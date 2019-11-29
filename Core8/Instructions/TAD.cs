@@ -1,13 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using Core8.Enum;
 using Core8.Interfaces;
 
 namespace Core8.Instructions
 {
     public class TAD : MemoryReferenceInstruction
     {
-        public TAD(ushort address) : base(0b_001, address)
+        public TAD(uint address) : base((uint)InstructionName.TAD, address)
         {
 
         }
@@ -18,7 +19,7 @@ namespace Core8.Instructions
 
             var ac = core.Registers.LINK_AC.Data;
 
-            core.Registers.LINK_AC.Set((ushort)(ac + memory));
+            core.Registers.LINK_AC.Set((ac + memory));
         }
     }
 }

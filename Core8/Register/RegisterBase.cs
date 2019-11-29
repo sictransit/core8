@@ -2,6 +2,6 @@
 {
     public abstract class RegisterBase
     {
-        public ushort Data { get; protected set; }
+        public uint Data { get; protected set; }
     }
 }

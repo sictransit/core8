@@ -6,6 +6,6 @@ namespace Core8.Interfaces
 {
     public interface IMemory
     {
-        ushort Read(uint address);
+        uint Read(uint address);
     }
 }

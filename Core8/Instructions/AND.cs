@@ -1,13 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using Core8.Enum;
 using Core8.Interfaces;
 
 namespace Core8.Instructions
 {
     public class AND : MemoryReferenceInstruction
     {
-        public AND(ushort address) : base(0b_000, address)
+        public AND(uint address) : base((uint)InstructionName.AND, address)
         {
 
         }
@@ -18,7 +19,7 @@ namespace Core8.Instructions
 
             var ac = core.Registers.LINK_AC.Accumulator;
 
-            core.Registers.LINK_AC.SetAccumulator((ushort)(memory & ac));
+            core.Registers.LINK_AC.SetAccumulator((memory & ac));
         }
     }
 }

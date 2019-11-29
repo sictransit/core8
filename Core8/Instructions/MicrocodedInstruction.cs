@@ -6,7 +6,7 @@ namespace Core8.Instructions
 {
     public abstract class MicrocodedInstruction : InstructionBase
     {
-        public MicrocodedInstruction(ushort data) : base(data)
+        public MicrocodedInstruction(uint data) : base(data)
         {
 
         }

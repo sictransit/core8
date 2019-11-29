@@ -7,18 +7,18 @@ namespace Core8.Instructions
 {
     public abstract class InstructionBase
     {
-        public InstructionBase(ushort data)
+        public InstructionBase(uint data)
         {
             Data = data;
         }
 
-        protected ushort Data { get; private set; }
+        protected uint Data { get; private set; }
 
-        public ushort Content
+        public uint Content
         {
             get
             {
-                return (ushort)(Data & Masks.INSTRUCTION);
+                return (Data & Masks.INSTRUCTION);
             }
         }
 

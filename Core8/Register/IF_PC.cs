@@ -2,17 +2,17 @@
 {
     public class IF_PC : RegisterBase
     {
-        public ushort Address => (ushort)(Data & Masks.MEM_WORD);
+        public uint Address => (Data & Masks.MEM_WORD);
 
-        public ushort IF => (ushort)((Data & Masks.IF) >> 12);
+        public uint IF => ((Data & Masks.IF) >> 12);
 
-        public ushort Page => (ushort)((Data & Masks.PAGE) >> 7);
+        public uint Page => ((Data & Masks.PAGE) >> 7);
 
-        public ushort Word => (ushort)(Data & Masks.WORD);
+        public uint Word => (Data & Masks.WORD);
 
         public void Increment()
         {
-            Data = (ushort)(Data & Masks.IF | Data + 1 & Masks.MEM_WORD);
+            Data = (Data & Masks.IF | Data + 1 & Masks.MEM_WORD);
         }
 
         public void Reset()

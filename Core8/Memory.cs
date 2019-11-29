@@ -9,7 +9,7 @@ namespace Core8
     public class Memory : IMemory
     {
         private readonly uint size;
-        private readonly ushort[] ram;
+        private readonly uint[] ram;
 
         public Memory(uint size)
         {
@@ -18,7 +18,7 @@ namespace Core8
                 throw new ArgumentOutOfRangeException(nameof(size));
             }
 
-            ram = new ushort[size];
+            ram = new uint[size];
             this.size = size;
         }
 
@@ -27,17 +27,17 @@ namespace Core8
             Write(address, instruction.Content);
         }
 
-        public ushort Read(uint address)
+        public uint Read(uint address)
         {
             if (address > size)
             {
                 throw new ArgumentOutOfRangeException(nameof(address));
             }
 
-            return (ushort)(ram[address] & Masks.MEM_WORD);
+            return ram[address] & Masks.MEM_WORD;
         }
 
-        public void Write(uint address, ushort data)
+        public void Write(uint address, uint data)
         {
             if (address > size)
             {

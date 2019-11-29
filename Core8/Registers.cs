@@ -17,12 +17,12 @@ namespace Core8
         public LINK_AC LINK_AC { get; }
         public IF_PC IF_PC { get; }
 
-        public ushort GetAccumulator()
+        public uint GetAccumulator()
         {
             return LINK_AC.Accumulator;
         }
 
-        public void SetAccumulator(ushort value)
+        public void SetAccumulator(uint value)
         {
             LINK_AC.SetAccumulator(value);
         }

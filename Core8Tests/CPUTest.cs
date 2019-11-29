@@ -21,7 +21,7 @@ namespace Core8Tests
 
             cpu.Run();
 
-            Assert.AreEqual(0x0f0, cpu.Accumulator);
+            Assert.AreEqual(0x0f0u, cpu.Accumulator);
 
         }
     }

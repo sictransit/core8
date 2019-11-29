@@ -7,18 +7,18 @@ namespace Core8.Instructions
 {
     public abstract class MemoryReferenceInstruction : InstructionBase
     {
-        protected MemoryReferenceInstruction(ushort opCode, ushort address) : base((ushort)(((opCode << 9) & Masks.OP_CODE) | (address & Masks.ADDRESS_WORD)))
+        protected MemoryReferenceInstruction(uint opCode, uint address) : base((((opCode << 9) & Masks.OP_CODE) | (address & Masks.ADDRESS_WORD)))
         {
-
+            
         }
 
-        public ushort OpCode => (ushort)((Data & Masks.OP_CODE) >> 9);
+        public uint OpCode => ((Data & Masks.OP_CODE) >> 9);
 
-        public ushort I => (ushort)((Data & Masks.I_MODE) >> 8);
+        public uint I => ((Data & Masks.I_MODE) >> 8);
 
-        public ushort Z => (ushort)((Data & Masks.Z_MODE) >> 7);
+        public uint Z => ((Data & Masks.Z_MODE) >> 7);
 
-        public ushort Address => (ushort)(Data & Masks.ADDRESS_WORD);
+        public uint Address => (Data & Masks.ADDRESS_WORD);
 
     }
 

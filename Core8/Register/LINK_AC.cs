@@ -2,9 +2,9 @@
 {
     public class LINK_AC : RegisterBase
     {
-        public ushort Link => (ushort)((Data & Masks.LINK) >> 12);
+        public uint Link => (Data & Masks.LINK) >> 12;
 
-        public ushort Accumulator => (ushort)(Data & Masks.AC);
+        public uint Accumulator => Data & Masks.AC;
 
         public void Clear()
         {
@@ -12,19 +12,19 @@
             SetAccumulator(0);
         }
 
-        public void SetAccumulator(ushort value)
+        public void SetAccumulator(uint value)
         {
-            Data = (ushort)((Link << 12) | (value & Masks.AC));
+            Data = ((Link << 12) | (value & Masks.AC));
         }
 
-        public void SetLink(ushort value)
+        public void SetLink(uint value)
         {
-            Data = (ushort)(((value & Masks.FLAG) << 12) | Accumulator);
+            Data = (((value & Masks.FLAG) << 12) | Accumulator);
         }
 
-        public void Set(ushort value)
+        public void Set(uint value)
         { 
-            Data = (ushort) (value & (Masks.LINK | Masks.AC));
+            Data =  (value & (Masks.LINK | Masks.AC));
         }
     }
 }
