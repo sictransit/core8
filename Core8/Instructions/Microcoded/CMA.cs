@@ -2,17 +2,13 @@
 using System.Collections.Generic;
 using System.Text;
 using Core8.Enum;
+using Core8.Instructions.Abstract;
 using Core8.Interfaces;
 
-namespace Core8.Instructions
+namespace Core8.Instructions.Microcoded
 {
     public class CMA : MicrocodedInstruction
     {
-        public CMA() : base((uint)InstructionName.Microcoded)
-        {
-
-        }
-
         public override void Execute(ICore core)
         {
             var acc = core.Registers.LINK_AC.Accumulator;

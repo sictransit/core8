@@ -2,22 +2,20 @@
 using System.Collections.Generic;
 using System.Text;
 using Core8.Enum;
+using Core8.Instructions.Abstract;
 using Core8.Interfaces;
 
-namespace Core8.Instructions
+namespace Core8.Instructions.Microcoded
 {
-    public class IAC : MicrocodedInstruction
+    public class RAR : MicrocodedInstruction
     {
-        public IAC() : base((uint)InstructionName.Microcoded)
-        {
-
-        }
-
         public override void Execute(ICore core)
         {
             var acc = core.Registers.LINK_AC.Data;
 
-            core.Registers.LINK_AC.Set(acc++);
+            var result = acc >> 1 | (acc & Masks.FLAG) << 12;
+
+            core.Registers.LINK_AC.Set(result);
         }
     }
 }

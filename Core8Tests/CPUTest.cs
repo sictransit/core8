@@ -1,5 +1,6 @@
 using Core8;
-using Core8.Instructions;
+using Core8.Instructions.MemoryReference;
+using Core8.Instructions.Microcoded;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Core8Tests

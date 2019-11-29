@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Core8.Instructions
+namespace Core8.Instructions.Abstract
 {
     public abstract class InstructionBase
     {
@@ -18,7 +18,7 @@ namespace Core8.Instructions
         {
             get
             {
-                return (Data & Masks.INSTRUCTION);
+                return Data & Masks.INSTRUCTION;
             }
         }
 

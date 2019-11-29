@@ -1,4 +1,4 @@
-﻿using Core8.Instructions;
+﻿using Core8.Instructions.Abstract;
 using Core8.Interfaces;
 using System;
 using System.Collections.Generic;

@@ -1,5 +1,7 @@
 ﻿using Core8.Enum;
-using Core8.Instructions;
+using Core8.Instructions.Abstract;
+using Core8.Instructions.MemoryReference;
+using Core8.Instructions.Microcoded;
 using Core8.Interfaces;
 using System;
 using System.Collections.Generic;
@@ -67,10 +69,10 @@ namespace Core8
 
                 var instructions = instructionName == InstructionName.Microcoded ? DecodeMicrocodedInstruction(data) : DecodeMemoryReferenceInstruction(instructionName, data);
 
+                registers.IF_PC.Increment();
+
                 foreach (var instruction in instructions)
                 {
-                    registers.IF_PC.Increment();
-
                     instruction.Execute(core);
                 }
             }
@@ -78,13 +80,27 @@ namespace Core8
 
         private IEnumerable<InstructionBase> DecodeMemoryReferenceInstruction(InstructionName name, uint data)
         {
-            switch(name)
+            var address = data & Masks.ADDRESS_WORD;
+
+            switch (name)
             {
                 case InstructionName.AND:
-                    yield return new AND(data & Masks.ADDRESS_WORD);
+                    yield return new AND(address);
                     break;
                 case InstructionName.TAD:
-                    yield return new TAD(data & Masks.ADDRESS_WORD);
+                    yield return new TAD(address);
+                    break;
+                case InstructionName.ISZ:
+                    yield return new ISZ(address);
+                    break;
+                case InstructionName.DCA:
+                    yield return new DCA(address);
+                    break;
+                case InstructionName.JMS:
+                    yield return new JMS(address);
+                    break;
+                case InstructionName.JMP:
+                    yield return new JMP(address);
                     break;
                 default:
                     throw new NotImplementedException();
@@ -133,32 +149,29 @@ namespace Core8
 
                 if ((data & Masks.GROUP_1_RAR) != 0)
                 {
-                    throw new NotImplementedException();
+                    yield return new RAR();
                 }
 
                 if ((data & Masks.GROUP_1_RAL) != 0)
                 {
-                    throw new NotImplementedException();
-                }
-
-                if ((data & Masks.GROUP_1_RAR) != 0)
-                {
-                    throw new NotImplementedException();
+                    yield return new RAL();
                 }
 
                 if ((data & Masks.GROUP_1_RTR) != 0)
                 {
-                    throw new NotImplementedException();
+                    yield return new RAR();
+                    yield return new RAR();
                 }
 
                 if ((data & Masks.GROUP_1_RTL) != 0)
                 {
-                    throw new NotImplementedException();
+                    yield return new RAL();
+                    yield return new RAL();
                 }
 
                 if ((data & Masks.GROUP_1_BSW) != 0)
                 {
-                    throw new NotImplementedException();
+                    yield return new BSW();
                 }
 
             }

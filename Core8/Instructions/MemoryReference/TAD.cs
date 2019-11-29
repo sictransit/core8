@@ -2,9 +2,10 @@
 using System.Collections.Generic;
 using System.Text;
 using Core8.Enum;
+using Core8.Instructions.Abstract;
 using Core8.Interfaces;
 
-namespace Core8.Instructions
+namespace Core8.Instructions.MemoryReference
 {
     public class TAD : MemoryReferenceInstruction
     {
@@ -19,7 +20,7 @@ namespace Core8.Instructions
 
             var ac = core.Registers.LINK_AC.Data;
 
-            core.Registers.LINK_AC.Set((ac + memory));
+            core.Registers.LINK_AC.Set(ac + memory);
         }
     }
 }

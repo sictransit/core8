@@ -2,9 +2,10 @@
 using System.Collections.Generic;
 using System.Text;
 using Core8.Enum;
+using Core8.Instructions.Abstract;
 using Core8.Interfaces;
 
-namespace Core8.Instructions
+namespace Core8.Instructions.MemoryReference
 {
     public class AND : MemoryReferenceInstruction
     {
@@ -19,7 +20,7 @@ namespace Core8.Instructions
 
             var ac = core.Registers.LINK_AC.Accumulator;
 
-            core.Registers.LINK_AC.SetAccumulator((memory & ac));
+            core.Registers.LINK_AC.SetAccumulator(memory & ac);
         }
     }
 }

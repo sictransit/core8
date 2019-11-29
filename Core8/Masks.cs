@@ -25,6 +25,8 @@ namespace Core8
 
         public const uint LINK = 0b_1_0000_0000_0000;
         public const uint AC = 0b_0_1111_1111_1111;
+        public const uint AC_HIGH = 0b_0_1111_1100_0000;
+        public const uint AC_LOW = 0b_0_0000_0011_1111;
 
         public const uint GROUP_1 = 0b_1110_0000_0000;
         public const uint GROUP_2 = 0b_1111_0000_0000;
