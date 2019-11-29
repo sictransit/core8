@@ -1,0 +1,30 @@
+﻿using Core8.Interfaces;
+using Core8.Register;
+using System;
+using System.Collections.Generic;
+using System.Text;
+
+namespace Core8
+{
+    public class Registers : IRegisters
+    {
+        public Registers()
+        {
+            LINK_AC = new LINK_AC();
+            IF_PC = new IF_PC();
+        }
+
+        public LINK_AC LINK_AC { get; }
+        public IF_PC IF_PC { get; }
+
+        public ushort GetAccumulator()
+        {
+            return LINK_AC.Accumulator;
+        }
+
+        public void SetAccumulator(ushort value)
+        {
+            LINK_AC.SetAccumulator(value);
+        }
+    }
+}
