@@ -52,9 +52,9 @@ namespace Core8
             Halted = true;
         }
 
-        public void Run()
+        public void Run(uint address = 0)
         {
-            registers.IF_PC.Reset();
+            registers.IF_PC.Set(address);
 
             Halted = false;
 

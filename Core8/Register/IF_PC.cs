@@ -20,7 +20,7 @@
             Data = 0;
         }
 
-        public void Jump(uint address)
+        public void Set(uint address)
         {
             Data = (Data & Masks.IF) | (address & Masks.MEM_WORD);
         }
