@@ -1,17 +1,19 @@
 ﻿using Core8.Instructions.Abstract;
 using Core8.Interfaces;
+using System;
 
 namespace Core8.Instructions.Microcoded
 {
-    public class CLL : MicrocodedInstruction
+    public class OSR : MicrocodedInstruction
     {
-        public CLL() : base(0, Masks.GROUP_1_CLL)
+        public OSR() : base(1, Masks.GROUP_2_OSR)
         {
 
         }
+
         public override void Execute(ICore core)
         {
-            core.Registers.LINK_AC.SetLink(0);
+            throw new NotImplementedException("no console present");
         }
     }
 }

@@ -11,7 +11,7 @@ namespace Core8Tests
         [TestMethod]
         public void TestDeposit()
         {
-            var ram = new Memory(4096);                        
+            var ram = new Memory(4096);
             var cpu = new Processor(ram);
 
             cpu.Deposit(new TAD(0b011));
@@ -32,7 +32,7 @@ namespace Core8Tests
             var ram = new Memory(4096);
             var cpu = new Processor(ram);
 
-            var length = 5;
+            var length = 1024;
 
             for (int i = 0; i < length; i++)
             {

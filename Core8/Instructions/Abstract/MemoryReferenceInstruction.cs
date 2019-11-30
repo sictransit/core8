@@ -1,9 +1,4 @@
-﻿using Core8.Interfaces;
-using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Core8.Instructions.Abstract
+﻿namespace Core8.Instructions.Abstract
 {
     public abstract class MemoryReferenceInstruction : InstructionBase
     {

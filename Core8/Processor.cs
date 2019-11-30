@@ -5,7 +5,6 @@ using Core8.Instructions.Microcoded;
 using Core8.Interfaces;
 using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace Core8
 {
@@ -153,14 +152,24 @@ namespace Core8
                 }
 
             }
-            else // Group #2
+            else if ((data & Masks.GROUP_2_HLT) == Masks.GROUP_2_HLT)
             {
-                core.Processor.Halt();
-                
+                yield return new HLT();
             }
-
+            else if ((data & Masks.GROUP_2_OSR) == Masks.GROUP_2_OSR)
+            {
+                yield return new OSR();
+            }
+            else if ((data & Masks.GROUP_2_AND) == Masks.GROUP_2_AND)
+            {
+                yield return new G2A(data);
+            }
+            else
+            {
+                yield return new G2O(data);
+            }
         }
     }
 
-    
+
 }

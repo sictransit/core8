@@ -1,8 +1,5 @@
 ﻿using Core8.Interfaces;
 using Core8.Register;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Core8
 {

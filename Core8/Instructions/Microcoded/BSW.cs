@@ -1,15 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using Core8.Enum;
-using Core8.Instructions.Abstract;
+﻿using Core8.Instructions.Abstract;
 using Core8.Interfaces;
 
 namespace Core8.Instructions.Microcoded
 {
     public class BSW : MicrocodedInstruction
     {
-        public BSW() : base (0, Masks.GROUP_1_BSW)
+        public BSW() : base(0, Masks.GROUP_1_BSW)
         {
 
         }

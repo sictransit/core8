@@ -23,8 +23,8 @@
         }
 
         public void Set(uint value)
-        { 
-            Data =  (value & (Masks.LINK | Masks.AC));
+        {
+            Data = (value & (Masks.LINK | Masks.AC));
         }
     }
 }
