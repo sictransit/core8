@@ -9,6 +9,10 @@ namespace Core8.Instructions.Microcoded
 {
     public class RAL : MicrocodedInstruction
     {
+        public RAL() : base(0, Masks.GROUP_1_RAL)
+        {
+
+        }
         public override void Execute(ICore core)
         {
             var acc = core.Registers.LINK_AC.Data;

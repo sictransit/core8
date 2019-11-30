@@ -28,11 +28,13 @@ namespace Core8
         public const uint AC_HIGH = 0b_0_1111_1100_0000;
         public const uint AC_LOW = 0b_0_0000_0011_1111;
 
-        public const uint GROUP_1 = 0b_1110_0000_0000;
+        public const uint GROUP = 0b_0001_0000_0000;
         public const uint GROUP_2 = 0b_1111_0000_0000;
         public const uint GROUP_2_AND_OR = 0b_1111_0000_1000;
         public const uint GROUP_2_OSR = 0b_1111_0000_0100;
         public const uint GROUP_2_HLT = 0b_1111_0000_0010;
+
+        public const uint GROUP_1 = 0b_1111_1111;
 
         public const uint GROUP_1_CLA = 0b_1000_0000;
         public const uint GROUP_1_CLL = 0b_0100_0000;

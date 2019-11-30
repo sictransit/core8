@@ -9,6 +9,11 @@ namespace Core8.Instructions.Microcoded
 {
     public class BSW : MicrocodedInstruction
     {
+        public BSW() : base (0, Masks.GROUP_1_BSW)
+        {
+
+        }
+
         public override void Execute(ICore core)
         {
             var acc = core.Registers.LINK_AC.Accumulator;

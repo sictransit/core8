@@ -109,76 +109,56 @@ namespace Core8
 
         private IEnumerable<InstructionBase> DecodeMicrocodedInstruction(uint data)
         {
-            if ((data & Masks.GROUP_2) != 0)
+            if ((data & Masks.GROUP) == 0) // Group #1
             {
-                if ((data & Masks.GROUP_2_HLT) == Masks.GROUP_2_HLT)
-                {
-                    yield return new HLT();
-                }
-                else
-                {
-                    throw new NotImplementedException(nameof(data));
-                }
-            }
-            else if ((data & Masks.GROUP_1) != 0)
-            {
-                if ((data & Masks.GROUP_1_CLA) != 0)
-                {
-                    yield return new CLA();
-                }
+                var microcode = data & Masks.GROUP_1;
 
-                if ((data & Masks.GROUP_1_CLL) != 0)
+                switch (microcode)
                 {
-                    yield return new CLL();
-                }
+                    case Masks.GROUP_1_CLA:
+                        yield return new CLA();
+                        break;
 
-                if ((data & Masks.GROUP_1_CMA) != 0)
-                {
-                    yield return new CMA();
-                }
-
-                if ((data & Masks.GROUP_1_CML) != 0)
-                {
-                    yield return new CML();
-                }
-
-                if ((data & Masks.GROUP_1_IAC) != 0)
-                {
-                    yield return new IAC();
-                }
-
-                if ((data & Masks.GROUP_1_RAR) != 0)
-                {
-                    yield return new RAR();
-                }
-
-                if ((data & Masks.GROUP_1_RAL) != 0)
-                {
-                    yield return new RAL();
-                }
-
-                if ((data & Masks.GROUP_1_RTR) != 0)
-                {
-                    yield return new RAR();
-                    yield return new RAR();
-                }
-
-                if ((data & Masks.GROUP_1_RTL) != 0)
-                {
-                    yield return new RAL();
-                    yield return new RAL();
-                }
-
-                if ((data & Masks.GROUP_1_BSW) != 0)
-                {
-                    yield return new BSW();
+                    case Masks.GROUP_1_CLL:
+                        yield return new CLL();
+                        break;
+                    case Masks.GROUP_1_CMA:
+                        yield return new CMA();
+                        break;
+                    case Masks.GROUP_1_CML:
+                        yield return new CML();
+                        break;
+                    case Masks.GROUP_1_IAC:
+                        yield return new IAC();
+                        break;
+                    case Masks.GROUP_1_RAR:
+                        yield return new RAR();
+                        break;
+                    case Masks.GROUP_1_RAL:
+                        yield return new RAL();
+                        break;
+                    case Masks.GROUP_1_RTR:
+                        yield return new RAR();
+                        yield return new RAR();
+                        break;
+                    case Masks.GROUP_1_RTL:
+                        yield return new RAL();
+                        yield return new RAL();
+                        break;
+                    case Masks.GROUP_1_BSW:
+                        yield return new BSW();
+                        break;
+                    default:
+                        throw new NotImplementedException(nameof(data));
                 }
 
             }
-            else
+            else // Group #2
             {
-                throw new ArgumentOutOfRangeException(nameof(data));
+                core.Processor.Halt();
+                
             }
+
         }
     }
 

@@ -9,6 +9,10 @@ namespace Core8.Instructions.Microcoded
 {
     public class CML : MicrocodedInstruction
     {
+        public CML():base(0, Masks.GROUP_1_CML)
+        {
+
+        }
         public override void Execute(ICore core)
         {
             var link = core.Registers.LINK_AC.Link;
