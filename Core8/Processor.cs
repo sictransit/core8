@@ -33,6 +33,8 @@ namespace Core8
 
         public uint Accumulator => registers.LINK_AC.Accumulator;
 
+        public uint Link => registers.LINK_AC.Link;
+
         public bool Halted { get; private set; }
 
         public void Deposit8(uint data)
@@ -89,7 +91,7 @@ namespace Core8
 
                 var instruction = instructionName == InstructionName.Microcoded ? DecodeMicrocodedInstruction(data) : DecodeMemoryReferenceInstruction(instructionName, data);
 
-                Trace.WriteLine($"{registers.IF_PC.Word.ToOctal().ToString("d4")}: {instruction}");
+                Trace.WriteLine($"{registers.IF_PC.Address.ToOctal().ToString("d4")}: {instruction}");
 
                 registers.IF_PC.Increment();
 
