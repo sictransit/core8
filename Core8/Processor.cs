@@ -35,17 +35,12 @@ namespace Core8
 
         public bool Halted { get; private set; }
 
-        public void Deposit(InstructionBase instruction)
+        public void Deposit8(uint data)
         {
-            DepositDecimal(instruction.Content);
+            Deposit10(data.ToDecimal());
         }
 
-        public void Deposit(int data)
-        {
-            DepositDecimal(data.ToDecimal());
-        }
-
-        public void DepositDecimal(uint data)
+        public void Deposit10(uint data)
         {
             ram.Write(registers.IF_PC.Address, data & Masks.MEM_WORD);
 
@@ -59,7 +54,12 @@ namespace Core8
             Halted = true;
         }
 
-        public void Load(uint address = 0)
+        public void Load8(uint address = 0)
+        {
+            Load10(address.ToDecimal());
+        }
+
+        public void Load10(uint address)
         {
             registers.IF_PC.Set(address);
 
@@ -101,22 +101,20 @@ namespace Core8
 
         private InstructionBase DecodeMemoryReferenceInstruction(InstructionName name, uint data)
         {
-            var address = data & Masks.ADDRESS_WORD;
-
             switch (name)
             {
                 case InstructionName.AND:
-                    return new AND(address);
+                    return new AND(data);
                 case InstructionName.TAD:
-                    return new TAD(address);
+                    return new TAD(data);
                 case InstructionName.ISZ:
-                    return new ISZ(address);
+                    return new ISZ(data);
                 case InstructionName.DCA:
-                    return new DCA(address);
+                    return new DCA(data);
                 case InstructionName.JMS:
-                    return new JMS(address);
+                    return new JMS(data);
                 case InstructionName.JMP:
-                    return new JMP(address);
+                    return new JMP(data);
                 default:
                     throw new NotImplementedException();
             }

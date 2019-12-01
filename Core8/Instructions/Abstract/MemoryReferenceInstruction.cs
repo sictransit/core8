@@ -1,11 +1,12 @@
 ﻿using Core8.Enum;
 using Core8.Extensions;
+using Core8.Interfaces;
 
 namespace Core8.Instructions.Abstract
 {
     public abstract class MemoryReferenceInstruction : InstructionBase
     {
-        protected MemoryReferenceInstruction(uint opCode, uint address) : base(opCode & Masks.OP_CODE | address & Masks.ADDRESS_WORD)
+        protected MemoryReferenceInstruction(uint data) : base(data)
         {
 
         }
@@ -19,8 +20,20 @@ namespace Core8.Instructions.Abstract
         public override string ToString()
         {
             var mode = AddressingMode != 0 ? AddressingMode.ToString() : string.Empty;
+
             return $"{Data.ToOctal().ToString("d4")} {OpCode} {mode} {Address.ToOctal().ToString()}";
         }
+
+        protected uint GetAddress(IRegisters registers)
+        {
+            if (AddressingMode.HasFlag(AddressingModes.Z))
+            {
+                return (registers.IF_PC.Page << 7) | (Address & Masks.ADDRESS_WORD);
+            }
+
+            return Address & Masks.ADDRESS_WORD;
+        }
+
 
     }
 

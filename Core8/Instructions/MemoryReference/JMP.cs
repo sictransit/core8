@@ -6,14 +6,14 @@ namespace Core8.Instructions.MemoryReference
 {
     public class JMP : MemoryReferenceInstruction
     {
-        public JMP(uint address) : base((uint)InstructionName.JMP, address)
+        public JMP(uint data) : base(data)
         {
 
         }
 
         public override void Execute(ICore core)
         {
-            core.Registers.IF_PC.Set(core.Memory.Read(Address));
+            core.Registers.IF_PC.Set(core.Memory.Read(GetAddress(core.Registers)));
         }
     }
 }

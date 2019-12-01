@@ -6,18 +6,18 @@ namespace Core8.Instructions.MemoryReference
 {
     public class ISZ : MemoryReferenceInstruction
     {
-        public ISZ(uint address) : base((uint)InstructionName.ISZ, address)
+        public ISZ(uint data) : base(data)
         {
 
         }
 
         public override void Execute(ICore core)
         {
-            var value = core.Memory.Read(Address);
+            var value = core.Memory.Read(GetAddress(core.Registers));
 
             value = value + 1 & Masks.MEM_WORD;
 
-            core.Memory.Write(Address, value);
+            core.Memory.Write(GetAddress(core.Registers), value);
 
             if (value == 0)
             {

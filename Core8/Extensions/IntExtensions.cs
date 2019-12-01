@@ -6,7 +6,7 @@ namespace Core8.Extensions
 {
     public static class IntExtensions
     {
-        public static uint ToDecimal(this int oct)
+        public static uint ToDecimal(this uint oct)
         {
             return Convert.ToUInt32(oct.ToString(), 8);
         }
