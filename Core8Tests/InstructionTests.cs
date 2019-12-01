@@ -10,11 +10,13 @@ namespace Core8Tests
     public class InstrucitonTests
     {
         private Processor proc;
+        private Memory ram;
 
         [TestInitialize]
         public void Initialize()
         {
-            proc = new Processor(new Memory(4096));
+            ram = new Memory(4096);
+            proc = new Processor(ram);
         }
 
         [TestMethod]
@@ -92,7 +94,6 @@ namespace Core8Tests
             Assert.AreEqual(2u, proc.ProgramCounterWord);
         }
 
-
         [TestMethod]
         public void ISZ_WZ()
         {
@@ -110,8 +111,63 @@ namespace Core8Tests
             Assert.AreEqual(3u, proc.ProgramCounterWord);
         }
 
-        
+        [TestMethod]
+        public void DCA()
+        {
+            proc.Load8(0000);
 
+            proc.Deposit8(7300); // CLA, CLL
+            proc.Deposit8(1006); // TAD
+            proc.Deposit8(1007); // TAD
+            proc.Deposit8(1006); // TAD
+            proc.Deposit8(3010); // DCA
+            proc.Deposit8(7402); // HLT
+            proc.Deposit8(7777);
+            proc.Deposit8(0001);
 
+            proc.Load8(0000);
+
+            proc.Run();            
+
+            Assert.AreEqual(0u, proc.Accumulator);
+            Assert.AreEqual(1u, proc.Link);
+
+            Assert.AreEqual(7777u.ToDecimal(), ram.Read(0008u));
+        }
+
+        [TestMethod]
+        public void JMS()
+        {
+            proc.Load8(0000);
+
+            proc.Deposit8(4002); // JMS
+            proc.Deposit8(7402); 
+            proc.Deposit8(7402); 
+            proc.Deposit8(7402); // HLT
+
+            proc.Load8(0000);
+
+            proc.Run();
+
+            Assert.AreEqual(4u, proc.ProgramCounterWord);
+
+            Assert.AreEqual(0001u, ram.Read(0002u));
+        }
+
+        [TestMethod]
+        public void JMP()
+        {
+            proc.Load8(0000);
+
+            proc.Deposit8(5002); // JMP
+            proc.Deposit8(7402);
+            proc.Deposit8(7402);
+
+            proc.Load8(0000);
+
+            proc.Run();
+
+            Assert.AreEqual(3u, proc.ProgramCounterWord);
+        }
     }
 }
