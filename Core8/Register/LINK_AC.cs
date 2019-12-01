@@ -31,7 +31,7 @@ namespace Core8.Register
 
         public override string ToString()
         {
-            return string.Format($"[LINK_AC] {Link} {Accumulator.ToString("d4")}");
+            return string.Format($"[LINK_AC] {Link} {Accumulator.ToOctalString()}");
         }
     }
 }

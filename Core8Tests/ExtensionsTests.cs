@@ -22,5 +22,17 @@ namespace Core8Tests
         {
             var _ = 8u.ToDecimal();
         }
+
+        [TestMethod]
+        public void TestToOctal()
+        {
+            Assert.AreEqual(7777u, 4095u.ToOctal());
+        }
+
+        [TestMethod]
+        public void TestToOctalString()
+        {
+            Assert.AreEqual("7777", 4095u.ToOctalString());
+        }
     }
 }

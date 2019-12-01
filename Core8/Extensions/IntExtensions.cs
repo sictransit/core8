@@ -20,5 +20,12 @@ namespace Core8.Extensions
 
             return dec % 8 + 10 * (dec / 8).ToOctal();
         }
+
+        public static string ToOctalString(this uint dec)
+        {
+            return dec.ToOctal().ToString("d4");
+        }
     }
+
+   
 }

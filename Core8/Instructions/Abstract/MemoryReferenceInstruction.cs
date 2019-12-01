@@ -21,7 +21,7 @@ namespace Core8.Instructions.Abstract
         {
             var mode = AddressingMode != 0 ? AddressingMode.ToString() : string.Empty;
 
-            return $"{Data.ToOctal().ToString("d4")} {OpCode} {mode} {Address.ToOctal().ToString()}";
+            return $"{Data.ToOctalString()} {OpCode} {mode} {Address.ToOctal().ToString()}";
         }
 
         protected uint GetAddress(ICore core)

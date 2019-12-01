@@ -46,7 +46,7 @@ namespace Core8
         {
             ram.Write(registers.IF_PC.Address, data & Masks.MEM_WORD);
 
-            Trace.WriteLine($"DEP: {registers.IF_PC.Address.ToOctal().ToString("d4")} {data.ToOctal().ToString("d4")}");
+            Trace.WriteLine($"DEP: {registers.IF_PC.Address.ToOctalString()} {data.ToOctalString()}");
 
             registers.IF_PC.Increment();
         }
@@ -65,7 +65,7 @@ namespace Core8
         {
             registers.IF_PC.Set(address);
 
-            Trace.WriteLine($"LOAD: {address.ToOctal().ToString("d4")}");
+            Trace.WriteLine($"LOAD: {address.ToOctalString()}");
         }
 
         public void Exam()
@@ -91,7 +91,7 @@ namespace Core8
 
                 var instruction = instructionName == InstructionName.Microcoded ? DecodeMicrocodedInstruction(data) : DecodeMemoryReferenceInstruction(instructionName, data);
 
-                Trace.WriteLine($"{registers.IF_PC.Address.ToOctal().ToString("d4")}: {instruction}");
+                Trace.WriteLine($"{registers.IF_PC.Address.ToOctalString()}: {instruction}");
 
                 registers.IF_PC.Increment();
 
