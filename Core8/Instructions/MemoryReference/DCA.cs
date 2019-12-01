@@ -13,7 +13,7 @@ namespace Core8.Instructions.MemoryReference
 
         public override void Execute(ICore core)
         {
-            core.Memory.Write(GetAddress(core.Registers), core.Registers.LINK_AC.Accumulator);
+            core.Memory.Write(GetAddress(core), core.Registers.LINK_AC.Accumulator);
 
             core.Registers.LINK_AC.SetAccumulator(0);
         }

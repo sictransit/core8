@@ -13,7 +13,7 @@ namespace Core8.Instructions.MemoryReference
 
         public override void Execute(ICore core)
         {
-            var memory = core.Memory.Read(GetAddress(core.Registers));
+            var memory = core.Memory.Read(GetAddress(core));
 
             var ac = core.Registers.LINK_AC.Accumulator;
 

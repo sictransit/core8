@@ -24,17 +24,11 @@ namespace Core8.Instructions.Abstract
             return $"{Data.ToOctal().ToString("d4")} {OpCode} {mode} {Address.ToOctal().ToString()}";
         }
 
-        protected uint GetAddress(IRegisters registers)
+        protected uint GetAddress(ICore core)
         {
-            if (AddressingMode.HasFlag(AddressingModes.Z))
-            {
-                return (registers.IF_PC.Page << 7) | (Address & Masks.ADDRESS_WORD);
-            }
+            var location = AddressingMode.HasFlag(AddressingModes.Z) ? (core.Registers.IF_PC.Page << 7) | (Address & Masks.ADDRESS_WORD) : Address & Masks.ADDRESS_WORD;
 
-            return Address & Masks.ADDRESS_WORD;
+            return AddressingMode.HasFlag(AddressingModes.I) ? core.Memory.Read(location) : location;
         }
-
-
     }
-
 }

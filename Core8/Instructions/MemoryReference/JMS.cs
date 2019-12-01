@@ -13,9 +13,9 @@ namespace Core8.Instructions.MemoryReference
 
         public override void Execute(ICore core)
         {
-            core.Memory.Write(GetAddress(core.Registers), core.Registers.IF_PC.Address);
+            core.Memory.Write(GetAddress(core), core.Registers.IF_PC.Address);
 
-            core.Registers.IF_PC.Set(GetAddress(core.Registers));
+            core.Registers.IF_PC.Set(GetAddress(core));
 
         }
     }

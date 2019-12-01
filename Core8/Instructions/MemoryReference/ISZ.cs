@@ -13,11 +13,11 @@ namespace Core8.Instructions.MemoryReference
 
         public override void Execute(ICore core)
         {
-            var value = core.Memory.Read(GetAddress(core.Registers));
+            var value = core.Memory.Read(GetAddress(core));
 
             value = value + 1 & Masks.MEM_WORD;
 
-            core.Memory.Write(GetAddress(core.Registers), value);
+            core.Memory.Write(GetAddress(core), value);
 
             if (value == 0)
             {
