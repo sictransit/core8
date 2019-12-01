@@ -11,7 +11,7 @@ namespace Core8.Instructions.Abstract
 
         }
 
-        public InstructionName OpCode => (InstructionName) (Data & Masks.OP_CODE);
+        public InstructionName OpCode => (InstructionName)(Data & Masks.OP_CODE);
 
         public AddressingModes AddressingMode => (AddressingModes)(Data & Masks.ADDRESSING_MODE);
 

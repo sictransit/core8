@@ -1,7 +1,4 @@
 using Core8;
-using Core8.Extensions;
-using Core8.Instructions.MemoryReference;
-using Core8.Instructions.Microcoded;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Core8Tests
@@ -9,7 +6,7 @@ namespace Core8Tests
     [TestClass]
     public class CPUTest
     {
-      
+
 
         [TestMethod]
         public void TestIAC()

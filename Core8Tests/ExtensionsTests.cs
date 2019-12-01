@@ -1,8 +1,6 @@
 ﻿using Core8.Extensions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Core8Tests
 {
@@ -13,7 +11,7 @@ namespace Core8Tests
         public void TestToDecimal()
         {
             Assert.AreEqual(0u, 0u.ToDecimal());
-            Assert.AreEqual(4095u, 7777u.ToDecimal());            
+            Assert.AreEqual(4095u, 7777u.ToDecimal());
         }
 
         [TestMethod]

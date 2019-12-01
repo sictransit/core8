@@ -54,7 +54,7 @@ namespace Core8.Enum
     [Flags]
     public enum PrivilegedGroupTwoFlags : uint
     {
-        HLT = 1<<1,
-        OSR = 1<<2,
+        HLT = 1 << 1,
+        OSR = 1 << 2,
     }
 }

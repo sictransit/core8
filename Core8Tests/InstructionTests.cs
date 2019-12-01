@@ -1,7 +1,5 @@
 using Core8;
 using Core8.Extensions;
-using Core8.Instructions.MemoryReference;
-using Core8.Instructions.Microcoded;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Core8Tests
@@ -127,7 +125,7 @@ namespace Core8Tests
 
             proc.Load8(0000);
 
-            proc.Run();            
+            proc.Run();
 
             Assert.AreEqual(0u, proc.Accumulator);
             Assert.AreEqual(1u, proc.Link);
@@ -141,8 +139,8 @@ namespace Core8Tests
             proc.Load8(0000);
 
             proc.Deposit8(4002); // JMS
-            proc.Deposit8(7402); 
-            proc.Deposit8(7402); 
+            proc.Deposit8(7402);
+            proc.Deposit8(7402);
             proc.Deposit8(7402); // HLT
 
             proc.Load8(0000);

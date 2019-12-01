@@ -5,7 +5,6 @@ using Core8.Instructions.MemoryReference;
 using Core8.Instructions.Microcoded;
 using Core8.Interfaces;
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 
 namespace Core8
@@ -76,7 +75,7 @@ namespace Core8
         }
 
         public void Run()
-        {        
+        {
             Halted = false;
 
             Trace.WriteLine("RUN");
@@ -97,7 +96,7 @@ namespace Core8
 
                 instruction.Execute(core);
 
-                
+
             }
         }
 

@@ -1,5 +1,4 @@
-﻿using Core8.Enum;
-using Core8.Extensions;
+﻿using Core8.Extensions;
 
 namespace Core8.Instructions.Abstract
 {

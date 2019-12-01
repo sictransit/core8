@@ -1,9 +1,6 @@
 ﻿using Core8.Enum;
-using Core8.Extensions;
 using Core8.Instructions.Abstract;
 using Core8.Interfaces;
-using Core8.Register;
-using System.Collections.Generic;
 
 namespace Core8.Instructions.Microcoded
 {

@@ -1,5 +1,4 @@
-﻿using Core8.Enum;
-using Core8.Instructions.Abstract;
+﻿using Core8.Instructions.Abstract;
 using Core8.Interfaces;
 
 namespace Core8.Instructions.MemoryReference
