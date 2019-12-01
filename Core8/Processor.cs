@@ -1,10 +1,12 @@
 ﻿using Core8.Enum;
+using Core8.Extensions;
 using Core8.Instructions.Abstract;
 using Core8.Instructions.MemoryReference;
 using Core8.Instructions.Microcoded;
 using Core8.Interfaces;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 
 namespace Core8
 {
@@ -35,14 +37,19 @@ namespace Core8
 
         public void Deposit(InstructionBase instruction)
         {
-            ram.Load(registers.IF_PC.Address, instruction);
-
-            registers.IF_PC.Increment();
+            DepositDecimal(instruction.Content);
         }
 
-        public void Deposit(uint data)
+        public void Deposit(int data)
+        {
+            DepositDecimal(data.ToDecimal());
+        }
+
+        public void DepositDecimal(uint data)
         {
             ram.Write(registers.IF_PC.Address, data & Masks.MEM_WORD);
+
+            Trace.WriteLine($"DEP: {registers.IF_PC.Address.ToOctal().ToString("d4")} {data.ToOctal().ToString("d4")}");
 
             registers.IF_PC.Increment();
         }
@@ -52,121 +59,86 @@ namespace Core8
             Halted = true;
         }
 
-        public void Run(uint address = 0)
+        public void Load(uint address = 0)
         {
             registers.IF_PC.Set(address);
 
+            Trace.WriteLine($"LOAD: {address.ToOctal().ToString("d4")}");
+        }
+
+        public void Exam()
+        {
+            registers.LINK_AC.SetAccumulator(ram.Read(registers.IF_PC.Address));
+
+            Trace.WriteLine($"EXAM: {registers.LINK_AC.ToString()}");
+        }
+
+        public void Run()
+        {        
             Halted = false;
+
+            Trace.WriteLine("RUN");
 
             while (!Halted)
             {
                 var data = ram.Read(registers.IF_PC.Address);
 
-                var opCode = (data & Masks.OP_CODE) >> 9;
+                var opCode = (data & Masks.OP_CODE);
 
                 var instructionName = (InstructionName)opCode;
 
-                var instructions = instructionName == InstructionName.Microcoded ? DecodeMicrocodedInstruction(data) : DecodeMemoryReferenceInstruction(instructionName, data);
+                var instruction = instructionName == InstructionName.Microcoded ? DecodeMicrocodedInstruction(data) : DecodeMemoryReferenceInstruction(instructionName, data);
+
+                Trace.WriteLine($"{registers.IF_PC.Word.ToOctal().ToString("d4")}: {instruction}");
 
                 registers.IF_PC.Increment();
 
-                foreach (var instruction in instructions)
-                {
-                    instruction.Execute(core);
-                }
+                instruction.Execute(core);
+
+                
             }
         }
 
-        private IEnumerable<InstructionBase> DecodeMemoryReferenceInstruction(InstructionName name, uint data)
+        private InstructionBase DecodeMemoryReferenceInstruction(InstructionName name, uint data)
         {
             var address = data & Masks.ADDRESS_WORD;
 
             switch (name)
             {
                 case InstructionName.AND:
-                    yield return new AND(address);
-                    break;
+                    return new AND(address);
                 case InstructionName.TAD:
-                    yield return new TAD(address);
-                    break;
+                    return new TAD(address);
                 case InstructionName.ISZ:
-                    yield return new ISZ(address);
-                    break;
+                    return new ISZ(address);
                 case InstructionName.DCA:
-                    yield return new DCA(address);
-                    break;
+                    return new DCA(address);
                 case InstructionName.JMS:
-                    yield return new JMS(address);
-                    break;
+                    return new JMS(address);
                 case InstructionName.JMP:
-                    yield return new JMP(address);
-                    break;
+                    return new JMP(address);
                 default:
                     throw new NotImplementedException();
             }
         }
 
-        private IEnumerable<InstructionBase> DecodeMicrocodedInstruction(uint data)
+        private InstructionBase DecodeMicrocodedInstruction(uint data)
         {
             if ((data & Masks.GROUP) == 0) // Group #1
             {
-                var microcode = data & Masks.GROUP_1;
-
-                switch (microcode)
-                {
-                    case Masks.GROUP_1_CLA:
-                        yield return new CLA();
-                        break;
-
-                    case Masks.GROUP_1_CLL:
-                        yield return new CLL();
-                        break;
-                    case Masks.GROUP_1_CMA:
-                        yield return new CMA();
-                        break;
-                    case Masks.GROUP_1_CML:
-                        yield return new CML();
-                        break;
-                    case Masks.GROUP_1_IAC:
-                        yield return new IAC();
-                        break;
-                    case Masks.GROUP_1_RAR:
-                        yield return new RAR();
-                        break;
-                    case Masks.GROUP_1_RAL:
-                        yield return new RAL();
-                        break;
-                    case Masks.GROUP_1_RTR:
-                        yield return new RAR();
-                        yield return new RAR();
-                        break;
-                    case Masks.GROUP_1_RTL:
-                        yield return new RAL();
-                        yield return new RAL();
-                        break;
-                    case Masks.GROUP_1_BSW:
-                        yield return new BSW();
-                        break;
-                    default:
-                        throw new NotImplementedException(nameof(data));
-                }
-
+                return new G1(data);
             }
-            else if ((data & Masks.GROUP_2_HLT) == Masks.GROUP_2_HLT)
+            else if ((data & Masks.GROUP_2_PRIV) != 0)
             {
-                yield return new HLT();
-            }
-            else if ((data & Masks.GROUP_2_OSR) == Masks.GROUP_2_OSR)
-            {
-                yield return new OSR();
+                return new PG2(data);
             }
             else if ((data & Masks.GROUP_2_AND) == Masks.GROUP_2_AND)
             {
-                yield return new G2A(data);
+                return new G2A(data);
             }
             else
             {
-                yield return new G2O(data);
+                return new G2O(data);
             }
         }
     }

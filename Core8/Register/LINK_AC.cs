@@ -1,4 +1,6 @@
-﻿namespace Core8.Register
+﻿using Core8.Extensions;
+
+namespace Core8.Register
 {
     public class LINK_AC : RegisterBase
     {
@@ -25,6 +27,11 @@
         public void Set(uint value)
         {
             Data = (value & (Masks.LINK | Masks.AC));
+        }
+
+        public override string ToString()
+        {
+            return string.Format($"[LINK_AC] {Link} {Accumulator.ToString("d4")}");
         }
     }
 }

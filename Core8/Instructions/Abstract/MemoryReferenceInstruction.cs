@@ -1,19 +1,26 @@
-﻿namespace Core8.Instructions.Abstract
+﻿using Core8.Enum;
+using Core8.Extensions;
+
+namespace Core8.Instructions.Abstract
 {
     public abstract class MemoryReferenceInstruction : InstructionBase
     {
-        protected MemoryReferenceInstruction(uint opCode, uint address) : base(opCode << 9 & Masks.OP_CODE | address & Masks.ADDRESS_WORD)
+        protected MemoryReferenceInstruction(uint opCode, uint address) : base(opCode & Masks.OP_CODE | address & Masks.ADDRESS_WORD)
         {
 
         }
 
-        public uint OpCode => (Data & Masks.OP_CODE) >> 9;
+        public InstructionName OpCode => (InstructionName) (Data & Masks.OP_CODE);
 
-        public uint I => (Data & Masks.I_MODE) >> 8;
-
-        public uint Z => (Data & Masks.Z_MODE) >> 7;
+        public AddressingModes AddressingMode => (AddressingModes)(Data & Masks.ADDRESSING_MODE);
 
         public uint Address => Data & Masks.ADDRESS_WORD;
+
+        public override string ToString()
+        {
+            var mode = AddressingMode != 0 ? AddressingMode.ToString() : string.Empty;
+            return $"{Data.ToOctal().ToString("d4")} {OpCode} {mode} {Address.ToOctal().ToString()}";
+        }
 
     }
 
