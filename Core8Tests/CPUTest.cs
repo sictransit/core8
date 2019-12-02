@@ -6,7 +6,37 @@ namespace Core8Tests
     [TestClass]
     public class CPUTest
     {
+        [TestMethod]
+        public void TestRIM()
+        {
+            var ram = new Memory(4096);
+            var cpu = new Processor(ram);
 
+            cpu.Load8(7756);
+            
+            cpu.Deposit8(6014);
+            cpu.Deposit8(6011);           
+            cpu.Deposit8(5357);
+            cpu.Deposit8(6016);
+            cpu.Deposit8(7106);
+            cpu.Deposit8(7006);
+            cpu.Deposit8(7510);
+            cpu.Deposit8(5357);
+            cpu.Deposit8(7006);
+            cpu.Deposit8(6011);
+            cpu.Deposit8(5367);
+            cpu.Deposit8(6016);
+            cpu.Deposit8(7420);
+            cpu.Deposit8(3776);
+            cpu.Deposit8(3376);
+            cpu.Deposit8(5357);
+            cpu.Deposit8(0);
+            cpu.Deposit8(0);
+
+            cpu.Load8(7756);
+
+            cpu.Run();
+        }
 
         [TestMethod]
         public void TestIAC()
