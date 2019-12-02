@@ -13,6 +13,7 @@ namespace Core8
     {
         private readonly Memory ram;
         private readonly Registers registers;
+        private readonly PaperTape paperTape;
 
         private readonly ICore core;
 
@@ -20,8 +21,9 @@ namespace Core8
         {
             ram = memory;
             registers = new Registers();
+            paperTape = new PaperTape();           
 
-            core = new Core(this, ram, registers);
+            core = new Core(this, ram, registers, paperTape, paperTape);
         }
 
         public uint ProgramCounterWord => registers.IF_PC.Word;
@@ -84,7 +86,20 @@ namespace Core8
 
                 var instructionName = (InstructionName)opCode;
 
-                var instruction = instructionName == InstructionName.Microcoded ? DecodeMicrocodedInstruction(data) : DecodeMemoryReferenceInstruction(instructionName, data);
+                InstructionBase instruction;
+
+                switch (instructionName)
+                {
+                    case InstructionName.Microcoded:
+                        instruction = DecodeMicrocode(data);
+                        break;
+                    case InstructionName.PaperTape:
+                        instruction = DecodePaperTape(data);
+                        break;
+                    default:
+                        instruction = DecodeMemoryReference(instructionName, data);
+                        break;
+                }
 
                 Trace.WriteLine($"{registers.IF_PC.Address.ToOctalString()}: {instruction}");
 
@@ -94,7 +109,7 @@ namespace Core8
             }
         }
 
-        private static InstructionBase DecodeMemoryReferenceInstruction(InstructionName name, uint data)
+        private static InstructionBase DecodeMemoryReference(InstructionName name, uint data)
         {
             switch (name)
             {
@@ -115,7 +130,24 @@ namespace Core8
             }
         }
 
-        private static InstructionBase DecodeMicrocodedInstruction(uint data)
+        private static InstructionBase DecodePaperTape(uint data)
+        {
+            var instruction = (InstructionName)data;
+
+            switch (instruction)
+            {
+                case InstructionName.RFC:
+                    return new RFC(data);
+                case InstructionName.RSF:
+                    return new RSF(data);
+                case InstructionName.RRB_RFC:
+                    return new RRB_RFC(data);
+                default:
+                    throw new NotImplementedException();
+            }
+        }
+
+        private static InstructionBase DecodeMicrocode(uint data)
         {
             if ((data & Masks.GROUP) == 0) // Group #1
             {

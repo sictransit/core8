@@ -3,9 +3,9 @@ using Core8.Interfaces;
 
 namespace Core8.Instructions.MemoryReference
 {
-    public class AND : MemoryReferenceInstruction
+    public class RRB_RFC : PaperTapeInstruction
     {
-        public AND(uint data) : base(data)
+        public RRB_RFC(uint data) : base(data)
         {
 
         }
@@ -17,11 +17,9 @@ namespace Core8.Instructions.MemoryReference
                 throw new System.ArgumentNullException(nameof(core));
             }
 
-            var memory = core.Memory.Read(GetAddress(core));
 
-            var ac = core.Registers.LINK_AC.Accumulator;
 
-            core.Registers.LINK_AC.SetAccumulator(memory & ac);
+            RFC(core);
         }
     }
 }

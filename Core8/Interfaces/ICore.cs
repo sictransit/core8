@@ -7,5 +7,9 @@
         IProcessor Processor { get; }
 
         IRegisters Registers { get; }
+
+        IReader Reader { get; }
+
+        IPunch Punch { get; }
     }
 }
