@@ -1,4 +1,4 @@
-﻿using Core8.Enum;
+﻿using Core8.Enums;
 using Core8.Instructions.Abstract;
 using Core8.Interfaces;
 using System;
@@ -14,8 +14,12 @@ namespace Core8.Instructions.Microcoded
 
         protected override string FlagString => Flags.ToString();
 
-        public override void Execute(ICore core)
+        protected override void ExecuteInternal(ICore core)
         {
+            if (core is null)
+            {
+                throw new ArgumentNullException(nameof(core));
+            }
 
             if (Flags.HasFlag(PrivilegedGroupTwoFlags.OSR))
             {

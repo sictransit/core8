@@ -1,4 +1,4 @@
-﻿using Core8.Enum;
+﻿using Core8.Enums;
 using Core8.Extensions;
 using Core8.Instructions.Abstract;
 using Core8.Instructions.MemoryReference;
@@ -23,10 +23,6 @@ namespace Core8
 
             core = new Core(this, ram, registers);
         }
-
-        public uint InstructionField => registers.IF_PC.IF;
-
-        public uint ProgramCounterPage => registers.IF_PC.Page;
 
         public uint ProgramCounterWord => registers.IF_PC.Word;
 
@@ -95,12 +91,10 @@ namespace Core8
                 registers.IF_PC.Increment();
 
                 instruction.Execute(core);
-
-
             }
         }
 
-        private InstructionBase DecodeMemoryReferenceInstruction(InstructionName name, uint data)
+        private static InstructionBase DecodeMemoryReferenceInstruction(InstructionName name, uint data)
         {
             switch (name)
             {
@@ -121,7 +115,7 @@ namespace Core8
             }
         }
 
-        private InstructionBase DecodeMicrocodedInstruction(uint data)
+        private static InstructionBase DecodeMicrocodedInstruction(uint data)
         {
             if ((data & Masks.GROUP) == 0) // Group #1
             {

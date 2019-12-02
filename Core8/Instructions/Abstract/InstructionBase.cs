@@ -19,6 +19,16 @@ namespace Core8.Instructions.Abstract
             }
         }
 
-        public abstract void Execute(ICore core);
+        public void Execute(ICore core)
+        {
+            if (core is null)
+            {
+                throw new System.ArgumentNullException(nameof(core));
+            }
+
+            ExecuteInternal(core);
+        }
+
+        protected abstract void ExecuteInternal(ICore core);
     }
 }

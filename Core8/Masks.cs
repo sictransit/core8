@@ -1,6 +1,6 @@
 ﻿namespace Core8
 {
-    public class Masks
+    public static class Masks
     {
         public const uint INSTRUCTION
             = 0b_111_111_111_111;

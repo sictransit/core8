@@ -16,17 +16,17 @@ namespace Core8.Register
 
         public void SetAccumulator(uint value)
         {
-            Data = ((Link << 12) | (value & Masks.AC));
+            Data = (Link << 12) | (value & Masks.AC);
         }
 
         public void SetLink(uint value)
         {
-            Data = (((value & Masks.FLAG) << 12) | Accumulator);
+            Data = ((value & Masks.FLAG) << 12) | Accumulator;
         }
 
         public void Set(uint value)
         {
-            Data = (value & (Masks.LINK | Masks.AC));
+            Data = value & (Masks.LINK | Masks.AC);
         }
 
         public override string ToString()

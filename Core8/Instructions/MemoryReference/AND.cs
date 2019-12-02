@@ -10,7 +10,7 @@ namespace Core8.Instructions.MemoryReference
 
         }
 
-        public override void Execute(ICore core)
+        protected override void ExecuteInternal(ICore core)
         {
             var memory = core.Memory.Read(GetAddress(core));
 

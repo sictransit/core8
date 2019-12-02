@@ -10,8 +10,13 @@ namespace Core8.Instructions.MemoryReference
 
         }
 
-        public override void Execute(ICore core)
+        protected override void ExecuteInternal(ICore core)
         {
+            if (core is null)
+            {
+                throw new System.ArgumentNullException(nameof(core));
+            }
+
             var value = core.Memory.Read(GetAddress(core));
 
             value = value + 1 & Masks.MEM_WORD;

@@ -1,4 +1,4 @@
-﻿using Core8.Enum;
+﻿using Core8.Enums;
 using Core8.Instructions.Abstract;
 using Core8.Interfaces;
 
@@ -13,8 +13,13 @@ namespace Core8.Instructions.Microcoded
 
         protected override string FlagString => Flags.ToString();
 
-        public override void Execute(ICore core)
+        protected override void ExecuteInternal(ICore core)
         {
+            if (core is null)
+            {
+                throw new System.ArgumentNullException(nameof(core));
+            }
+
             bool result = true;
 
             result &= Flags.HasFlag(GroupTwoAndFlags.SPA) && ((core.Registers.LINK_AC.Accumulator & Masks.AC_SIGN) == 0);

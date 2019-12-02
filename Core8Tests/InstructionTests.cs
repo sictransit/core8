@@ -5,7 +5,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 namespace Core8Tests
 {
     [TestClass]
-    public class InstrucitonTests
+    public class InstructionTests
     {
         private Processor proc;
         private Memory ram;

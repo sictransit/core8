@@ -20,11 +20,6 @@ namespace Core8
             this.size = size;
         }
 
-        public void Load(uint address, InstructionBase instruction)
-        {
-            Write(address, instruction.Content);
-        }
-
         public uint Read(uint address)
         {
             if (address > size)
