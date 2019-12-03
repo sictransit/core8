@@ -5,5 +5,7 @@
         uint Read(uint address);
 
         void Write(uint address, uint data);
+
+        uint Size { get; }
     }
 }

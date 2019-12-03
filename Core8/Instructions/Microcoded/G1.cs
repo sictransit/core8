@@ -84,7 +84,7 @@ namespace Core8.Instructions.Microcoded
         {
             var acc = registers.LINK_AC.Data;
 
-            var result = acc >> 1 | (acc & Masks.FLAG) << 12;
+            var result = (acc >> 1) | ((acc & Masks.FLAG) << 12);
 
             registers.LINK_AC.Set(result);
         }
@@ -93,7 +93,7 @@ namespace Core8.Instructions.Microcoded
         {
             var acc = registers.LINK_AC.Data;
 
-            var result = acc << 1 | (acc & Masks.LINK) >> 12;
+            var result = (acc << 1) | ((acc & Masks.LINK) >> 12);
 
             registers.LINK_AC.Set(result);
         }

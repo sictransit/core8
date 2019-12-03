@@ -5,7 +5,6 @@ namespace Core8
 {
     public class Memory : IMemory
     {
-        private readonly uint size;
         private readonly uint[] ram;
 
         public Memory(uint size)
@@ -16,12 +15,14 @@ namespace Core8
             }
 
             ram = new uint[size];
-            this.size = size;
+            Size = size;
         }
+
+        public uint Size { get; private set; }
 
         public uint Read(uint address)
         {
-            if (address > size)
+            if (address > Size)
             {
                 throw new ArgumentOutOfRangeException(nameof(address));
             }
@@ -31,7 +32,7 @@ namespace Core8
 
         public void Write(uint address, uint data)
         {
-            if (address > size)
+            if (address > Size)
             {
                 throw new ArgumentOutOfRangeException(nameof(address));
             }

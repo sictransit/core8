@@ -1,5 +1,7 @@
 using Core8;
+using Core8.Extensions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System.Diagnostics;
 using System.IO;
 using System.Threading;
 
@@ -16,7 +18,7 @@ namespace Core8Tests
             pdp = new PDP();
         }
 
-        private static void LoadRIM(PDP pdp)
+        private static void LoadRIMHighSpeed(PDP pdp)
         {
             pdp.Load8(7756);
 
@@ -27,7 +29,7 @@ namespace Core8Tests
             pdp.Deposit8(7106);
             pdp.Deposit8(7006);
             pdp.Deposit8(7510);
-            pdp.Deposit8(5357);
+            pdp.Deposit8(5374);
             pdp.Deposit8(7006);
             pdp.Deposit8(6011);
             pdp.Deposit8(5367);
@@ -38,20 +40,32 @@ namespace Core8Tests
             pdp.Deposit8(5357);
             pdp.Deposit8(0);
             pdp.Deposit8(0);
-        }
-
-        [TestMethod]
-        public void TestRIM()
-        {
-            LoadRIM(pdp);
 
             pdp.Load8(7756);
+        }
 
-            pdp.Start(false);
+        private static void LoadRIMLowSpeed(PDP pdp)
+        {
+            pdp.Load8(7756);
 
-            Thread.Sleep(5000);
+            pdp.Deposit8(6032);
+            pdp.Deposit8(6031);
+            pdp.Deposit8(5357);
+            pdp.Deposit8(6036);
+            pdp.Deposit8(7106);
+            pdp.Deposit8(7006);
+            pdp.Deposit8(7510);
+            pdp.Deposit8(5357);
+            pdp.Deposit8(7006);
+            pdp.Deposit8(6031);
+            pdp.Deposit8(5367);
+            pdp.Deposit8(6034);
+            pdp.Deposit8(7420);
+            pdp.Deposit8(3776);
+            pdp.Deposit8(3376);
+            pdp.Deposit8(5356);
 
-            pdp.Stop();
+            pdp.Load8(7756);
         }
 
         [TestMethod]
@@ -68,9 +82,7 @@ namespace Core8Tests
         [TestMethod]
         public void TestBIN()
         {
-            LoadRIM(pdp);
-
-            pdp.Load8(7756);
+            LoadRIMLowSpeed(pdp);
 
             var bin = File.ReadAllBytes(@"Tapes/dec-08-lbaa-pm_5-10-67.bin");
 
@@ -84,6 +96,20 @@ namespace Core8Tests
             }
 
             pdp.Stop();
+
+            for (uint i = 0; i < pdp.Memory.Size; i++)
+            {
+                var data = pdp.Memory.Read(i);
+
+                if (Decoder.TryDecode(data, out var instruction))
+                {
+                    Trace.WriteLine($"{i.ToOctalString()}: {instruction}");
+                }
+                else
+                {
+                    Trace.WriteLine($"{i.ToOctalString()}: {data.ToOctalString()}");
+                }
+            }
         }
 
 

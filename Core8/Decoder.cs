@@ -8,7 +8,30 @@ namespace Core8
 {
     public static class Decoder
     {
-        public static InstructionBase DecodeMemoryReference(InstructionName name, uint data)
+        public static bool TryDecode(uint data, out InstructionBase instruction)
+        {
+            var opCode = (data & Masks.OP_CODE);
+
+            var instructionName = (InstructionName)opCode;
+
+            switch (instructionName)
+            {
+                case InstructionName.Microcoded:
+                    instruction = DecodeMicrocode(data);
+                    break;
+                case InstructionName.PaperTape:
+                    instruction = DecodePaperTape(data);
+                    break;
+                default:
+                    instruction = DecodeMemoryReference(instructionName, data);
+                    break;
+            }
+
+            return instruction != null;
+        }
+
+
+        private static InstructionBase DecodeMemoryReference(InstructionName name, uint data)
         {
             switch (name)
             {
@@ -25,11 +48,11 @@ namespace Core8
                 case InstructionName.JMP:
                     return new JMP(data);
                 default:
-                    throw new NotImplementedException();
+                    return null;
             }
         }
 
-        public static InstructionBase DecodePaperTape(uint data)
+        private static InstructionBase DecodePaperTape(uint data)
         {
             var instruction = (InstructionName)data;
 
@@ -44,11 +67,11 @@ namespace Core8
                 case InstructionName.RRB_RFC:
                     return new RRB_RFC(data);
                 default:
-                    throw new NotImplementedException();
+                    return null;
             }
         }
 
-        public static InstructionBase DecodeMicrocode(uint data)
+        private static InstructionBase DecodeMicrocode(uint data)
         {
             if ((data & Masks.GROUP) == 0) // Group #1
             {

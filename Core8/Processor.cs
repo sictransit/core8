@@ -2,6 +2,7 @@
 using Core8.Extensions;
 using Core8.Instructions.Abstract;
 using Core8.Interfaces;
+using System;
 using System.Diagnostics;
 using System.Threading;
 
@@ -9,7 +10,6 @@ namespace Core8
 {
     public class Processor : IProcessor
     {
-
         private readonly IEnvironment environment;        
         private volatile bool halted;
 
@@ -33,33 +33,23 @@ namespace Core8
             {
                 var data = environment.Memory.Read(environment.Registers.IF_PC.Address);
 
-                var opCode = (data & Masks.OP_CODE);
-
-                var instructionName = (InstructionName)opCode;
-
-                InstructionBase instruction;
-
-                switch (instructionName)
+                if (Decoder.TryDecode(data, out var instruction))
                 {
-                    case InstructionName.Microcoded:
-                        instruction = Decoder.DecodeMicrocode(data);
-                        break;
-                    case InstructionName.PaperTape:
-                        instruction = Decoder.DecodePaperTape(data);
-                        break;
-                    default:
-                        instruction = Decoder.DecodeMemoryReference(instructionName, data);
-                        break;
+                    Trace.WriteLine($"{environment.Registers.IF_PC.Address.ToOctalString()}: {instruction}");
+
+                    environment.Registers.IF_PC.Increment();
+
+                    instruction.Execute(environment);
                 }
-
-                Trace.WriteLine($"{environment.Registers.IF_PC.Address.ToOctalString()}: {instruction}");
-
-                environment.Registers.IF_PC.Increment();
-
-                instruction.Execute(environment);
+                else
+                {
+                    throw new NotImplementedException($"{environment.Registers.IF_PC.Address.ToOctalString()}: {data.ToOctalString()}");
+                }
 
                 environment.Reader.Tick();
             }
+
+            Trace.WriteLine("HLT");
         }
     }
 }
