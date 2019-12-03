@@ -5,7 +5,7 @@ using System.Threading;
 
 namespace Core8
 {
-    public class PDP 
+    public class PDP
     {
         private Thread cpuThread;
 
@@ -86,8 +86,8 @@ namespace Core8
             if (tape is null)
             {
                 throw new System.ArgumentNullException(nameof(tape));
-            }            
-            
+            }
+
             Reader.Load(tape);
 
             Trace.WriteLine($"TAPE: loaded {tape.Length} bytes");

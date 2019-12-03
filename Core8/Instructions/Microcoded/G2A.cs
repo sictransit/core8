@@ -28,7 +28,7 @@ namespace Core8.Instructions.Microcoded
             }
 
             if (Flags.HasFlag(GroupTwoAndFlags.SNA))
-            { 
+            {
                 result &= (environment.Registers.LINK_AC.Accumulator != 0);
             }
 

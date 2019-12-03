@@ -2,7 +2,6 @@
 using Core8.Instructions.Abstract;
 using Core8.Instructions.MemoryReference;
 using Core8.Instructions.Microcoded;
-using System;
 
 namespace Core8
 {

@@ -1,7 +1,6 @@
 using Core8;
 using Core8.Extensions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System.Diagnostics;
 using System.IO;
 using System.Threading;
 
@@ -10,11 +9,11 @@ namespace Core8Tests
     [TestClass]
     public class CPUTest
     {
-        private PDP pdp;        
+        private PDP pdp;
 
         [TestInitialize]
         public void Initialize()
-        {            
+        {
             pdp = new PDP();
         }
 
@@ -82,34 +81,22 @@ namespace Core8Tests
         [TestMethod]
         public void TestBIN()
         {
-            LoadRIMHighSpeed(pdp);
+            LoadRIMHighSpeed(pdp); // Toggle RIM loader
 
-            var bin = File.ReadAllBytes(@"Tapes/dec-08-lbaa-pm_5-10-67.bin");
+            var bin = File.ReadAllBytes(@"Tapes/dec-08-lbaa-pm_5-10-67.bin"); // Load a paper tape image from 1967 from disk.
 
-            pdp.LoadTape(bin);
+            pdp.LoadTape(bin); // Load tape
 
-            pdp.Start(false);
+            pdp.Start(waitForHalt: false); // Run! RIM loader won't HLT.
 
-            while (pdp.Reader.IsTapeLoaded)
+            while (pdp.Reader.IsTapeLoaded) // While there is tape to be read ...
             {
                 Thread.Sleep(200);
             }
 
-            pdp.Stop();
+            pdp.Stop(); // HLT!
 
-            for (uint i = 0; i < pdp.Memory.Size; i++)
-            {
-                var data = pdp.Memory.Read(i);
-
-                if (Decoder.TryDecode(data, out var instruction))
-                {
-                    Trace.WriteLine($"{i.ToOctalString()}: {instruction}");
-                }
-                else
-                {
-                    Trace.WriteLine($"{i.ToOctalString()}: {data.ToOctalString()}");
-                }
-            }
+            Assert.AreEqual(5301u.ToDecimal(), pdp.Memory.Read(4095)); // Verify a JMP @ end of RAM
         }
 
 

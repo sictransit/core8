@@ -7,11 +7,11 @@ namespace Core8Tests
     [TestClass]
     public class InstructionTests
     {
-        private PDP pdp;        
+        private PDP pdp;
 
         [TestInitialize]
         public void Initialize()
-        {            
+        {
             pdp = new PDP();
         }
 

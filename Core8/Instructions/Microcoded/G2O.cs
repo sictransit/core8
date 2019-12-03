@@ -24,7 +24,7 @@ namespace Core8.Instructions.Microcoded
 
             if (Flags.HasFlag(GroupTwoOrFlags.SMA))
             {
-                result |=  ((environment.Registers.LINK_AC.Accumulator & Masks.AC_SIGN) != 0);
+                result |= ((environment.Registers.LINK_AC.Accumulator & Masks.AC_SIGN) != 0);
             }
 
             if (Flags.HasFlag(GroupTwoOrFlags.SZA))
@@ -33,8 +33,8 @@ namespace Core8.Instructions.Microcoded
             }
 
             if (Flags.HasFlag(GroupTwoOrFlags.SNL))
-            { 
-                result |= (environment.Registers.LINK_AC.Link != 0); 
+            {
+                result |= (environment.Registers.LINK_AC.Link != 0);
             }
 
             if (result)
