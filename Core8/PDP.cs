@@ -79,5 +79,10 @@ namespace Core8
                 cpuThread.Join();
             }
         }
+
+        public void LoadTape(byte[] tape)
+        {
+            paperTape.Load(tape);
+        }
     }
 }

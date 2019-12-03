@@ -1,5 +1,6 @@
 using Core8;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System.IO;
 
 namespace Core8Tests
 {
@@ -43,6 +44,14 @@ namespace Core8Tests
             pdp.Load8(7756);
 
             pdp.Start();
+        }
+
+        [TestMethod]
+        public void TestBIN()
+        {
+            var bin = File.ReadAllBytes(@"Tapes/dec-08-lbaa-pm_5-10-67.bin");
+
+            pdp.LoadTape(bin);
         }
 
         [TestMethod]

@@ -21,7 +21,7 @@ namespace Core8
             readerFlag.Reset();
         }
 
-        public void Load(uint[] data)
+        public void Load(byte[] data)
         { 
 
         }
