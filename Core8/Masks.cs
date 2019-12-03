@@ -2,6 +2,12 @@
 {
     public static class Masks
     {
+        public const uint DF_DATA_FIELD
+            = 0b_111_000_000_000_000;
+
+        public const uint DF_INDIRECT_ADDRESSING
+            = 0b_000_111_111_111_111;
+
         public const uint INSTRUCTION
             = 0b_111_111_111_111;
 
