@@ -12,6 +12,8 @@ namespace Core8
 
         private volatile uint buffer;
 
+        public uint Buffer => buffer & Masks.READER_BUFFER_MASK;
+
         public uint ReaderFlag => readerFlag.WaitOne(TimeSpan.Zero) ? 0u : 1u;
 
         public bool IsReaderFlagSet => ReaderFlag == 1u;

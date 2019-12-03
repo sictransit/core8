@@ -17,7 +17,9 @@ namespace Core8.Instructions.MemoryReference
                 throw new System.ArgumentNullException(nameof(core));
             }
 
+            var acc = core.Registers.LINK_AC.Accumulator;
 
+            core.Registers.LINK_AC.SetAccumulator(core.Reader.Buffer | acc);
 
             RFC(core);
         }

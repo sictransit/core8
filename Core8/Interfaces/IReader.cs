@@ -9,5 +9,7 @@ namespace Core8.Interfaces
         void ClearReaderFlag();
 
         bool IsReaderFlagSet { get; }
+
+        uint Buffer { get; }
     }
 }

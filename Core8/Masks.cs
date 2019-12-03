@@ -64,5 +64,8 @@
 
         public const uint PRIVILEGED_GROUP_2_FLAGS
             = 0b_000_000_000_110;
+
+        public const uint READER_BUFFER_MASK
+            = 0b_000_011_111_111;
     }
 }
