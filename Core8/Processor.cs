@@ -1,86 +1,37 @@
 ﻿using Core8.Enums;
 using Core8.Extensions;
 using Core8.Instructions.Abstract;
-using Core8.Instructions.MemoryReference;
-using Core8.Instructions.Microcoded;
 using Core8.Interfaces;
-using System;
 using System.Diagnostics;
 
 namespace Core8
 {
     public class Processor : IProcessor
     {
-        private readonly Memory ram;
-        private readonly Registers registers;
-        private readonly PaperTape paperTape;
 
-        private readonly ICore core;
+        private readonly IEnvironment environment;
 
-        public Processor(Memory memory)
+        private volatile bool halted;
+
+        public Processor(IMemory memeory, IRegisters registers, IReader reader, IPunch punch)
         {
-            ram = memory;
-            registers = new Registers();
-            paperTape = new PaperTape();           
-
-            core = new Core(this, ram, registers, paperTape, paperTape);
-        }
-
-        public uint ProgramCounterWord => registers.IF_PC.Word;
-
-        public uint Accumulator => registers.LINK_AC.Accumulator;
-
-        public uint Link => registers.LINK_AC.Link;
-
-        public bool Halted { get; private set; }
-
-        public void Deposit8(uint data)
-        {
-            Deposit10(data.ToDecimal());
-        }
-
-        public void Deposit10(uint data)
-        {
-            ram.Write(registers.IF_PC.Address, data & Masks.MEM_WORD);
-
-            Trace.WriteLine($"DEP: {registers.IF_PC.Address.ToOctalString()} {data.ToOctalString()}");
-
-            registers.IF_PC.Increment();
+            environment = new Environment(this, memeory, registers, reader, punch);
         }
 
         public void Halt()
         {
-            Halted = true;
-        }
-
-        public void Load8(uint address = 0)
-        {
-            Load10(address.ToDecimal());
-        }
-
-        public void Load10(uint address)
-        {
-            registers.IF_PC.Set(address);
-
-            Trace.WriteLine($"LOAD: {address.ToOctalString()}");
-        }
-
-        public void Exam()
-        {
-            registers.LINK_AC.SetAccumulator(ram.Read(registers.IF_PC.Address));
-
-            Trace.WriteLine($"EXAM: {registers.LINK_AC.ToString()}");
+            halted = true;
         }
 
         public void Run()
         {
-            Halted = false;
+            halted = false;
 
             Trace.WriteLine("RUN");
 
-            while (!Halted)
+            while (!halted)
             {
-                var data = ram.Read(registers.IF_PC.Address);
+                var data = environment.Memory.Read(environment.Registers.IF_PC.Address);
 
                 var opCode = (data & Masks.OP_CODE);
 
@@ -91,82 +42,22 @@ namespace Core8
                 switch (instructionName)
                 {
                     case InstructionName.Microcoded:
-                        instruction = DecodeMicrocode(data);
+                        instruction = Decoder.DecodeMicrocode(data);
                         break;
                     case InstructionName.PaperTape:
-                        instruction = DecodePaperTape(data);
+                        instruction = Decoder.DecodePaperTape(data);
                         break;
                     default:
-                        instruction = DecodeMemoryReference(instructionName, data);
+                        instruction = Decoder.DecodeMemoryReference(instructionName, data);
                         break;
                 }
 
-                Trace.WriteLine($"{registers.IF_PC.Address.ToOctalString()}: {instruction}");
+                Trace.WriteLine($"{environment.Registers.IF_PC.Address.ToOctalString()}: {instruction}");
 
-                registers.IF_PC.Increment();
+                environment.Registers.IF_PC.Increment();
 
-                instruction.Execute(core);
-            }
-        }
-
-        private static InstructionBase DecodeMemoryReference(InstructionName name, uint data)
-        {
-            switch (name)
-            {
-                case InstructionName.AND:
-                    return new AND(data);
-                case InstructionName.TAD:
-                    return new TAD(data);
-                case InstructionName.ISZ:
-                    return new ISZ(data);
-                case InstructionName.DCA:
-                    return new DCA(data);
-                case InstructionName.JMS:
-                    return new JMS(data);
-                case InstructionName.JMP:
-                    return new JMP(data);
-                default:
-                    throw new NotImplementedException();
-            }
-        }
-
-        private static InstructionBase DecodePaperTape(uint data)
-        {
-            var instruction = (InstructionName)data;
-
-            switch (instruction)
-            {
-                case InstructionName.RFC:
-                    return new RFC(data);
-                case InstructionName.RSF:
-                    return new RSF(data);
-                case InstructionName.RRB_RFC:
-                    return new RRB_RFC(data);
-                default:
-                    throw new NotImplementedException();
-            }
-        }
-
-        private static InstructionBase DecodeMicrocode(uint data)
-        {
-            if ((data & Masks.GROUP) == 0) // Group #1
-            {
-                return new G1(data);
-            }
-            else if ((data & Masks.GROUP_2_PRIV) != 0)
-            {
-                return new PG2(data);
-            }
-            else if ((data & Masks.GROUP_2_AND) == Masks.GROUP_2_AND)
-            {
-                return new G2A(data);
-            }
-            else
-            {
-                return new G2O(data);
+                instruction.Execute(environment);
             }
         }
     }
-
-
 }

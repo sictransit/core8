@@ -13,27 +13,27 @@ namespace Core8.Instructions.Microcoded
 
         protected override string FlagString => Flags.ToString();
 
-        protected override void ExecuteInternal(ICore core)
+        protected override void ExecuteInternal(IEnvironment environment)
         {
-            if (core is null)
+            if (environment is null)
             {
-                throw new System.ArgumentNullException(nameof(core));
+                throw new System.ArgumentNullException(nameof(environment));
             }
 
             bool result = true;
 
-            result &= Flags.HasFlag(GroupTwoAndFlags.SPA) && ((core.Registers.LINK_AC.Accumulator & Masks.AC_SIGN) == 0);
-            result &= Flags.HasFlag(GroupTwoAndFlags.SNA) && (core.Registers.LINK_AC.Accumulator != 0);
-            result &= Flags.HasFlag(GroupTwoAndFlags.SZL) && (core.Registers.LINK_AC.Link == 0);
+            result &= Flags.HasFlag(GroupTwoAndFlags.SPA) && ((environment.Registers.LINK_AC.Accumulator & Masks.AC_SIGN) == 0);
+            result &= Flags.HasFlag(GroupTwoAndFlags.SNA) && (environment.Registers.LINK_AC.Accumulator != 0);
+            result &= Flags.HasFlag(GroupTwoAndFlags.SZL) && (environment.Registers.LINK_AC.Link == 0);
 
             if (result)
             {
-                core.Registers.IF_PC.Increment();
+                environment.Registers.IF_PC.Increment();
             }
 
             if (Flags.HasFlag(GroupTwoAndFlags.CLA))
             {
-                core.Registers.LINK_AC.Clear();
+                environment.Registers.LINK_AC.Clear();
             }
         }
     }

@@ -10,9 +10,9 @@ namespace Core8.Instructions.MemoryReference
 
         }
 
-        protected override void ExecuteInternal(ICore core)
+        protected override void ExecuteInternal(IEnvironment environment)
         {
-            RFC(core);
+            RFC(environment);
         }
     }
 }

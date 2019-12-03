@@ -10,22 +10,22 @@ namespace Core8.Instructions.MemoryReference
 
         }
 
-        protected override void ExecuteInternal(ICore core)
+        protected override void ExecuteInternal(IEnvironment environment)
         {
-            if (core is null)
+            if (environment is null)
             {
-                throw new System.ArgumentNullException(nameof(core));
+                throw new System.ArgumentNullException(nameof(environment));
             }
 
-            var value = core.Memory.Read(GetAddress(core));
+            var value = environment.Memory.Read(GetAddress(environment));
 
             value = value + 1 & Masks.MEM_WORD;
 
-            core.Memory.Write(GetAddress(core), value);
+            environment.Memory.Write(GetAddress(environment), value);
 
             if (value == 0)
             {
-                core.Registers.IF_PC.Increment();
+                environment.Registers.IF_PC.Increment();
             }
         }
     }

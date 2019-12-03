@@ -6,110 +6,108 @@ namespace Core8Tests
     [TestClass]
     public class CPUTest
     {
+        private PDP pdp;
+        private Memory ram;
+
+        [TestInitialize]
+        public void Initialize()
+        {
+            ram = new Memory(4096);
+            pdp = new PDP(ram);
+        }
+
         [TestMethod]
         public void TestRIM()
         {
-            var ram = new Memory(4096);
-            var cpu = new Processor(ram);
+            pdp.Load8(7756);
 
-            cpu.Load8(7756);
-            
-            cpu.Deposit8(6014);
-            cpu.Deposit8(6011);           
-            cpu.Deposit8(5357);
-            cpu.Deposit8(6016);
-            cpu.Deposit8(7106);
-            cpu.Deposit8(7006);
-            cpu.Deposit8(7510);
-            cpu.Deposit8(5357);
-            cpu.Deposit8(7006);
-            cpu.Deposit8(6011);
-            cpu.Deposit8(5367);
-            cpu.Deposit8(6016);
-            cpu.Deposit8(7420);
-            cpu.Deposit8(3776);
-            cpu.Deposit8(3376);
-            cpu.Deposit8(5357);
-            cpu.Deposit8(0);
-            cpu.Deposit8(0);
+            pdp.Deposit8(6014);
+            pdp.Deposit8(6011);
+            pdp.Deposit8(5357);
+            pdp.Deposit8(6016);
+            pdp.Deposit8(7106);
+            pdp.Deposit8(7006);
+            pdp.Deposit8(7510);
+            pdp.Deposit8(5357);
+            pdp.Deposit8(7006);
+            pdp.Deposit8(6011);
+            pdp.Deposit8(5367);
+            pdp.Deposit8(6016);
+            pdp.Deposit8(7420);
+            pdp.Deposit8(3776);
+            pdp.Deposit8(3376);
+            pdp.Deposit8(5357);
+            pdp.Deposit8(0);
+            pdp.Deposit8(0);
 
-            cpu.Load8(7756);
+            pdp.Load8(7756);
 
-            cpu.Run();
+            pdp.Start();
         }
 
         [TestMethod]
         public void TestIAC()
         {
-            var ram = new Memory(4096);
-            var cpu = new Processor(ram);
-
             var length = 10;
 
-            cpu.Load8(0000);
+            pdp.Load8(0000);
 
             for (int i = 0; i < length; i++)
             {
-                cpu.Deposit8(7001);
+                pdp.Deposit8(7001);
             }
 
-            cpu.Deposit8(7402);
+            pdp.Deposit8(7402);
 
-            cpu.Load8(0000);
+            pdp.Load8(0000);
 
-            cpu.Run();
+            pdp.Start();
 
-            Assert.IsTrue(cpu.Accumulator == length);
+            Assert.IsTrue(pdp.Accumulator == length);
         }
 
         [TestMethod]
         public void TestPaging()
         {
-            var ram = new Memory(4096);
-            var cpu = new Processor(ram);
+            pdp.Load8(0200);
 
-            cpu.Load8(0200);
+            pdp.Deposit8(7300);
+            pdp.Deposit8(1205);
+            pdp.Deposit8(1206);
+            pdp.Deposit8(3207);
+            pdp.Deposit8(7402);
+            pdp.Deposit8(0002);
+            pdp.Deposit8(0003);
 
-            cpu.Deposit8(7300);
-            cpu.Deposit8(1205);
-            cpu.Deposit8(1206);
-            cpu.Deposit8(3207);
-            cpu.Deposit8(7402);
-            cpu.Deposit8(0002);
-            cpu.Deposit8(0003);
+            pdp.Load8(0200);
+            pdp.Start();
 
-            cpu.Load8(0200);
-            cpu.Run();
+            pdp.Load8(0207);
+            pdp.Exam();
 
-            cpu.Load8(0207);
-            cpu.Exam();
-
-            Assert.AreEqual(5u, cpu.Accumulator);
+            Assert.AreEqual(5u, pdp.Accumulator);
         }
 
         [TestMethod]
         public void TestAddition()
         {
-            var ram = new Memory(4096);
-            var cpu = new Processor(ram);
+            pdp.Load8(0000);
 
-            cpu.Load8(0000);
+            pdp.Deposit8(7300);
+            pdp.Deposit8(1005);
+            pdp.Deposit8(1006);
+            pdp.Deposit8(3007);
+            pdp.Deposit8(7402);
+            pdp.Deposit8(0002);
+            pdp.Deposit8(0003);
 
-            cpu.Deposit8(7300);
-            cpu.Deposit8(1005);
-            cpu.Deposit8(1006);
-            cpu.Deposit8(3007);
-            cpu.Deposit8(7402);
-            cpu.Deposit8(0002);
-            cpu.Deposit8(0003);
+            pdp.Load8(0000);
+            pdp.Start();
 
-            cpu.Load8(0000);
-            cpu.Run();
+            pdp.Load8(0007);
+            pdp.Exam();
 
-            cpu.Load8(0007);
-            cpu.Exam();
-
-            Assert.AreEqual(5u, cpu.Accumulator);
+            Assert.AreEqual(5u, pdp.Accumulator);
         }
 
     }

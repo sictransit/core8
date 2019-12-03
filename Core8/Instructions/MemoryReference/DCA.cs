@@ -10,16 +10,16 @@ namespace Core8.Instructions.MemoryReference
 
         }
 
-        protected override void ExecuteInternal(ICore core)
+        protected override void ExecuteInternal(IEnvironment environment)
         {
-            if (core is null)
+            if (environment is null)
             {
-                throw new System.ArgumentNullException(nameof(core));
+                throw new System.ArgumentNullException(nameof(environment));
             }
 
-            core.Memory.Write(GetAddress(core), core.Registers.LINK_AC.Accumulator);
+            environment.Memory.Write(GetAddress(environment), environment.Registers.LINK_AC.Accumulator);
 
-            core.Registers.LINK_AC.SetAccumulator(0);
+            environment.Registers.LINK_AC.SetAccumulator(0);
         }
     }
 }

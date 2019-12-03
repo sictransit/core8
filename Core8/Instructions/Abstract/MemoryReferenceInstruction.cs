@@ -22,16 +22,16 @@ namespace Core8.Instructions.Abstract
             return $"{Data.ToOctalString()} {OpCode} {mode} {(Data & Masks.ADDRESS_WORD).ToOctal().ToString()}";
         }
 
-        protected uint GetAddress(ICore core)
+        protected uint GetAddress(IEnvironment environment)
         {
-            if (core is null)
+            if (environment is null)
             {
-                throw new System.ArgumentNullException(nameof(core));
+                throw new System.ArgumentNullException(nameof(environment));
             }
 
-            var location = AddressingMode.HasFlag(AddressingModes.Z) ? (core.Registers.IF_PC.Page << 7) | (Data & Masks.ADDRESS_WORD) : Data & Masks.ADDRESS_WORD;
+            var location = AddressingMode.HasFlag(AddressingModes.Z) ? (environment.Registers.IF_PC.Page << 7) | (Data & Masks.ADDRESS_WORD) : Data & Masks.ADDRESS_WORD;
 
-            return AddressingMode.HasFlag(AddressingModes.I) ? core.Memory.Read(location) : location;
+            return AddressingMode.HasFlag(AddressingModes.I) ? environment.Memory.Read(location) : location;
         }
     }
 }

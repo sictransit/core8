@@ -14,11 +14,11 @@ namespace Core8.Instructions.Microcoded
 
         protected override string FlagString => Flags.ToString();
 
-        protected override void ExecuteInternal(ICore core)
+        protected override void ExecuteInternal(IEnvironment environment)
         {
-            if (core is null)
+            if (environment is null)
             {
-                throw new ArgumentNullException(nameof(core));
+                throw new ArgumentNullException(nameof(environment));
             }
 
             if (Flags.HasFlag(PrivilegedGroupTwoFlags.OSR))
@@ -28,7 +28,7 @@ namespace Core8.Instructions.Microcoded
 
             if (Flags.HasFlag(PrivilegedGroupTwoFlags.HLT))
             {
-                core.Processor.Halt();
+                environment.Processor.Halt();
             }
         }
     }

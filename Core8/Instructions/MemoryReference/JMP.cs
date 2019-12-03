@@ -10,16 +10,16 @@ namespace Core8.Instructions.MemoryReference
 
         }
 
-        protected override void ExecuteInternal(ICore core)
+        protected override void ExecuteInternal(IEnvironment environment)
         {
-            if (core is null)
+            if (environment is null)
             {
-                throw new System.ArgumentNullException(nameof(core));
+                throw new System.ArgumentNullException(nameof(environment));
             }
 
-            var address = GetAddress(core);
+            var address = GetAddress(environment);
 
-            core.Registers.IF_PC.Set(address);
+            environment.Registers.IF_PC.Set(address);
         }
     }
 }

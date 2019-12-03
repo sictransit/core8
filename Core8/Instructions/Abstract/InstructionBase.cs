@@ -19,16 +19,16 @@ namespace Core8.Instructions.Abstract
             }
         }
 
-        public void Execute(ICore core)
+        public void Execute(IEnvironment environment)
         {
-            if (core is null)
+            if (environment is null)
             {
-                throw new System.ArgumentNullException(nameof(core));
+                throw new System.ArgumentNullException(nameof(environment));
             }
 
-            ExecuteInternal(core);
+            ExecuteInternal(environment);
         }
 
-        protected abstract void ExecuteInternal(ICore core);
+        protected abstract void ExecuteInternal(IEnvironment environment);
     }
 }

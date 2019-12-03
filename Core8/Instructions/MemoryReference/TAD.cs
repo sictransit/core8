@@ -10,18 +10,18 @@ namespace Core8.Instructions.MemoryReference
 
         }
 
-        protected override void ExecuteInternal(ICore core)
+        protected override void ExecuteInternal(IEnvironment environment)
         {
-            if (core is null)
+            if (environment is null)
             {
-                throw new System.ArgumentNullException(nameof(core));
+                throw new System.ArgumentNullException(nameof(environment));
             }
 
-            var memory = core.Memory.Read(GetAddress(core));
+            var memory = environment.Memory.Read(GetAddress(environment));
 
-            var ac = core.Registers.LINK_AC.Data;
+            var ac = environment.Registers.LINK_AC.Data;
 
-            core.Registers.LINK_AC.Set(ac + memory);
+            environment.Registers.LINK_AC.Set(ac + memory);
         }
     }
 }

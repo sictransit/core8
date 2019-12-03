@@ -18,14 +18,21 @@ namespace Core8.Instructions.Abstract
             return $"{Data.ToOctalString()} {OpCode}";
         }
 
-        protected void RFC(ICore core)
+        protected void RRB(IEnvironment environment)
         {
-            if (core is null)
+            var acc = environment.Registers.LINK_AC.Accumulator;
+
+            environment.Registers.LINK_AC.SetAccumulator(environment.Reader.Buffer | acc);
+        }
+
+        protected void RFC(IEnvironment environment)
+        {
+            if (environment is null)
             {
-                throw new System.ArgumentNullException(nameof(core));
+                throw new System.ArgumentNullException(nameof(environment));
             }
 
-            core.Reader.ClearReaderFlag();
+            environment.Reader.ClearReaderFlag();
         }
     }
 }

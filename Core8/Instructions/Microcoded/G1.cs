@@ -13,61 +13,61 @@ namespace Core8.Instructions.Microcoded
 
         protected override string FlagString => Flags.ToString();
 
-        protected override void ExecuteInternal(ICore core)
+        protected override void ExecuteInternal(IEnvironment environment)
         {
-            if (core is null)
+            if (environment is null)
             {
-                throw new System.ArgumentNullException(nameof(core));
+                throw new System.ArgumentNullException(nameof(environment));
             }
 
             if (Flags.HasFlag(GroupOneFlags.CLA))
             {
-                core.Registers.LINK_AC.SetAccumulator(0);
+                environment.Registers.LINK_AC.SetAccumulator(0);
             }
 
             if (Flags.HasFlag(GroupOneFlags.CLL))
             {
-                core.Registers.LINK_AC.SetLink(0);
+                environment.Registers.LINK_AC.SetLink(0);
             }
 
             if (Flags.HasFlag(GroupOneFlags.CMA))
             {
-                core.Registers.LINK_AC.SetAccumulator(core.Registers.LINK_AC.Accumulator % Masks.AC);
+                environment.Registers.LINK_AC.SetAccumulator(environment.Registers.LINK_AC.Accumulator % Masks.AC);
             }
 
             if (Flags.HasFlag(GroupOneFlags.CML))
             {
-                core.Registers.LINK_AC.SetLink(core.Registers.LINK_AC.Link % Masks.FLAG);
+                environment.Registers.LINK_AC.SetLink(environment.Registers.LINK_AC.Link % Masks.FLAG);
             }
 
             if (Flags.HasFlag(GroupOneFlags.IAC))
             {
-                core.Registers.LINK_AC.Set(core.Registers.LINK_AC.Data + 1);
+                environment.Registers.LINK_AC.Set(environment.Registers.LINK_AC.Data + 1);
             }
 
             if (Flags.HasFlag(GroupOneFlags.RAR))
             {
-                RotateAccumulatorRight(core.Registers);
+                RotateAccumulatorRight(environment.Registers);
 
                 if (Flags.HasFlag(GroupOneFlags.BSW))
                 {
-                    RotateAccumulatorRight(core.Registers);
+                    RotateAccumulatorRight(environment.Registers);
                 }
             }
 
             if (Flags.HasFlag(GroupOneFlags.RAL))
             {
-                RotateAccumulatorLeft(core.Registers);
+                RotateAccumulatorLeft(environment.Registers);
 
                 if (Flags.HasFlag(GroupOneFlags.BSW))
                 {
-                    RotateAccumulatorLeft(core.Registers);
+                    RotateAccumulatorLeft(environment.Registers);
                 }
             }
 
             if (Flags.HasFlag(GroupOneFlags.BSW) && !Flags.HasFlag(GroupOneFlags.RAR) && !Flags.HasFlag(GroupOneFlags.RAL))
             {
-                ByteSwap(core.Registers);
+                ByteSwap(environment.Registers);
             }
         }
 

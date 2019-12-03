@@ -1,6 +1,6 @@
 ﻿namespace Core8.Interfaces
 {
-    public interface ICore
+    public interface IEnvironment
     {
         IMemory Memory { get; }
 

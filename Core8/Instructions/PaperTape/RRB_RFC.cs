@@ -10,18 +10,16 @@ namespace Core8.Instructions.MemoryReference
 
         }
 
-        protected override void ExecuteInternal(ICore core)
+        protected override void ExecuteInternal(IEnvironment environment)
         {
-            if (core is null)
+            if (environment is null)
             {
-                throw new System.ArgumentNullException(nameof(core));
+                throw new System.ArgumentNullException(nameof(environment));
             }
 
-            var acc = core.Registers.LINK_AC.Accumulator;
+            RRB(environment);
 
-            core.Registers.LINK_AC.SetAccumulator(core.Reader.Buffer | acc);
-
-            RFC(core);
+            RFC(environment);
         }
     }
 }

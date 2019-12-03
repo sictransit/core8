@@ -1,5 +1,4 @@
-﻿using Core8.Instructions.Abstract;
-using Core8.Interfaces;
+﻿using Core8.Interfaces;
 using System;
 
 namespace Core8

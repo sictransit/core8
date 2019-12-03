@@ -1,7 +1,5 @@
 ﻿using Core8.Interfaces;
 using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Threading;
 
 namespace Core8
@@ -21,6 +19,11 @@ namespace Core8
         public void ClearReaderFlag()
         {
             readerFlag.Reset();
+        }
+
+        public void Load(uint[] data)
+        { 
+
         }
     }
 }

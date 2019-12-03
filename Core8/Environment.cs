@@ -2,9 +2,9 @@
 
 namespace Core8
 {
-    public class Core : ICore
+    public class Environment : IEnvironment
     {
-        public Core(IProcessor processor, IMemory memory, IRegisters registers, IReader reader, IPunch punch)
+        public Environment(IProcessor processor, IMemory memory, IRegisters registers, IReader reader, IPunch punch)
         {
             Memory = memory;
             Processor = processor;
@@ -14,7 +14,9 @@ namespace Core8
         }
 
         public IMemory Memory { get; }
+
         public IProcessor Processor { get; }
+
         public IRegisters Registers { get; }
 
         public IReader Reader { get; }
