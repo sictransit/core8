@@ -29,7 +29,7 @@ namespace Core8Tests
             pdp.Deposit8(7106);
             pdp.Deposit8(7006);
             pdp.Deposit8(7510);
-            pdp.Deposit8(5374);
+            pdp.Deposit8(5374); // 5357
             pdp.Deposit8(7006);
             pdp.Deposit8(6011);
             pdp.Deposit8(5367);
@@ -82,7 +82,7 @@ namespace Core8Tests
         [TestMethod]
         public void TestBIN()
         {
-            LoadRIMLowSpeed(pdp);
+            LoadRIMHighSpeed(pdp);
 
             var bin = File.ReadAllBytes(@"Tapes/dec-08-lbaa-pm_5-10-67.bin");
 
@@ -92,7 +92,7 @@ namespace Core8Tests
 
             while (pdp.Reader.IsTapeLoaded)
             {
-                Thread.Sleep(100);
+                Thread.Sleep(200);
             }
 
             pdp.Stop();

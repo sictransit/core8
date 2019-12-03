@@ -22,9 +22,20 @@ namespace Core8.Instructions.Microcoded
 
             bool result = false;
 
-            result |= Flags.HasFlag(GroupTwoOrFlags.SMA) && ((environment.Registers.LINK_AC.Accumulator & Masks.AC_SIGN) != 0);
-            result |= Flags.HasFlag(GroupTwoOrFlags.SZA) && (environment.Registers.LINK_AC.Accumulator == 0);
-            result |= Flags.HasFlag(GroupTwoOrFlags.SNL) && (environment.Registers.LINK_AC.Link != 0);
+            if (Flags.HasFlag(GroupTwoOrFlags.SMA))
+            {
+                result |=  ((environment.Registers.LINK_AC.Accumulator & Masks.AC_SIGN) != 0);
+            }
+
+            if (Flags.HasFlag(GroupTwoOrFlags.SZA))
+            {
+                result |= (environment.Registers.LINK_AC.Accumulator == 0);
+            }
+
+            if (Flags.HasFlag(GroupTwoOrFlags.SNL))
+            { 
+                result |= (environment.Registers.LINK_AC.Link != 0); 
+            }
 
             if (result)
             {
