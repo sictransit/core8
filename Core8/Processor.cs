@@ -3,19 +3,19 @@ using Core8.Extensions;
 using Core8.Instructions.Abstract;
 using Core8.Interfaces;
 using System.Diagnostics;
+using System.Threading;
 
 namespace Core8
 {
     public class Processor : IProcessor
     {
 
-        private readonly IEnvironment environment;
-
+        private readonly IEnvironment environment;        
         private volatile bool halted;
 
         public Processor(IMemory memeory, IRegisters registers, IReader reader, IPunch punch)
         {
-            environment = new Environment(this, memeory, registers, reader, punch);
+            environment = new Environment(this, memeory, registers, reader, punch);            
         }
 
         public void Halt()
@@ -57,6 +57,8 @@ namespace Core8
                 environment.Registers.IF_PC.Increment();
 
                 instruction.Execute(environment);
+
+                environment.Reader.Tick();
             }
         }
     }

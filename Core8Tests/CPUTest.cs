@@ -1,24 +1,22 @@
 using Core8;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.IO;
+using System.Threading;
 
 namespace Core8Tests
 {
     [TestClass]
     public class CPUTest
     {
-        private PDP pdp;
-        private Memory ram;
+        private PDP pdp;        
 
         [TestInitialize]
         public void Initialize()
-        {
-            ram = new Memory(4096);
-            pdp = new PDP(ram);
+        {            
+            pdp = new PDP();
         }
 
-        [TestMethod]
-        public void TestRIM()
+        private static void LoadRIM(PDP pdp)
         {
             pdp.Load8(7756);
 
@@ -40,19 +38,54 @@ namespace Core8Tests
             pdp.Deposit8(5357);
             pdp.Deposit8(0);
             pdp.Deposit8(0);
+        }
+
+        [TestMethod]
+        public void TestRIM()
+        {
+            LoadRIM(pdp);
 
             pdp.Load8(7756);
 
-            pdp.Start();
+            pdp.Start(false);
+
+            Thread.Sleep(5000);
+
+            pdp.Stop();
+        }
+
+        [TestMethod]
+        public void TestLoadTape()
+        {
+            var bin = File.ReadAllBytes(@"Tapes/dec-08-lbaa-pm_5-10-67.bin");
+
+            pdp.LoadTape(bin);
+
+            Assert.IsFalse(pdp.Reader.IsReaderFlagSet);
+            Assert.IsTrue(pdp.Reader.IsTapeLoaded);
         }
 
         [TestMethod]
         public void TestBIN()
         {
+            LoadRIM(pdp);
+
+            pdp.Load8(7756);
+
             var bin = File.ReadAllBytes(@"Tapes/dec-08-lbaa-pm_5-10-67.bin");
 
             pdp.LoadTape(bin);
+
+            pdp.Start(false);
+
+            while (pdp.Reader.IsTapeLoaded)
+            {
+                Thread.Sleep(100);
+            }
+
+            pdp.Stop();
         }
+
 
         [TestMethod]
         public void TestIAC()
@@ -72,7 +105,7 @@ namespace Core8Tests
 
             pdp.Start();
 
-            Assert.IsTrue(pdp.Accumulator == length);
+            Assert.IsTrue(pdp.Registers.LINK_AC.Accumulator == length);
         }
 
         [TestMethod]
@@ -94,7 +127,7 @@ namespace Core8Tests
             pdp.Load8(0207);
             pdp.Exam();
 
-            Assert.AreEqual(5u, pdp.Accumulator);
+            Assert.AreEqual(5u, pdp.Registers.LINK_AC.Accumulator);
         }
 
         [TestMethod]
@@ -116,7 +149,7 @@ namespace Core8Tests
             pdp.Load8(0007);
             pdp.Exam();
 
-            Assert.AreEqual(5u, pdp.Accumulator);
+            Assert.AreEqual(5u, pdp.Registers.LINK_AC.Accumulator);
         }
 
     }

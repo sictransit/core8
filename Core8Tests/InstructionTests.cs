@@ -7,14 +7,12 @@ namespace Core8Tests
     [TestClass]
     public class InstructionTests
     {
-        private PDP pdp;
-        private Memory ram;
+        private PDP pdp;        
 
         [TestInitialize]
         public void Initialize()
-        {
-            ram = new Memory(4096);
-            pdp = new PDP(ram);
+        {            
+            pdp = new PDP();
         }
 
         [TestMethod]
@@ -35,7 +33,7 @@ namespace Core8Tests
 
             pdp.Start();
 
-            Assert.AreEqual(0770u.ToDecimal(), pdp.Accumulator);
+            Assert.AreEqual(0770u.ToDecimal(), pdp.Registers.LINK_AC.Accumulator);
         }
 
         [TestMethod]
@@ -52,7 +50,7 @@ namespace Core8Tests
 
             pdp.Start();
 
-            Assert.AreEqual(1234u.ToDecimal(), pdp.Accumulator);
+            Assert.AreEqual(1234u.ToDecimal(), pdp.Registers.LINK_AC.Accumulator);
         }
 
         [TestMethod]
@@ -71,8 +69,8 @@ namespace Core8Tests
 
             pdp.Start();
 
-            Assert.AreEqual(0u, pdp.Accumulator);
-            Assert.AreEqual(1u, pdp.Link);
+            Assert.AreEqual(0u, pdp.Registers.LINK_AC.Accumulator);
+            Assert.AreEqual(1u, pdp.Registers.LINK_AC.Link);
         }
 
         [TestMethod]
@@ -89,7 +87,7 @@ namespace Core8Tests
 
             pdp.Start();
 
-            Assert.AreEqual(2u, pdp.ProgramCounterWord);
+            Assert.AreEqual(2u, pdp.Registers.IF_PC.Word);
         }
 
         [TestMethod]
@@ -106,7 +104,7 @@ namespace Core8Tests
 
             pdp.Start();
 
-            Assert.AreEqual(3u, pdp.ProgramCounterWord);
+            Assert.AreEqual(3u, pdp.Registers.IF_PC.Word);
         }
 
         [TestMethod]
@@ -127,10 +125,10 @@ namespace Core8Tests
 
             pdp.Start();
 
-            Assert.AreEqual(0u, pdp.Accumulator);
-            Assert.AreEqual(1u, pdp.Link);
+            Assert.AreEqual(0u, pdp.Registers.LINK_AC.Accumulator);
+            Assert.AreEqual(1u, pdp.Registers.LINK_AC.Link);
 
-            Assert.AreEqual(7777u.ToDecimal(), ram.Read(0008u));
+            Assert.AreEqual(7777u.ToDecimal(), pdp.Memory.Read(0008u));
         }
 
         [TestMethod]
@@ -147,9 +145,9 @@ namespace Core8Tests
 
             pdp.Start();
 
-            Assert.AreEqual(4u, pdp.ProgramCounterWord);
+            Assert.AreEqual(4u, pdp.Registers.IF_PC.Word);
 
-            Assert.AreEqual(0001u, ram.Read(0002u));
+            Assert.AreEqual(0001u, pdp.Memory.Read(0002u));
         }
 
         [TestMethod]
@@ -165,7 +163,7 @@ namespace Core8Tests
 
             pdp.Start();
 
-            Assert.AreEqual(3u, pdp.ProgramCounterWord);
+            Assert.AreEqual(3u, pdp.Registers.IF_PC.Word);
         }
     }
 }

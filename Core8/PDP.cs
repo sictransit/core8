@@ -5,28 +5,31 @@ using System.Threading;
 
 namespace Core8
 {
-    public class PDP : IProcessor
+    public class PDP 
     {
-        private readonly Memory ram;
-        private readonly Registers registers;
-        private readonly PaperTape paperTape;
-
         private Thread cpuThread;
 
-        public PDP(Memory memory)
+        private readonly IProcessor processor;
+
+        public PDP()
         {
-            ram = memory;
-            registers = new Registers();
-            paperTape = new PaperTape();
+            Memory = new Memory(4096);
+            Registers = new Registers();
+
+            var paperTape = new PaperTape();
+            Reader = paperTape;
+            Punch = paperTape;
+
+            processor = new Processor(Memory, Registers, Reader, Punch);
         }
 
-        public uint ProgramCounterWord => registers.IF_PC.Word;
+        public IReader Reader { get; }
 
-        public uint Accumulator => registers.LINK_AC.Accumulator;
+        public IPunch Punch { get; }
 
-        public uint Link => registers.LINK_AC.Link;
+        public IRegisters Registers { get; }
 
-        public bool Halted { get; private set; }
+        public IMemory Memory { get; }
 
         public void Deposit8(uint data)
         {
@@ -35,16 +38,11 @@ namespace Core8
 
         public void Deposit10(uint data)
         {
-            ram.Write(registers.IF_PC.Address, data & Masks.MEM_WORD);
+            Memory.Write(Registers.IF_PC.Address, data & Masks.MEM_WORD);
 
-            Trace.WriteLine($"DEP: {registers.IF_PC.Address.ToOctalString()} {data.ToOctalString()}");
+            Trace.WriteLine($"DEP: {Registers.IF_PC.Address.ToOctalString()} {data.ToOctalString()}");
 
-            registers.IF_PC.Increment();
-        }
-
-        public void Halt()
-        {
-            Halted = true;
+            Registers.IF_PC.Increment();
         }
 
         public void Load8(uint address = 0)
@@ -54,22 +52,20 @@ namespace Core8
 
         public void Load10(uint address)
         {
-            registers.IF_PC.Set(address);
+            Registers.IF_PC.Set(address);
 
             Trace.WriteLine($"LOAD: {address.ToOctalString()}");
         }
 
         public void Exam()
         {
-            registers.LINK_AC.SetAccumulator(ram.Read(registers.IF_PC.Address));
+            Registers.LINK_AC.SetAccumulator(Memory.Read(Registers.IF_PC.Address));
 
-            Trace.WriteLine($"EXAM: {registers.LINK_AC.ToString()}");
+            Trace.WriteLine($"EXAM: {Registers.LINK_AC.ToString()}");
         }
 
         public void Start(bool waitForHalt = true)
         {
-            var processor = new Processor(ram, registers, paperTape, paperTape);
-
             cpuThread = new Thread(processor.Run);
 
             cpuThread.Start();
@@ -80,9 +76,21 @@ namespace Core8
             }
         }
 
+        public void Stop()
+        {
+            processor.Halt();
+        }
+
         public void LoadTape(byte[] tape)
         {
-            paperTape.Load(tape);
+            if (tape is null)
+            {
+                throw new System.ArgumentNullException(nameof(tape));
+            }            
+            
+            Reader.Load(tape);
+
+            Trace.WriteLine($"TAPE: loaded {tape.Length} bytes");
         }
     }
 }

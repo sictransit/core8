@@ -2,6 +2,8 @@
 {
     public interface IProcessor
     {
+        void Run();
+
         void Halt();
     }
 }
