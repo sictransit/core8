@@ -20,6 +20,7 @@ namespace Core8Tests
 
             Log.Logger = new LoggerConfiguration()
                 .WriteTo.Console()
+                .MinimumLevel.Debug()
                 .CreateLogger();
         }
 
@@ -107,7 +108,7 @@ namespace Core8Tests
             LoadRIMLowSpeed(pdp); // Toggle RIM loader
 
             //var bin = File.ReadAllBytes(@"Tapes/dec-08-lbaa-pm_5-10-67.bin"); // Load a paper tape image of 1967 from disk.
-            var bin = File.ReadAllBytes(@"Tapes/dec-08-lbaa-pm.bin");
+            var bin = File.ReadAllBytes(@"Tapes/dnnbin.rim");
 
             pdp.LoadTape(bin); // Load tape
 
@@ -115,7 +116,7 @@ namespace Core8Tests
 
             while (pdp.Reader.IsTapeLoaded) // While there is tape to be read ...
             {
-                Thread.Sleep(200);
+                Thread.Sleep(0);
             }
 
             pdp.Stop(); // HLT!
@@ -126,7 +127,7 @@ namespace Core8Tests
 
             pdp.Load8(7777);
 
-            pdp.Start();
+            //pdp.Start();
         }
 
 
