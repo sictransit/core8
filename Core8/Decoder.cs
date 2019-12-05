@@ -66,6 +66,8 @@ namespace Core8
                     return new KRS(data);
                 case InstructionName.KRB:
                     return new KRB(data);
+                case InstructionName.TPC:
+                    return new TPC(data);
                 default:
                     return null;
             }

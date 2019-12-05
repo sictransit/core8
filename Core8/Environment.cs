@@ -22,5 +22,11 @@ namespace Core8
         public IKeyboard Keyboard { get; }
 
         public ITeleprinter Teleprinter { get; }
+
+        public void Tick()
+        {
+            Keyboard.Tick();
+            Teleprinter.Tick();
+        }
     }
 }

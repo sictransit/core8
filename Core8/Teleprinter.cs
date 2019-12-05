@@ -5,7 +5,7 @@ using System.Threading;
 
 namespace Core8
 {
-    public class Teletype : IKeyboard, ITeleprinter
+    public class Teleprinter : ITeleprinter
     {
         private readonly ManualResetEvent readerFlag = new ManualResetEvent(false);
 

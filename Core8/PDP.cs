@@ -16,17 +16,15 @@ namespace Core8
         {
             Memory = new Memory(4096);
             Registers = new Registers();
+            Keyboard = new Keyboard(); 
+            Teleprinter = new Teleprinter();
 
-            var paperTape = new Teletype();
-            Reader = paperTape;
-            Punch = paperTape;
-
-            processor = new Processor(Memory, Registers, Reader, Punch);
+            processor = new Processor(Memory, Registers, Keyboard, Teleprinter);
         }
 
-        public IKeyboard Reader { get; }
+        public IKeyboard Keyboard { get; }
 
-        public ITeleprinter Punch { get; }
+        public ITeleprinter Teleprinter { get; }
 
         public IRegisters Registers { get; }
 
@@ -89,7 +87,7 @@ namespace Core8
                 throw new System.ArgumentNullException(nameof(tape));
             }
 
-            Reader.Load(tape);
+            Keyboard.Load(tape);
 
             Log.Information($"TAPE: loaded {tape.Length} bytes");
         }

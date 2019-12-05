@@ -1,4 +1,6 @@
 ﻿using Core8.Extensions;
+using Core8.Instructions;
+using Core8.Instructions.Abstract;
 using Core8.Interfaces;
 using Serilog;
 using System;
@@ -36,24 +38,24 @@ namespace Core8
 
                 var data = environment.Memory.Read(CurrentAddress);
 
-                if (Decoder.TryDecode(data, out var instruction))
+                InstructionBase instruction;
+
+                if (Decoder.TryDecode(data, out instruction))
                 {
                     Log.Debug($"{CurrentAddress.ToOctalString()}: {instruction}");
-
-                    environment.Registers.IF_PC.Increment();
-
-                    instruction.Execute(environment);                    
                 }
                 else
                 {
-                    var debugInformation = $"{CurrentAddress.ToOctalString()}: {data.ToOctalString()}";
+                    Log.Warning($"Not implemented: {CurrentAddress.ToOctalString()}: {data.ToOctalString()}");
 
-                    Log.Error($"Not implemented: {debugInformation}");
-
-                    throw new NotImplementedException(debugInformation);
+                    instruction = new NOP(data);
                 }
 
-                environment.Keyboard.Tick();
+                environment.Registers.IF_PC.Increment();
+
+                instruction.Execute(environment);
+
+                environment.Tick();
 
                 Thread.Sleep(0);
             }

@@ -12,15 +12,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Update="Tapes\binloader.rim">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Tapes\dec-08-lbaa-pm.bin">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Tapes\dec-08-lbaa-pm_5-10-67.bin">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
     <None Update="Tapes\dnnbin.rim">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>

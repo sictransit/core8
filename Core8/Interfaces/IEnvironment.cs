@@ -11,5 +11,7 @@
         IKeyboard Keyboard { get; }
 
         ITeleprinter Teleprinter { get; }
+
+        void Tick();
     }
 }

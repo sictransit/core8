@@ -2,5 +2,6 @@
 {
     public interface ITeleprinter
     {
+        void Tick();
     }
 }

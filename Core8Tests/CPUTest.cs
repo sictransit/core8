@@ -98,8 +98,51 @@ namespace Core8Tests
 
             pdp.LoadTape(bin);
 
-            Assert.IsFalse(pdp.Reader.IsFlagSet);
-            Assert.IsTrue(pdp.Reader.IsTapeLoaded);
+            Assert.IsFalse(pdp.Keyboard.IsFlagSet);
+            Assert.IsTrue(pdp.Keyboard.IsTapeLoaded);
+        }
+
+        [TestMethod]
+        public void TestHelloWorld()
+        {
+            pdp.Load8(0200);
+
+            pdp.Deposit8(7200);
+            pdp.Deposit8(7100);
+            pdp.Deposit8(1220);
+            pdp.Deposit8(3010);
+            pdp.Deposit8(7000);
+            pdp.Deposit8(1410);
+            pdp.Deposit8(7450);
+            pdp.Deposit8(5577);
+            pdp.Deposit8(4212);
+            pdp.Deposit8(5204);
+            pdp.Deposit8(0000);
+            pdp.Deposit8(6046);
+            pdp.Deposit8(6041);
+            pdp.Deposit8(5214);
+            pdp.Deposit8(7200);
+            pdp.Deposit8(5612);
+            pdp.Deposit8(0220);
+            pdp.Deposit8(0110);
+            pdp.Deposit8(0105);
+            pdp.Deposit8(0114);
+            pdp.Deposit8(0114);
+            pdp.Deposit8(0117);
+            pdp.Deposit8(0040);
+            pdp.Deposit8(0127);
+            pdp.Deposit8(0117);
+            pdp.Deposit8(0122);
+            pdp.Deposit8(0114);
+            pdp.Deposit8(0104);
+            pdp.Deposit8(0041);
+            pdp.Deposit8(0000);
+
+            pdp.Load8(0177);
+            pdp.Deposit8(7600);
+
+            pdp.Load8(0200);
+            pdp.Start();
         }
 
         [TestMethod]
@@ -114,20 +157,20 @@ namespace Core8Tests
 
             pdp.Start(waitForHalt: false); // Run! RIM loader won't HLT.
 
-            while (pdp.Reader.IsTapeLoaded) // While there is tape to be read ...
+            while (pdp.Keyboard.IsTapeLoaded) // While there is tape to be read ...
             {
                 Thread.Sleep(0);
             }
 
             pdp.Stop(); // HLT!
 
-            Assert.AreEqual(5301u.ToDecimal(), pdp.Memory.Read(4095)); // Verify a JMP @ end of RAM
+            Assert.AreEqual(5304u.ToDecimal(), pdp.Memory.Read(4095)); // Verify a JMP @ end of RAM
 
             DumpMemory(pdp);
 
             pdp.Load8(7777);
 
-            //pdp.Start();
+            pdp.Start();
         }
 
 
