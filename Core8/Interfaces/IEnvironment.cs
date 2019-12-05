@@ -8,8 +8,8 @@
 
         IRegisters Registers { get; }
 
-        IReader Reader { get; }
+        IKeyboard Keyboard { get; }
 
-        IPunch Punch { get; }
+        ITeleprinter Teleprinter { get; }
     }
 }

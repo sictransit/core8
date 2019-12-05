@@ -1,5 +1,6 @@
 ﻿using Core8.Extensions;
 using Core8.Interfaces;
+using Serilog;
 using System.Diagnostics;
 using System.Threading;
 
@@ -16,16 +17,16 @@ namespace Core8
             Memory = new Memory(4096);
             Registers = new Registers();
 
-            var paperTape = new PaperTape();
+            var paperTape = new Teletype();
             Reader = paperTape;
             Punch = paperTape;
 
             processor = new Processor(Memory, Registers, Reader, Punch);
         }
 
-        public IReader Reader { get; }
+        public IKeyboard Reader { get; }
 
-        public IPunch Punch { get; }
+        public ITeleprinter Punch { get; }
 
         public IRegisters Registers { get; }
 
@@ -40,7 +41,7 @@ namespace Core8
         {
             Memory.Write(Registers.IF_PC.Address, data & Masks.MEM_WORD);
 
-            Trace.WriteLine($"DEP: {Registers.IF_PC.Address.ToOctalString()} {data.ToOctalString()}");
+            Log.Information($"DEP: {Registers.IF_PC.Address.ToOctalString()} {data.ToOctalString()}");
 
             Registers.IF_PC.Increment();
         }
@@ -54,14 +55,14 @@ namespace Core8
         {
             Registers.IF_PC.Set(address);
 
-            Trace.WriteLine($"LOAD: {address.ToOctalString()}");
+            Log.Information($"LOAD: {address.ToOctalString()}");
         }
 
         public void Exam()
         {
             Registers.LINK_AC.SetAccumulator(Memory.Read(Registers.IF_PC.Address));
 
-            Trace.WriteLine($"EXAM: {Registers.LINK_AC.ToString()}");
+            Log.Information($"EXAM: {Registers.LINK_AC.ToString()}");
         }
 
         public void Start(bool waitForHalt = true)
@@ -90,7 +91,7 @@ namespace Core8
 
             Reader.Load(tape);
 
-            Trace.WriteLine($"TAPE: loaded {tape.Length} bytes");
+            Log.Information($"TAPE: loaded {tape.Length} bytes");
         }
     }
 }

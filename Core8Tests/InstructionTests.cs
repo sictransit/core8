@@ -1,6 +1,7 @@
 using Core8;
 using Core8.Extensions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Serilog;
 
 namespace Core8Tests
 {
@@ -12,6 +13,10 @@ namespace Core8Tests
         [TestInitialize]
         public void Initialize()
         {
+            Log.Logger = new LoggerConfiguration()
+                .WriteTo.Console()
+                .CreateLogger();
+
             pdp = new PDP();
         }
 

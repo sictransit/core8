@@ -5,7 +5,7 @@ using System.Threading;
 
 namespace Core8
 {
-    public class PaperTape : IReader, IPunch
+    public class Teletype : IKeyboard, ITeleprinter
     {
         private readonly ManualResetEvent readerFlag = new ManualResetEvent(false);
 
@@ -17,13 +17,13 @@ namespace Core8
 
         public uint ReaderFlag => readerFlag.WaitOne(TimeSpan.Zero) ? 1u : 0u;
 
-        public bool IsReaderFlagSet => ReaderFlag == 1u;
+        public bool IsFlagSet => ReaderFlag == 1u;
 
         public bool IsTapeLoaded => !queue.IsEmpty;
 
         public void Tick()
         {
-            if (!IsReaderFlagSet && queue.TryDequeue(out var item))
+            if (!IsFlagSet && queue.TryDequeue(out var item))
             {
                 buffer = item;
 
@@ -31,7 +31,7 @@ namespace Core8
             }
         }
 
-        public void ClearReaderFlag()
+        public void ClearFlag()
         {
             readerFlag.Reset();
         }

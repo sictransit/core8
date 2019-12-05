@@ -1,5 +1,6 @@
 ﻿using Core8.Extensions;
 using Core8.Interfaces;
+using Serilog;
 using System;
 using System.Diagnostics;
 using System.Threading;
@@ -11,9 +12,9 @@ namespace Core8
         private readonly IEnvironment environment;
         private volatile bool halted;
 
-        public Processor(IMemory memeory, IRegisters registers, IReader reader, IPunch punch)
+        public Processor(IMemory memeory, IRegisters registers, IKeyboard keyboard, ITeleprinter teleprinter)
         {
-            environment = new Environment(this, memeory, registers, reader, punch);
+            environment = new Environment(this, memeory, registers, keyboard, teleprinter);
         }
 
         public uint CurrentAddress { get; private set; }
@@ -27,7 +28,7 @@ namespace Core8
         {
             halted = false;
 
-            Trace.WriteLine("RUN");
+            Log.Information("RUN");
 
             while (!halted)
             {
@@ -37,7 +38,7 @@ namespace Core8
 
                 if (Decoder.TryDecode(data, out var instruction))
                 {
-                    Trace.WriteLine($"{CurrentAddress.ToOctalString()}: {instruction}");
+                    Log.Debug($"{CurrentAddress.ToOctalString()}: {instruction}");
 
                     environment.Registers.IF_PC.Increment();
 
@@ -45,15 +46,19 @@ namespace Core8
                 }
                 else
                 {
-                    throw new NotImplementedException($"{CurrentAddress.ToOctalString()}: {data.ToOctalString()}");
+                    var debugInformation = $"{CurrentAddress.ToOctalString()}: {data.ToOctalString()}";
+
+                    Log.Error($"Not implemented: {debugInformation}");
+
+                    throw new NotImplementedException(debugInformation);
                 }
 
-                environment.Reader.Tick();
+                environment.Keyboard.Tick();
 
                 Thread.Sleep(0);
             }
 
-            Trace.WriteLine("HLT");
+            Log.Information("HLT");
         }
     }
 }

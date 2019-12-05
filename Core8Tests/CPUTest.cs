@@ -1,6 +1,7 @@
 using Core8;
 using Core8.Extensions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Serilog;
 using System.Diagnostics;
 using System.IO;
 using System.Threading;
@@ -16,6 +17,10 @@ namespace Core8Tests
         public void Initialize()
         {
             pdp = new PDP();
+
+            Log.Logger = new LoggerConfiguration()
+                .WriteTo.Console()
+                .CreateLogger();
         }
 
         private static void DumpMemory(PDP pdp)
@@ -26,11 +31,11 @@ namespace Core8Tests
 
                 if (Decoder.TryDecode(data, out var instruction))
                 {
-                    Trace.WriteLine($"{i.ToOctalString()}: {instruction}");
+                    Log.Debug($"{i.ToOctalString()}: {instruction}");
                 }
                 else
                 {
-                    Trace.WriteLine($"{i.ToOctalString()}: {data.ToOctalString()}");
+                    Log.Debug($"{i.ToOctalString()}: {data.ToOctalString()}");
                 }
             }
         }
@@ -88,20 +93,21 @@ namespace Core8Tests
         [TestMethod]
         public void TestLoadTape()
         {
-            var bin = File.ReadAllBytes(@"Tapes/dec-08-lbaa-pm_5-10-67.bin");
+            var bin = File.ReadAllBytes(@"Tapes/dec-08-lbaa-pm_5-10-67.bin");            
 
             pdp.LoadTape(bin);
 
-            Assert.IsFalse(pdp.Reader.IsReaderFlagSet);
+            Assert.IsFalse(pdp.Reader.IsFlagSet);
             Assert.IsTrue(pdp.Reader.IsTapeLoaded);
         }
 
         [TestMethod]
         public void TestBIN()
         {
-            LoadRIMHighSpeed(pdp); // Toggle RIM loader
+            LoadRIMLowSpeed(pdp); // Toggle RIM loader
 
-            var bin = File.ReadAllBytes(@"Tapes/dec-08-lbaa-pm_5-10-67.bin"); // Load a paper tape image from 1967 from disk.
+            //var bin = File.ReadAllBytes(@"Tapes/dec-08-lbaa-pm_5-10-67.bin"); // Load a paper tape image of 1967 from disk.
+            var bin = File.ReadAllBytes(@"Tapes/dec-08-lbaa-pm.bin");
 
             pdp.LoadTape(bin); // Load tape
 

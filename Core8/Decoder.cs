@@ -1,5 +1,6 @@
 ﻿using Core8.Enums;
 using Core8.Instructions.Abstract;
+using Core8.Instructions.Keyboard;
 using Core8.Instructions.MemoryReference;
 using Core8.Instructions.Microcoded;
 
@@ -15,11 +16,11 @@ namespace Core8
 
             switch (instructionName)
             {
-                case InstructionName.Microcoded:
+                case InstructionName.MCI:
                     instruction = DecodeMicrocode(data);
                     break;
-                case InstructionName.PaperTape:
-                    instruction = DecodePaperTape(data);
+                case InstructionName.IOT:
+                    instruction = DecodeIO(data);
                     break;
                 default:
                     instruction = DecodeMemoryReference(instructionName, data);
@@ -51,20 +52,20 @@ namespace Core8
             }
         }
 
-        private static InstructionBase DecodePaperTape(uint data)
+        private static InstructionBase DecodeIO(uint data)
         {
             var instruction = (InstructionName)data;
 
             switch (instruction)
             {
-                case InstructionName.RSF:
-                    return new RSF(data);
-                case InstructionName.RRB:
-                    return new RRB(data);
-                case InstructionName.RFC:
-                    return new RFC(data);
-                case InstructionName.RRB_RFC:
-                    return new RRB_RFC(data);
+                case InstructionName.KSF:
+                    return new KSF(data);
+                case InstructionName.KCC:
+                    return new KCC(data);
+                case InstructionName.KRS:
+                    return new KRS(data);
+                case InstructionName.KRB:
+                    return new KRB(data);
                 default:
                     return null;
             }

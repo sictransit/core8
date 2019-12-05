@@ -1,12 +1,12 @@
 ﻿namespace Core8.Interfaces
 {
-    public interface IReader
+    public interface IKeyboard
     {
         void Tick();
 
-        void ClearReaderFlag();
+        void ClearFlag();
 
-        bool IsReaderFlagSet { get; }
+        bool IsFlagSet { get; }
 
         bool IsTapeLoaded { get; }
 

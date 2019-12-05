@@ -7,9 +7,14 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.CodeAnalysis.FxCopAnalyzers" Version="2.9.3" />
+    <PackageReference Include="Serilog" Version="2.9.0" />
+    <PackageReference Include="Serilog.Sinks.Console" Version="3.1.1" />
   </ItemGroup>
 
   <ItemGroup>
+    <None Update="Tapes\dec-08-lbaa-pm.bin">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Update="Tapes\dec-08-lbaa-pm_5-10-67.bin">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>

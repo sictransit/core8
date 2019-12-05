@@ -4,13 +4,13 @@ namespace Core8
 {
     public class Environment : IEnvironment
     {
-        public Environment(IProcessor processor, IMemory memory, IRegisters registers, IReader reader, IPunch punch)
+        public Environment(IProcessor processor, IMemory memory, IRegisters registers, IKeyboard keyboard, ITeleprinter teleprinter)
         {
             Memory = memory;
             Processor = processor;
             Registers = registers;
-            Reader = reader;
-            Punch = punch;
+            Keyboard = keyboard;
+            Teleprinter = teleprinter;
         }
 
         public IMemory Memory { get; }
@@ -19,8 +19,8 @@ namespace Core8
 
         public IRegisters Registers { get; }
 
-        public IReader Reader { get; }
+        public IKeyboard Keyboard { get; }
 
-        public IPunch Punch { get; }
+        public ITeleprinter Teleprinter { get; }
     }
 }

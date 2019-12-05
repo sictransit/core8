@@ -1,11 +1,11 @@
 ﻿using Core8.Instructions.Abstract;
 using Core8.Interfaces;
 
-namespace Core8.Instructions.MemoryReference
+namespace Core8.Instructions.Keyboard
 {
-    public class RSF : PaperTapeInstruction
+    public class KRS : KeyboardInstruction
     {
-        public RSF(uint data) : base(data)
+        public KRS(uint data) : base(data)
         {
 
         }
@@ -17,10 +17,10 @@ namespace Core8.Instructions.MemoryReference
                 throw new System.ArgumentNullException(nameof(environment));
             }
 
-            if (environment.Reader.IsReaderFlagSet)
-            {
-                environment.Registers.IF_PC.Increment();
-            }
+            var buffer = environment.Keyboard.Buffer;
+            var acc = environment.Registers.LINK_AC.Accumulator;
+
+            environment.Registers.LINK_AC.SetAccumulator(acc | buffer);
         }
     }
 }

@@ -1,6 +1,6 @@
 ﻿namespace Core8.Interfaces
 {
-    public interface IPunch
+    public interface ITeleprinter
     {
     }
 }

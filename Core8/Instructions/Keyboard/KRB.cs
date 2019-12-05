@@ -1,11 +1,11 @@
 ﻿using Core8.Instructions.Abstract;
 using Core8.Interfaces;
 
-namespace Core8.Instructions.MemoryReference
+namespace Core8.Instructions.Keyboard
 {
-    public class RRB : PaperTapeInstruction
+    public class KRB : KeyboardInstruction
     {
-        public RRB(uint data) : base(data)
+        public KRB(uint data) : base(data)
         {
 
         }
@@ -17,9 +17,11 @@ namespace Core8.Instructions.MemoryReference
                 throw new System.ArgumentNullException(nameof(environment));
             }
 
-            RRB(environment);
+            var buffer = environment.Keyboard.Buffer;
 
-            RFC(environment);
+            environment.Registers.LINK_AC.SetAccumulator(buffer);
+
+            environment.Keyboard.ClearFlag();
         }
     }
 }

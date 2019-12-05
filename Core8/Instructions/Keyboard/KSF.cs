@@ -1,11 +1,11 @@
 ﻿using Core8.Instructions.Abstract;
 using Core8.Interfaces;
 
-namespace Core8.Instructions.MemoryReference
+namespace Core8.Instructions.Keyboard
 {
-    public class RRB_RFC : PaperTapeInstruction
+    public class KSF : KeyboardInstruction
     {
-        public RRB_RFC(uint data) : base(data)
+        public KSF(uint data) : base(data)
         {
 
         }
@@ -17,9 +17,10 @@ namespace Core8.Instructions.MemoryReference
                 throw new System.ArgumentNullException(nameof(environment));
             }
 
-            RRB(environment);
-
-            RFC(environment);
+            if (environment.Keyboard.IsFlagSet)
+            {
+                environment.Registers.IF_PC.Increment();
+            }
         }
     }
 }
