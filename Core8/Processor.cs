@@ -2,6 +2,7 @@
 using Core8.Interfaces;
 using System;
 using System.Diagnostics;
+using System.Threading;
 
 namespace Core8
 {
@@ -14,6 +15,8 @@ namespace Core8
         {
             environment = new Environment(this, memeory, registers, reader, punch);
         }
+
+        public uint CurrentAddress { get; private set; }
 
         public void Halt()
         {
@@ -28,22 +31,26 @@ namespace Core8
 
             while (!halted)
             {
-                var data = environment.Memory.Read(environment.Registers.IF_PC.Address);
+                CurrentAddress = environment.Registers.IF_PC.Address;
+
+                var data = environment.Memory.Read(CurrentAddress);
 
                 if (Decoder.TryDecode(data, out var instruction))
                 {
-                    Trace.WriteLine($"{environment.Registers.IF_PC.Address.ToOctalString()}: {instruction}");
+                    Trace.WriteLine($"{CurrentAddress.ToOctalString()}: {instruction}");
 
                     environment.Registers.IF_PC.Increment();
 
-                    instruction.Execute(environment);
+                    instruction.Execute(environment);                    
                 }
                 else
                 {
-                    throw new NotImplementedException($"{environment.Registers.IF_PC.Address.ToOctalString()}: {data.ToOctalString()}");
+                    throw new NotImplementedException($"{CurrentAddress.ToOctalString()}: {data.ToOctalString()}");
                 }
 
                 environment.Reader.Tick();
+
+                Thread.Sleep(0);
             }
 
             Trace.WriteLine("HLT");

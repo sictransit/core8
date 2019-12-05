@@ -1,6 +1,7 @@
 using Core8;
 using Core8.Extensions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System.Diagnostics;
 using System.IO;
 using System.Threading;
 
@@ -15,6 +16,23 @@ namespace Core8Tests
         public void Initialize()
         {
             pdp = new PDP();
+        }
+
+        private static void DumpMemory(PDP pdp)
+        {
+            for (uint i = 0; i < pdp.Memory.Size; i++)
+            {
+                var data = pdp.Memory.Read(i);
+
+                if (Decoder.TryDecode(data, out var instruction))
+                {
+                    Trace.WriteLine($"{i.ToOctalString()}: {instruction}");
+                }
+                else
+                {
+                    Trace.WriteLine($"{i.ToOctalString()}: {data.ToOctalString()}");
+                }
+            }
         }
 
         private static void LoadRIMHighSpeed(PDP pdp)
@@ -97,6 +115,12 @@ namespace Core8Tests
             pdp.Stop(); // HLT!
 
             Assert.AreEqual(5301u.ToDecimal(), pdp.Memory.Read(4095)); // Verify a JMP @ end of RAM
+
+            DumpMemory(pdp);
+
+            pdp.Load8(7777);
+
+            pdp.Start();
         }
 
 

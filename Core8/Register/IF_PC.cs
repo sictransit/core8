@@ -6,9 +6,9 @@
 
         public uint IF => (Data & Masks.IF) >> 12;
 
-        public uint Page => (Data & Masks.PAGE) >> 7;
+        public uint Page => (Data & Masks.ADDRESS_PAGE) >> 7;
 
-        public uint Word => Data & Masks.WORD;
+        public uint Word => Data & Masks.ADDRESS_WORD;
 
         public void Increment()
         {

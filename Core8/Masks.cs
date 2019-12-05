@@ -14,9 +14,6 @@
         public const uint ADDRESSING_MODE
             = 0b_000_110_000_000;
 
-        public const uint ADDRESS_WORD
-            = 0b_000_001_111_111;
-
         public const uint MEM_WORD
             = 0b_111_111_111_111;
 
@@ -29,10 +26,10 @@
         public const uint IF
             = 0b_111_000_000_000_000;
 
-        public const uint PAGE
+        public const uint ADDRESS_PAGE
             = 0b_111_110_000_000;
 
-        public const uint WORD
+        public const uint ADDRESS_WORD
             = 0b_000_001_111_111;
 
         public const uint LINK
