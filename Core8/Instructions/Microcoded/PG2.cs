@@ -23,7 +23,7 @@ namespace Core8.Instructions.Microcoded
 
             if (Flags.HasFlag(PrivilegedGroupTwoFlags.OSR))
             {
-                throw new NotImplementedException("no console present");
+                environment.Registers.LINK_AC.SetAccumulator(environment.Registers.LINK_AC.Accumulator | environment.Registers.Switch.Get);
             }
 
             if (Flags.HasFlag(PrivilegedGroupTwoFlags.HLT))

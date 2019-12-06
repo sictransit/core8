@@ -36,6 +36,15 @@ namespace Core8
 
         public void Deposit10(uint data)
         {
+            Registers.Switch.Set(data);
+
+            Deposit();
+        }
+
+        private void Deposit()
+        {
+            var data = Registers.Switch.Get;
+
             Memory.Write(Registers.IF_PC.Address, data & Masks.MEM_WORD);
 
             Log.Information($"DEP: {Registers.IF_PC.Address.ToOctalString()} {data.ToOctalString()}");
@@ -50,9 +59,28 @@ namespace Core8
 
         public void Load10(uint address)
         {
+            Registers.Switch.Set(address);
+
+            Load();
+        }
+
+        private void Load()
+        {
+            var address = Registers.Switch.Get;
+
             Registers.IF_PC.Set(address);
 
             Log.Information($"LOAD: {address.ToOctalString()}");
+        }
+
+        public void Toggle8(uint word)
+        {
+            Toggle10(word.ToDecimal());
+        }
+
+        public void Toggle10(uint word)
+        {
+            Registers.Switch.Set(word);
         }
 
         public void Exam()
