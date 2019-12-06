@@ -66,8 +66,12 @@ namespace Core8
                     return new KRS(data);
                 case InstructionName.KRB:
                     return new KRB(data);
+                case InstructionName.TSF:
+                    return new TSF(data);
                 case InstructionName.TPC:
                     return new TPC(data);
+                case InstructionName.TLS:
+                    return new TLS(data);
                 default:
                     return null;
             }

@@ -1,52 +1,45 @@
 ﻿using Core8.Interfaces;
 using System;
 using System.Collections.Concurrent;
+using System.Text;
 using System.Threading;
 
 namespace Core8
 {
     public class Teleprinter : ITeleprinter
     {
-        private readonly ManualResetEvent readerFlag = new ManualResetEvent(false);
+        private readonly ManualResetEvent flag = new ManualResetEvent(false);
 
-        private volatile uint buffer;
+        private readonly ConcurrentQueue<byte> queue = new ConcurrentQueue<byte>();
 
-        private ConcurrentQueue<uint> queue = new ConcurrentQueue<uint>();
+        private readonly StringBuilder paper = new StringBuilder();
 
-        public uint Buffer => buffer & Masks.READER_BUFFER_MASK;
+        public string Printout => paper.ToString();
 
-        public uint ReaderFlag => readerFlag.WaitOne(TimeSpan.Zero) ? 1u : 0u;
+        public uint Flag => flag.WaitOne(TimeSpan.Zero) ? 1u : 0u;
 
-        public bool IsFlagSet => ReaderFlag == 1u;
-
-        public bool IsTapeLoaded => !queue.IsEmpty;
+        public bool IsFlagSet => Flag == 1u;
 
         public void Tick()
         {
             if (!IsFlagSet && queue.TryDequeue(out var item))
             {
-                buffer = item;
+                var c = Encoding.ASCII.GetChars(new[] { item })[0];
 
-                readerFlag.Set();
+                paper.Append(c);
+
+                flag.Set();
             }
         }
 
         public void ClearFlag()
         {
-            readerFlag.Reset();
+            flag.Reset();
         }
 
-        public void Load(byte[] data)
+        public void Print(byte c)
         {
-            if (data is null)
-            {
-                throw new ArgumentNullException(nameof(data));
-            }
-
-            foreach (var item in data)
-            {
-                queue.Enqueue(item);
-            }
+            queue.Enqueue(c);
         }
     }
 }

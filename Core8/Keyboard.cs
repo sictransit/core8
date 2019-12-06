@@ -7,17 +7,17 @@ namespace Core8
 {
     public class Keyboard : IKeyboard
     {
-        private readonly ManualResetEvent readerFlag = new ManualResetEvent(false);
+        private readonly ManualResetEvent flag = new ManualResetEvent(false);
 
         private volatile uint buffer;
 
-        private ConcurrentQueue<uint> queue = new ConcurrentQueue<uint>();
+        private readonly ConcurrentQueue<uint> queue = new ConcurrentQueue<uint>();
 
-        public uint Buffer => buffer & Masks.READER_BUFFER_MASK;
+        public uint Buffer => buffer & Masks.KEYBOARD_BUFFER_MASK;
 
-        public uint ReaderFlag => readerFlag.WaitOne(TimeSpan.Zero) ? 1u : 0u;
+        public uint Flag => flag.WaitOne(TimeSpan.Zero) ? 1u : 0u;
 
-        public bool IsFlagSet => ReaderFlag == 1u;
+        public bool IsFlagSet => Flag == 1u;
 
         public bool IsTapeLoaded => !queue.IsEmpty;
 
@@ -27,13 +27,13 @@ namespace Core8
             {
                 buffer = item;
 
-                readerFlag.Set();
+                flag.Set();
             }
         }
 
         public void ClearFlag()
         {
-            readerFlag.Reset();
+            flag.Reset();
         }
 
         public void Load(byte[] data)

@@ -2,7 +2,6 @@ using Core8;
 using Core8.Extensions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Serilog;
-using System.Diagnostics;
 using System.IO;
 using System.Threading;
 
@@ -28,7 +27,7 @@ namespace Core8Tests
         {
             for (uint i = 0; i < pdp.Memory.Size; i++)
             {
-                var data = pdp.Memory.Read(i);
+                var data = pdp.Memory.Read(i, true);
 
                 if (Decoder.TryDecode(data, out var instruction))
                 {
@@ -94,7 +93,7 @@ namespace Core8Tests
         [TestMethod]
         public void TestLoadTape()
         {
-            var bin = File.ReadAllBytes(@"Tapes/dec-08-lbaa-pm_5-10-67.bin");            
+            var bin = File.ReadAllBytes(@"Tapes/dnnbin.rim");
 
             pdp.LoadTape(bin);
 
@@ -114,7 +113,7 @@ namespace Core8Tests
             pdp.Deposit8(7000);
             pdp.Deposit8(1410);
             pdp.Deposit8(7450);
-            pdp.Deposit8(5577);
+            pdp.Deposit8(7402); //5577
             pdp.Deposit8(4212);
             pdp.Deposit8(5204);
             pdp.Deposit8(0000);
@@ -138,11 +137,17 @@ namespace Core8Tests
             pdp.Deposit8(0041);
             pdp.Deposit8(0000);
 
-            pdp.Load8(0177);
-            pdp.Deposit8(7600);
+            //pdp.Load8(0177);
+            //pdp.Deposit8(7600);
+
+            //DumpMemory(pdp);
 
             pdp.Load8(0200);
             pdp.Start();
+
+            Assert.AreEqual("HELLO WORLD!", pdp.Teleprinter.Printout);
+
+            Log.Information(pdp.Teleprinter.Printout);
         }
 
         [TestMethod]
@@ -179,7 +184,7 @@ namespace Core8Tests
         {
             var length = 10;
 
-            pdp.Load8(0000);
+            pdp.Load8(0200);
 
             for (int i = 0; i < length; i++)
             {
@@ -188,7 +193,7 @@ namespace Core8Tests
 
             pdp.Deposit8(7402);
 
-            pdp.Load8(0000);
+            pdp.Load8(0200);
 
             pdp.Start();
 
@@ -238,6 +243,5 @@ namespace Core8Tests
 
             Assert.AreEqual(5u, pdp.Registers.LINK_AC.Accumulator);
         }
-
     }
 }

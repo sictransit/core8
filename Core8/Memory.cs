@@ -20,11 +20,16 @@ namespace Core8
 
         public uint Size { get; private set; }
 
-        public uint Read(uint address)
+        public uint Read(uint address, bool examine = false)
         {
             if (address > Size)
             {
                 throw new ArgumentOutOfRangeException(nameof(address));
+            }
+
+            if ((address >= 8) && (address <= 15) && (!examine))
+            {
+                Write(address, Read(address, true) + 1);
             }
 
             return ram[address] & Masks.MEM_WORD;

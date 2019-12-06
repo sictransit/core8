@@ -1,7 +1,6 @@
 ﻿using Core8.Extensions;
 using Core8.Interfaces;
 using Serilog;
-using System.Diagnostics;
 using System.Threading;
 
 namespace Core8
@@ -16,7 +15,7 @@ namespace Core8
         {
             Memory = new Memory(4096);
             Registers = new Registers();
-            Keyboard = new Keyboard(); 
+            Keyboard = new Keyboard();
             Teleprinter = new Teleprinter();
 
             processor = new Processor(Memory, Registers, Keyboard, Teleprinter);

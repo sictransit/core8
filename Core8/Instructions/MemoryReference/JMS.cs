@@ -17,9 +17,13 @@ namespace Core8.Instructions.MemoryReference
                 throw new System.ArgumentNullException(nameof(environment));
             }
 
-            environment.Memory.Write(GetAddress(environment), environment.Registers.IF_PC.Address);
+            var pc = environment.Registers.IF_PC.Address;
 
-            environment.Registers.IF_PC.Set(GetAddress(environment));
+            var address = GetAddress(environment);
+
+            environment.Memory.Write(address, pc);
+
+            environment.Registers.IF_PC.Set(address + 1);
 
         }
     }

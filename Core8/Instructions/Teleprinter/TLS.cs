@@ -1,11 +1,11 @@
 ﻿using Core8.Instructions.Abstract;
 using Core8.Interfaces;
 
-namespace Core8.Instructions.MemoryReference
+namespace Core8.Instructions.Keyboard
 {
-    public class TAD : MemoryReferenceInstruction
+    public class TLS : TeleprinterInstruction
     {
-        public TAD(uint data) : base(data)
+        public TLS(uint data) : base(data)
         {
 
         }
@@ -17,11 +17,11 @@ namespace Core8.Instructions.MemoryReference
                 throw new System.ArgumentNullException(nameof(environment));
             }
 
-            var memory = environment.Memory.Read(GetAddress(environment));
+            var c = environment.Registers.LINK_AC.Accumulator & Masks.TELEPRINTER_BUFFER_MASK;
 
-            var ac = environment.Registers.LINK_AC.Accumulator;
+            environment.Teleprinter.Print((byte)c);
 
-            environment.Registers.LINK_AC.Set(ac + memory);
+            environment.Teleprinter.ClearFlag();
         }
     }
 }

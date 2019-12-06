@@ -1,6 +1,5 @@
 ﻿using Core8.Enums;
 using Core8.Extensions;
-using Core8.Interfaces;
 
 namespace Core8.Instructions.Abstract
 {

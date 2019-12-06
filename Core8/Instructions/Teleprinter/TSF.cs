@@ -3,9 +3,9 @@ using Core8.Interfaces;
 
 namespace Core8.Instructions.Keyboard
 {
-    public class TPC : TeleprinterInstruction
+    public class TSF : TeleprinterInstruction
     {
-        public TPC(uint data) : base(data)
+        public TSF(uint data) : base(data)
         {
 
         }
@@ -17,9 +17,10 @@ namespace Core8.Instructions.Keyboard
                 throw new System.ArgumentNullException(nameof(environment));
             }
 
-            var c = environment.Registers.LINK_AC.Accumulator & Masks.TELEPRINTER_BUFFER_MASK;
-
-            environment.Teleprinter.Print((byte)c);
+            if (environment.Teleprinter.IsFlagSet)
+            {
+                environment.Registers.IF_PC.Increment();
+            }
         }
     }
 }

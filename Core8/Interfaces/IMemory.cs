@@ -2,7 +2,7 @@
 {
     public interface IMemory
     {
-        uint Read(uint address);
+        uint Read(uint address, bool examine = false);
 
         void Write(uint address, uint data);
 

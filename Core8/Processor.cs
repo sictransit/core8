@@ -3,8 +3,6 @@ using Core8.Instructions;
 using Core8.Instructions.Abstract;
 using Core8.Interfaces;
 using Serilog;
-using System;
-using System.Diagnostics;
 using System.Threading;
 
 namespace Core8
