@@ -58,6 +58,8 @@ namespace Core8
 
             switch (instruction)
             {
+                case InstructionName.KCF:
+                    return new KCF(data);
                 case InstructionName.KSF:
                     return new KSF(data);
                 case InstructionName.KCC:

@@ -171,11 +171,19 @@ namespace Core8Tests
 
             Assert.AreEqual(5304u.ToDecimal(), pdp.Memory.Read(4095)); // Verify a JMP @ end of RAM
 
-            DumpMemory(pdp);
+          
 
             pdp.Load8(7777);
 
+            pdp.LoadTape(File.ReadAllBytes(@"Tapes/MAINDEC-08-D2PE-PB.bin"));
+
+            pdp.Toggle8(3777);
+
             pdp.Start();
+
+
+
+            DumpMemory(pdp);
         }
 
 
