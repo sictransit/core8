@@ -20,7 +20,8 @@ namespace Core8
                     instruction = DecodeMicrocode(data);
                     break;
                 case InstructionName.IOT:
-                    instruction = DecodeIO(data);
+                    var ioInstruction = (IOInstructionName)data;
+                    instruction = DecodeIO(ioInstruction, data);
                     break;
                 default:
                     instruction = DecodeMemoryReference(instructionName, data);
@@ -31,53 +32,32 @@ namespace Core8
         }
 
 
-        private static InstructionBase DecodeMemoryReference(InstructionName name, uint data)
-        {
-            switch (name)
+        private static InstructionBase DecodeMemoryReference(InstructionName name, uint data) =>
+            name switch
             {
-                case InstructionName.AND:
-                    return new AND(data);
-                case InstructionName.TAD:
-                    return new TAD(data);
-                case InstructionName.ISZ:
-                    return new ISZ(data);
-                case InstructionName.DCA:
-                    return new DCA(data);
-                case InstructionName.JMS:
-                    return new JMS(data);
-                case InstructionName.JMP:
-                    return new JMP(data);
-                default:
-                    return null;
-            }
-        }
+                InstructionName.AND => new AND(data),
+                InstructionName.TAD => new TAD(data),
+                InstructionName.ISZ => new ISZ(data),
+                InstructionName.DCA => new DCA(data),
+                InstructionName.JMS => new JMS(data),
+                InstructionName.JMP => new JMP(data),
+                _ => null
+            };
 
-        private static InstructionBase DecodeIO(uint data)
-        {
-            var instruction = (InstructionName)data;
 
-            switch (instruction)
+        private static InstructionBase DecodeIO(IOInstructionName name, uint data) =>
+            name switch
             {
-                case InstructionName.KCF:
-                    return new KCF(data);
-                case InstructionName.KSF:
-                    return new KSF(data);
-                case InstructionName.KCC:
-                    return new KCC(data);
-                case InstructionName.KRS:
-                    return new KRS(data);
-                case InstructionName.KRB:
-                    return new KRB(data);
-                case InstructionName.TSF:
-                    return new TSF(data);
-                case InstructionName.TPC:
-                    return new TPC(data);
-                case InstructionName.TLS:
-                    return new TLS(data);
-                default:
-                    return null;
-            }
-        }
+                IOInstructionName.KCF => new KCF(data),
+                IOInstructionName.KSF => new KSF(data),
+                IOInstructionName.KCC => new KCC(data),
+                IOInstructionName.KRS => new KRS(data),
+                IOInstructionName.KRB => new KRB(data),
+                IOInstructionName.TSF => new TSF(data),
+                IOInstructionName.TPC => new TPC(data),
+                IOInstructionName.TLS => new TLS(data),
+                _ => null,
+            };        
 
         private static InstructionBase DecodeMicrocode(uint data)
         {

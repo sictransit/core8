@@ -175,15 +175,17 @@ namespace Core8Tests
 
             pdp.Load8(7777);
 
-            pdp.LoadTape(File.ReadAllBytes(@"Tapes/MAINDEC-08-D2PE-PB.bin"));
-
-            pdp.Toggle8(3777);
+            pdp.LoadTape(File.ReadAllBytes(@"Tapes/tint.bin"));
 
             pdp.Start();
 
-
+            pdp.Load8(0200);
 
             DumpMemory(pdp);
+
+            pdp.Start();
+
+            
         }
 
 
