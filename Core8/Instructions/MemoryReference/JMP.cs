@@ -3,7 +3,7 @@ using Core8.Interfaces;
 
 namespace Core8.Instructions.MemoryReference
 {
-    public class JMP : MemoryReferenceInstruction
+    public class JMP : MemoryReferenceInstructions
     {
         public JMP(uint data) : base(data)
         {

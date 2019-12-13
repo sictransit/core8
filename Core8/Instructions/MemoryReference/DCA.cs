@@ -3,7 +3,7 @@ using Core8.Interfaces;
 
 namespace Core8.Instructions.MemoryReference
 {
-    public class DCA : MemoryReferenceInstruction
+    public class DCA : MemoryReferenceInstructions
     {
         public DCA(uint data) : base(data)
         {

@@ -3,7 +3,7 @@ using Core8.Interfaces;
 
 namespace Core8.Instructions.MemoryReference
 {
-    public class JMS : MemoryReferenceInstruction
+    public class JMS : MemoryReferenceInstructions
     {
         public JMS(uint data) : base(data)
         {

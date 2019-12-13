@@ -3,7 +3,7 @@ using Core8.Interfaces;
 
 namespace Core8.Instructions.MemoryReference
 {
-    public class TAD : MemoryReferenceInstruction
+    public class TAD : MemoryReferenceInstructions
     {
         public TAD(uint data) : base(data)
         {

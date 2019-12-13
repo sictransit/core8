@@ -3,7 +3,7 @@ using Core8.Interfaces;
 
 namespace Core8.Instructions.MemoryReference
 {
-    public class ISZ : MemoryReferenceInstruction
+    public class ISZ : MemoryReferenceInstructions
     {
         public ISZ(uint data) : base(data)
         {

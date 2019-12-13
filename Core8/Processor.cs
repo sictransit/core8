@@ -7,14 +7,25 @@ using System.Threading;
 
 namespace Core8
 {
-    public class Processor : IProcessor
+    public partial class Processor : IProcessor
     {
         private readonly IEnvironment environment;
         private volatile bool halted;
+        private readonly TeleprinterInstructions teleprinterInstructions;
+        private readonly KeyboardInstructions keyboardInstructions;
+        private readonly GroupOneMicrocodedInstructions groupOneMicrocodedInstructions;
+        private readonly GroupTwoAndMicrocodedInstructions groupTwoAndMicrocodedInstructions;
+        private readonly GroupTwoOrMicrocodedInstructions groupTwoOrMicrocodedInstructions;
 
         public Processor(IMemory memeory, IRegisters registers, IKeyboard keyboard, ITeleprinter teleprinter)
         {
             environment = new Environment(this, memeory, registers, keyboard, teleprinter);
+
+            teleprinterInstructions = new TeleprinterInstructions(registers, teleprinter);
+            keyboardInstructions = new KeyboardInstructions(registers, keyboard);
+            groupOneMicrocodedInstructions = new GroupOneMicrocodedInstructions(registers);
+            groupTwoAndMicrocodedInstructions = new GroupTwoAndMicrocodedInstructions(registers);
+            groupTwoOrMicrocodedInstructions = new GroupTwoOrMicrocodedInstructions(registers);
         }
 
         public uint CurrentAddress { get; private set; }
@@ -38,16 +49,11 @@ namespace Core8
 
                 InstructionBase instruction;
 
-                if (Decoder.TryDecode(data, out instruction))
-                {
-                    Log.Debug($"{CurrentAddress.ToOctalString()}: {instruction}");
-                }
-                else
+                if (!Execute(data))
                 {
                     Log.Warning($"Not implemented: {CurrentAddress.ToOctalString()}: {data.ToOctalString()}");
-
-                    instruction = new NOP(data);
                 }
+
 
                 environment.Registers.IF_PC.Increment();
 

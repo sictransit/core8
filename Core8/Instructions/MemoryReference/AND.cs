@@ -3,7 +3,7 @@ using Core8.Interfaces;
 
 namespace Core8.Instructions.MemoryReference
 {
-    public class AND : MemoryReferenceInstruction
+    public class AND : MemoryReferenceInstructions
     {
         public AND(uint data) : base(data)
         {

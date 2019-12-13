@@ -1,4 +1,5 @@
 ﻿using Core8.Enums;
+using Core8.Instructions;
 using Core8.Instructions.Abstract;
 using Core8.Instructions.Keyboard;
 using Core8.Instructions.MemoryReference;
@@ -6,9 +7,9 @@ using Core8.Instructions.Microcoded;
 
 namespace Core8
 {
-    public static class Decoder
+    public partial class Processor
     {
-        public static bool TryDecode(uint data, out InstructionBase instruction)
+        private bool Execute(uint data)
         {
             var opCode = (data & Masks.OP_CODE);
 
@@ -21,8 +22,7 @@ namespace Core8
                     break;
                 case InstructionName.IOT:
                     var ioInstruction = (IOInstructionName)data;
-                    instruction = DecodeIO(ioInstruction, data);
-                    break;
+                    return ExecuteIO(ioInstruction, data);                    
                 default:
                     instruction = DecodeMemoryReference(instructionName, data);
                     break;
@@ -32,7 +32,7 @@ namespace Core8
         }
 
 
-        private static InstructionBase DecodeMemoryReference(InstructionName name, uint data) =>
+        private InstructionBase DecodeMemoryReference(InstructionName name, uint data) =>
             name switch
             {
                 InstructionName.AND => new AND(data),
@@ -45,25 +45,46 @@ namespace Core8
             };
 
 
-        private static InstructionBase DecodeIO(IOInstructionName name, uint data) =>
-            name switch
+        private bool ExecuteIO(IOInstructionName name, uint data)
+        {
+            switch (name)
             {
-                IOInstructionName.KCF => new KCF(data),
-                IOInstructionName.KSF => new KSF(data),
-                IOInstructionName.KCC => new KCC(data),
-                IOInstructionName.KRS => new KRS(data),
-                IOInstructionName.KRB => new KRB(data),
-                IOInstructionName.TSF => new TSF(data),
-                IOInstructionName.TPC => new TPC(data),
-                IOInstructionName.TLS => new TLS(data),
-                _ => null,
-            };        
+                case IOInstructionName.KCF:
+                    keyboardInstructions.KCF();
+                    break;
+                case IOInstructionName.KSF:
+                    keyboardInstructions.KSF();
+                    break;
+                case IOInstructionName.KCC:
+                    keyboardInstructions.KCC();
+                    break;
+                case IOInstructionName.KRS:
+                    keyboardInstructions.KRS();
+                    break;
+                case IOInstructionName.KRB:
+                    keyboardInstructions.KRB();
+                    break;
+                case IOInstructionName.TSF:
+                    teleprinterInstructions.TSF();
+                    break;
+                case IOInstructionName.TPC:
+                    teleprinterInstructions.TPC();
+                    break;
+                case IOInstructionName.TLS:
+                    teleprinterInstructions.TLS();
+                    break;
+                default:
+                    return false;
+            }
 
-        private static InstructionBase DecodeMicrocode(uint data)
+            return true;
+        }
+
+        private bool DecodeMicrocode(uint data)
         {
             if ((data & Masks.GROUP) == 0) // Group #1
             {
-                return new G1(data);
+                groupOneMicrocodedInstructions.Execute(data);
             }
             else if ((data & Masks.GROUP_2_PRIV) != 0)
             {
@@ -71,12 +92,14 @@ namespace Core8
             }
             else if ((data & Masks.GROUP_2_AND) == Masks.GROUP_2_AND)
             {
-                return new G2A(data);
+                groupTwoAndMicrocodedInstructions.Execute(data);
             }
             else
             {
-                return new G2O(data);
+                groupTwoOrMicrocodedInstructions.Execute(data);
             }
+
+            return true;
         }
     }
 

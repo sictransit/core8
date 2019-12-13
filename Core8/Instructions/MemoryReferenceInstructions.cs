@@ -4,11 +4,13 @@ using Core8.Interfaces;
 
 namespace Core8.Instructions.Abstract
 {
-    public abstract class MemoryReferenceInstruction : InstructionBase
+    public abstract class MemoryReferenceInstructions : InstructionBase
     {
-        protected MemoryReferenceInstruction(uint data) : base(data)
-        {
+        private readonly uint data;
 
+        protected MemoryReferenceInstructions(uint data) 
+        {
+            this.data = data;
         }
 
         public InstructionName OpCode => (InstructionName)(Data & Masks.OP_CODE);
