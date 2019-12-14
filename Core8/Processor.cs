@@ -1,35 +1,31 @@
-﻿using Core8.Extensions;
-using Core8.Instructions;
-using Core8.Instructions.Abstract;
+﻿using Core8.Enums;
+using Core8.Extensions;
 using Core8.Interfaces;
 using Serilog;
+using System;
 using System.Threading;
 
 namespace Core8
 {
-    public partial class Processor : IProcessor
+    public class Processor : IProcessor
     {
-        private readonly IEnvironment environment;
         private volatile bool halted;
-        private readonly TeleprinterInstructions teleprinterInstructions;
-        private readonly KeyboardInstructions keyboardInstructions;
-        private readonly GroupOneMicrocodedInstructions groupOneMicrocodedInstructions;
-        private readonly GroupTwoAndMicrocodedInstructions groupTwoAndMicrocodedInstructions;
-        private readonly GroupTwoOrMicrocodedInstructions groupTwoOrMicrocodedInstructions;
-        private readonly PrivilegedGroupTwoMicrocodedInstructions privilegedGroupTwoMicrocodedInstructions;
-        private readonly MemoryReferenceInstructions memoryReferenceInstructions;
+
+        private readonly IMemory memory;
+        private readonly IRegisters registers;
+        private readonly IKeyboard keyboard;
+        private readonly ITeleprinter teleprinter;
+
+        private readonly InstructionSet instructionSet;
 
         public Processor(IMemory memory, IRegisters registers, IKeyboard keyboard, ITeleprinter teleprinter)
         {
-            environment = new Environment(this, memory, registers, keyboard, teleprinter);
+            instructionSet = new InstructionSet(this, memory, registers, keyboard, teleprinter);
 
-            teleprinterInstructions = new TeleprinterInstructions(registers, teleprinter);
-            keyboardInstructions = new KeyboardInstructions(registers, keyboard);
-            groupOneMicrocodedInstructions = new GroupOneMicrocodedInstructions(registers);
-            groupTwoAndMicrocodedInstructions = new GroupTwoAndMicrocodedInstructions(registers);
-            groupTwoOrMicrocodedInstructions = new GroupTwoOrMicrocodedInstructions(registers);
-            privilegedGroupTwoMicrocodedInstructions = new PrivilegedGroupTwoMicrocodedInstructions(this, registers);
-            memoryReferenceInstructions = new MemoryReferenceInstructions(this, registers, memory);
+            this.memory = memory;
+            this.registers = registers;
+            this.keyboard = keyboard;
+            this.teleprinter = teleprinter;
         }
 
         public uint CurrentAddress { get; private set; }
@@ -47,24 +43,88 @@ namespace Core8
 
             while (!halted)
             {
-                CurrentAddress = environment.Registers.IF_PC.Address;
+                CurrentAddress = registers.IF_PC.Address;
 
-                var data = environment.Memory.Read(CurrentAddress);
+                var instruction = memory.Read(CurrentAddress);
 
-                if (!Execute(data))
+                registers.IF_PC.Increment();
+
+                try
                 {
-                    Log.Warning($"Not implemented: {CurrentAddress.ToOctalString()}: {data.ToOctalString()}");
+                    Execute(instruction);
                 }
+                catch (NotImplementedException)
+                {
+                    Log.Warning($"[{CurrentAddress.ToOctalString()}] NOP {instruction.ToOctalString()}");
+                    
+                }
+                
 
-
-                environment.Registers.IF_PC.Increment();
-
-                environment.Tick();
+                keyboard.Tick();
+                teleprinter.Tick();
 
                 Thread.Sleep(0);
             }
 
             Log.Information("HLT");
+        }
+
+        private void Execute(uint data)
+        {
+            var opCode = (data & Masks.OP_CODE);
+
+            var instructionName = (InstructionClass)opCode;
+
+            switch (instructionName)
+            {
+                case InstructionClass.MCI:
+                    ExecuteMicrocode(data);
+                    break;
+                case InstructionClass.IOT:
+                    ExecuteIO(data);
+                    break;
+                default:
+                    ExecuteMemoryReference(data);
+                    break;
+            }
+        }
+
+
+        private void ExecuteMemoryReference(uint data)
+        {
+            instructionSet.MemRef.Execute(data);
+        }
+
+        private void ExecuteIO(uint data)
+        {
+            if ((data & Masks.KEYBOARD_INSTRUCTION_FLAGS) == Masks.KEYBOARD_INSTRUCTION_FLAGS)
+            {
+                instructionSet.Keyboard.Execute(data);
+            }
+            else
+            {
+                instructionSet.Teleprinter.Execute(data);
+            }
+        }
+
+        private void ExecuteMicrocode(uint data)
+        {
+            if ((data & Masks.GROUP) == 0) // Group #1
+            {
+                instructionSet.Group1.Execute(data);
+            }
+            else if ((data & Masks.GROUP_2_PRIV) != 0)
+            {
+                instructionSet.Group2Priv.Execute(data);
+            }
+            else if ((data & Masks.GROUP_2_AND) == Masks.GROUP_2_AND)
+            {
+                instructionSet.Group2AND.Execute(data);
+            }
+            else
+            {
+                instructionSet.Group2OR.Execute(data);
+            }
         }
     }
 }

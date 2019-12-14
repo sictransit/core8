@@ -4,61 +4,61 @@ using Core8.Interfaces;
 
 namespace Core8.Instructions
 {
-    public class GroupOneMicrocodedInstructions : MicrocodedInstructionsBase
+    public class Group1 : InstructionBase
     {
-        public GroupOneMicrocodedInstructions(IRegisters registers) : base(registers)
+        public Group1(IRegisters registers) : base(registers)
         { }
 
         public override void Execute(uint data)
         {
-            var flags = (GroupOneFlags)(data & Masks.GROUP_1_FLAGS);
+            var flags = (GroupOneInstructions)(data & Masks.GROUP_1_FLAGS);
 
-            if (flags.HasFlag(GroupOneFlags.CLA))
+            if (flags.HasFlag(GroupOneInstructions.CLA))
             {
                 Registers.LINK_AC.SetAccumulator(0);
             }
 
-            if (flags.HasFlag(GroupOneFlags.CLL))
+            if (flags.HasFlag(GroupOneInstructions.CLL))
             {
                 Registers.LINK_AC.SetLink(0);
             }
 
-            if (flags.HasFlag(GroupOneFlags.CMA))
+            if (flags.HasFlag(GroupOneInstructions.CMA))
             {
                 Registers.LINK_AC.SetAccumulator(Registers.LINK_AC.Accumulator % Masks.AC);
             }
 
-            if (flags.HasFlag(GroupOneFlags.CML))
+            if (flags.HasFlag(GroupOneInstructions.CML))
             {
                 Registers.LINK_AC.SetLink(Registers.LINK_AC.Link % Masks.FLAG);
             }
 
-            if (flags.HasFlag(GroupOneFlags.IAC))
+            if (flags.HasFlag(GroupOneInstructions.IAC))
             {
                 Registers.LINK_AC.Set(Registers.LINK_AC.Data + 1);
             }
 
-            if (flags.HasFlag(GroupOneFlags.RAR))
+            if (flags.HasFlag(GroupOneInstructions.RAR))
             {
                 RotateAccumulatorRight();
 
-                if (flags.HasFlag(GroupOneFlags.BSW))
+                if (flags.HasFlag(GroupOneInstructions.BSW))
                 {
                     RotateAccumulatorRight();
                 }
             }
 
-            if (flags.HasFlag(GroupOneFlags.RAL))
+            if (flags.HasFlag(GroupOneInstructions.RAL))
             {
                 RotateAccumulatorLeft();
 
-                if (flags.HasFlag(GroupOneFlags.BSW))
+                if (flags.HasFlag(GroupOneInstructions.BSW))
                 {
                     RotateAccumulatorLeft();
                 }
             }
 
-            if (flags.HasFlag(GroupOneFlags.BSW) && !flags.HasFlag(GroupOneFlags.RAR) && !flags.HasFlag(GroupOneFlags.RAL))
+            if (flags.HasFlag(GroupOneInstructions.BSW) && !flags.HasFlag(GroupOneInstructions.RAR) && !flags.HasFlag(GroupOneInstructions.RAL))
             {
                 ByteSwap();
             }

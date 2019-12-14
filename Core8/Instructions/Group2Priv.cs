@@ -4,25 +4,25 @@ using Core8.Interfaces;
 
 namespace Core8.Instructions
 {
-    public class PrivilegedGroupTwoMicrocodedInstructions : MicrocodedInstructionsBase
+    public class Group2Priv : InstructionBase
     {
         private readonly IProcessor processor;
 
-        public PrivilegedGroupTwoMicrocodedInstructions(IProcessor processor, IRegisters registers) : base(registers)
+        public Group2Priv(IRegisters registers, IProcessor processor) : base(registers)
         {
             this.processor = processor;
         }
 
         public override void Execute(uint data)
         {
-            var flags = (PrivilegedGroupTwoFlags)(data & Masks.PRIVILEGED_GROUP_2_FLAGS);
+            var flags = (PrivilegedGroupTwoInstructions)(data & Masks.PRIVILEGED_GROUP_2_FLAGS);
 
-            if (flags.HasFlag(PrivilegedGroupTwoFlags.OSR))
+            if (flags.HasFlag(PrivilegedGroupTwoInstructions.OSR))
             {
                 Registers.LINK_AC.SetAccumulator(Registers.LINK_AC.Accumulator | Registers.Switch.Get);
             }
 
-            if (flags.HasFlag(PrivilegedGroupTwoFlags.HLT))
+            if (flags.HasFlag(PrivilegedGroupTwoInstructions.HLT))
             {
                 processor.Halt();
             }

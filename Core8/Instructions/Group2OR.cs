@@ -4,28 +4,28 @@ using Core8.Interfaces;
 
 namespace Core8.Instructions
 {
-    public class GroupTwoOrMicrocodedInstructions : MicrocodedInstructionsBase
+    public class Group2OR : InstructionBase
     {
-        public GroupTwoOrMicrocodedInstructions(IRegisters registers) : base(registers)
+        public Group2OR(IRegisters registers) : base(registers)
         { }
 
         public override void Execute(uint data)
         {
-            var flags = (GroupTwoOrFlags)(data & Masks.GROUP_2_OR_FLAGS);
+            var flags = (GroupTwoOrInstructions)(data & Masks.GROUP_2_OR_FLAGS);
 
             bool result = false;
 
-            if (flags.HasFlag(GroupTwoOrFlags.SMA))
+            if (flags.HasFlag(GroupTwoOrInstructions.SMA))
             {
                 result |= ((Registers.LINK_AC.Accumulator & Masks.AC_SIGN) != 0);
             }
 
-            if (flags.HasFlag(GroupTwoOrFlags.SZA))
+            if (flags.HasFlag(GroupTwoOrInstructions.SZA))
             {
                 result |= (Registers.LINK_AC.Accumulator == 0);
             }
 
-            if (flags.HasFlag(GroupTwoOrFlags.SNL))
+            if (flags.HasFlag(GroupTwoOrInstructions.SNL))
             {
                 result |= (Registers.LINK_AC.Link != 0);
             }
@@ -35,7 +35,7 @@ namespace Core8.Instructions
                 Registers.IF_PC.Increment();
             }
 
-            if (flags.HasFlag(GroupTwoOrFlags.CLA))
+            if (flags.HasFlag(GroupTwoOrInstructions.CLA))
             {
                 Registers.LINK_AC.Clear();
             }

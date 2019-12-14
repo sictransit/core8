@@ -1,26 +1,23 @@
 ﻿using Core8.Enums;
-using Core8.Extensions;
 using Core8.Interfaces;
 using System;
 
 namespace Core8.Instructions.Abstract
 {
-    public class MemoryReferenceInstructions : InstructionBase
+    public class MemRef : InstructionBase
     {
         private readonly IProcessor processor;
         private readonly IMemory memory;
-        private readonly IRegisters registers;
 
-        public MemoryReferenceInstructions(IProcessor processor, IRegisters registers, IMemory memory)
+        public MemRef(IRegisters registers, IProcessor processor, IMemory memory) : base(registers)
         {
             this.processor = processor;
-            this.registers = registers;
             this.memory = memory;
         }
 
-        public void Execute(uint data)
+        public override void Execute(uint data)
         {
-            var opCode = (InstructionName)(data & Masks.OP_CODE);
+            var opCode = (MemoryReferenceInstruction)(data & Masks.OP_CODE);
             var addressingMode = (AddressingModes)(data & Masks.ADDRESSING_MODE);
 
             var location = addressingMode.HasFlag(AddressingModes.Z) ? (processor.CurrentAddress & Masks.ADDRESS_PAGE) | (data & Masks.ADDRESS_WORD) : data & Masks.ADDRESS_WORD;
@@ -29,23 +26,23 @@ namespace Core8.Instructions.Abstract
 
             switch (opCode)
             {
-                case InstructionName.AND:
+                case MemoryReferenceInstruction.AND:
                     AND(address);
                     break;
-                case InstructionName.DCA:
-                    DCA(address); 
+                case MemoryReferenceInstruction.DCA:
+                    DCA(address);
                     break;
-                case InstructionName.ISZ:
+                case MemoryReferenceInstruction.ISZ:
                     ISZ(address);
                     break;
-                case InstructionName.JMP:
-                    JMP(address); 
+                case MemoryReferenceInstruction.JMP:
+                    JMP(address);
                     break;
-                case InstructionName.JMS:
-                    JMS(address); 
+                case MemoryReferenceInstruction.JMS:
+                    JMS(address);
                     break;
-                case InstructionName.TAD:
-                    TAD(address); 
+                case MemoryReferenceInstruction.TAD:
+                    TAD(address);
                     break;
                 default:
                     throw new NotImplementedException();
@@ -56,16 +53,16 @@ namespace Core8.Instructions.Abstract
         {
             var value = memory.Read(address);
 
-            var ac = registers.LINK_AC.Accumulator;
+            var ac = Registers.LINK_AC.Accumulator;
 
-            registers.LINK_AC.SetAccumulator(value & ac);
+            Registers.LINK_AC.SetAccumulator(value & ac);
         }
 
         private void DCA(uint address)
         {
-            memory.Write(address, registers.LINK_AC.Accumulator);
+            memory.Write(address, Registers.LINK_AC.Accumulator);
 
-            registers.LINK_AC.SetAccumulator(0);
+            Registers.LINK_AC.SetAccumulator(0);
         }
 
         private void ISZ(uint address)
@@ -78,31 +75,31 @@ namespace Core8.Instructions.Abstract
 
             if (value == 0)
             {
-                registers.IF_PC.Increment();
+                Registers.IF_PC.Increment();
             }
         }
 
         private void JMP(uint address)
         {
-            registers.IF_PC.Set(address);
+            Registers.IF_PC.Set(address);
         }
 
         private void JMS(uint address)
         {
-            var pc = registers.IF_PC.Address;
+            var pc = Registers.IF_PC.Address;
 
             memory.Write(address, pc);
 
-            registers.IF_PC.Set(address + 1);
+            Registers.IF_PC.Set(address + 1);
         }
 
         private void TAD(uint address)
         {
             var value = memory.Read(address);
 
-            var ac = registers.LINK_AC.Accumulator;
+            var ac = Registers.LINK_AC.Accumulator;
 
-            registers.LINK_AC.Set(ac + value);
+            Registers.LINK_AC.Set(ac + value);
         }
     }
 

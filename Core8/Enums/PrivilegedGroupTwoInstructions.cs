@@ -3,7 +3,7 @@
 namespace Core8.Enums
 {
     [Flags]
-    public enum PrivilegedGroupTwoFlags : uint
+    public enum PrivilegedGroupTwoInstructions : uint
     {
         HLT = 1 << 1,
         OSR = 1 << 2,
