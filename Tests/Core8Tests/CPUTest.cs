@@ -5,7 +5,7 @@ using Serilog;
 using System.IO;
 using System.Threading;
 
-namespace Core8Tests
+namespace Core8.Tests
 {
     [TestClass]
     public class CPUTest
@@ -66,40 +66,18 @@ namespace Core8Tests
             pdp.Load8(7756);
         }
 
-        private static void LoadRIMLowSpeed(PDP pdp)
-        {
-            pdp.Load8(7756);
+        
 
-            pdp.Deposit8(6032);
-            pdp.Deposit8(6031);
-            pdp.Deposit8(5357);
-            pdp.Deposit8(6036);
-            pdp.Deposit8(7106);
-            pdp.Deposit8(7006);
-            pdp.Deposit8(7510);
-            pdp.Deposit8(5357);
-            pdp.Deposit8(7006);
-            pdp.Deposit8(6031);
-            pdp.Deposit8(5367);
-            pdp.Deposit8(6034);
-            pdp.Deposit8(7420);
-            pdp.Deposit8(3776);
-            pdp.Deposit8(3376);
-            pdp.Deposit8(5356);
+        //[TestMethod]
+        //public void TestLoadTape()
+        //{
+        //    var bin = File.ReadAllBytes(@"Tapes/dnnbin.rim");
 
-            pdp.Load8(7756);
-        }
+        //    pdp.LoadTape(bin);
 
-        [TestMethod]
-        public void TestLoadTape()
-        {
-            var bin = File.ReadAllBytes(@"Tapes/dnnbin.rim");
-
-            pdp.LoadTape(bin);
-
-            Assert.IsFalse(pdp.Keyboard.IsFlagSet);
-            Assert.IsTrue(pdp.Keyboard.IsTapeLoaded);
-        }
+        //    Assert.IsFalse(pdp.Keyboard.IsFlagSet);
+        //    Assert.IsTrue(pdp.Keyboard.IsTapeLoaded);
+        //}
 
         [TestMethod]
         public void TestHelloWorld()
@@ -149,35 +127,6 @@ namespace Core8Tests
 
             Log.Information(pdp.Teleprinter.Printout);
         }
-
-        [TestMethod]
-        public void TestBIN()
-        {
-            LoadRIMLowSpeed(pdp); // Toggle RIM loader
-
-            //var bin = File.ReadAllBytes(@"Tapes/dec-08-lbaa-pm_5-10-67.bin"); // Load a paper tape image of 1967 from disk.
-            var bin = File.ReadAllBytes(@"Tapes/dnnbin.rim");
-
-            pdp.LoadTape(bin); // Load tape
-
-            pdp.Start(waitForHalt: false); // Run! RIM loader won't HLT.
-
-            while (pdp.Keyboard.IsTapeLoaded) // While there is tape to be read ...
-            {
-                Thread.Sleep(0);
-            }
-
-            pdp.Stop(); // HLT!
-
-            Assert.AreEqual(5304u.ToDecimal(), pdp.Memory.Read(4095)); // Verify a JMP @ end of RAM
-
-
-
-           
-
-
-        }
-
 
         [TestMethod]
         public void TestIAC()

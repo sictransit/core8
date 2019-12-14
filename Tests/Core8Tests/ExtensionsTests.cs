@@ -2,7 +2,7 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 
-namespace Core8Tests
+namespace Core8.Tests
 {
     [TestClass]
     public class ExtensionsTests
