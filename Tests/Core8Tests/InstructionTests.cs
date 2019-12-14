@@ -1,4 +1,3 @@
-using Core8;
 using Core8.Extensions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Serilog;

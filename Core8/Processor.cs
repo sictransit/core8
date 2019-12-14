@@ -56,9 +56,9 @@ namespace Core8
                 catch (NotImplementedException)
                 {
                     Log.Warning($"[{CurrentAddress.ToOctalString()}] NOP {instruction.ToOctalString()}");
-                    
+
                 }
-                
+
 
                 keyboard.Tick();
                 teleprinter.Tick();

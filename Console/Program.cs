@@ -1,16 +1,13 @@
-﻿using Core8;
-using Core8.Extensions;
-using Serilog;
-using System;
+﻿using Serilog;
 using System.IO;
 using System.Threading;
 
-namespace Console
+namespace Core8.Console
 {
     public class Program
     {
         public static void Main(string[] args)
-{
+        {
             var pdp = new PDP();
 
             Log.Logger = new LoggerConfiguration()

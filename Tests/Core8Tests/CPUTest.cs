@@ -1,9 +1,5 @@
-using Core8;
-using Core8.Extensions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Serilog;
-using System.IO;
-using System.Threading;
 
 namespace Core8.Tests
 {
@@ -66,7 +62,7 @@ namespace Core8.Tests
             pdp.Load8(7756);
         }
 
-        
+
 
         //[TestMethod]
         //public void TestLoadTape()
