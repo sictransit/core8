@@ -16,16 +16,20 @@ namespace Core8
         private readonly GroupOneMicrocodedInstructions groupOneMicrocodedInstructions;
         private readonly GroupTwoAndMicrocodedInstructions groupTwoAndMicrocodedInstructions;
         private readonly GroupTwoOrMicrocodedInstructions groupTwoOrMicrocodedInstructions;
+        private readonly PrivilegedGroupTwoMicrocodedInstructions privilegedGroupTwoMicrocodedInstructions;
+        private readonly MemoryReferenceInstructions memoryReferenceInstructions;
 
-        public Processor(IMemory memeory, IRegisters registers, IKeyboard keyboard, ITeleprinter teleprinter)
+        public Processor(IMemory memory, IRegisters registers, IKeyboard keyboard, ITeleprinter teleprinter)
         {
-            environment = new Environment(this, memeory, registers, keyboard, teleprinter);
+            environment = new Environment(this, memory, registers, keyboard, teleprinter);
 
             teleprinterInstructions = new TeleprinterInstructions(registers, teleprinter);
             keyboardInstructions = new KeyboardInstructions(registers, keyboard);
             groupOneMicrocodedInstructions = new GroupOneMicrocodedInstructions(registers);
             groupTwoAndMicrocodedInstructions = new GroupTwoAndMicrocodedInstructions(registers);
             groupTwoOrMicrocodedInstructions = new GroupTwoOrMicrocodedInstructions(registers);
+            privilegedGroupTwoMicrocodedInstructions = new PrivilegedGroupTwoMicrocodedInstructions(this, registers);
+            memoryReferenceInstructions = new MemoryReferenceInstructions(this, registers, memory);
         }
 
         public uint CurrentAddress { get; private set; }
@@ -47,8 +51,6 @@ namespace Core8
 
                 var data = environment.Memory.Read(CurrentAddress);
 
-                InstructionBase instruction;
-
                 if (!Execute(data))
                 {
                     Log.Warning($"Not implemented: {CurrentAddress.ToOctalString()}: {data.ToOctalString()}");
@@ -56,8 +58,6 @@ namespace Core8
 
 
                 environment.Registers.IF_PC.Increment();
-
-                instruction.Execute(environment);
 
                 environment.Tick();
 

@@ -1,39 +1,109 @@
 ﻿using Core8.Enums;
 using Core8.Extensions;
 using Core8.Interfaces;
+using System;
 
 namespace Core8.Instructions.Abstract
 {
-    public abstract class MemoryReferenceInstructions : InstructionBase
+    public class MemoryReferenceInstructions : InstructionBase
     {
-        private readonly uint data;
+        private readonly IProcessor processor;
+        private readonly IMemory memory;
+        private readonly IRegisters registers;
 
-        protected MemoryReferenceInstructions(uint data) 
+        public MemoryReferenceInstructions(IProcessor processor, IRegisters registers, IMemory memory)
         {
-            this.data = data;
+            this.processor = processor;
+            this.registers = registers;
+            this.memory = memory;
         }
 
-        public InstructionName OpCode => (InstructionName)(Data & Masks.OP_CODE);
-
-        public AddressingModes AddressingMode => (AddressingModes)(Data & Masks.ADDRESSING_MODE);
-
-        public override string ToString()
+        public void Execute(uint data)
         {
-            var mode = AddressingMode != 0 ? AddressingMode.ToString() : string.Empty;
+            var opCode = (InstructionName)(data & Masks.OP_CODE);
+            var addressingMode = (AddressingModes)(data & Masks.ADDRESSING_MODE);
 
-            return $"{Data.ToOctalString()} {OpCode} {mode} {(Data & Masks.ADDRESS_WORD).ToOctal().ToString()}";
-        }
+            var location = addressingMode.HasFlag(AddressingModes.Z) ? (processor.CurrentAddress & Masks.ADDRESS_PAGE) | (data & Masks.ADDRESS_WORD) : data & Masks.ADDRESS_WORD;
 
-        protected uint GetAddress(IEnvironment environment)
-        {
-            if (environment is null)
+            var address = addressingMode.HasFlag(AddressingModes.I) ? memory.Read(location) : location;
+
+            switch (opCode)
             {
-                throw new System.ArgumentNullException(nameof(environment));
+                case InstructionName.AND:
+                    AND(address);
+                    break;
+                case InstructionName.DCA:
+                    DCA(address); 
+                    break;
+                case InstructionName.ISZ:
+                    ISZ(address);
+                    break;
+                case InstructionName.JMP:
+                    JMP(address); 
+                    break;
+                case InstructionName.JMS:
+                    JMS(address); 
+                    break;
+                case InstructionName.TAD:
+                    TAD(address); 
+                    break;
+                default:
+                    throw new NotImplementedException();
             }
+        }
 
-            var location = AddressingMode.HasFlag(AddressingModes.Z) ? (environment.Processor.CurrentAddress & Masks.ADDRESS_PAGE) | (Data & Masks.ADDRESS_WORD) : Data & Masks.ADDRESS_WORD;
+        private void AND(uint address)
+        {
+            var value = memory.Read(address);
 
-            return AddressingMode.HasFlag(AddressingModes.I) ? environment.Memory.Read(location) : location;
+            var ac = registers.LINK_AC.Accumulator;
+
+            registers.LINK_AC.SetAccumulator(value & ac);
+        }
+
+        private void DCA(uint address)
+        {
+            memory.Write(address, registers.LINK_AC.Accumulator);
+
+            registers.LINK_AC.SetAccumulator(0);
+        }
+
+        private void ISZ(uint address)
+        {
+            var value = memory.Read(address);
+
+            value = value + 1 & Masks.MEM_WORD;
+
+            memory.Write(address, value);
+
+            if (value == 0)
+            {
+                registers.IF_PC.Increment();
+            }
+        }
+
+        private void JMP(uint address)
+        {
+            registers.IF_PC.Set(address);
+        }
+
+        private void JMS(uint address)
+        {
+            var pc = registers.IF_PC.Address;
+
+            memory.Write(address, pc);
+
+            registers.IF_PC.Set(address + 1);
+        }
+
+        private void TAD(uint address)
+        {
+            var value = memory.Read(address);
+
+            var ac = registers.LINK_AC.Accumulator;
+
+            registers.LINK_AC.Set(ac + value);
         }
     }
+
 }

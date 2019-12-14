@@ -23,22 +23,22 @@ namespace Core8Tests
                 .CreateLogger();
         }
 
-        private static void DumpMemory(PDP pdp)
-        {
-            for (uint i = 0; i < pdp.Memory.Size; i++)
-            {
-                var data = pdp.Memory.Read(i, true);
+        //private static void DumpMemory(PDP pdp)
+        //{
+        //    for (uint i = 0; i < pdp.Memory.Size; i++)
+        //    {
+        //        var data = pdp.Memory.Read(i, true);
 
-                if (Decoder.TryDecode(data, out var instruction))
-                {
-                    Log.Debug($"{i.ToOctalString()}: {instruction}");
-                }
-                else
-                {
-                    Log.Debug($"{i.ToOctalString()}: {data.ToOctalString()}");
-                }
-            }
-        }
+        //        if (Decoder.TryDecode(data, out var instruction))
+        //        {
+        //            Log.Debug($"{i.ToOctalString()}: {instruction}");
+        //        }
+        //        else
+        //        {
+        //            Log.Debug($"{i.ToOctalString()}: {data.ToOctalString()}");
+        //        }
+        //    }
+        //}
 
         private static void LoadRIMHighSpeed(PDP pdp)
         {
@@ -181,7 +181,7 @@ namespace Core8Tests
 
             pdp.Load8(0200);
 
-            DumpMemory(pdp);
+            //DumpMemory(pdp);
 
             pdp.Start();
 

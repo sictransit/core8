@@ -1,9 +1,5 @@
 ﻿using Core8.Enums;
-using Core8.Instructions;
 using Core8.Instructions.Abstract;
-using Core8.Instructions.Keyboard;
-using Core8.Instructions.MemoryReference;
-using Core8.Instructions.Microcoded;
 
 namespace Core8
 {
@@ -18,35 +14,26 @@ namespace Core8
             switch (instructionName)
             {
                 case InstructionName.MCI:
-                    instruction = DecodeMicrocode(data);
-                    break;
-                case InstructionName.IOT:
-                    var ioInstruction = (IOInstructionName)data;
-                    return ExecuteIO(ioInstruction, data);                    
+                    return ExecuteMicrocode(data);                    
+                case InstructionName.IOT:                    
+                    return ExecuteIO(data);                    
                 default:
-                    instruction = DecodeMemoryReference(instructionName, data);
-                    break;
+                    return ExecuteMemoryReference(data);
             }
-
-            return instruction != null;
         }
 
 
-        private InstructionBase DecodeMemoryReference(InstructionName name, uint data) =>
-            name switch
-            {
-                InstructionName.AND => new AND(data),
-                InstructionName.TAD => new TAD(data),
-                InstructionName.ISZ => new ISZ(data),
-                InstructionName.DCA => new DCA(data),
-                InstructionName.JMS => new JMS(data),
-                InstructionName.JMP => new JMP(data),
-                _ => null
-            };
-
-
-        private bool ExecuteIO(IOInstructionName name, uint data)
+        private bool ExecuteMemoryReference(uint data)
         {
+            memoryReferenceInstructions.Execute(data);
+
+            return true;
+        }
+
+        private bool ExecuteIO(uint data)
+        {
+            var name = (IOInstructionName)data;
+
             switch (name)
             {
                 case IOInstructionName.KCF:
@@ -80,7 +67,7 @@ namespace Core8
             return true;
         }
 
-        private bool DecodeMicrocode(uint data)
+        private bool ExecuteMicrocode(uint data)
         {
             if ((data & Masks.GROUP) == 0) // Group #1
             {
@@ -88,7 +75,7 @@ namespace Core8
             }
             else if ((data & Masks.GROUP_2_PRIV) != 0)
             {
-                return new PG2(data);
+                privilegedGroupTwoMicrocodedInstructions.Execute(data);
             }
             else if ((data & Masks.GROUP_2_AND) == Masks.GROUP_2_AND)
             {
