@@ -1,4 +1,5 @@
 ﻿using Core8.Interfaces;
+using Serilog;
 using System;
 using System.Collections.Concurrent;
 using System.Threading;
@@ -28,6 +29,8 @@ namespace Core8
                 buffer = item;
 
                 flag.Set();
+
+                Log.Debug($"Reader queue: {queue.Count}");
             }
         }
 

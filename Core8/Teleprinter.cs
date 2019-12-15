@@ -31,7 +31,7 @@ namespace Core8
 
                 flag.Set();
 
-                Log.Debug(Printout);
+                Log.Information(Printout);
             }
         }
 

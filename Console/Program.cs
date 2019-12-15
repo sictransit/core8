@@ -13,7 +13,7 @@ namespace Core8.Console
 
             Log.Logger = new LoggerConfiguration()
                 .WriteTo.Console()
-                .MinimumLevel.Debug()
+                .MinimumLevel.Information()
                 .CreateLogger();
 
             TestBIN(pdp);
@@ -23,10 +23,7 @@ namespace Core8.Console
         {
             LoadRIMLowSpeed(pdp); // Toggle RIM loader
 
-            //var bin = File.ReadAllBytes(@"Tapes/dec-08-lbaa-pm_5-10-67.bin"); // Load a paper tape image of 1967 from disk.
-            var bin = File.ReadAllBytes(@"Tapes/dnnbin.rim");
-
-            pdp.LoadTape(bin); // Load tape
+            pdp.LoadTape(File.ReadAllBytes(@"Tapes/dnnbin.rim")); // Load BIN loader
 
             pdp.Start(waitForHalt: false); // Run! RIM loader won't HLT.
 

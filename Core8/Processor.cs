@@ -7,8 +7,7 @@ namespace Core8
 {
     public class Processor : IProcessor
     {
-        private volatile bool halted;
-
+        private readonly ManualResetEvent running = new ManualResetEvent(false);
 
         public Processor(IMemory memory, IRegisters registers, IKeyboard keyboard, ITeleprinter teleprinter)
         {
@@ -19,18 +18,16 @@ namespace Core8
 
         public void Halt()
         {
-            halted = true;
+            running.Reset();
         }
 
         public void Run()
         {
-            halted = false;
+            running.Set();
 
             Log.Information("RUN");
 
-
-
-            while (!halted)
+            while (running.WaitOne(0))
             {
                 var address = Hardware.Registers.IF_PC.Address;
 
@@ -50,8 +47,6 @@ namespace Core8
                 }
 
                 Hardware.Tick();
-
-                Thread.Sleep(0);
             }
 
             Log.Information("HLT");
