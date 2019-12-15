@@ -1,8 +1,6 @@
-﻿using Core8.Enums;
-using Core8.Extensions;
+﻿using Core8.Extensions;
 using Core8.Interfaces;
 using Serilog;
-using System;
 using System.Threading;
 
 namespace Core8
@@ -11,24 +9,13 @@ namespace Core8
     {
         private volatile bool halted;
 
-        private readonly IMemory memory;
-        private readonly IRegisters registers;
-        private readonly IKeyboard keyboard;
-        private readonly ITeleprinter teleprinter;
-
-        private readonly InstructionSet instructionSet;
 
         public Processor(IMemory memory, IRegisters registers, IKeyboard keyboard, ITeleprinter teleprinter)
         {
-            instructionSet = new InstructionSet(this, memory, registers, keyboard, teleprinter);
-
-            this.memory = memory;
-            this.registers = registers;
-            this.keyboard = keyboard;
-            this.teleprinter = teleprinter;
+            Hardware = new Hardware(this, memory, registers, keyboard, teleprinter);
         }
 
-        public uint CurrentAddress { get; private set; }
+        public IHardware Hardware { get; }
 
         public void Halt()
         {
@@ -41,27 +28,28 @@ namespace Core8
 
             Log.Information("RUN");
 
+
+
             while (!halted)
             {
-                CurrentAddress = registers.IF_PC.Address;
+                var address = Hardware.Registers.IF_PC.Address;
 
-                var instruction = memory.Read(CurrentAddress);
+                var data = Hardware.Memory.Read(address);
 
-                registers.IF_PC.Increment();
+                Hardware.Registers.IF_PC.Increment();
 
-                try
+                if (Decoder.TryDecode(address, data, out var instruction))
                 {
-                    Execute(instruction);
+                    instruction.Execute(Hardware);
+
+                    Log.Debug(instruction.ToString());
                 }
-                catch (NotImplementedException)
+                else
                 {
-                    Log.Warning($"[{CurrentAddress.ToOctalString()}] NOP {instruction.ToOctalString()}");
-
+                    Log.Warning($"[{address.ToOctalString()}] NOP {data.ToOctalString()}");
                 }
 
-
-                keyboard.Tick();
-                teleprinter.Tick();
+                Hardware.Tick();
 
                 Thread.Sleep(0);
             }
@@ -69,62 +57,6 @@ namespace Core8
             Log.Information("HLT");
         }
 
-        private void Execute(uint data)
-        {
-            var opCode = (data & Masks.OP_CODE);
 
-            var instructionName = (InstructionClass)opCode;
-
-            switch (instructionName)
-            {
-                case InstructionClass.MCI:
-                    ExecuteMicrocode(data);
-                    break;
-                case InstructionClass.IOT:
-                    ExecuteIO(data);
-                    break;
-                default:
-                    ExecuteMemoryReference(data);
-                    break;
-            }
-        }
-
-
-        private void ExecuteMemoryReference(uint data)
-        {
-            instructionSet.MemRef.Execute(data);
-        }
-
-        private void ExecuteIO(uint data)
-        {
-            if ((data & Masks.KEYBOARD_INSTRUCTION_FLAGS) == Masks.KEYBOARD_INSTRUCTION_FLAGS)
-            {
-                instructionSet.Keyboard.Execute(data);
-            }
-            else
-            {
-                instructionSet.Teleprinter.Execute(data);
-            }
-        }
-
-        private void ExecuteMicrocode(uint data)
-        {
-            if ((data & Masks.GROUP) == 0) // Group #1
-            {
-                instructionSet.Group1.Execute(data);
-            }
-            else if ((data & Masks.GROUP_2_PRIV) != 0)
-            {
-                instructionSet.Group2Priv.Execute(data);
-            }
-            else if ((data & Masks.GROUP_2_AND) == Masks.GROUP_2_AND)
-            {
-                instructionSet.Group2AND.Execute(data);
-            }
-            else
-            {
-                instructionSet.Group2OR.Execute(data);
-            }
-        }
     }
 }

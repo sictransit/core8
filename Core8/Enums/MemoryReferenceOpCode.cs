@@ -1,6 +1,6 @@
 ﻿namespace Core8.Enums
 {
-    public enum MemoryReferenceInstruction : uint
+    public enum MemoryReferenceOpCode : uint
     {
         AND = 0b_000_00_0000000,
         TAD = 0b_001_00_0000000,

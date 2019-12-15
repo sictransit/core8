@@ -1,4 +1,5 @@
 ﻿using Core8.Interfaces;
+using Serilog;
 using System;
 using System.Collections.Concurrent;
 using System.Text;
@@ -29,6 +30,8 @@ namespace Core8
                 paper.Append(c);
 
                 flag.Set();
+
+                Log.Debug(Printout);
             }
         }
 

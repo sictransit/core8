@@ -5,7 +5,5 @@
         void Run();
 
         void Halt();
-
-        uint CurrentAddress { get; }
     }
 }

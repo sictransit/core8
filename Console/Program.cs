@@ -1,5 +1,6 @@
 ﻿using Serilog;
 using System.IO;
+using System.Net.Http;
 using System.Threading;
 
 namespace Core8.Console
@@ -36,21 +37,19 @@ namespace Core8.Console
 
             pdp.Stop(); // HLT
 
-            pdp.LoadTape(File.ReadAllBytes(@"Tapes/MAINDEC-8E-D0AB-PB.bin"));
+            var client = new HttpClient();
+
+            var tape = client.GetByteArrayAsync(@"https://github.com/PontusPih/TINT8/releases/download/v0.1.0-alpha/tint.bin").Result;
+
+            pdp.LoadTape(tape);
 
             pdp.Load8(7777);
+
+            pdp.Toggle8(0000);
 
             pdp.Start();
 
             pdp.Load8(0200);
-
-            pdp.Toggle8(7777);
-
-            pdp.Registers.LINK_AC.Clear();
-
-            pdp.Start();
-
-            Log.Information(pdp.Registers.LINK_AC.Accumulator.ToString());
 
             pdp.Start();
         }

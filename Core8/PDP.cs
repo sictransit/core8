@@ -1,6 +1,7 @@
 ﻿using Core8.Extensions;
 using Core8.Interfaces;
 using Serilog;
+using System;
 using System.Threading;
 
 namespace Core8
@@ -111,7 +112,7 @@ namespace Core8
         {
             if (tape is null)
             {
-                throw new System.ArgumentNullException(nameof(tape));
+                throw new ArgumentNullException(nameof(tape));
             }
 
             Keyboard.Load(tape);

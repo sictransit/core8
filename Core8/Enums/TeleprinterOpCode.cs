@@ -1,6 +1,6 @@
 ﻿namespace Core8.Enums
 {
-    public enum TeleprinterInstruction : uint
+    public enum TeleprinterOpCode : uint
     {
         TSF = 0b_110_000_100_001,
         TLS = 0b_110_000_100_110,

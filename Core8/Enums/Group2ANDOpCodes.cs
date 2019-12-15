@@ -3,7 +3,7 @@
 namespace Core8.Enums
 {
     [Flags]
-    public enum GroupTwoAndInstructions : uint
+    public enum Group2ANDOpCodes : uint
     {
         CLA = 1 << 7 | 1 << 3,
         SPA = 1 << 6 | 1 << 3,

@@ -3,7 +3,7 @@
 namespace Core8.Enums
 {
     [Flags]
-    public enum GroupOneInstructions : uint
+    public enum Group1OpCodes : uint
     {
         IAC = 1 << 0,
         BSW = 1 << 1,

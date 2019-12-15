@@ -3,7 +3,7 @@
 namespace Core8.Enums
 {
     [Flags]
-    public enum GroupTwoOrInstructions : uint
+    public enum Group2OROpCodes : uint
     {
         CLA = 1 << 7,
         SMA = 1 << 6,
