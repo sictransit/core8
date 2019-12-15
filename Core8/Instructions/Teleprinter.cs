@@ -1,6 +1,8 @@
 ﻿using Core8.Enums;
+using Core8.Extensions;
 using Core8.Instructions.Abstract;
 using Core8.Interfaces;
+using Serilog;
 using System;
 
 namespace Core8.Instructions
@@ -30,7 +32,9 @@ namespace Core8.Instructions
                     TSF();
                     break;
                 default:
-                    throw new NotImplementedException();
+                    Log.Warning($"NOP {data.ToOctalString()}");
+                    //throw new NotImplementedException();
+                    break;
             }
         }
 

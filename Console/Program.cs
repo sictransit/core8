@@ -35,6 +35,24 @@ namespace Core8.Console
             }
 
             pdp.Stop(); // HLT
+
+            pdp.LoadTape(File.ReadAllBytes(@"Tapes/MAINDEC-8E-D0AB-PB.bin"));
+
+            pdp.Load8(7777);
+
+            pdp.Start();
+
+            pdp.Load8(0200);
+
+            pdp.Toggle8(7777);
+
+            pdp.Registers.LINK_AC.Clear();
+
+            pdp.Start();
+
+            Log.Information(pdp.Registers.LINK_AC.Accumulator.ToString());
+
+            pdp.Start();
         }
 
 

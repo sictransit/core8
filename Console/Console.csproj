@@ -18,7 +18,10 @@
     <None Update="Tapes\dnnbin.rim">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Tapes\MAINDEC-08-D2PE-PB.bin">
+    <None Update="Tapes\MAINDEC-8E-D0AB-PB">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Tapes\MAINDEC-8E-D0AB-PB.bin">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
