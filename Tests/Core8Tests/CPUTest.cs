@@ -1,3 +1,4 @@
+using Core8.Extensions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Serilog;
 
@@ -19,61 +20,23 @@ namespace Core8.Tests
                 .CreateLogger();
         }
 
-        //private static void DumpMemory(PDP pdp)
-        //{
-        //    for (uint i = 0; i < pdp.Memory.Size; i++)
-        //    {
-        //        var data = pdp.Memory.Read(i, true);
-
-        //        if (Decoder.TryDecode(data, out var instruction))
-        //        {
-        //            Log.Debug($"{i.ToOctalString()}: {instruction}");
-        //        }
-        //        else
-        //        {
-        //            Log.Debug($"{i.ToOctalString()}: {data.ToOctalString()}");
-        //        }
-        //    }
-        //}
-
-        private static void LoadRIMHighSpeed(PDP pdp)
+        private static void DumpMemory(PDP pdp)
         {
-            pdp.Load8(7756);
+            for (uint address = 0; address < pdp.Memory.Size; address++)
+            {
+                var data = pdp.Memory.Read(address, true);
 
-            pdp.Deposit8(6014);
-            pdp.Deposit8(6011);
-            pdp.Deposit8(5357);
-            pdp.Deposit8(6016);
-            pdp.Deposit8(7106);
-            pdp.Deposit8(7006);
-            pdp.Deposit8(7510);
-            pdp.Deposit8(5374); // 5357
-            pdp.Deposit8(7006);
-            pdp.Deposit8(6011);
-            pdp.Deposit8(5367);
-            pdp.Deposit8(6016);
-            pdp.Deposit8(7420);
-            pdp.Deposit8(3776);
-            pdp.Deposit8(3376);
-            pdp.Deposit8(5357);
-            pdp.Deposit8(0);
-            pdp.Deposit8(0);
-
-            pdp.Load8(7756);
+                if (Decoder.TryDecode(address, data, out var instruction))
+                {
+                    Log.Debug($"{instruction}");
+                }
+                else
+                {
+                    Log.Debug($"{address.ToOctalString()}: {data.ToOctalString()}");
+                }
+            }
         }
 
-
-
-        //[TestMethod]
-        //public void TestLoadTape()
-        //{
-        //    var bin = File.ReadAllBytes(@"Tapes/dnnbin.rim");
-
-        //    pdp.LoadTape(bin);
-
-        //    Assert.IsFalse(pdp.Keyboard.IsFlagSet);
-        //    Assert.IsTrue(pdp.Keyboard.IsTapeLoaded);
-        //}
 
         [TestMethod]
         public void TestHelloWorld()
@@ -114,7 +77,7 @@ namespace Core8.Tests
             //pdp.Load8(0177);
             //pdp.Deposit8(7600);
 
-            //DumpMemory(pdp);
+            DumpMemory(pdp);
 
             pdp.Load8(0200);
             pdp.Start();
