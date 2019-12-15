@@ -16,7 +16,7 @@ namespace Core8.Instructions
 
         public override void Execute(uint data)
         {
-            var opCode = (TeleprinterInstruction)(data & Masks.OP_CODE);
+            var opCode = (TeleprinterInstruction)data;
 
             switch (opCode)
             {

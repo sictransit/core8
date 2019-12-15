@@ -16,7 +16,7 @@ namespace Core8.Instructions
 
         public override void Execute(uint data)
         {
-            var opCode = (KeyboardInstruction)(data & Masks.OP_CODE);
+            var opCode = (KeyboardInstruction)data;
 
             switch (opCode)
             {
