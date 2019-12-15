@@ -36,7 +36,7 @@ namespace Core8.Console
 
             var client = new HttpClient();
 
-            var tape = client.GetByteArrayAsync(@"https://github.com/PontusPih/TINT8/releases/download/v0.1.0-alpha/tint.bin").Result;
+            var tape = client.GetByteArrayAsync(@"https://github.com/PontusPih/TINT8/releases/download/v0.1.0-alpha/tint.bin").Result; // Pontus' TINT
 
             pdp.LoadTape(tape);
 
