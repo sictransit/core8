@@ -11,12 +11,7 @@ namespace Core8.Extensions
 
         public static uint ToOctal(this uint dec)
         {
-            if (dec == 0)
-            {
-                return 0;
-            }
-
-            return dec % 8 + 10 * (dec / 8).ToOctal();
+            return dec == 0 ? 0 : dec % 8 + 10 * (dec / 8).ToOctal();
         }
 
         public static string ToOctalString(this uint dec)

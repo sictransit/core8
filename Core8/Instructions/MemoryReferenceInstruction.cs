@@ -1,6 +1,7 @@
 ﻿using Core8.Enums;
 using Core8.Interfaces;
 using System;
+using System.Linq;
 
 namespace Core8.Instructions.Abstract
 {
@@ -14,7 +15,7 @@ namespace Core8.Instructions.Abstract
 
         private AddressingModes AddressingModes => (AddressingModes)(Data & Masks.ADDRESSING_MODE);
 
-        protected override string OpCodeText => string.Join(" ", new[] { OpCode.ToString(), AddressingModes.ToString() });
+        protected override string OpCodeText => string.Join(" ", (new[] { OpCode.ToString(), AddressingModes != 0 ? AddressingModes.ToString() : string.Empty }).Where(x => !string.IsNullOrEmpty(x)));
 
         public override void Execute(IHardware hardware)
         {
@@ -24,22 +25,22 @@ namespace Core8.Instructions.Abstract
 
             switch (OpCode)
             {
-                case Enums.MemoryReferenceOpCode.AND:
+                case MemoryReferenceOpCode.AND:
                     AND(hardware, address);
                     break;
-                case Enums.MemoryReferenceOpCode.DCA:
+                case MemoryReferenceOpCode.DCA:
                     DCA(hardware, address);
                     break;
-                case Enums.MemoryReferenceOpCode.ISZ:
+                case MemoryReferenceOpCode.ISZ:
                     ISZ(hardware, address);
                     break;
-                case Enums.MemoryReferenceOpCode.JMP:
+                case MemoryReferenceOpCode.JMP:
                     JMP(hardware, address);
                     break;
-                case Enums.MemoryReferenceOpCode.JMS:
+                case MemoryReferenceOpCode.JMS:
                     JMS(hardware, address);
                     break;
-                case Enums.MemoryReferenceOpCode.TAD:
+                case MemoryReferenceOpCode.TAD:
                     TAD(hardware, address);
                     break;
                 default:

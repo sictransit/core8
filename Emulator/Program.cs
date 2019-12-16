@@ -40,7 +40,7 @@ namespace Core8
 
             var client = new HttpClient();
 
-            var tape = client.GetByteArrayAsync(@"https://github.com/PontusPih/TINT8/releases/download/v0.1.0-alpha/tint.bin").Result; // Pontus' TINT
+            var tape = client.GetByteArrayAsync(@"https://www.pdp8.net/pdp8cgi/os8_html/INST2.BN?act=file;fn=images/misc_dectapes/unlabled2.tu56;blk=308,11,0;to=sv_bin").Result; 
 
             pdp.LoadTape(tape);
 
@@ -57,16 +57,8 @@ namespace Core8
 
             loggingLevel.MinimumLevel = Serilog.Events.LogEventLevel.Debug;
 
-            pdp.Start(waitForHalt: false);
-
-            while (true)
-            {
-                Thread.Sleep(1000);
-
-                pdp.Keyboard.Load(new[] { (byte)'F' });
-
-                Log.Information("Typed something ...");
-            }        
+            pdp.Start(waitForHalt: true);
+        
         }
 
 
