@@ -26,7 +26,9 @@ namespace Core8.Tests
             {
                 var data = pdp.Memory.Read(address, true);
 
-                if (Processor.TryDecode(address, data, 3, 4, out var instruction))
+                var instruction = Processor.Decode(address, data, 3, 4);
+
+                if (instruction != null)
                 {
                     Log.Debug($"{instruction}");
                 }

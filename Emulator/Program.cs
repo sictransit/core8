@@ -1,4 +1,5 @@
 ﻿using Serilog;
+using Serilog.Core;
 using System;
 using System.IO;
 using System.Net.Http;
@@ -8,13 +9,15 @@ namespace Core8
 {
     public class Program
     {
+        private static LoggingLevelSwitch loggingLevel = new LoggingLevelSwitch(Serilog.Events.LogEventLevel.Information);
+
         public static void Main(string[] args)
         {
             var pdp = new PDP();
 
             Log.Logger = new LoggerConfiguration()
                 .WriteTo.Console()
-                .MinimumLevel.Information()
+                .MinimumLevel.ControlledBy(loggingLevel)
                 .CreateLogger();
 
             TestBIN(pdp);
@@ -47,9 +50,23 @@ namespace Core8
 
             pdp.Start();
 
+            pdp.Teleprinter.Clear();
+            pdp.Keyboard.Clear();
+
             pdp.Load8(0200);
 
-            pdp.Start(waitForHalt: true);
+            loggingLevel.MinimumLevel = Serilog.Events.LogEventLevel.Debug;
+
+            pdp.Start(waitForHalt: false);
+
+            while (true)
+            {
+                Thread.Sleep(1000);
+
+                pdp.Keyboard.Load(new[] { (byte)'F' });
+
+                Log.Information("Typed something ...");
+            }        
         }
 
 

@@ -2,10 +2,6 @@
 {
     public interface IKeyboard : IIODevice
     {
-        void ClearFlag();
-
-        bool IsFlagSet { get; }
-
         bool IsTapeLoaded { get; }
 
         uint Buffer { get; }

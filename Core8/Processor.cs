@@ -38,7 +38,9 @@ namespace Core8
 
                 Hardware.Registers.IF_PC.Increment();
 
-                if (TryDecode(address, data, Hardware.Keyboard.Id, Hardware.Teleprinter.Id, out var instruction))
+                var instruction = Decode(address, data, Hardware.Keyboard.Id, Hardware.Teleprinter.Id);
+                
+                if (instruction != null)
                 {
                     instruction.Execute(Hardware);
 
@@ -46,65 +48,30 @@ namespace Core8
                 }
                 else
                 {
-                    Log.Debug($"[{address.ToOctalString()}] NOP {data.ToOctalString()}");
+                    Log.Warning($"[{address.ToOctalString()}] NOP {data.ToOctalString()}");
                 }
 
                 Hardware.Tick();
+
+                Thread.Sleep(0);
             }
 
             Log.Information("HLT");
         }
 
-        public static bool TryDecode(uint address, uint data, uint inputId, uint outputId, out InstructionBase instruction)
+        public static InstructionBase Decode(uint address, uint data, uint inputId, uint outputId)
         {
-            instruction = null;
-
-            var opCode = (data & Masks.OP_CODE);
-
-            var instructionClass = (InstructionClass)opCode;
-
-            switch (instructionClass)
+            return ((InstructionClass)(data & Masks.OP_CODE)) switch
             {
-                case InstructionClass.MCI:
-                    instruction = DecodeMicrocode(address, data);
-                    break;
-                case InstructionClass.IOT when ((data & Masks.IO) >> 3) == inputId:
-                    instruction = new KeyboardInstruction(address, data);
-                    break;
-                case InstructionClass.IOT when ((data & Masks.IO) >> 3) == outputId:
-                    instruction = new TeleprinterInstruction(address, data);
-                    break;
-                case InstructionClass.IOT:
-                    break;
-                default:
-                    instruction = new MemoryReferenceInstruction(address, data);
-                    break;
-            }
-
-            return instruction != null;
+                InstructionClass.MCI when (data & Masks.GROUP) == 0 => new Group1Instruction(address, data),
+                InstructionClass.MCI when (data & Masks.GROUP_2_PRIV) != 0 => new Group2PrivilegedInstruction(address, data),
+                InstructionClass.MCI when (data & Masks.GROUP_2_AND) == Masks.GROUP_2_AND => new Group2ANDInstruction(address, data),
+                InstructionClass.MCI => new Group2ORInstruction(address, data),
+                InstructionClass.IOT when ((data & Masks.IO) >> 3) == inputId => new KeyboardInstruction(address, data),
+                InstructionClass.IOT when ((data & Masks.IO) >> 3) == outputId => new TeleprinterInstruction(address, data),
+                InstructionClass.IOT => null,
+                _ => new MemoryReferenceInstruction(address, data),
+            };
         }
-
-        private static InstructionBase DecodeMicrocode(uint address, uint data)
-        {
-            if ((data & Masks.GROUP) == 0) // Group #1
-            {
-                return new Group1Instruction(address, data);
-            }
-            else if ((data & Masks.GROUP_2_PRIV) != 0)
-            {
-                return new Group2PrivilegedInstruction(address, data);
-            }
-            else if ((data & Masks.GROUP_2_AND) == Masks.GROUP_2_AND)
-            {
-                return new Group2ANDInstruction(address, data);
-            }
-            else
-            {
-                return new Group2ORInstruction(address, data);
-            }
-        }
-
-
-
     }
 }
