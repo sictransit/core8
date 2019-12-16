@@ -13,7 +13,7 @@ namespace Core8.Instructions
 
         protected override string OpCodeText => OpCode.ToString();
 
-        private KeyboardOpCode OpCode => (KeyboardOpCode)Data;
+        private KeyboardOpCode OpCode => (KeyboardOpCode)(Data & Masks.IO_OPCODE);
 
         public override void Execute(IHardware hardware)
         {

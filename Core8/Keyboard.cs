@@ -1,4 +1,5 @@
-﻿using Core8.Interfaces;
+﻿using Core8.Abstract;
+using Core8.Interfaces;
 using Serilog;
 using System;
 using System.Collections.Concurrent;
@@ -6,13 +7,16 @@ using System.Threading;
 
 namespace Core8
 {
-    public class Keyboard : IKeyboard
+    public class Keyboard : IODevice, IKeyboard
     {
         private readonly ManualResetEvent flag = new ManualResetEvent(false);
 
         private volatile uint buffer;
 
         private readonly ConcurrentQueue<uint> queue = new ConcurrentQueue<uint>();
+
+        public Keyboard(uint id) : base(id)
+        { }
 
         public uint Buffer => buffer & Masks.KEYBOARD_BUFFER_MASK;
 
@@ -22,7 +26,7 @@ namespace Core8
 
         public bool IsTapeLoaded => !queue.IsEmpty;
 
-        public void Tick()
+        public override void Tick()
         {
             if (!IsFlagSet && queue.TryDequeue(out var item))
             {

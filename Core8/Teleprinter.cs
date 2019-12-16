@@ -1,4 +1,5 @@
-﻿using Core8.Interfaces;
+﻿using Core8.Abstract;
+using Core8.Interfaces;
 using Serilog;
 using System;
 using System.Collections.Concurrent;
@@ -7,7 +8,7 @@ using System.Threading;
 
 namespace Core8
 {
-    public class Teleprinter : ITeleprinter
+    public class Teleprinter : IODevice, ITeleprinter
     {
         private readonly ManualResetEvent flag = new ManualResetEvent(false);
 
@@ -15,13 +16,16 @@ namespace Core8
 
         private readonly StringBuilder paper = new StringBuilder();
 
+        public Teleprinter(uint id) : base(id)
+        { }
+
         public string Printout => paper.ToString();
 
         public uint Flag => flag.WaitOne(TimeSpan.Zero) ? 1u : 0u;
 
         public bool IsFlagSet => Flag == 1u;
 
-        public void Tick()
+        public override void Tick()
         {
             if (!IsFlagSet && queue.TryDequeue(out var item))
             {

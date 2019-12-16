@@ -2,8 +2,7 @@
 {
     public enum TeleprinterOpCode : uint
     {
-        TSF = 0b_110_000_100_001,
-        TLS = 0b_110_000_100_110,
-        TPC = 0b_110_010_001_100,
+        TSF = 0b_001,
+        TLS = 0b_110
     }
 }

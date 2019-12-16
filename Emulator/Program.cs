@@ -30,7 +30,7 @@ namespace Core8
 
             while (pdp.Keyboard.IsTapeLoaded) // While there is tape to be read ...
             {
-                Thread.Sleep(0);
+                Thread.Sleep(200);
             }
 
             pdp.Stop(); // HLT

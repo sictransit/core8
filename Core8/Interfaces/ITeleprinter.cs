@@ -1,9 +1,7 @@
 ﻿namespace Core8.Interfaces
 {
-    public interface ITeleprinter
+    public interface ITeleprinter : IIODevice
     {
-        void Tick();
-
         void Print(byte c);
 
         bool IsFlagSet { get; }

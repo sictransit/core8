@@ -16,8 +16,8 @@ namespace Core8
         {
             Memory = new Memory(4096);
             Registers = new Registers();
-            Keyboard = new Keyboard();
-            Teleprinter = new Teleprinter();
+            Keyboard = new Keyboard(3);
+            Teleprinter = new Teleprinter(4);
 
             processor = new Processor(Memory, Registers, Keyboard, Teleprinter);
         }

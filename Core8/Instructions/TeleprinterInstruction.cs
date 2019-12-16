@@ -3,6 +3,7 @@ using Core8.Extensions;
 using Core8.Instructions.Abstract;
 using Core8.Interfaces;
 using Serilog;
+using System;
 
 namespace Core8.Instructions
 {
@@ -14,7 +15,7 @@ namespace Core8.Instructions
 
         protected override string OpCodeText => OpCode.ToString();
 
-        private TeleprinterOpCode OpCode => (TeleprinterOpCode)Data;
+        private TeleprinterOpCode OpCode => (TeleprinterOpCode)(Data & Masks.IO_OPCODE);
 
         public override void Execute(IHardware hardware)
         {
@@ -23,16 +24,11 @@ namespace Core8.Instructions
                 case TeleprinterOpCode.TLS:
                     TLS(hardware);
                     break;
-                case TeleprinterOpCode.TPC:
-                    TPC(hardware);
-                    break;
                 case TeleprinterOpCode.TSF:
                     TSF(hardware);
                     break;
                 default:
-                    Log.Debug($"NOP {Data.ToOctalString()}");
-                    //throw new NotImplementedException();
-                    break;
+                    throw new NotImplementedException();
             }
         }
 
@@ -43,13 +39,6 @@ namespace Core8.Instructions
             hardware.Teleprinter.Print((byte)c);
 
             hardware.Teleprinter.ClearFlag();
-        }
-
-        private void TPC(IHardware hardware)
-        {
-            var c = hardware.Registers.LINK_AC.Accumulator & Masks.TELEPRINTER_BUFFER_MASK;
-
-            hardware.Teleprinter.Print((byte)c);
         }
 
         private void TSF(IHardware hardware)

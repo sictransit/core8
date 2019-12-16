@@ -1,9 +1,7 @@
 ﻿namespace Core8.Interfaces
 {
-    public interface IKeyboard
+    public interface IKeyboard : IIODevice
     {
-        void Tick();
-
         void ClearFlag();
 
         bool IsFlagSet { get; }
