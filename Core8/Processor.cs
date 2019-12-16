@@ -43,7 +43,7 @@ namespace Core8
                 }
                 else
                 {
-                    Log.Warning($"[{address.ToOctalString()}] NOP {data.ToOctalString()}");
+                    Log.Debug($"[{address.ToOctalString()}] NOP {data.ToOctalString()}");
                 }
 
                 Hardware.Tick();

@@ -1,6 +1,7 @@
 ﻿using Core8.Enums;
 using Core8.Instructions.Abstract;
 using Core8.Interfaces;
+using System.Diagnostics;
 
 namespace Core8.Instructions
 {
@@ -12,7 +13,7 @@ namespace Core8.Instructions
 
         protected override string OpCodeText => OpCodes.ToString();
 
-        private Group2ANDOpCodes OpCodes => (Group2ANDOpCodes)(Data & Masks.GROUP_2_AND_FLAGS);
+        private Group2ANDOpCodes OpCodes => (Group2ANDOpCodes)(Data & Masks.GROUP_2_AND_OR_FLAGS);
 
         public override void Execute(IHardware hardware)
         {

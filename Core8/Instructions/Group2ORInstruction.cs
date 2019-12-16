@@ -12,7 +12,7 @@ namespace Core8.Instructions
 
         protected override string OpCodeText => OpCodes.ToString();
 
-        private Group2OROpCodes OpCodes => (Group2OROpCodes)(Data & Masks.GROUP_2_OR_FLAGS);
+        private Group2OROpCodes OpCodes => (Group2OROpCodes)(Data & Masks.GROUP_2_AND_OR_FLAGS);
 
         public override void Execute(IHardware hardware)
         {

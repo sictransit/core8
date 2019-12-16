@@ -1,9 +1,10 @@
 ﻿using Serilog;
+using System;
 using System.IO;
 using System.Net.Http;
 using System.Threading;
 
-namespace Core8.Console
+namespace Core8
 {
     public class Program
     {
@@ -48,7 +49,7 @@ namespace Core8.Console
 
             pdp.Load8(0200);
 
-            pdp.Start();
+            pdp.Start(waitForHalt: true);
         }
 
 

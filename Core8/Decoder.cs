@@ -1,6 +1,7 @@
 ﻿using Core8.Enums;
 using Core8.Instructions;
 using Core8.Instructions.Abstract;
+using System.Diagnostics;
 
 namespace Core8
 {

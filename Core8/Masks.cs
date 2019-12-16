@@ -59,10 +59,7 @@
         public const uint GROUP_2_AND
             = 0b_000_000_001_000;
 
-        public const uint GROUP_2_AND_FLAGS
-            = 0b_000_011_111_000;
-
-        public const uint GROUP_2_OR_FLAGS
+        public const uint GROUP_2_AND_OR_FLAGS
             = 0b_000_011_110_000;
 
         public const uint PRIVILEGED_GROUP_2_FLAGS

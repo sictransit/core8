@@ -30,7 +30,7 @@ namespace Core8.Instructions
                     TSF(hardware);
                     break;
                 default:
-                    Log.Warning($"NOP {Data.ToOctalString()}");
+                    Log.Debug($"NOP {Data.ToOctalString()}");
                     //throw new NotImplementedException();
                     break;
             }

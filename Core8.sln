@@ -9,7 +9,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{82DE4941
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Core8Tests", "Tests\Core8Tests\Core8Tests.csproj", "{48408869-1087-4D3D-A858-644123B42599}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Console", "Console\Console.csproj", "{95A62BDB-AC5E-4FB7-A9CE-ECFCFA194FE8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Emulator", "Emulator\Emulator.csproj", "{5D4DD138-3A52-473D-8104-D70722AF2270}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -25,10 +25,10 @@ Global
 		{48408869-1087-4D3D-A858-644123B42599}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{48408869-1087-4D3D-A858-644123B42599}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{48408869-1087-4D3D-A858-644123B42599}.Release|Any CPU.Build.0 = Release|Any CPU
-		{95A62BDB-AC5E-4FB7-A9CE-ECFCFA194FE8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{95A62BDB-AC5E-4FB7-A9CE-ECFCFA194FE8}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{95A62BDB-AC5E-4FB7-A9CE-ECFCFA194FE8}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{95A62BDB-AC5E-4FB7-A9CE-ECFCFA194FE8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5D4DD138-3A52-473D-8104-D70722AF2270}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5D4DD138-3A52-473D-8104-D70722AF2270}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5D4DD138-3A52-473D-8104-D70722AF2270}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5D4DD138-3A52-473D-8104-D70722AF2270}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

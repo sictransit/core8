@@ -30,7 +30,7 @@ namespace Core8
 
                 flag.Set();
 
-                Log.Debug($"Reader queue: {queue.Count}");
+                Log.Information($"Reader queue: {queue.Count}");
             }
         }
 
