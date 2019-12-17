@@ -2,11 +2,7 @@
 {
     public interface ITeleprinter : IIODevice
     {
-        void Print(byte c);
-
-        bool IsFlagSet { get; }
-
-        void ClearFlag();
+        void Print(byte c);       
 
         string Printout { get; }
     }

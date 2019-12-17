@@ -11,7 +11,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Core8Tests", "Tests\Core8Te
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Emulator", "Emulator\Emulator.csproj", "{5D4DD138-3A52-473D-8104-D70722AF2270}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TerminalServer", "TerminalServer\TerminalServer.csproj", "{93C032E9-E11C-4872-95DF-9432C547F5A0}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TerminalServer", "TerminalServer\TerminalServer.csproj", "{93C032E9-E11C-4872-95DF-9432C547F5A0}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Model", "Model\Model.csproj", "{712814F0-3517-4946-8676-C8829E3B5BE5}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -35,6 +37,10 @@ Global
 		{93C032E9-E11C-4872-95DF-9432C547F5A0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{93C032E9-E11C-4872-95DF-9432C547F5A0}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{93C032E9-E11C-4872-95DF-9432C547F5A0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{712814F0-3517-4946-8676-C8829E3B5BE5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{712814F0-3517-4946-8676-C8829E3B5BE5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{712814F0-3517-4946-8676-C8829E3B5BE5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{712814F0-3517-4946-8676-C8829E3B5BE5}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
