@@ -1,6 +1,5 @@
 ﻿using Serilog;
 using Serilog.Core;
-using System;
 using System.IO;
 using System.Net.Http;
 using System.Threading;
@@ -20,7 +19,13 @@ namespace Core8
                 .MinimumLevel.ControlledBy(loggingLevel)
                 .CreateLogger();
 
+            var host = new Host(pdp.Keyboard, pdp.Teleprinter);
+
+            host.Start();
+
             TestBIN(pdp);
+
+            host.Stop();
         }
 
         public static void TestBIN(PDP pdp)
@@ -40,7 +45,7 @@ namespace Core8
 
             var client = new HttpClient();
 
-            var tape = client.GetByteArrayAsync(@"https://www.pdp8.net/pdp8cgi/os8_html/INST2.BN?act=file;fn=images/misc_dectapes/unlabled2.tu56;blk=308,11,0;to=sv_bin").Result; 
+            var tape = client.GetByteArrayAsync(@"https://www.pdp8.net/pdp8cgi/os8_html/INST2.BN?act=file;fn=images/misc_dectapes/unlabled2.tu56;blk=308,11,0;to=sv_bin").Result;
 
             pdp.LoadTape(tape);
 
@@ -58,7 +63,7 @@ namespace Core8
             loggingLevel.MinimumLevel = Serilog.Events.LogEventLevel.Debug;
 
             pdp.Start(waitForHalt: true);
-        
+
         }
 
 

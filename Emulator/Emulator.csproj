@@ -12,6 +12,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Core8\Core8.csproj" />
+    <ProjectReference Include="..\TerminalServer\TerminalServer.csproj" />
   </ItemGroup>
 
   <ItemGroup>

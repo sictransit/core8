@@ -1,5 +1,5 @@
-﻿using Core8.Interfaces;
-using Core8.Register;
+﻿using Core8.Model.Interfaces;
+using Core8.Model.Register;
 
 namespace Core8
 {

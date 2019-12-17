@@ -1,8 +1,9 @@
-﻿using Core8.Enums;
-using Core8.Extensions;
-using Core8.Instructions;
-using Core8.Instructions.Abstract;
-using Core8.Interfaces;
+﻿using Core8.Model;
+using Core8.Model.Enums;
+using Core8.Model.Extensions;
+using Core8.Model.Instructions;
+using Core8.Model.Instructions.Abstract;
+using Core8.Model.Interfaces;
 using Serilog;
 using System.Threading;
 
@@ -39,7 +40,7 @@ namespace Core8
                 Hardware.Registers.IF_PC.Increment();
 
                 var instruction = Decode(address, data, Hardware.Keyboard.Id, Hardware.Teleprinter.Id);
-                
+
                 if (instruction != null)
                 {
                     instruction.Execute(Hardware);

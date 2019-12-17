@@ -1,5 +1,6 @@
-﻿using Core8.Extensions;
-using Core8.Interfaces;
+﻿using Core8.Model;
+using Core8.Model.Extensions;
+using Core8.Model.Interfaces;
 using Serilog;
 using System;
 using System.Threading;
@@ -115,7 +116,7 @@ namespace Core8
                 throw new ArgumentNullException(nameof(tape));
             }
 
-            Keyboard.Load(tape);
+            Keyboard.Input(tape);
 
             Log.Information($"TAPE: loaded {tape.Length} bytes");
         }

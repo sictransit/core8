@@ -1,0 +1,11 @@
+﻿namespace Core8.Model.Enums
+{
+    public enum KeyboardOpCode : uint
+    {
+        KCF = 0b_000,
+        KSF = 0b_001,
+        KCC = 0b_010,
+        KRS = 0b_100,
+        KRB = 0b_110,
+    }
+}

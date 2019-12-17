@@ -18,6 +18,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Model\Model.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
     <None Update="Tapes\dnnbin.rim">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>

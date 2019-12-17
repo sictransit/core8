@@ -1,8 +1,6 @@
-﻿using Core8.Interfaces;
+﻿using Core8.Model.Interfaces;
 using System;
 using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.Text;
 using System.Threading;
 
 namespace Core8.Abstract

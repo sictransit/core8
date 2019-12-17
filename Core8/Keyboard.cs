@@ -1,16 +1,14 @@
 ﻿using Core8.Abstract;
-using Core8.Interfaces;
+using Core8.Model;
+using Core8.Model.Interfaces;
 using Serilog;
-using System;
-using System.Collections.Concurrent;
-using System.Threading;
 
 namespace Core8
 {
     public class Keyboard : IODevice, IKeyboard
     {
         private volatile uint buffer;
-        
+
         public Keyboard(uint id) : base(id)
         { }
 
@@ -28,14 +26,19 @@ namespace Core8
 
                 Log.Information($"Reader queue: {Queue.Count}");
             }
-        }        
+        }
 
-        public void Load(byte[] data)
+        public void Input(byte[] data)
         {
-            foreach (var item in data)
+            foreach (var c in data)
             {
-                Queue.Enqueue(item);
+                Type(c);
             }
+        }
+
+        public void Type(byte data)
+        {
+            Queue.Enqueue(data);
         }
     }
 }

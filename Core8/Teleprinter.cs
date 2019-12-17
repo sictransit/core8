@@ -1,10 +1,7 @@
 ﻿using Core8.Abstract;
-using Core8.Interfaces;
+using Core8.Model.Interfaces;
 using Serilog;
-using System;
-using System.Collections.Concurrent;
 using System.Text;
-using System.Threading;
 
 namespace Core8
 {
@@ -15,7 +12,7 @@ namespace Core8
         public Teleprinter(uint id) : base(id)
         { }
 
-        public string Printout => paper.ToString();        
+        public string Printout => paper.ToString();
 
         public override void Tick()
         {
@@ -31,9 +28,17 @@ namespace Core8
             }
         }
 
-        public void Print(byte c)
+        public void Print(byte data)
         {
-            Queue.Enqueue(c);
+            Queue.Enqueue(data);
+        }
+
+        public void Output(byte[] data)
+        {
+            foreach (var c in data)
+            {
+                Print(c);
+            }
         }
     }
 }
