@@ -6,6 +6,6 @@
 
         uint Buffer { get; }
 
-        void Type(byte data);        
+        void Type(byte data);
     }
 }

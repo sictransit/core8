@@ -10,29 +10,31 @@ namespace Core8
     {
         private readonly IInputDevice input;
         private readonly IOutputDevice output;
-
+        private readonly int port;
         private readonly ManualResetEvent running = new ManualResetEvent(false);
 
         private Thread hostThread;
 
-        public Host(IInputDevice input, IOutputDevice output)
+        public Host(IInputDevice input, IOutputDevice output, int port = 23)
         {
             this.input = input;
             this.output = output;
+            this.port = port;
         }
 
         public void Start()
         {
             hostThread = new Thread(Run);
+            hostThread.Priority = ThreadPriority.AboveNormal;
 
             hostThread.Start();
         }
 
-        private void Run()        
+        private void Run()
         {
             running.Set();
 
-            var server = new EchoServer(IPAddress.Any, 2222)
+            var server = new EchoServer(IPAddress.Any, port)
             {
                 OptionReuseAddress = true
             };

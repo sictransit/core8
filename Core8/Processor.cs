@@ -33,24 +33,7 @@ namespace Core8
 
             while (running.WaitOne(0))
             {
-                var address = Hardware.Registers.IF_PC.Address;
-
-                var data = Hardware.Memory.Read(address);
-
-                Hardware.Registers.IF_PC.Increment();
-
-                var instruction = Decode(address, data, Hardware.Keyboard.Id, Hardware.Teleprinter.Id);
-
-                if (instruction != null)
-                {
-                    instruction.Execute(Hardware);
-
-                    Log.Debug(instruction.ToString());
-                }
-                else
-                {
-                    Log.Warning($"[{address.ToOctalString()}] NOP {data.ToOctalString()}");
-                }
+                Tick();
 
                 Hardware.Tick();
 
@@ -58,6 +41,28 @@ namespace Core8
             }
 
             Log.Information("HLT");
+        }
+
+        public void Tick()
+        {
+            var address = Hardware.Registers.IF_PC.Address;
+
+            var data = Hardware.Memory.Read(address);
+
+            Hardware.Registers.IF_PC.Increment();
+
+            var instruction = Decode(address, data, Hardware.Keyboard.Id, Hardware.Teleprinter.Id);
+
+            if (instruction != null)
+            {
+                instruction.Execute(Hardware);
+
+                Log.Debug(instruction.ToString());
+            }
+            else
+            {
+                Log.Warning($"[{address.ToOctalString()}] NOP {data.ToOctalString()}");
+            }
         }
 
         public static InstructionBase Decode(uint address, uint data, uint inputId, uint outputId)
