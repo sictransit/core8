@@ -28,17 +28,9 @@ namespace Core8
             }
         }
 
-        public void Print(byte data)
+        public void Output(byte data)
         {
             Queue.Enqueue(data);
-        }
-
-        public void Output(byte[] data)
-        {
-            foreach (var c in data)
-            {
-                Print(c);
-            }
         }
     }
 }

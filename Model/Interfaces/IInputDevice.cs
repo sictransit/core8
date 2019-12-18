@@ -2,6 +2,6 @@
 {
     public interface IInputDevice
     {
-        void Input(byte[] data);
+        void Input(byte data);
     }
 }

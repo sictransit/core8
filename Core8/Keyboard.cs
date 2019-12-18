@@ -28,15 +28,7 @@ namespace Core8
             }
         }
 
-        public void Input(byte[] data)
-        {
-            foreach (var c in data)
-            {
-                Type(c);
-            }
-        }
-
-        public void Type(byte data)
+        public void Input(byte data)
         {
             Queue.Enqueue(data);
         }

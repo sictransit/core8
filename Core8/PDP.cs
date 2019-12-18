@@ -116,7 +116,10 @@ namespace Core8
                 throw new ArgumentNullException(nameof(tape));
             }
 
-            Keyboard.Input(tape);
+            foreach(var b in tape)
+            { 
+                Keyboard.Input(b);
+            }
 
             Log.Information($"TAPE: loaded {tape.Length} bytes");
         }

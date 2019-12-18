@@ -2,6 +2,6 @@
 {
     public interface IOutputDevice
     {
-        void Output(byte[] data);
+        void Output(byte data);
     }
 }

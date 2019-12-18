@@ -5,7 +5,5 @@
         bool IsTapeLoaded { get; }
 
         uint Buffer { get; }
-
-        void Type(byte data);
     }
 }

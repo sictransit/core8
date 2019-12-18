@@ -2,8 +2,6 @@
 {
     public interface ITeleprinter : IIODevice, IOutputDevice
     {
-        void Print(byte data);
-
         string Printout { get; }
     }
 }
