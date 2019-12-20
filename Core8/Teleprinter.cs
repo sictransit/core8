@@ -1,6 +1,6 @@
 ﻿using Core8.Abstract;
 using Core8.Model.Interfaces;
-using Serilog;
+using System;
 using System.Text;
 
 namespace Core8
@@ -9,10 +9,17 @@ namespace Core8
     {
         private readonly StringBuilder paper = new StringBuilder();
 
+        private Action<byte> callback;
+
         public Teleprinter(uint id) : base(id)
         { }
 
         public string Printout => paper.ToString();
+
+        public void RegisterPrintCallback(Action<byte> callback)
+        {
+            this.callback = callback;
+        }
 
         public override void Tick()
         {
@@ -23,14 +30,14 @@ namespace Core8
                 paper.Append(c);
 
                 base.Flag.Set();
-
-                Log.Information(Printout);
             }
         }
 
-        public void Output(byte data)
+        public override void Type(byte c)
         {
-            Queue.Enqueue(data);
+            callback?.Invoke(c);
+
+            base.Type(c);
         }
     }
 }

@@ -27,10 +27,5 @@ namespace Core8
                 Log.Information($"Reader queue: {Queue.Count}");
             }
         }
-
-        public void Input(byte data)
-        {
-            Queue.Enqueue(data);
-        }
     }
 }

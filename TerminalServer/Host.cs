@@ -8,24 +8,26 @@ namespace Core8
 {
     public class Host
     {
-        private readonly IInputDevice input;
-        private readonly IOutputDevice output;
+        private readonly IKeyboard keyboard;
+        private readonly ITeleprinter teleprinter;
         private readonly int port;
         private readonly ManualResetEvent running = new ManualResetEvent(false);
 
         private Thread hostThread;
 
-        public Host(IInputDevice input, IOutputDevice output, int port = 23)
+        public Host(IKeyboard keyboard, ITeleprinter teleprinter, int port = 23)
         {
-            this.input = input;
-            this.output = output;
+            this.keyboard = keyboard;
+            this.teleprinter = teleprinter;
             this.port = port;
         }
 
         public void Start()
         {
-            hostThread = new Thread(Run);
-            hostThread.Priority = ThreadPriority.AboveNormal;
+            hostThread = new Thread(Run)
+            {
+                Priority = ThreadPriority.AboveNormal
+            };
 
             hostThread.Start();
         }
@@ -34,7 +36,7 @@ namespace Core8
         {
             running.Set();
 
-            var server = new EchoServer(IPAddress.Any, port)
+            var server = new TelnetServer(IPAddress.Any, port, keyboard, teleprinter)
             {
                 OptionReuseAddress = true
             };
@@ -58,6 +60,11 @@ namespace Core8
             running.Reset();
 
             hostThread.Join();
+        }
+
+        public void Display(byte key)
+        {
+            throw new NotImplementedException();
         }
     }
 }

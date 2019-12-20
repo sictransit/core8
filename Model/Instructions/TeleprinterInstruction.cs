@@ -34,7 +34,7 @@ namespace Core8.Model.Instructions
         {
             var c = hardware.Registers.LINK_AC.Accumulator & Masks.TELEPRINTER_BUFFER_MASK;
 
-            hardware.Teleprinter.Output((byte)c);
+            hardware.Teleprinter.Type((byte)c);
 
             hardware.Teleprinter.ClearFlag();
         }

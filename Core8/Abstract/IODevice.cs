@@ -33,5 +33,18 @@ namespace Core8.Abstract
 
             Queue.Clear();
         }
+
+        public virtual void Type(byte c)
+        {
+            Queue.Enqueue(c);
+        }
+
+        public void Type(byte[] chars)
+        {
+            foreach (var c in chars)
+            {
+                Type(c);
+            }
+        }
     }
 }

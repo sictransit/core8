@@ -1,5 +1,6 @@
 ﻿using Serilog;
 using Serilog.Core;
+using System;
 using System.IO;
 using System.Net.Http;
 using System.Threading;
@@ -23,10 +24,65 @@ namespace Core8
 
             host.Start();
 
+            Console.WriteLine("Press any key ...");
+
+            Console.ReadLine();
+
             TestBIN(pdp);
+            //TestHelloWorld(pdp);
+
+            Console.WriteLine("Press any key ...");
+
+            Console.ReadLine();
+
 
             host.Stop();
         }
+
+        private static void TestHelloWorld(PDP pdp)
+        {
+            pdp.Load8(0200);
+
+            pdp.Deposit8(7200);
+            pdp.Deposit8(7100);
+            pdp.Deposit8(1220);
+            pdp.Deposit8(3010);
+            pdp.Deposit8(7000);
+            pdp.Deposit8(1410);
+            pdp.Deposit8(7450);
+            pdp.Deposit8(7402); //5577
+            pdp.Deposit8(4212);
+            pdp.Deposit8(5204);
+            pdp.Deposit8(0000);
+            pdp.Deposit8(6046);
+            pdp.Deposit8(6041);
+            pdp.Deposit8(5214);
+            pdp.Deposit8(7200);
+            pdp.Deposit8(5612);
+            pdp.Deposit8(0220);
+            pdp.Deposit8(0110);
+            pdp.Deposit8(0105);
+            pdp.Deposit8(0114);
+            pdp.Deposit8(0114);
+            pdp.Deposit8(0117);
+            pdp.Deposit8(0040);
+            pdp.Deposit8(0127);
+            pdp.Deposit8(0117);
+            pdp.Deposit8(0122);
+            pdp.Deposit8(0114);
+            pdp.Deposit8(0104);
+            pdp.Deposit8(0041);
+            pdp.Deposit8(0000);
+
+            //pdp.Load8(0177);
+            //pdp.Deposit8(7600);            
+
+            pdp.Load8(0200);
+            pdp.Start();
+
+            Log.Information(pdp.Teleprinter.Printout);
+        }
+
 
         public static void TestBIN(PDP pdp)
         {
@@ -45,7 +101,8 @@ namespace Core8
 
             var client = new HttpClient();
 
-            var tape = client.GetByteArrayAsync(@"https://www.pdp8.net/pdp8cgi/os8_html/INST2.BN?act=file;fn=images/misc_dectapes/unlabled2.tu56;blk=308,11,0;to=sv_bin").Result;
+            //var tape = client.GetByteArrayAsync(@"https://www.pdp8.net/pdp8cgi/os8_html/INST2.BN?act=file;fn=images/misc_dectapes/unlabled2.tu56;blk=308,11,0;to=sv_bin").Result;
+            var tape = client.GetByteArrayAsync(@"https://github.com/PontusPih/TINT8/releases/download/v0.1.0-alpha/tint.bin").Result;
 
             pdp.LoadTape(tape);
 
@@ -60,7 +117,7 @@ namespace Core8
 
             pdp.Load8(0200);
 
-            loggingLevel.MinimumLevel = Serilog.Events.LogEventLevel.Debug;
+            loggingLevel.MinimumLevel = Serilog.Events.LogEventLevel.Information;
 
             pdp.Start(waitForHalt: true);
 

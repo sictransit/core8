@@ -11,5 +11,9 @@
         void ClearFlag();
 
         void Clear();
+
+        void Type(byte c);
+
+        void Type(byte[] chars);
     }
 }
