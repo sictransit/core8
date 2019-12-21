@@ -1,4 +1,5 @@
-﻿using NetCoreServer;
+﻿using Core8.Model.Interfaces;
+using NetCoreServer;
 using Serilog;
 using System.Net.Sockets;
 
@@ -6,27 +7,26 @@ namespace Core8
 {
     internal class TelnetSession : TcpSession
     {
-        private readonly TelnetServer server;
+        private readonly IKeyboard keyboard;
 
-        public TelnetSession(TelnetServer server) : base(server)
+        public TelnetSession(TelnetServer server, IKeyboard keyboard) : base(server)
         {
-            this.server = server;
-
-            this.server.Teleprinter.RegisterPrintCallback(Print);
+            this.keyboard = keyboard;
         }
 
-        private void Print(byte c)
+        protected override void OnConnected()
         {
-            SendAsync(new[] { c });
+            SendAsync("WELCOME TO THE PDP-8 TERMINAL SERVER\r\n");
+
         }
 
         protected override void OnReceived(byte[] buffer, long offset, long size)
         {
             for (long i = offset; i < offset + size; i++)
             {
-                server.Keyboard.Type(buffer[i]);
+                keyboard.Type(buffer[i]);
             }
-            
+
             //SendAsync(buffer, offset, size);
         }
 

@@ -24,14 +24,16 @@ namespace Core8
 
             host.Start();
 
-            Console.WriteLine("Press any key ...");
+            Console.WriteLine("Hook up your telnet client now ...");
+
+            Console.WriteLine("Press the any-key when done ...");
 
             Console.ReadLine();
 
-            TestBIN(pdp);
-            //TestHelloWorld(pdp);
+            //TestBIN(pdp);
+            TestHelloWorld(pdp);
 
-            Console.WriteLine("Press any key ...");
+            Console.WriteLine("Press the any-key ...");
 
             Console.ReadLine();
 
@@ -41,6 +43,8 @@ namespace Core8
 
         private static void TestHelloWorld(PDP pdp)
         {
+            loggingLevel.MinimumLevel = Serilog.Events.LogEventLevel.Debug;
+
             pdp.Load8(0200);
 
             pdp.Deposit8(7200);

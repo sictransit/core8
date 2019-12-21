@@ -8,19 +8,23 @@ namespace Core8
 {
     internal class TelnetServer : TcpServer
     {
+        private readonly IKeyboard keyboard;
+
         public TelnetServer(IPAddress address, int port, IKeyboard keyboard, ITeleprinter teleprinter) : base(address, port)
         {
-            Keyboard = keyboard;
-            Teleprinter = teleprinter;
+            teleprinter.RegisterPrintCallback(Print);
+
+            this.keyboard = keyboard;
         }
 
-        public IKeyboard Keyboard { get; }
-
-        public ITeleprinter Teleprinter { get; }
+        private void Print(byte c)
+        {
+            Multicast(new[] { c });
+        }
 
         protected override TcpSession CreateSession()
         {
-            return new TelnetSession(this);
+            return new TelnetSession(this, keyboard);
         }
 
         protected override void OnError(SocketError error)
