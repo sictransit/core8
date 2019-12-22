@@ -20,10 +20,6 @@ namespace Core8
                 .MinimumLevel.ControlledBy(loggingLevel)
                 .CreateLogger();
 
-            var host = new Host(pdp.Keyboard, pdp.Teleprinter);
-
-            host.Start();
-
             Console.WriteLine("Hook up your telnet client now ...");
 
             Console.WriteLine("Press the any-key when done ...");
@@ -36,9 +32,6 @@ namespace Core8
             Console.WriteLine("Press the any-key ...");
 
             Console.ReadLine();
-
-
-            host.Stop();
         }
 
         private static void TestHelloWorld(PDP pdp)

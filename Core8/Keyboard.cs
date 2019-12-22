@@ -1,16 +1,25 @@
 ﻿using Core8.Abstract;
 using Core8.Model;
 using Core8.Model.Interfaces;
+using NetMQ;
+using NetMQ.Sockets;
 using Serilog;
+using System;
 
 namespace Core8
 {
     public class Keyboard : IODevice, IKeyboard
     {
         private volatile uint buffer;
+        private readonly SubscriberSocket subscriberSocket;
 
         public Keyboard(uint id) : base(id)
-        { }
+        {
+            subscriberSocket = new SubscriberSocket();
+
+            subscriberSocket.Connect(@"tcp://127.0.0.1:17232");
+            subscriberSocket.SubscribeToAnyTopic();
+        }
 
         public uint Buffer => buffer & Masks.KEYBOARD_BUFFER_MASK;
 
@@ -18,13 +27,21 @@ namespace Core8
 
         public override void Tick()
         {
-            if (!IsFlagSet && Queue.TryDequeue(out var item))
+            if (!IsFlagSet)
             {
-                buffer = item;
+                if (subscriberSocket.TryReceiveFrameBytes(TimeSpan.Zero, out var frame))
+                {
+                    Type(frame);
+                }
 
-                Flag.Set();
+                if (Queue.TryDequeue(out var item))
+                {
+                    buffer = item;
 
-                Log.Information($"Reader queue: {Queue.Count}");
+                    Flag.Set();
+
+                    Log.Information($"Reader queue: {Queue.Count}");
+                }
             }
         }
     }

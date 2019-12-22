@@ -1,4 +1,6 @@
 ﻿using Core8.Model.Interfaces;
+using NetMQ;
+using NetMQ.Sockets;
 using Serilog;
 using System;
 using System.Net;
@@ -8,18 +10,16 @@ namespace Core8
 {
     public class Host
     {
-        private readonly IKeyboard keyboard;
-        private readonly ITeleprinter teleprinter;
         private readonly int port;
         private readonly ManualResetEvent running = new ManualResetEvent(false);
 
         private Thread hostThread;
 
-        public Host(IKeyboard keyboard, ITeleprinter teleprinter, int port = 23)
+        public Host(int port = 23)
         {
-            this.keyboard = keyboard;
-            this.teleprinter = teleprinter;
             this.port = port;
+
+            Console.CancelKeyPress += (sender, e) => running.Reset();
         }
 
         public void Start()
@@ -34,25 +34,39 @@ namespace Core8
 
         private void Run()
         {
-            running.Set();
-
-            var server = new TelnetServer(IPAddress.Any, port, keyboard, teleprinter)
+            using (var publisher = new PublisherSocket())
             {
-                OptionReuseAddress = true
-            };
+                publisher.Bind(@"tcp://127.0.0.1:17232");
 
-            Log.Information("Server starting ...");
+                using var subscriber = new SubscriberSocket();
+                subscriber.Bind(@"tcp://127.0.0.1:17233");
+                subscriber.SubscribeToAnyTopic();
 
-            server.Start();
+                running.Set();
 
-            while (running.WaitOne(TimeSpan.Zero))
-            {
-                Thread.Sleep(200);
+                var server = new TelnetServer(IPAddress.Any, port, publisher, subscriber)
+                {
+                    OptionReuseAddress = true
+                };
+
+                Log.Information("Server starting ...");
+
+                server.Start();
+
+                while (running.WaitOne(TimeSpan.Zero))
+                {
+                    if (subscriber.TryReceiveFrameBytes(TimeSpan.FromMilliseconds(100), out var frame))
+                    {
+                        server.Multicast(frame);   
+                    }                    
+                }
+
+                server.Stop();
+
+                Log.Information("Server stopped.");
+
             }
 
-            server.Stop();
-
-            Log.Information("Server stopped.");
         }
 
         public void Stop()
@@ -62,9 +76,6 @@ namespace Core8
             hostThread.Join();
         }
 
-        public void Display(byte key)
-        {
-            throw new NotImplementedException();
-        }
+       
     }
 }

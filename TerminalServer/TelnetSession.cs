@@ -1,17 +1,20 @@
 ﻿using Core8.Model.Interfaces;
 using NetCoreServer;
+using NetMQ;
+using NetMQ.Sockets;
 using Serilog;
+using System;
 using System.Net.Sockets;
 
 namespace Core8
 {
     internal class TelnetSession : TcpSession
     {
-        private readonly IKeyboard keyboard;
+        private PublisherSocket publisher;
 
-        public TelnetSession(TelnetServer server, IKeyboard keyboard) : base(server)
+        public TelnetSession(TelnetServer server, PublisherSocket publisher) : base(server)
         {
-            this.keyboard = keyboard;
+            this.publisher = publisher;
         }
 
         protected override void OnConnected()
@@ -22,10 +25,11 @@ namespace Core8
 
         protected override void OnReceived(byte[] buffer, long offset, long size)
         {
-            for (long i = offset; i < offset + size; i++)
-            {
-                keyboard.Type(buffer[i]);
-            }
+            var frame = new  byte[size];
+
+            Array.Copy(buffer, offset, frame, 0, size);
+            
+            publisher.TrySendFrame(frame);               
 
             //SendAsync(buffer, offset, size);
         }

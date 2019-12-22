@@ -18,6 +18,16 @@ namespace Core8
                 .MinimumLevel.ControlledBy(loggingLevel)
                 .CreateLogger();
 
+            var host = new Host();
+
+            host.Start();
+
+            Console.WriteLine("Host has started ...");
+
+            Console.ReadLine();
+
+            host.Stop();
+
         }
 
     }
