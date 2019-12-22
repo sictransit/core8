@@ -75,6 +75,7 @@ namespace Core8
                 InstructionClass.MCI => new Group2ORInstruction(address, data),
                 InstructionClass.IOT when ((data & Masks.IO) >> 3) == inputId => new KeyboardInstruction(address, data),
                 InstructionClass.IOT when ((data & Masks.IO) >> 3) == outputId => new TeleprinterInstruction(address, data),
+                InstructionClass.IOT when (data & Masks.IO) == 0 => new InterruptInstruction(address, data),
                 InstructionClass.IOT => null,
                 _ => new MemoryReferenceInstruction(address, data),
             };
