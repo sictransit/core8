@@ -1,4 +1,6 @@
-﻿namespace Core8.Model.Interfaces
+﻿using System;
+
+namespace Core8.Model.Interfaces
 {
     public interface IIODevice
     {
@@ -15,5 +17,7 @@
         void Type(byte c);
 
         void Type(byte[] chars);
+
+        bool InterruptRequested { get; }
     }
 }

@@ -5,6 +5,7 @@ using Core8.Model.Instructions;
 using Core8.Model.Instructions.Abstract;
 using Core8.Model.Interfaces;
 using Serilog;
+using System;
 using System.Threading;
 
 namespace Core8
@@ -13,16 +14,34 @@ namespace Core8
     {
         private readonly ManualResetEvent running = new ManualResetEvent(false);
 
+        private readonly ManualResetEvent interruptEnable = new ManualResetEvent(false);
+
+        private readonly AutoResetEvent interruptEnablePending = new AutoResetEvent(false);
+
         public Processor(IMemory memory, IRegisters registers, IKeyboard keyboard, ITeleprinter teleprinter)
         {
-            Hardware = new Hardware(this, memory, registers, keyboard, teleprinter);
+            Hardware = new Hardware(this, memory, registers, keyboard, teleprinter);            
         }
 
         public IHardware Hardware { get; }
 
+        public bool InterruptsEnabled => interruptEnable.WaitOne(TimeSpan.Zero);
+
         public void Halt()
         {
             running.Reset();
+        }
+
+        public void EnableInterrupts()
+        {
+            interruptEnablePending.Set();
+        }
+
+        public void DisableInterrupts()
+        {
+            interruptEnablePending.Reset();
+
+            interruptEnable.Reset();
         }
 
         public void Run()
@@ -33,7 +52,23 @@ namespace Core8
 
             while (running.WaitOne(0))
             {
-                Tick();
+                FetchAndExecute();
+
+                if (interruptEnablePending.WaitOne(TimeSpan.Zero))
+                {
+                    Log.Information("Interrupt enable pending ...");
+
+                    interruptEnable.Set();
+                }
+
+                if (InterruptsEnabled & Hardware.InterruptRequested)
+                {
+                    Log.Information("Interrupt!");
+
+                    interruptEnable.Reset();
+
+                    MemoryReferenceInstruction.JMS(Hardware, 0);
+                }
 
                 Hardware.Tick();
 
@@ -43,7 +78,7 @@ namespace Core8
             Log.Information("HLT");
         }
 
-        public void Tick()
+        public void FetchAndExecute()
         {
             var address = Hardware.Registers.IF_PC.Address;
 

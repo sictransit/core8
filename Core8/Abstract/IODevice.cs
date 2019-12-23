@@ -14,17 +14,30 @@ namespace Core8.Abstract
 
         public uint Id { get; }
 
-        protected ManualResetEvent Flag { get; } = new ManualResetEvent(false);
+        private readonly ManualResetEvent flag = new ManualResetEvent(false);
+
+        private readonly ManualResetEvent interruptRequested = new ManualResetEvent(false);
 
         protected ConcurrentQueue<byte> Queue { get; } = new ConcurrentQueue<byte>();
 
-        public bool IsFlagSet => Flag.WaitOne(TimeSpan.Zero) ? true : false;
+        public bool IsFlagSet => flag.WaitOne(TimeSpan.Zero);
+
+        public bool InterruptRequested => interruptRequested.WaitOne(TimeSpan.Zero);
 
         public abstract void Tick();
 
+        protected void SetFlag()
+        {
+            flag.Set();
+
+            interruptRequested.Set();
+        }
+
         public void ClearFlag()
         {
-            Flag.Reset();
+            flag.Reset();
+
+            interruptRequested.Reset();
         }
 
         public void Clear()

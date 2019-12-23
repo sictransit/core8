@@ -23,6 +23,8 @@ namespace Core8
 
         public ITeleprinter Teleprinter { get; }
 
+        public bool InterruptRequested => Keyboard.InterruptRequested | Teleprinter.InterruptRequested;
+
         public void Tick()
         {
             Teleprinter.Tick();

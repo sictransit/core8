@@ -35,14 +35,20 @@ namespace Core8.Model.Instructions
 
         private void SKON(IHardware hardware)
         {
+            if (hardware.Processor.InterruptsEnabled)
+            {
+                hardware.Registers.IF_PC.Increment();
+            }
         }
 
         private void ION(IHardware hardware)
         {
+            hardware.Processor.EnableInterrupts();
         }
 
         private void IOF(IHardware hardware)
         {
+            hardware.Processor.DisableInterrupts();
         }
     }
 }

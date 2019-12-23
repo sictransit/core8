@@ -37,7 +37,7 @@ namespace Core8
                 var c = Encoding.ASCII.GetChars(data)[0];
                 paper.Append(c);
 
-                base.Flag.Set();
+                SetFlag();
             }
         }
     }

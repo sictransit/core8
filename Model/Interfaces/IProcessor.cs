@@ -5,5 +5,11 @@
         void Run();
 
         void Halt();
+
+        void EnableInterrupts();
+
+        bool InterruptsEnabled { get; }
+
+        void DisableInterrupts();
     }
 }

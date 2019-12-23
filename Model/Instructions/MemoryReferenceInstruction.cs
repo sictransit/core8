@@ -84,7 +84,7 @@ namespace Core8.Model.Instructions
             hardware.Registers.IF_PC.Set(address);
         }
 
-        private void JMS(IHardware hardware, uint address)
+        public static void JMS(IHardware hardware, uint address)
         {
             var pc = hardware.Registers.IF_PC.Address;
 

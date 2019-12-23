@@ -38,7 +38,7 @@ namespace Core8
                 {
                     buffer = item;
 
-                    Flag.Set();
+                    SetFlag();
 
                     Log.Information($"Reader queue: {Queue.Count}");
                 }

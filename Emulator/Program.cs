@@ -26,8 +26,8 @@ namespace Core8
 
             Console.ReadLine();
 
-            //TestBIN(pdp);
-            TestHelloWorld(pdp);
+            TestBIN(pdp);
+            //TestHelloWorld(pdp);
 
             Console.WriteLine("Press the any-key ...");
 
@@ -114,7 +114,7 @@ namespace Core8
 
             pdp.Load8(0200);
 
-            loggingLevel.MinimumLevel = Serilog.Events.LogEventLevel.Information;
+            loggingLevel.MinimumLevel = Serilog.Events.LogEventLevel.Debug;
 
             pdp.Start(waitForHalt: true);
 

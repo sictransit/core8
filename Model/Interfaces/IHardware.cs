@@ -4,6 +4,8 @@
     {
         void Tick();
 
+        bool InterruptRequested { get; }
+
         IMemory Memory { get; }
 
         IProcessor Processor { get; }
