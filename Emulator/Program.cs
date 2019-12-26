@@ -26,8 +26,8 @@ namespace Core8
 
             Console.ReadLine();
 
-            TestBIN(pdp);
-            //TestHelloWorld(pdp);
+            //TestBIN(pdp);
+            TestHelloWorld(pdp);
 
             Console.WriteLine("Press the any-key ...");
 

@@ -16,7 +16,7 @@ namespace Core8
 
         private readonly ManualResetEvent interruptEnable = new ManualResetEvent(false);
 
-        private readonly AutoResetEvent interruptEnablePending = new AutoResetEvent(false);
+        private readonly AutoResetEvent interruptDelay = new AutoResetEvent(false);
 
         public Processor(IMemory memory, IRegisters registers, IKeyboard keyboard, ITeleprinter teleprinter)
         {
@@ -34,12 +34,12 @@ namespace Core8
 
         public void EnableInterrupts()
         {
-            interruptEnablePending.Set();
+            interruptDelay.Set();
         }
 
         public void DisableInterrupts()
         {
-            interruptEnablePending.Reset();
+            interruptDelay.Reset();
 
             interruptEnable.Reset();
         }
@@ -50,16 +50,9 @@ namespace Core8
 
             Log.Information("RUN");
 
-            while (running.WaitOne(0))
+            while (running.WaitOne(TimeSpan.Zero))
             {
-                FetchAndExecute();
-
-                if (interruptEnablePending.WaitOne(TimeSpan.Zero))
-                {
-                    Log.Information("Interrupt enable pending ...");
-
-                    interruptEnable.Set();
-                }
+                FetchAndExecute();               
 
                 if (InterruptsEnabled & Hardware.InterruptRequested)
                 {
@@ -70,9 +63,14 @@ namespace Core8
                     MemoryReferenceInstruction.JMS(Hardware, 0);
                 }
 
-                Hardware.Tick();
+                if (interruptDelay.WaitOne(TimeSpan.Zero))
+                {
+                    Log.Information("Interrupt enable pending ...");
 
-                Thread.Sleep(0);
+                    interruptEnable.Set();
+                }
+
+                Hardware.Tick();
             }
 
             Log.Information("HLT");
