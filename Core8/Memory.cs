@@ -21,19 +21,24 @@ namespace Core8
 
         public uint Size { get; private set; }
 
-        public uint Read(uint address, bool examine = false)
+        public uint Examine(uint address)
+        {
+            return ram[address] & Masks.MEM_WORD;
+        }
+
+        public uint Read(uint address, bool indirect = false)
         {
             if (address > Size)
             {
                 throw new ArgumentOutOfRangeException(nameof(address));
             }
 
-            if ((address >= 8) && (address <= 15) && (!examine))
+            if (indirect && (address >= 8) && (address <= 15))
             {
-                Write(address, Read(address, true) + 1);
+                Write(address, Examine(address) + 1);
             }
 
-            return ram[address] & Masks.MEM_WORD;
+            return Examine(address);
         }
 
         public void Write(uint address, uint data)

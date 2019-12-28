@@ -26,8 +26,8 @@ namespace Core8
 
             Console.ReadLine();
 
-            //TestBIN(pdp);
-            TestHelloWorld(pdp);
+            TestBIN(pdp);
+            //TestHelloWorld(pdp);
 
             Console.WriteLine("Press the any-key ...");
 
@@ -85,7 +85,12 @@ namespace Core8
         {
             LoadRIMLowSpeed(pdp); // Toggle RIM loader
 
-            pdp.LoadTape(File.ReadAllBytes(@"Tapes/dnnbin.rim")); // Load BIN loader
+            var client = new HttpClient();
+            pdp.LoadTape(client.GetByteArrayAsync(@"http://bitsavers.informatik.uni-stuttgart.de/bits/DEC/pdp8/papertapeImages/set2/tray2/dec-08-lbaa-pm_5-10-67.bin").Result); // Load BIN loader
+
+            //pdp.Toggle8(3777);
+
+            //loggingLevel.MinimumLevel = Serilog.Events.LogEventLevel.Debug;
 
             pdp.Start(waitForHalt: false); // Run! RIM loader won't HLT.
 
@@ -96,27 +101,31 @@ namespace Core8
 
             pdp.Stop(); // HLT
 
-            var client = new HttpClient();
+            
 
             //var tape = client.GetByteArrayAsync(@"https://www.pdp8.net/pdp8cgi/os8_html/INST2.BN?act=file;fn=images/misc_dectapes/unlabled2.tu56;blk=308,11,0;to=sv_bin").Result;
-            var tape = client.GetByteArrayAsync(@"https://github.com/PontusPih/TINT8/releases/download/v0.1.0-alpha/tint.bin").Result;
+            //var tape = client.GetByteArrayAsync(@"https://github.com/PontusPih/TINT8/releases/download/v0.1.0-alpha/tint.bin").Result;
+            var tape = client.GetByteArrayAsync(@"http://svn.so-much-stuff.com/svn/trunk/pdp8/src/maindec/08/d01c-pb").Result;
 
             pdp.LoadTape(tape);
 
             pdp.Load8(7777);
 
-            pdp.Toggle8(0000);
+            pdp.Toggle8(7777);
 
-            pdp.Start();
+            pdp.Start();            
 
-            pdp.Teleprinter.Clear();
-            pdp.Keyboard.Clear();
+            pdp.Load8(0144);
+            pdp.Toggle8(7777);
+            pdp.Clear();
 
-            pdp.Load8(0200);
-
+            
             loggingLevel.MinimumLevel = Serilog.Events.LogEventLevel.Debug;
 
+            pdp.DumpMemory();
+
             pdp.Start(waitForHalt: true);
+            pdp.Start();
 
         }
 

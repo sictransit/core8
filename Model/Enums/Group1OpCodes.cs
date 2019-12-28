@@ -5,6 +5,7 @@ namespace Core8.Model.Enums
     [Flags]
     public enum Group1OpCodes : uint
     {
+        NOP = 0,
         IAC = 1 << 0,
         BSW = 1 << 1,
         RAL = 1 << 2,

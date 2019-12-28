@@ -16,12 +16,12 @@ namespace Core8.Model.Register
 
         public void SetAccumulator(uint value)
         {
-            Data = Link << 12 | value & Masks.AC;
+            Data = (Link << 12) | (value & Masks.AC);
         }
 
         public void SetLink(uint value)
         {
-            Data = (value & Masks.FLAG) << 12 | Accumulator;
+            Data = ((value & Masks.FLAG) << 12) | Accumulator;
         }
 
         public void Set(uint value)

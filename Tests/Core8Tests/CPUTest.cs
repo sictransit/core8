@@ -20,26 +20,6 @@ namespace Core8.Tests
                 .CreateLogger();
         }
 
-        private static void DumpMemory(PDP pdp)
-        {
-            for (uint address = 0; address < pdp.Memory.Size; address++)
-            {
-                var data = pdp.Memory.Read(address, true);
-
-                var instruction = Processor.Decode(address, data, 3, 4);
-
-                if (instruction != null)
-                {
-                    Log.Debug($"{instruction}");
-                }
-                else
-                {
-                    Log.Debug($"{address.ToOctalString()}: {data.ToOctalString()}");
-                }
-            }
-        }
-
-
         [TestMethod]
         public void TestHelloWorld()
         {
@@ -79,7 +59,7 @@ namespace Core8.Tests
             //pdp.Load8(0177);
             //pdp.Deposit8(7600);
 
-            DumpMemory(pdp);
+            pdp.DumpMemory();
 
             pdp.Load8(0200);
             pdp.Start();

@@ -31,6 +31,34 @@ namespace Core8
 
         public IMemory Memory { get; }
 
+        public void DumpMemory()
+        {
+            for (uint address = 0; address < Memory.Size; address++)
+            {
+                var data = Memory.Examine(address);
+
+                var instruction = Processor.Decode(address, data, 3, 4);
+
+                if (instruction != null)
+                {
+                    Log.Debug($"{instruction}");
+                }
+                else
+                {
+                    Log.Debug($"{address.ToOctalString()}: {data.ToOctalString()}");
+                }
+            }
+        }
+
+        public void Clear()
+        {
+            Keyboard.ClearFlag();
+            Keyboard.Clear();
+            Teleprinter.ClearFlag();
+            Teleprinter.Clear();
+            Registers.LINK_AC.Clear();
+        }
+
         public void Deposit8(uint data)
         {
             Deposit10(data.ToDecimal());

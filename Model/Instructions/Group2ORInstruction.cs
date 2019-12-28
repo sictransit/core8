@@ -40,7 +40,7 @@ namespace Core8.Model.Instructions
 
             if (OpCodes.HasFlag(Group2OROpCodes.CLA))
             {
-                hardware.Registers.LINK_AC.Clear();
+                hardware.Registers.LINK_AC.SetAccumulator(0);
             }
         }
     }

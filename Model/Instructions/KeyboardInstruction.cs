@@ -41,7 +41,7 @@ namespace Core8.Model.Instructions
 
         private void KCC(IHardware hardware)
         {
-            hardware.Registers.LINK_AC.Clear();
+            hardware.Registers.LINK_AC.SetAccumulator(0);
 
             hardware.Keyboard.ClearFlag();
         }

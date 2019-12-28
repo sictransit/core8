@@ -20,9 +20,9 @@ namespace Core8.Model.Instructions
 
         public override void Execute(IHardware hardware)
         {
-            var location = AddressingModes.HasFlag(AddressingModes.Z) ? Address & Masks.ADDRESS_PAGE | Data & Masks.ADDRESS_WORD : Data & Masks.ADDRESS_WORD;
+            var location = AddressingModes.HasFlag(AddressingModes.Z) ? (Address & Masks.ADDRESS_PAGE) | (Data & Masks.ADDRESS_WORD) : (Data & Masks.ADDRESS_WORD);
 
-            var address = AddressingModes.HasFlag(AddressingModes.I) ? hardware.Memory.Read(location) : location;
+            var address = AddressingModes.HasFlag(AddressingModes.I) ? hardware.Memory.Read(location, true) : location;
 
             switch (OpCode)
             {
@@ -69,7 +69,7 @@ namespace Core8.Model.Instructions
         {
             var value = hardware.Memory.Read(address);
 
-            value = value + 1 & Masks.MEM_WORD;
+            value = (value + 1) & Masks.MEM_WORD;
 
             hardware.Memory.Write(address, value);
 
