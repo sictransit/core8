@@ -46,17 +46,17 @@ namespace Core8.Model.Instructions
 
             if (OpCodes.HasFlag(Group1OpCodes.CMA))
             {
-                hardware.Registers.LINK_AC.SetAccumulator(hardware.Registers.LINK_AC.Accumulator % Masks.AC);
+                hardware.Registers.LINK_AC.SetAccumulator(hardware.Registers.LINK_AC.Accumulator ^ Masks.AC);
             }
 
             if (OpCodes.HasFlag(Group1OpCodes.CML))
             {
-                hardware.Registers.LINK_AC.SetLink(hardware.Registers.LINK_AC.Link % Masks.FLAG);
+                hardware.Registers.LINK_AC.SetLink(hardware.Registers.LINK_AC.Link ^ Masks.FLAG);
             }
 
             if (OpCodes.HasFlag(Group1OpCodes.IAC))
             {
-                hardware.Registers.LINK_AC.Set(hardware.Registers.LINK_AC.Data + 1);
+                hardware.Registers.LINK_AC.Set(hardware.Registers.LINK_AC.Accumulator + 1);
             }
 
             if (OpCodes.HasFlag(Group1OpCodes.RAR))
