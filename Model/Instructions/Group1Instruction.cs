@@ -20,7 +20,8 @@ namespace Core8.Model.Instructions
             {
                 var acc = hardware.Registers.LINK_AC.Data;
 
-                var result = (acc >> 1) | ((acc & Masks.FLAG) << 12);
+                var result = (acc >> 1) & Masks.AC;
+                result += (acc & Masks.FLAG) << 12;
 
                 hardware.Registers.LINK_AC.Set(result);
             }
@@ -29,7 +30,8 @@ namespace Core8.Model.Instructions
             {
                 var acc = hardware.Registers.LINK_AC.Data;
 
-                var result = (acc << 1) | ((acc & Masks.LINK) >> 12);
+                var result = (acc << 1) & (Masks.AC | Masks.LINK);
+                result += (acc & Masks.LINK) >> 12;
 
                 hardware.Registers.LINK_AC.Set(result);
             }

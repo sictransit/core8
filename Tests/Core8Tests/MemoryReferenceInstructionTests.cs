@@ -5,7 +5,7 @@ using Serilog;
 namespace Core8.Tests
 {
     [TestClass]
-    public class InstructionTests
+    public class MemoryReferenceInstructionTests
     {
         private PDP pdp;
 

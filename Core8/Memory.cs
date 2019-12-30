@@ -48,12 +48,7 @@ namespace Core8
                 throw new ArgumentOutOfRangeException(nameof(address));
             }
 
-            if (data > Masks.MEM_WORD)
-            {
-                throw new ArgumentOutOfRangeException(nameof(data));
-            }
-
-            ram[address] = data;
+            ram[address] = data & Masks.MEM_WORD;
         }
     }
 }
