@@ -1,72 +1,60 @@
 using Core8.Model.Extensions;
+using Core8.Tests.Abstract;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Serilog;
 
 namespace Core8.Tests
 {
     [TestClass]
-    public class CPUTest
+    public class CPUTest : InstructionTestsBase
     {
-        private PDP pdp;
-
-        [TestInitialize]
-        public void Initialize()
-        {
-            pdp = new PDP();
-
-            Log.Logger = new LoggerConfiguration()
-                .WriteTo.Console()
-                .MinimumLevel.Debug()
-                .CreateLogger();
-        }
-
         [TestMethod]
         public void TestHelloWorld()
         {
-            pdp.Load8(0200);
+            PDP.Load8(0200);
 
-            pdp.Deposit8(7200);
-            pdp.Deposit8(7100);
-            pdp.Deposit8(1220);
-            pdp.Deposit8(3010);
-            pdp.Deposit8(7000);
-            pdp.Deposit8(1410);
-            pdp.Deposit8(7450);
-            pdp.Deposit8(7402); //5577
-            pdp.Deposit8(4212);
-            pdp.Deposit8(5204);
-            pdp.Deposit8(0000);
-            pdp.Deposit8(6046);
-            pdp.Deposit8(6041);
-            pdp.Deposit8(5214);
-            pdp.Deposit8(7200);
-            pdp.Deposit8(5612);
-            pdp.Deposit8(0220);
-            pdp.Deposit8(0110);
-            pdp.Deposit8(0105);
-            pdp.Deposit8(0114);
-            pdp.Deposit8(0114);
-            pdp.Deposit8(0117);
-            pdp.Deposit8(0040);
-            pdp.Deposit8(0127);
-            pdp.Deposit8(0117);
-            pdp.Deposit8(0122);
-            pdp.Deposit8(0114);
-            pdp.Deposit8(0104);
-            pdp.Deposit8(0041);
-            pdp.Deposit8(0000);
+            PDP.Deposit8(7200);
+            PDP.Deposit8(7100);
+            PDP.Deposit8(1220);
+            PDP.Deposit8(3010);
+            PDP.Deposit8(7000);
+            PDP.Deposit8(1410);
+            PDP.Deposit8(7450);
+            PDP.Deposit8(7402); //5577
+            PDP.Deposit8(4212);
+            PDP.Deposit8(5204);
+            PDP.Deposit8(0000);
+            PDP.Deposit8(6046);
+            PDP.Deposit8(6041);
+            PDP.Deposit8(5214);
+            PDP.Deposit8(7200);
+            PDP.Deposit8(5612);
+            PDP.Deposit8(0220);
+            PDP.Deposit8(0110);
+            PDP.Deposit8(0105);
+            PDP.Deposit8(0114);
+            PDP.Deposit8(0114);
+            PDP.Deposit8(0117);
+            PDP.Deposit8(0040);
+            PDP.Deposit8(0127);
+            PDP.Deposit8(0117);
+            PDP.Deposit8(0122);
+            PDP.Deposit8(0114);
+            PDP.Deposit8(0104);
+            PDP.Deposit8(0041);
+            PDP.Deposit8(0000);
 
             //pdp.Load8(0177);
             //pdp.Deposit8(7600);
 
-            pdp.DumpMemory();
+            PDP.DumpMemory();
 
-            pdp.Load8(0200);
-            pdp.Start();
+            PDP.Load8(0200);
+            PDP.Start();
 
-            Assert.AreEqual("HELLO WORLD!", pdp.Teleprinter.Printout);
+            Assert.AreEqual("HELLO WORLD!", PDP.Teleprinter.Printout);
 
-            Log.Information(pdp.Teleprinter.Printout);
+            Log.Information(PDP.Teleprinter.Printout);
         }
 
         [TestMethod]
@@ -74,64 +62,64 @@ namespace Core8.Tests
         {
             var length = 10;
 
-            pdp.Load8(0200);
+            PDP.Load8(0200);
 
             for (int i = 0; i < length; i++)
             {
-                pdp.Deposit8(7001);
+                PDP.Deposit8(7001);
             }
 
-            pdp.Deposit8(7402);
+            PDP.Deposit8(7402);
 
-            pdp.Load8(0200);
+            PDP.Load8(0200);
 
-            pdp.Start();
+            PDP.Start();
 
-            Assert.IsTrue(pdp.Registers.LINK_AC.Accumulator == length);
+            Assert.IsTrue(PDP.Registers.LINK_AC.Accumulator == length);
         }
 
         [TestMethod]
         public void TestPaging()
         {
-            pdp.Load8(0200);
+            PDP.Load8(0200);
 
-            pdp.Deposit8(7300);
-            pdp.Deposit8(1205);
-            pdp.Deposit8(1206);
-            pdp.Deposit8(3207);
-            pdp.Deposit8(7402);
-            pdp.Deposit8(0002);
-            pdp.Deposit8(0003);
+            PDP.Deposit8(7300);
+            PDP.Deposit8(1205);
+            PDP.Deposit8(1206);
+            PDP.Deposit8(3207);
+            PDP.Deposit8(7402);
+            PDP.Deposit8(0002);
+            PDP.Deposit8(0003);
 
-            pdp.Load8(0200);
-            pdp.Start();
+            PDP.Load8(0200);
+            PDP.Start();
 
-            pdp.Load8(0207);
-            pdp.Exam();
+            PDP.Load8(0207);
+            PDP.Exam();
 
-            Assert.AreEqual(5u, pdp.Registers.LINK_AC.Accumulator);
+            Assert.AreEqual(5u, PDP.Registers.LINK_AC.Accumulator);
         }
 
         [TestMethod]
         public void TestAddition()
         {
-            pdp.Load8(0000);
+            PDP.Load8(0000);
 
-            pdp.Deposit8(7300);
-            pdp.Deposit8(1005);
-            pdp.Deposit8(1006);
-            pdp.Deposit8(3007);
-            pdp.Deposit8(7402);
-            pdp.Deposit8(0002);
-            pdp.Deposit8(0003);
+            PDP.Deposit8(7300);
+            PDP.Deposit8(1005);
+            PDP.Deposit8(1006);
+            PDP.Deposit8(3007);
+            PDP.Deposit8(7402);
+            PDP.Deposit8(0002);
+            PDP.Deposit8(0003);
 
-            pdp.Load8(0000);
-            pdp.Start();
+            PDP.Load8(0000);
+            PDP.Start();
 
-            pdp.Load8(0007);
-            pdp.Exam();
+            PDP.Load8(0007);
+            PDP.Exam();
 
-            Assert.AreEqual(5u, pdp.Registers.LINK_AC.Accumulator);
+            Assert.AreEqual(5u, PDP.Registers.LINK_AC.Accumulator);
         }
     }
 }

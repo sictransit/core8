@@ -1,174 +1,162 @@
 using Core8.Model.Extensions;
+using Core8.Tests.Abstract;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Serilog;
 
 namespace Core8.Tests
 {
     [TestClass]
-    public class MemoryReferenceInstructionTests
+    public class MemoryReferenceInstructionTests : InstructionTestsBase
     {
-        private PDP pdp;
-
-        [TestInitialize]
-        public void Initialize()
-        {
-            Log.Logger = new LoggerConfiguration()
-                .WriteTo.Console()
-                .MinimumLevel.Debug()
-                .CreateLogger();
-
-            pdp = new PDP();
-        }
-
         [TestMethod]
         public void AND()
         {
-            pdp.Load8(0200);
+            PDP.Load8(0200);
 
-            pdp.Deposit8(7200); // CLA
-            pdp.Deposit8(1205); // TAD Z
-            pdp.Deposit8(0206); // AND
-            pdp.Deposit8(0207); // AND
-            pdp.Deposit8(7402); // HLT
-            pdp.Deposit8(7777);
-            pdp.Deposit8(0777);
-            pdp.Deposit8(7770);
+            PDP.Deposit8(7200); // CLA
+            PDP.Deposit8(1205); // TAD Z
+            PDP.Deposit8(0206); // AND
+            PDP.Deposit8(0207); // AND
+            PDP.Deposit8(7402); // HLT
+            PDP.Deposit8(7777);
+            PDP.Deposit8(0777);
+            PDP.Deposit8(7770);
 
-            pdp.Load8(0200);
+            PDP.Load8(0200);
 
-            pdp.Start();
+            PDP.Start();
 
-            Assert.AreEqual(0770u.ToDecimal(), pdp.Registers.LINK_AC.Accumulator);
+            Assert.AreEqual(0770u.ToDecimal(), PDP.Registers.LINK_AC.Accumulator);
         }
 
         [TestMethod]
         public void TAD_NC()
         {
-            pdp.Load8(0200);
+            PDP.Load8(0200);
 
-            pdp.Deposit8(7200); // CLA
-            pdp.Deposit8(1203); // TAD
-            pdp.Deposit8(7402); // HLT
-            pdp.Deposit8(1234);
+            PDP.Deposit8(7200); // CLA
+            PDP.Deposit8(1203); // TAD
+            PDP.Deposit8(7402); // HLT
+            PDP.Deposit8(1234);
 
-            pdp.Load8(0200);
+            PDP.Load8(0200);
 
-            pdp.Start();
+            PDP.Start();
 
-            Assert.AreEqual(1234u.ToDecimal(), pdp.Registers.LINK_AC.Accumulator);
+            Assert.AreEqual(1234u.ToDecimal(), PDP.Registers.LINK_AC.Accumulator);
         }
 
         [TestMethod]
         public void TAD_WC()
         {
-            pdp.Load8(0200);
+            PDP.Load8(0200);
 
-            pdp.Deposit8(7200); // CLA
-            pdp.Deposit8(1204); // TAD
-            pdp.Deposit8(1205); // TAD
-            pdp.Deposit8(7402); // HLT
-            pdp.Deposit8(7777);
-            pdp.Deposit8(0001);
+            PDP.Deposit8(7200); // CLA
+            PDP.Deposit8(1204); // TAD
+            PDP.Deposit8(1205); // TAD
+            PDP.Deposit8(7402); // HLT
+            PDP.Deposit8(7777);
+            PDP.Deposit8(0001);
 
-            pdp.Load8(0200);
+            PDP.Load8(0200);
 
-            pdp.Start();
+            PDP.Start();
 
-            Assert.AreEqual(0u, pdp.Registers.LINK_AC.Accumulator);
-            Assert.AreEqual(1u, pdp.Registers.LINK_AC.Link);
+            Assert.AreEqual(0u, PDP.Registers.LINK_AC.Accumulator);
+            Assert.AreEqual(1u, PDP.Registers.LINK_AC.Link);
         }
 
         [TestMethod]
         public void ISZ_NZ()
         {
-            pdp.Load8(0200);
+            PDP.Load8(0200);
 
-            pdp.Deposit8(2203); // ISZ
-            pdp.Deposit8(7402); // HLT
-            pdp.Deposit8(7402); // HLT
-            pdp.Deposit8(7776);
+            PDP.Deposit8(2203); // ISZ
+            PDP.Deposit8(7402); // HLT
+            PDP.Deposit8(7402); // HLT
+            PDP.Deposit8(7776);
 
-            pdp.Load8(0200);
+            PDP.Load8(0200);
 
-            pdp.Start();
+            PDP.Start();
 
-            Assert.AreEqual(2u, pdp.Registers.IF_PC.Word);
+            Assert.AreEqual(2u, PDP.Registers.IF_PC.Word);
         }
 
         [TestMethod]
         public void ISZ_WZ()
         {
-            pdp.Load8(0200);
+            PDP.Load8(0200);
 
-            pdp.Deposit8(2203); // ISZ
-            pdp.Deposit8(7402); // HLT
-            pdp.Deposit8(7402); // HLT
-            pdp.Deposit8(7777);
+            PDP.Deposit8(2203); // ISZ
+            PDP.Deposit8(7402); // HLT
+            PDP.Deposit8(7402); // HLT
+            PDP.Deposit8(7777);
 
-            pdp.Load8(0200);
+            PDP.Load8(0200);
 
-            pdp.Start();
+            PDP.Start();
 
-            Assert.AreEqual(3u, pdp.Registers.IF_PC.Word);
+            Assert.AreEqual(3u, PDP.Registers.IF_PC.Word);
         }
 
         [TestMethod]
         public void DCA()
         {
-            pdp.Load8(0200);
+            PDP.Load8(0200);
 
-            pdp.Deposit8(7300); // CLA, CLL
-            pdp.Deposit8(1206); // TAD
-            pdp.Deposit8(3210); // DCA
-            pdp.Deposit8(1206); // TAD
-            pdp.Deposit8(1207); // TAD                        
-            pdp.Deposit8(7402); // HLT
-            pdp.Deposit8(7777);
-            pdp.Deposit8(0001);
+            PDP.Deposit8(7300); // CLA, CLL
+            PDP.Deposit8(1206); // TAD
+            PDP.Deposit8(3210); // DCA
+            PDP.Deposit8(1206); // TAD
+            PDP.Deposit8(1207); // TAD                        
+            PDP.Deposit8(7402); // HLT
+            PDP.Deposit8(7777);
+            PDP.Deposit8(0001);
 
-            pdp.Load8(0200);
+            PDP.Load8(0200);
 
-            pdp.Start();
+            PDP.Start();
 
-            Assert.AreEqual(0u, pdp.Registers.LINK_AC.Accumulator);
-            Assert.AreEqual(1u, pdp.Registers.LINK_AC.Link);
+            Assert.AreEqual(0u, PDP.Registers.LINK_AC.Accumulator);
+            Assert.AreEqual(1u, PDP.Registers.LINK_AC.Link);
 
-            Assert.AreEqual(7777u.ToDecimal(), pdp.Memory.Examine(0210u.ToDecimal()));
+            Assert.AreEqual(7777u.ToDecimal(), PDP.Memory.Examine(0210u.ToDecimal()));
         }
 
         [TestMethod]
         public void JMS()
         {
-            pdp.Load8(0200);
+            PDP.Load8(0200);
 
-            pdp.Deposit8(4202); // JMS
-            pdp.Deposit8(0000);
-            pdp.Deposit8(7402);
-            pdp.Deposit8(7402); // HLT
+            PDP.Deposit8(4202); // JMS
+            PDP.Deposit8(0000);
+            PDP.Deposit8(7402);
+            PDP.Deposit8(7402); // HLT
 
-            pdp.Load8(0200);
+            PDP.Load8(0200);
 
-            pdp.Start();
+            PDP.Start();
 
-            Assert.AreEqual(4u, pdp.Registers.IF_PC.Word);
+            Assert.AreEqual(4u, PDP.Registers.IF_PC.Word);
 
-            Assert.AreEqual(0201u.ToDecimal(), pdp.Memory.Examine(0202u.ToDecimal()));
+            Assert.AreEqual(0201u.ToDecimal(), PDP.Memory.Examine(0202u.ToDecimal()));
         }
 
         [TestMethod]
         public void JMP()
         {
-            pdp.Load8(0200);
+            PDP.Load8(0200);
 
-            pdp.Deposit8(5202); // JMP
-            pdp.Deposit8(7402);
-            pdp.Deposit8(7402);
+            PDP.Deposit8(5202); // JMP
+            PDP.Deposit8(7402);
+            PDP.Deposit8(7402);
 
-            pdp.Load8(0200);
+            PDP.Load8(0200);
 
-            pdp.Start();
+            PDP.Start();
 
-            Assert.AreEqual(3u, pdp.Registers.IF_PC.Word);
+            Assert.AreEqual(3u, PDP.Registers.IF_PC.Word);
         }
     }
 }
