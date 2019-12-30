@@ -1,7 +1,5 @@
-using Core8.Model.Extensions;
 using Core8.Tests.Abstract;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Serilog;
 
 namespace Core8.Tests
 {

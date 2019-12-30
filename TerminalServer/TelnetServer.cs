@@ -1,5 +1,4 @@
-﻿using Core8.Model.Interfaces;
-using NetCoreServer;
+﻿using NetCoreServer;
 using NetMQ.Sockets;
 using Serilog;
 using System.Net;

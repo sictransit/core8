@@ -3,7 +3,6 @@ using Core8.Model.Interfaces;
 using NetMQ;
 using NetMQ.Sockets;
 using Serilog;
-using System;
 using System.Text;
 
 namespace Core8

@@ -1,5 +1,4 @@
-﻿using Core8.Model.Interfaces;
-using NetCoreServer;
+﻿using NetCoreServer;
 using NetMQ;
 using NetMQ.Sockets;
 using Serilog;
@@ -25,11 +24,11 @@ namespace Core8
 
         protected override void OnReceived(byte[] buffer, long offset, long size)
         {
-            var frame = new  byte[size];
+            var frame = new byte[size];
 
             Array.Copy(buffer, offset, frame, 0, size);
-            
-            publisher.TrySendFrame(frame);               
+
+            publisher.TrySendFrame(frame);
 
             //SendAsync(buffer, offset, size);
         }

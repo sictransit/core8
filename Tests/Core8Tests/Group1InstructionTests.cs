@@ -1,7 +1,5 @@
-using Core8.Model.Extensions;
 using Core8.Tests.Abstract;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Serilog;
 
 namespace Core8.Tests
 {
@@ -113,7 +111,7 @@ namespace Core8.Tests
             Assert.AreEqual((uint)1, PDP.Registers.LINK_AC.Link);
             Assert.AreEqual((uint)0b_101_010_101_010, PDP.Registers.LINK_AC.Accumulator);
         }
-        
+
         [TestMethod]
         public void RAL()
         {

@@ -1,5 +1,4 @@
-﻿using Core8.Model.Interfaces;
-using NetMQ;
+﻿using NetMQ;
 using NetMQ.Sockets;
 using Serilog;
 using System;
@@ -57,8 +56,8 @@ namespace Core8
                 {
                     if (subscriber.TryReceiveFrameBytes(TimeSpan.FromMilliseconds(100), out var frame))
                     {
-                        server.Multicast(frame);   
-                    }                    
+                        server.Multicast(frame);
+                    }
                 }
 
                 server.Stop();
@@ -76,6 +75,6 @@ namespace Core8
             hostThread.Join();
         }
 
-       
+
     }
 }

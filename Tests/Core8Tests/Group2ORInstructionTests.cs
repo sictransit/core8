@@ -1,7 +1,5 @@
-using Core8.Model.Extensions;
 using Core8.Tests.Abstract;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Serilog;
 
 namespace Core8.Tests
 {
@@ -45,7 +43,7 @@ namespace Core8.Tests
             Assert.AreEqual((uint)131, PDP.Registers.IF_PC.Address);
             Assert.AreEqual((uint)0b_100_000_000_000, PDP.Registers.LINK_AC.Accumulator);
         }
-        
+
         [TestMethod]
         public void SMA_CLA_Zero()
         {
@@ -99,7 +97,7 @@ namespace Core8.Tests
 
             PDP.Start();
 
-            Assert.AreEqual((uint)131, PDP.Registers.IF_PC.Address);            
+            Assert.AreEqual((uint)131, PDP.Registers.IF_PC.Address);
         }
 
         [TestMethod]

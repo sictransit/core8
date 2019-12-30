@@ -1,7 +1,6 @@
 ﻿using Serilog;
 using Serilog.Core;
 using System;
-using System.IO;
 using System.Net.Http;
 using System.Threading;
 
@@ -101,7 +100,7 @@ namespace Core8
 
             pdp.Stop(); // HLT
 
-            
+
 
             //var tape = client.GetByteArrayAsync(@"https://www.pdp8.net/pdp8cgi/os8_html/INST2.BN?act=file;fn=images/misc_dectapes/unlabled2.tu56;blk=308,11,0;to=sv_bin").Result;
             //var tape = client.GetByteArrayAsync(@"https://github.com/PontusPih/TINT8/releases/download/v0.1.0-alpha/tint.bin").Result;
@@ -113,13 +112,13 @@ namespace Core8
 
             pdp.Toggle8(7777);
 
-            pdp.Start();            
+            pdp.Start();
 
             pdp.Load8(0144);
             pdp.Toggle8(7777);
             pdp.Clear();
 
-            
+
             loggingLevel.MinimumLevel = Serilog.Events.LogEventLevel.Debug;
 
             pdp.DumpMemory();

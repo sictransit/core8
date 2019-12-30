@@ -20,7 +20,7 @@ namespace Core8
 
         public Processor(IMemory memory, IRegisters registers, IKeyboard keyboard, ITeleprinter teleprinter)
         {
-            Hardware = new Hardware(this, memory, registers, keyboard, teleprinter);            
+            Hardware = new Hardware(this, memory, registers, keyboard, teleprinter);
         }
 
         public IHardware Hardware { get; }
@@ -52,7 +52,7 @@ namespace Core8
 
             while (running.WaitOne(TimeSpan.Zero))
             {
-                FetchAndExecute();               
+                FetchAndExecute();
 
                 if (InterruptsEnabled & Hardware.InterruptRequested)
                 {
