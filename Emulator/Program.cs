@@ -1,4 +1,5 @@
-﻿using Serilog;
+﻿using Core8.Model.Extensions;
+using Serilog;
 using Serilog.Core;
 using System;
 using System.IO;
@@ -82,6 +83,8 @@ namespace Core8
 
         public static void TestBIN(PDP pdp)
         {
+            //loggingLevel.MinimumLevel = Serilog.Events.LogEventLevel.Debug;
+
             ToggleRIMLowSpeedLoader(pdp); // Toggle RIM loader
 
             pdp.LoadTape(File.ReadAllBytes("tapes/dec-08-lbaa-pm_5-10-67.bin")); // Load BIN loader
@@ -103,10 +106,13 @@ namespace Core8
 
             pdp.Load8(7777);
             pdp.Toggle8(7777);
+
             pdp.Start();
 
-            loggingLevel.MinimumLevel = Serilog.Events.LogEventLevel.Debug;
+            Log.Information(pdp.Memory.ToString());
+            Log.Information(pdp.Registers.LINK_AC.ToString());
 
+            loggingLevel.MinimumLevel = Serilog.Events.LogEventLevel.Debug;
             pdp.DumpMemory();
         }
 

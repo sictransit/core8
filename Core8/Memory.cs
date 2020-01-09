@@ -1,4 +1,5 @@
 ﻿using Core8.Model;
+using Core8.Model.Extensions;
 using Core8.Model.Interfaces;
 using System;
 
@@ -21,6 +22,8 @@ namespace Core8
 
         public uint Size { get; private set; }
 
+        public uint MB { get; private set; }
+
         public uint Examine(uint address)
         {
             return ram[address] & Masks.MEM_WORD;
@@ -38,7 +41,9 @@ namespace Core8
                 Write(address, Examine(address) + 1);
             }
 
-            return Examine(address);
+            MB = Examine(address);
+
+            return MB;
         }
 
         public void Write(uint address, uint data)
@@ -48,7 +53,14 @@ namespace Core8
                 throw new ArgumentOutOfRangeException(nameof(address));
             }
 
-            ram[address] = data & Masks.MEM_WORD;
+            MB = data & Masks.MEM_WORD;
+
+            ram[address] = MB;
+        }
+
+        public override string ToString()
+        {
+            return string.Format($"[RAM] {MB.ToOctalString()}");
         }
     }
 }

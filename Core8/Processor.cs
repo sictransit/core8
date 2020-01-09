@@ -82,9 +82,9 @@ namespace Core8
 
             if (instruction != null)
             {
-                instruction.Execute();
-
-                Log.Debug(instruction.ToString());
+                Log.Debug(instruction.ToString()); 
+                
+                instruction.Execute();                
             }
             else
             {

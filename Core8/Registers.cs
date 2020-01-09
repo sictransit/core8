@@ -9,13 +9,13 @@ namespace Core8
         {
             LINK_AC = new LINK_AC();
             IF_PC = new IF_PC();
-            Switch = new Switch();
+            Switch = new SR();
         }
 
         public LINK_AC LINK_AC { get; }
 
         public IF_PC IF_PC { get; }
 
-        public Switch Switch { get; }
+        public SR Switch { get; }
     }
 }

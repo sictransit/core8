@@ -8,6 +8,6 @@ namespace Core8.Model.Interfaces
 
         IF_PC IF_PC { get; }
 
-        Switch Switch { get; }
+        SR Switch { get; }
     }
 }

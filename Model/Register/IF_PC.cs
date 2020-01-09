@@ -1,4 +1,6 @@
-﻿namespace Core8.Model.Register
+﻿using Core8.Model.Extensions;
+
+namespace Core8.Model.Register
 {
     public class IF_PC : RegisterBase
     {
@@ -12,17 +14,22 @@
 
         public void Increment()
         {
-            Data = Data & Masks.IF | Data + 1 & Masks.MEM_WORD;
+            SetRegister(Data & Masks.IF | Data + 1 & Masks.MEM_WORD);
         }
 
         public void Reset()
         {
-            Data = 0;
+            SetRegister(0);
         }
 
         public void Set(uint address)
         {
-            Data = Data & Masks.IF | address & Masks.MEM_WORD;
+            SetRegister(Data & Masks.IF | address & Masks.MEM_WORD);            
+        }
+
+        public override string ToString()
+        {
+            return string.Format($"[IF_PC] {IF.ToOctalString()} {Page.ToOctalString()} {Word.ToOctalString()}");
         }
     }
 }

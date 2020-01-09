@@ -1,4 +1,5 @@
 ﻿using Core8.Model.Extensions;
+using Serilog;
 
 namespace Core8.Model.Register
 {
@@ -11,17 +12,17 @@ namespace Core8.Model.Register
 
         public void SetAccumulator(uint value)
         {
-            Data = (Link << 12) | (value & Masks.AC);
+            SetRegister((Link << 12) | (value & Masks.AC));
         }
 
         public void SetLink(uint value)
         {
-            Data = ((value & Masks.FLAG) << 12) | Accumulator;
+            SetRegister(((value & Masks.FLAG) << 12) | Accumulator);
         }
 
         public void Set(uint value)
         {
-            Data = value & (Masks.LINK | Masks.AC);
+            SetRegister(value & (Masks.LINK | Masks.AC));
         }
 
         public override string ToString()

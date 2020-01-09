@@ -9,5 +9,7 @@
         void Write(uint address, uint data);
 
         uint Size { get; }
+
+        uint MB { get; }
     }
 }
