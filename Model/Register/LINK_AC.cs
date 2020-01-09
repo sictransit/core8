@@ -8,11 +8,6 @@ namespace Core8.Model.Register
 
         public uint Accumulator => Data & Masks.AC;
 
-        public void Clear()
-        {
-            SetLink(0);
-            SetAccumulator(0);
-        }
 
         public void SetAccumulator(uint value)
         {

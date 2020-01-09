@@ -18,12 +18,21 @@ namespace Core8
 
         private readonly AutoResetEvent interruptDelay = new AutoResetEvent(false);
 
+        private readonly IMemory memory;
+
+        private readonly IRegisters registers;
+
+        private readonly IKeyboard keyboard;
+
+        private readonly ITeleprinter teleprinter;
+
         public Processor(IMemory memory, IRegisters registers, IKeyboard keyboard, ITeleprinter teleprinter)
         {
-            Hardware = new Hardware(this, memory, registers, keyboard, teleprinter);
+            this.memory = memory;
+            this.registers = registers;
+            this.keyboard = keyboard;
+            this.teleprinter = teleprinter;
         }
-
-        public IHardware Hardware { get; }
 
         public bool InterruptsEnabled => interruptEnable.WaitOne(TimeSpan.Zero);
 
@@ -54,23 +63,8 @@ namespace Core8
             {
                 FetchAndExecute();
 
-                if (InterruptsEnabled & Hardware.InterruptRequested)
-                {
-                    Log.Information("Interrupt!");
-
-                    interruptEnable.Reset();
-
-                    MemoryReferenceInstruction.JMS(Hardware, 0);
-                }
-
-                if (interruptDelay.WaitOne(TimeSpan.Zero))
-                {
-                    Log.Information("Interrupt enable pending ...");
-
-                    interruptEnable.Set();
-                }
-
-                Hardware.Tick();
+                teleprinter.Tick();
+                keyboard.Tick();
             }
 
             Log.Information("HLT");
@@ -78,17 +72,17 @@ namespace Core8
 
         public void FetchAndExecute()
         {
-            var address = Hardware.Registers.IF_PC.Address;
+            var address = registers.IF_PC.Address;
 
-            var data = Hardware.Memory.Read(address);
+            var data = memory.Read(address);
 
-            Hardware.Registers.IF_PC.Increment();
+            registers.IF_PC.Increment();
 
-            var instruction = Decode(address, data, Hardware.Keyboard.Id, Hardware.Teleprinter.Id);
+            var instruction = Decode(address, data, this, memory, registers, keyboard, teleprinter);
 
             if (instruction != null)
             {
-                instruction.Execute(Hardware);
+                instruction.Execute();
 
                 Log.Debug(instruction.ToString());
             }
@@ -98,19 +92,18 @@ namespace Core8
             }
         }
 
-        public static InstructionBase Decode(uint address, uint data, uint inputId, uint outputId)
+        public static InstructionBase Decode(uint address, uint data, IProcessor processor, IMemory memory, IRegisters registers, IKeyboard keyboard, ITeleprinter teleprinter)
         {
             return ((InstructionClass)(data & Masks.OP_CODE)) switch
             {
-                InstructionClass.MCI when (data & Masks.GROUP) == 0 => new Group1Instruction(address, data),
-                InstructionClass.MCI when (data & Masks.GROUP_2_PRIV) != 0 => new Group2PrivilegedInstruction(address, data),
-                InstructionClass.MCI when (data & Masks.GROUP_2_AND) == Masks.GROUP_2_AND => new Group2ANDInstruction(address, data),
-                InstructionClass.MCI => new Group2ORInstruction(address, data),
-                InstructionClass.IOT when ((data & Masks.IO) >> 3) == inputId => new KeyboardInstruction(address, data),
-                InstructionClass.IOT when ((data & Masks.IO) >> 3) == outputId => new TeleprinterInstruction(address, data),
-                InstructionClass.IOT when (data & Masks.IO) == 0 => new InterruptInstruction(address, data),
+                InstructionClass.MCI when (data & Masks.GROUP) == 0 => new Group1Instruction(address, data, registers),
+                InstructionClass.MCI when (data & Masks.GROUP_2_AND) == Masks.GROUP_2_AND => new Group2ANDInstruction(address, data, processor, registers),
+                InstructionClass.MCI => new Group2ORInstruction(address, data, processor, registers),
+                InstructionClass.IOT when ((data & Masks.IO) >> 3) == keyboard.Id => new KeyboardInstruction(address, data, registers, keyboard),
+                InstructionClass.IOT when ((data & Masks.IO) >> 3) == teleprinter.Id => new TeleprinterInstruction(address, data, registers, teleprinter),
+                InstructionClass.IOT when (data & Masks.IO) == 0 => new InterruptInstruction(address, data, processor, registers),
                 InstructionClass.IOT => null,
-                _ => new MemoryReferenceInstruction(address, data),
+                _ => new MemoryReferenceInstruction(address, data, memory, registers),
             };
         }
     }

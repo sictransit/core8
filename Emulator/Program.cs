@@ -1,7 +1,7 @@
 ﻿using Serilog;
 using Serilog.Core;
 using System;
-using System.Net.Http;
+using System.IO;
 using System.Threading;
 
 namespace Core8
@@ -82,13 +82,12 @@ namespace Core8
 
         public static void TestBIN(PDP pdp)
         {
-            LoadRIMLowSpeed(pdp); // Toggle RIM loader
+            ToggleRIMLowSpeedLoader(pdp); // Toggle RIM loader
 
-            var client = new HttpClient();
-            pdp.LoadTape(client.GetByteArrayAsync(@"http://bitsavers.informatik.uni-stuttgart.de/bits/DEC/pdp8/papertapeImages/set2/tray2/dec-08-lbaa-pm_5-10-67.bin").Result); // Load BIN loader
+            pdp.LoadTape(File.ReadAllBytes("tapes/dec-08-lbaa-pm_5-10-67.bin")); // Load BIN loader
 
-            //pdp.Toggle8(3777);
 
+            pdp.Load8(7756);
             //loggingLevel.MinimumLevel = Serilog.Events.LogEventLevel.Debug;
 
             pdp.Start(waitForHalt: false); // Run! RIM loader won't HLT.
@@ -100,38 +99,40 @@ namespace Core8
 
             pdp.Stop(); // HLT
 
-
-
-            //var tape = client.GetByteArrayAsync(@"https://www.pdp8.net/pdp8cgi/os8_html/INST2.BN?act=file;fn=images/misc_dectapes/unlabled2.tu56;blk=308,11,0;to=sv_bin").Result;
-            //var tape = client.GetByteArrayAsync(@"https://github.com/PontusPih/TINT8/releases/download/v0.1.0-alpha/tint.bin").Result;
-            var tape = client.GetByteArrayAsync(@"http://svn.so-much-stuff.com/svn/trunk/pdp8/src/maindec/08/d01c-pb").Result;
-
-            pdp.LoadTape(tape);
+            pdp.LoadTape(File.ReadAllBytes("tapes/hello_world.bin")); // Load BIN loader
 
             pdp.Load8(7777);
-
             pdp.Toggle8(7777);
-
             pdp.Start();
-
-            pdp.Load8(0144);
-            pdp.Toggle8(7777);
-            pdp.Clear();
-
 
             loggingLevel.MinimumLevel = Serilog.Events.LogEventLevel.Debug;
 
             pdp.DumpMemory();
-
-            pdp.Start(waitForHalt: true);
-            pdp.Start();
-
         }
 
 
-        private static void LoadRIMLowSpeed(PDP pdp)
+        private static void ToggleRIMLowSpeedLoader(PDP pdp)
         {
             pdp.Load8(7756);
+
+            //pdp.Deposit8(6014);
+            //pdp.Deposit8(6011);
+            //pdp.Deposit8(5357);
+            //pdp.Deposit8(6016);
+            //pdp.Deposit8(7106);
+            //pdp.Deposit8(7006);
+            //pdp.Deposit8(7510);
+            //pdp.Deposit8(5357);
+            //pdp.Deposit8(7006);
+            //pdp.Deposit8(6011);
+            //pdp.Deposit8(5367);
+            //pdp.Deposit8(6016);
+            //pdp.Deposit8(7420);
+            //pdp.Deposit8(3776);
+            //pdp.Deposit8(3376);
+            //pdp.Deposit8(5357);
+            //pdp.Deposit8(0);
+            //pdp.Deposit8(0);
 
             pdp.Deposit8(6032);
             pdp.Deposit8(6031);
@@ -149,8 +150,10 @@ namespace Core8
             pdp.Deposit8(3776);
             pdp.Deposit8(3376);
             pdp.Deposit8(5356);
+            pdp.Deposit8(0);
+            pdp.Deposit8(0);
 
-            pdp.Load8(7756);
+
         }
     }
 }

@@ -6,48 +6,53 @@ namespace Core8.Model.Instructions
 {
     public class InterruptInstruction : InstructionBase
     {
-        public InterruptInstruction(uint address, uint data) : base(address, data)
+        private readonly IProcessor processor;
+        private readonly IRegisters registers;
+
+        public InterruptInstruction(uint address, uint data, IProcessor processor, IRegisters registers) : base(address, data)
         {
+            this.processor = processor;
+            this.registers = registers;
         }
 
         protected override string OpCodeText => OpCode.ToString();
 
         private InterruptOpCode OpCode => (InterruptOpCode)(Data & Masks.IO_OPCODE);
 
-        public override void Execute(IHardware hardware)
+        public override void Execute()
         {
             switch (OpCode)
             {
                 case InterruptOpCode.SKON:
-                    SKON(hardware);
+                    SKON();
                     break;
                 case InterruptOpCode.ION:
-                    ION(hardware);
+                    ION();
                     break;
                 case InterruptOpCode.IOF:
-                    IOF(hardware);
+                    IOF();
                     break;
                 default:
                     break;
             }
         }
 
-        private void SKON(IHardware hardware)
+        private void SKON()
         {
-            if (hardware.Processor.InterruptsEnabled)
+            if (processor.InterruptsEnabled)
             {
-                hardware.Registers.IF_PC.Increment();
+                registers.IF_PC.Increment();
             }
         }
 
-        private void ION(IHardware hardware)
+        private void ION()
         {
-            hardware.Processor.EnableInterrupts();
+            processor.EnableInterrupts();
         }
 
-        private void IOF(IHardware hardware)
+        private void IOF()
         {
-            hardware.Processor.DisableInterrupts();
+            processor.DisableInterrupts();
         }
     }
 }

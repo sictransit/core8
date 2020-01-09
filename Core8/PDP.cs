@@ -37,7 +37,7 @@ namespace Core8
             {
                 var data = Memory.Examine(address);
 
-                var instruction = Processor.Decode(address, data, 3, 4);
+                var instruction = Processor.Decode(address, data, processor, Memory, Registers, Keyboard, Teleprinter);
 
                 if (instruction != null)
                 {

@@ -4,44 +4,46 @@ using Core8.Model.Interfaces;
 
 namespace Core8.Model.Instructions
 {
-    public class Group2ORInstruction : InstructionBase
+    public class Group2ORInstruction : Group2InstructionBase
     {
-        public Group2ORInstruction(uint address, uint data) : base(address, data)
+        public Group2ORInstruction(uint address, uint data, IProcessor processor, IRegisters registers) : base(address, data, processor, registers)
         {
         }
 
-        protected override string OpCodeText => OpCodes.ToString();
+        protected override string OpCodeText => string.Join(' ', OpCodes != 0 ? OpCodes.ToString() : string.Empty, base.OpCodeText);
 
         private Group2OROpCodes OpCodes => (Group2OROpCodes)(Data & Masks.GROUP_2_AND_OR_FLAGS);
 
-        public override void Execute(IHardware hardware)
+        public override void Execute()
         {
             bool result = false;
 
             if (OpCodes.HasFlag(Group2OROpCodes.SMA))
             {
-                result |= (hardware.Registers.LINK_AC.Accumulator & Masks.AC_SIGN) != 0;
+                result |= (Registers.LINK_AC.Accumulator & Masks.AC_SIGN) != 0;
             }
 
             if (OpCodes.HasFlag(Group2OROpCodes.SZA))
             {
-                result |= hardware.Registers.LINK_AC.Accumulator == 0;
+                result |= Registers.LINK_AC.Accumulator == 0;
             }
 
             if (OpCodes.HasFlag(Group2OROpCodes.SNL))
             {
-                result |= hardware.Registers.LINK_AC.Link != 0;
+                result |= Registers.LINK_AC.Link != 0;
             }
 
             if (result)
             {
-                hardware.Registers.IF_PC.Increment();
+                Registers.IF_PC.Increment();
             }
 
             if (OpCodes.HasFlag(Group2OROpCodes.CLA))
             {
-                hardware.Registers.LINK_AC.SetAccumulator(0);
+                Registers.LINK_AC.SetAccumulator(0);
             }
+
+            base.Execute();
         }
     }
 }

@@ -6,59 +6,62 @@ namespace Core8.Model.Instructions
 {
     public class Group1Instruction : InstructionBase
     {
-        public Group1Instruction(uint address, uint data) : base(address, data)
+        private readonly IRegisters registers;
+
+        public Group1Instruction(uint address, uint data, IRegisters registers) : base(address, data)
         {
+            this.registers = registers;
         }
 
         protected override string OpCodeText => OpCodes.ToString();
 
         private Group1OpCodes OpCodes => (Group1OpCodes)(Data & Masks.GROUP_1_FLAGS);
 
-        public override void Execute(IHardware hardware)
+        public override void Execute()
         {
             void RotateAccumulatorRight()
             {
-                var acc = hardware.Registers.LINK_AC.Data;
+                var acc = registers.LINK_AC.Data;
 
                 var result = (acc >> 1) & Masks.AC;
                 result += (acc & Masks.FLAG) << 12;
 
-                hardware.Registers.LINK_AC.Set(result);
+                registers.LINK_AC.Set(result);
             }
 
             void RotateAccumulatorLeft()
             {
-                var acc = hardware.Registers.LINK_AC.Data;
+                var acc = registers.LINK_AC.Data;
 
                 var result = (acc << 1) & (Masks.AC | Masks.LINK);
                 result += (acc & Masks.LINK) >> 12;
 
-                hardware.Registers.LINK_AC.Set(result);
+                registers.LINK_AC.Set(result);
             }
 
             if (OpCodes.HasFlag(Group1OpCodes.CLA))
             {
-                hardware.Registers.LINK_AC.SetAccumulator(0);
+                registers.LINK_AC.SetAccumulator(0);
             }
 
             if (OpCodes.HasFlag(Group1OpCodes.CLL))
             {
-                hardware.Registers.LINK_AC.SetLink(0);
+                registers.LINK_AC.SetLink(0);
             }
 
             if (OpCodes.HasFlag(Group1OpCodes.CMA))
             {
-                hardware.Registers.LINK_AC.SetAccumulator(hardware.Registers.LINK_AC.Accumulator ^ Masks.AC);
+                registers.LINK_AC.SetAccumulator(registers.LINK_AC.Accumulator ^ Masks.AC);
             }
 
             if (OpCodes.HasFlag(Group1OpCodes.CML))
             {
-                hardware.Registers.LINK_AC.SetLink(hardware.Registers.LINK_AC.Link ^ Masks.FLAG);
+                registers.LINK_AC.SetLink(registers.LINK_AC.Link ^ Masks.FLAG);
             }
 
             if (OpCodes.HasFlag(Group1OpCodes.IAC))
             {
-                hardware.Registers.LINK_AC.Set(hardware.Registers.LINK_AC.Accumulator + 1);
+                registers.LINK_AC.Set(registers.LINK_AC.Accumulator + 1);
             }
 
             if (OpCodes.HasFlag(Group1OpCodes.RAR))
@@ -83,11 +86,11 @@ namespace Core8.Model.Instructions
 
             if (OpCodes.HasFlag(Group1OpCodes.BSW) && !OpCodes.HasFlag(Group1OpCodes.RAR) && !OpCodes.HasFlag(Group1OpCodes.RAL))
             {
-                var acc = hardware.Registers.LINK_AC.Accumulator;
+                var acc = registers.LINK_AC.Accumulator;
 
                 var result = (acc & Masks.AC_HIGH) >> 6 | (acc & Masks.AC_LOW) << 6;
 
-                hardware.Registers.LINK_AC.SetAccumulator(result);
+                registers.LINK_AC.SetAccumulator(result);
             }
         }
     }

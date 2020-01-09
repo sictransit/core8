@@ -7,43 +7,48 @@ namespace Core8.Model.Instructions
 {
     public class TeleprinterInstruction : InstructionBase
     {
-        public TeleprinterInstruction(uint address, uint data) : base(address, data)
+        private readonly IRegisters registers;
+        private readonly ITeleprinter teleprinter;
+
+        public TeleprinterInstruction(uint address, uint data, IRegisters registers, ITeleprinter teleprinter) : base(address, data)
         {
+            this.registers = registers;
+            this.teleprinter = teleprinter;
         }
 
         protected override string OpCodeText => OpCode.ToString();
 
         private TeleprinterOpCode OpCode => (TeleprinterOpCode)(Data & Masks.IO_OPCODE);
 
-        public override void Execute(IHardware hardware)
+        public override void Execute()
         {
             switch (OpCode)
             {
                 case TeleprinterOpCode.TLS:
-                    TLS(hardware);
+                    TLS();
                     break;
                 case TeleprinterOpCode.TSF:
-                    TSF(hardware);
+                    TSF();
                     break;
                 default:
                     throw new NotImplementedException();
             }
         }
 
-        private void TLS(IHardware hardware)
+        private void TLS()
         {
-            var c = hardware.Registers.LINK_AC.Accumulator & Masks.TELEPRINTER_BUFFER_MASK;
+            var c = registers.LINK_AC.Accumulator & Masks.TELEPRINTER_BUFFER_MASK;
 
-            hardware.Teleprinter.Type((byte)c);
+            teleprinter.Type((byte)c);
 
-            hardware.Teleprinter.ClearFlag();
+            teleprinter.ClearFlag();
         }
 
-        private void TSF(IHardware hardware)
+        private void TSF()
         {
-            if (hardware.Teleprinter.IsFlagSet)
+            if (teleprinter.IsFlagSet)
             {
-                hardware.Registers.IF_PC.Increment();
+                registers.IF_PC.Increment();
             }
         }
     }

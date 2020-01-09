@@ -1,4 +1,5 @@
 ﻿using Core8.Model.Enums;
+using Core8.Model.Extensions;
 using Core8.Model.Instructions.Abstract;
 using Core8.Model.Interfaces;
 using System;
@@ -8,98 +9,112 @@ namespace Core8.Model.Instructions
 {
     public class MemoryReferenceInstruction : InstructionBase
     {
-        public MemoryReferenceInstruction(uint address, uint data) : base(address, data)
+        private readonly IMemory memory;
+        private readonly IRegisters registers;
+
+        public MemoryReferenceInstruction(uint address, uint data, IMemory memory, IRegisters registers) : base(address, data)
         {
+            this.memory = memory;
+            this.registers = registers;
         }
 
         private MemoryReferenceOpCode OpCode => (MemoryReferenceOpCode)(Data & Masks.OP_CODE);
 
         private AddressingModes AddressingModes => (AddressingModes)(Data & Masks.ADDRESSING_MODE);
 
-        protected override string OpCodeText => string.Join(" ", (new[] { OpCode.ToString(), AddressingModes != 0 ? AddressingModes.ToString() : string.Empty }).Where(x => !string.IsNullOrEmpty(x)));
+        protected override string OpCodeText => string.Join(" ", (new[] { OpCode.ToString(), Indirect ? "I" : null, Zero ? "Z" : null }).Where(x => !string.IsNullOrEmpty(x)));
 
-        public override void Execute(IHardware hardware)
+        private bool Indirect => AddressingModes.HasFlag(AddressingModes.I);
+
+        private bool Zero => !AddressingModes.HasFlag(AddressingModes.Z);
+
+        public uint Location => Zero ? (Data & Masks.ADDRESS_WORD) : (Address & Masks.ADDRESS_PAGE) | (Data & Masks.ADDRESS_WORD);
+
+        public override void Execute()
         {
-            var location = AddressingModes.HasFlag(AddressingModes.Z) ? (Address & Masks.ADDRESS_PAGE) | (Data & Masks.ADDRESS_WORD) : (Data & Masks.ADDRESS_WORD);
-
-            var address = AddressingModes.HasFlag(AddressingModes.I) ? hardware.Memory.Read(location, true) : location;
+            var address = Indirect ? memory.Read(Location, true) : Location;
 
             switch (OpCode)
             {
                 case MemoryReferenceOpCode.AND:
-                    AND(hardware, address);
+                    AND(address);
                     break;
                 case MemoryReferenceOpCode.DCA:
-                    DCA(hardware, address);
+                    DCA(address);
                     break;
                 case MemoryReferenceOpCode.ISZ:
-                    ISZ(hardware, address);
+                    ISZ(address);
                     break;
                 case MemoryReferenceOpCode.JMP:
-                    JMP(hardware, address);
+                    JMP(address);
                     break;
                 case MemoryReferenceOpCode.JMS:
-                    JMS(hardware, address);
+                    JMS(address);
                     break;
                 case MemoryReferenceOpCode.TAD:
-                    TAD(hardware, address);
+                    TAD(address);
                     break;
                 default:
                     throw new NotImplementedException();
             }
         }
 
-        private void AND(IHardware hardware, uint address)
+        private void AND(uint address)
         {
-            var value = hardware.Memory.Read(address);
+            var value = memory.Read(address);
 
-            var ac = hardware.Registers.LINK_AC.Accumulator;
+            var ac = registers.LINK_AC.Accumulator;
 
-            hardware.Registers.LINK_AC.SetAccumulator(value & ac);
+            registers.LINK_AC.SetAccumulator(value & ac);
         }
 
-        private void DCA(IHardware hardware, uint address)
+        private void DCA(uint address)
         {
-            hardware.Memory.Write(address, hardware.Registers.LINK_AC.Accumulator);
+            memory.Write(address, registers.LINK_AC.Accumulator);
 
-            hardware.Registers.LINK_AC.SetAccumulator(0);
+            registers.LINK_AC.SetAccumulator(0);
         }
 
-        private void ISZ(IHardware hardware, uint address)
+        private void ISZ(uint address)
         {
-            var value = hardware.Memory.Read(address);
+            var value = memory.Read(address);
 
             value = (value + 1) & Masks.MEM_WORD;
 
-            hardware.Memory.Write(address, value);
+            memory.Write(address, value);
 
             if (value == 0)
             {
-                hardware.Registers.IF_PC.Increment();
+                registers.IF_PC.Increment();
             }
         }
 
-        private void JMP(IHardware hardware, uint address)
+        private void JMP(uint address)
         {
-            hardware.Registers.IF_PC.Set(address);
+            registers.IF_PC.Set(address);
         }
 
-        public static void JMS(IHardware hardware, uint address)
+        public void JMS(uint address)
         {
-            var pc = hardware.Registers.IF_PC.Address;
+            var pc = registers.IF_PC.Address;
 
-            hardware.Memory.Write(address, pc);
+            memory.Write(address, pc);
 
-            hardware.Registers.IF_PC.Set(address + 1);
+            registers.IF_PC.Set(address + 1);
         }
 
-        private void TAD(IHardware hardware, uint address)
+        private void TAD(uint address)
         {
-            var value = hardware.Memory.Read(address);
+            var value = memory.Read(address);
 
-            var ac = hardware.Registers.LINK_AC.Accumulator;
+            var ac = registers.LINK_AC.Accumulator;
 
-            hardware.Registers.LINK_AC.Set(ac + value);
+            registers.LINK_AC.Set(ac + value);
+        }
+
+        public override string ToString()
+        {
+            return $"{base.ToString()} ({Location.ToOctalString()})";
         }
     }
 

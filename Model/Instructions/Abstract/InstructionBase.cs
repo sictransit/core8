@@ -1,5 +1,4 @@
 ﻿using Core8.Model.Extensions;
-using Core8.Model.Interfaces;
 
 namespace Core8.Model.Instructions.Abstract
 {
@@ -15,13 +14,13 @@ namespace Core8.Model.Instructions.Abstract
 
         public uint Data { get; }
 
-        public abstract void Execute(IHardware hardware);
+        public abstract void Execute();
 
         protected abstract string OpCodeText { get; }
 
         public override string ToString()
         {
-            return $"{Address.ToOctalString()}: {OpCodeText} ({Data.ToOctalString()})";
+            return $"{Address.ToOctalString()}:{Data.ToOctalString()} {OpCodeText}";
         }
     }
 }

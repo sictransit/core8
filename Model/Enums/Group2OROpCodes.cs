@@ -8,6 +8,6 @@ namespace Core8.Model.Enums
         CLA = 1 << 7,
         SMA = 1 << 6,
         SZA = 1 << 5,
-        SNL = 1 << 4
+        SNL = 1 << 4,
     }
 }

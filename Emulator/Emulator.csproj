@@ -15,13 +15,13 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Update="Tapes\dnnbin.rim">
+    <None Update="Tapes\dec-08-lbaa-pm_5-10-67.bin">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Tapes\hello_world.bin">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="Tapes\MAINDEC-8E-D0AB-PB">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Tapes\MAINDEC-8E-D0AB-PB.bin">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>

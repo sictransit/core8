@@ -7,72 +7,77 @@ namespace Core8.Model.Instructions
 {
     public class KeyboardInstruction : InstructionBase
     {
-        public KeyboardInstruction(uint address, uint data) : base(address, data)
+        private readonly IRegisters registers;
+        private readonly IKeyboard keyboard;
+
+        public KeyboardInstruction(uint address, uint data, IRegisters registers, IKeyboard keyboard) : base(address, data)
         {
+            this.registers = registers;
+            this.keyboard = keyboard;
         }
 
         protected override string OpCodeText => OpCode.ToString();
 
         private KeyboardOpCode OpCode => (KeyboardOpCode)(Data & Masks.IO_OPCODE);
 
-        public override void Execute(IHardware hardware)
+        public override void Execute()
         {
             switch (OpCode)
             {
                 case KeyboardOpCode.KCC:
-                    KCC(hardware);
+                    KCC();
                     break;
                 case KeyboardOpCode.KCF:
-                    KCF(hardware);
+                    KCF();
                     break;
                 case KeyboardOpCode.KRB:
-                    KRB(hardware);
+                    KRB();
                     break;
                 case KeyboardOpCode.KRS:
-                    KRS(hardware);
+                    KRS();
                     break;
                 case KeyboardOpCode.KSF:
-                    KSF(hardware);
+                    KSF();
                     break;
                 default:
                     throw new NotImplementedException();
             }
         }
 
-        private void KCC(IHardware hardware)
+        private void KCC()
         {
-            hardware.Registers.LINK_AC.SetAccumulator(0);
+            registers.LINK_AC.SetAccumulator(0);
 
-            hardware.Keyboard.ClearFlag();
+            keyboard.ClearFlag();
         }
 
-        private void KCF(IHardware hardware)
+        private void KCF()
         {
-            hardware.Keyboard.ClearFlag();
+            keyboard.ClearFlag();
         }
 
-        private void KRB(IHardware hardware)
+        private void KRB()
         {
-            var buffer = hardware.Keyboard.Buffer;
+            var buffer = keyboard.Buffer;
 
-            hardware.Registers.LINK_AC.SetAccumulator(buffer);
+            registers.LINK_AC.SetAccumulator(buffer);
 
-            hardware.Keyboard.ClearFlag();
+            keyboard.ClearFlag();
         }
 
-        private void KRS(IHardware hardware)
+        private void KRS()
         {
-            var buffer = hardware.Keyboard.Buffer;
-            var acc = hardware.Registers.LINK_AC.Accumulator;
+            var buffer = keyboard.Buffer;
+            var acc = registers.LINK_AC.Accumulator;
 
-            hardware.Registers.LINK_AC.SetAccumulator(acc | buffer);
+            registers.LINK_AC.SetAccumulator(acc | buffer);
         }
 
-        private void KSF(IHardware hardware)
+        private void KSF()
         {
-            if (hardware.Keyboard.IsFlagSet)
+            if (keyboard.IsFlagSet)
             {
-                hardware.Registers.IF_PC.Increment();
+                registers.IF_PC.Increment();
             }
         }
     }
