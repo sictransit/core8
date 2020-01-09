@@ -1,5 +1,4 @@
 ﻿using Core8.Model.Extensions;
-using Serilog;
 
 namespace Core8.Model.Register
 {

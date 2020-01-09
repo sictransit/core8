@@ -82,9 +82,9 @@ namespace Core8
 
             if (instruction != null)
             {
-                Log.Debug(instruction.ToString()); 
-                
-                instruction.Execute();                
+                Log.Debug(instruction.ToString());
+
+                instruction.Execute();
             }
             else
             {
@@ -101,7 +101,6 @@ namespace Core8
                 InstructionClass.MCI => new Group2ORInstruction(address, data, processor, registers),
                 InstructionClass.IOT when ((data & Masks.IO) >> 3) == keyboard.Id => new KeyboardInstruction(address, data, registers, keyboard),
                 InstructionClass.IOT when ((data & Masks.IO) >> 3) == teleprinter.Id => new TeleprinterInstruction(address, data, registers, teleprinter),
-                InstructionClass.IOT when (data & Masks.IO) == 0 => new InterruptInstruction(address, data, processor, registers),
                 InstructionClass.IOT => null,
                 _ => new MemoryReferenceInstruction(address, data, memory, registers),
             };

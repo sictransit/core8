@@ -61,11 +61,7 @@ namespace Core8.Model.Instructions
 
         private void AND(uint address)
         {
-            var value = memory.Read(address);
-
-            var ac = registers.LINK_AC.Accumulator;
-
-            registers.LINK_AC.SetAccumulator(value & ac);
+            registers.LINK_AC.SetAccumulator(memory.Read(address) & registers.LINK_AC.Accumulator);
         }
 
         private void DCA(uint address)
@@ -77,13 +73,9 @@ namespace Core8.Model.Instructions
 
         private void ISZ(uint address)
         {
-            var value = memory.Read(address);
+            memory.Write(address, (memory.Read(address) + 1) & Masks.MEM_WORD);
 
-            value = (value + 1) & Masks.MEM_WORD;
-
-            memory.Write(address, value);
-
-            if (value == 0)
+            if (memory.MB == 0)
             {
                 registers.IF_PC.Increment();
             }
@@ -96,20 +88,14 @@ namespace Core8.Model.Instructions
 
         public void JMS(uint address)
         {
-            var pc = registers.IF_PC.Address;
-
-            memory.Write(address, pc);
+            memory.Write(address, registers.IF_PC.Address);
 
             registers.IF_PC.Set(address + 1);
         }
 
         private void TAD(uint address)
         {
-            var value = memory.Read(address);
-
-            var ac = registers.LINK_AC.Accumulator;
-
-            registers.LINK_AC.Set(ac + value);
+            registers.LINK_AC.Set(registers.LINK_AC.Accumulator + memory.Read(address));
         }
 
         public override string ToString()
