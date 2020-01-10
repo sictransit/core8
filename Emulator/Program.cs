@@ -2,6 +2,7 @@
 using Serilog.Core;
 using System;
 using System.IO;
+using System.Net.Http;
 using System.Threading;
 
 namespace Core8
@@ -9,6 +10,8 @@ namespace Core8
     public class Program
     {
         private static LoggingLevelSwitch loggingLevel = new LoggingLevelSwitch(Serilog.Events.LogEventLevel.Information);
+
+        private static HttpClient httpClient = new HttpClient();
 
         public static void Main(string[] args)
         {
@@ -82,17 +85,15 @@ namespace Core8
 
         public static void TestBIN(PDP pdp)
         {
-            //loggingLevel.MinimumLevel = Serilog.Events.LogEventLevel.Debug;
-
             ToggleRIMLowSpeedLoader(pdp); // Toggle RIM loader
 
-            pdp.LoadTape(File.ReadAllBytes("tapes/dec-08-lbaa-pm_5-10-67.bin")); // Load BIN loader
+            pdp.LoadTape(File.ReadAllBytes("tapes/binLoader.rim")); // Load BIN loader
 
 
             pdp.Load8(7756);
-            //loggingLevel.MinimumLevel = Serilog.Events.LogEventLevel.Debug;
-
+            
             pdp.Start(waitForHalt: false); // Run! RIM loader won't HLT.
+
 
             while (pdp.Keyboard.IsTapeLoaded) // While there is tape to be read ...
             {
@@ -101,18 +102,32 @@ namespace Core8
 
             pdp.Stop(); // HLT
 
-            pdp.LoadTape(File.ReadAllBytes("tapes/hello_world.bin")); // Load BIN loader
+            pdp.Clear();
+
+            pdp.LoadTape(httpClient.GetByteArrayAsync("https://www.bernhard-baehr.de/pdp8e/MAINDECs/MAINDEC-8E-D0AB-PB").Result); // Load BIN loader
 
             pdp.Load8(7777);
+            
+            //loggingLevel.MinimumLevel = Serilog.Events.LogEventLevel.Debug;
+            pdp.Start();
+
+            Log.Information(pdp.Memory.ToString());
+            Log.Information(pdp.Registers.LINK_AC.ToString());
+
+            pdp.Load8(0200);
             pdp.Toggle8(7777);
+            pdp.Clear();
+
+            loggingLevel.MinimumLevel = Serilog.Events.LogEventLevel.Debug;
+            pdp.DumpMemory();
 
             pdp.Start();
 
             Log.Information(pdp.Memory.ToString());
             Log.Information(pdp.Registers.LINK_AC.ToString());
 
-            loggingLevel.MinimumLevel = Serilog.Events.LogEventLevel.Debug;
-            pdp.DumpMemory();
+            pdp.Start();
+            //pdp.DumpMemory();
         }
 
 

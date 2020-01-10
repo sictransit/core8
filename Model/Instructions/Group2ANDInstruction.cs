@@ -10,7 +10,7 @@ namespace Core8.Model.Instructions
         {
         }
 
-        protected override string OpCodeText => string.Join(' ', OpCodes != 0 ? OpCodes.ToString() : string.Empty, base.OpCodeText);
+        protected override string OpCodeText => OpCodes == 0 ? base.OpCodeText : string.Join(' ', OpCodes.ToString(), base.OpCodeText);
 
         private Group2ANDOpCodes OpCodes => (Group2ANDOpCodes)(Data & Masks.GROUP_2_AND_OR_FLAGS);
 

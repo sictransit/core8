@@ -52,9 +52,7 @@ namespace Core8
 
         public void Clear()
         {
-            Keyboard.ClearFlag();
             Keyboard.Clear();
-            Teleprinter.ClearFlag();
             Teleprinter.Clear();
             Registers.LINK_AC.Clear();
         }
@@ -66,14 +64,14 @@ namespace Core8
 
         public void Deposit10(uint data)
         {
-            Registers.Switch.Set(data);
+            Registers.SR.Set(data);
 
             Deposit();
         }
 
         private void Deposit()
         {
-            var data = Registers.Switch.Get;
+            var data = Registers.SR.Get;
 
             Memory.Write(Registers.IF_PC.Address, data & Masks.MEM_WORD);
 
@@ -89,14 +87,14 @@ namespace Core8
 
         public void Load10(uint address)
         {
-            Registers.Switch.Set(address);
+            Registers.SR.Set(address);
 
             Load();
         }
 
         private void Load()
         {
-            var address = Registers.Switch.Get;
+            var address = Registers.SR.Get;
 
             Registers.IF_PC.Set(address);
 
@@ -110,7 +108,7 @@ namespace Core8
 
         public void Toggle10(uint word)
         {
-            Registers.Switch.Set(word);
+            Registers.SR.Set(word);
         }
 
         public void Exam()

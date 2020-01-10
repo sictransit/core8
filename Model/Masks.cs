@@ -54,7 +54,7 @@
             = 0b_111_100_001_000;
 
         public const uint GROUP_2_AND_OR_FLAGS
-            = 0b_000_011_110_000;
+            = 0b_000_011_111_000;
 
         public const uint PRIVILEGED_GROUP_2_FLAGS
             = 0b_000_000_000_110;
@@ -66,6 +66,6 @@
             = 0b_000_011_111_111;
 
         public const uint TELEPRINTER_BUFFER_MASK
-            = 0b_000_011_111_111;
+            = 0b_000_001_111_111;
     }
 }

@@ -14,7 +14,7 @@ namespace Core8.Model.Register
 
         public void Increment()
         {
-            SetRegister(Data & Masks.IF | Data + 1 & Masks.MEM_WORD);
+            SetRegister((Data & Masks.IF) | ((Data + 1) & Masks.MEM_WORD));
         }
 
         public void Reset()
@@ -24,7 +24,7 @@ namespace Core8.Model.Register
 
         public void Set(uint address)
         {
-            SetRegister(Data & Masks.IF | address & Masks.MEM_WORD);
+            SetRegister((Data & Masks.IF) | (address & Masks.MEM_WORD));
         }
 
         public override string ToString()
