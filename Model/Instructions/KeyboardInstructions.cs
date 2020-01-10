@@ -5,14 +5,12 @@ using System;
 
 namespace Core8.Model.Instructions
 {
-    public class KeyboardInstruction : InstructionBase
+    public class KeyboardInstructions : InstructionsBase
     {
-        private readonly IRegisters registers;
         private readonly IKeyboard keyboard;
 
-        public KeyboardInstruction(uint address, uint data, IRegisters registers, IKeyboard keyboard) : base(address, data)
+        public KeyboardInstructions(IRegisters registers, IKeyboard keyboard) : base(registers)
         {
-            this.registers = registers;
             this.keyboard = keyboard;
         }
 
@@ -20,7 +18,7 @@ namespace Core8.Model.Instructions
 
         private KeyboardOpCode OpCode => (KeyboardOpCode)(Data & Masks.IO_OPCODE);
 
-        public override void Execute()
+        protected override void Execute()
         {
             switch (OpCode)
             {
@@ -46,7 +44,7 @@ namespace Core8.Model.Instructions
 
         private void KCC()
         {
-            registers.LINK_AC.SetAccumulator(0);
+            Registers.LINK_AC.SetAccumulator(0);
 
             keyboard.ClearFlag();
         }
@@ -58,26 +56,21 @@ namespace Core8.Model.Instructions
 
         private void KRB()
         {
-            var buffer = keyboard.Buffer;
-
-            registers.LINK_AC.SetAccumulator(buffer);
+            Registers.LINK_AC.SetAccumulator(keyboard.Buffer);
 
             keyboard.ClearFlag();
         }
 
         private void KRS()
         {
-            var buffer = keyboard.Buffer;
-            var acc = registers.LINK_AC.Accumulator;
-
-            registers.LINK_AC.SetAccumulator(acc | buffer);
+            Registers.LINK_AC.SetAccumulator(Registers.LINK_AC.Accumulator | keyboard.Buffer);
         }
 
         private void KSF()
         {
             if (keyboard.IsFlagSet)
             {
-                registers.IF_PC.Increment();
+                Registers.IF_PC.Increment();
             }
         }
     }

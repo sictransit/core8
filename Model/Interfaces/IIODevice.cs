@@ -4,8 +4,6 @@
     {
         void Tick();
 
-        uint Id { get; }
-
         bool IsFlagSet { get; }
 
         void ClearFlag();

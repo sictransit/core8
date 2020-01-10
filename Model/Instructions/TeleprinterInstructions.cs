@@ -5,14 +5,12 @@ using System;
 
 namespace Core8.Model.Instructions
 {
-    public class TeleprinterInstruction : InstructionBase
+    public class TeleprinterInstructions : InstructionsBase
     {
-        private readonly IRegisters registers;
         private readonly ITeleprinter teleprinter;
 
-        public TeleprinterInstruction(uint address, uint data, IRegisters registers, ITeleprinter teleprinter) : base(address, data)
+        public TeleprinterInstructions(IRegisters registers, ITeleprinter teleprinter) : base(registers)
         {
-            this.registers = registers;
             this.teleprinter = teleprinter;
         }
 
@@ -20,7 +18,7 @@ namespace Core8.Model.Instructions
 
         private TeleprinterOpCode OpCode => (TeleprinterOpCode)(Data & Masks.IO_OPCODE);
 
-        public override void Execute()
+        protected override void Execute()
         {
             switch (OpCode)
             {
@@ -37,7 +35,7 @@ namespace Core8.Model.Instructions
 
         private void TLS()
         {
-            var c = registers.LINK_AC.Accumulator & Masks.TELEPRINTER_BUFFER_MASK;
+            var c = Registers.LINK_AC.Accumulator & Masks.TELEPRINTER_BUFFER_MASK;
 
             teleprinter.Type((byte)c);
 
@@ -48,7 +46,7 @@ namespace Core8.Model.Instructions
         {
             if (teleprinter.IsFlagSet)
             {
-                registers.IF_PC.Increment();
+                Registers.IF_PC.Increment();
             }
         }
     }

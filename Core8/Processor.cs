@@ -1,8 +1,6 @@
 ﻿using Core8.Model;
 using Core8.Model.Enums;
 using Core8.Model.Extensions;
-using Core8.Model.Instructions;
-using Core8.Model.Instructions.Abstract;
 using Core8.Model.Interfaces;
 using Serilog;
 using System;
@@ -26,12 +24,16 @@ namespace Core8
 
         private readonly ITeleprinter teleprinter;
 
+        private readonly InstructionSet instructionSet;
+
         public Processor(IMemory memory, IRegisters registers, IKeyboard keyboard, ITeleprinter teleprinter)
         {
             this.memory = memory;
             this.registers = registers;
             this.keyboard = keyboard;
             this.teleprinter = teleprinter;
+
+            instructionSet = new InstructionSet(this, memory, registers, keyboard, teleprinter);
         }
 
         public bool InterruptsEnabled => interruptEnable.WaitOne(TimeSpan.Zero);
@@ -78,13 +80,13 @@ namespace Core8
 
             registers.IF_PC.Increment();
 
-            var instruction = Decode(address, data, this, memory, registers, keyboard, teleprinter);
+            var instruction = Decode(data, instructionSet);
 
             if (instruction != null)
             {
-                Log.Debug(instruction.ToString());
+                instruction.LoadAndExecute(address, data);
 
-                instruction.Execute();
+                Log.Debug(instruction.ToString());
             }
             else
             {
@@ -92,17 +94,22 @@ namespace Core8
             }
         }
 
-        public static InstructionBase Decode(uint address, uint data, IProcessor processor, IMemory memory, IRegisters registers, IKeyboard keyboard, ITeleprinter teleprinter)
+        public static IInstruction Decode(uint data, InstructionSet instructionSet)
         {
+            if (instructionSet is null)
+            {
+                throw new ArgumentNullException(nameof(instructionSet));
+            }
+
             return ((InstructionClass)(data & Masks.OP_CODE)) switch
             {
-                InstructionClass.MCI when (data & Masks.GROUP) == 0 => new Group1Instruction(address, data, registers),
-                InstructionClass.MCI when (data & Masks.GROUP_2_AND) == Masks.GROUP_2_AND => new Group2ANDInstruction(address, data, processor, registers),
-                InstructionClass.MCI => new Group2ORInstruction(address, data, processor, registers),
-                InstructionClass.IOT when ((data & Masks.IO) >> 3) == keyboard.Id => new KeyboardInstruction(address, data, registers, keyboard),
-                InstructionClass.IOT when ((data & Masks.IO) >> 3) == teleprinter.Id => new TeleprinterInstruction(address, data, registers, teleprinter),
+                InstructionClass.MCI when (data & Masks.GROUP) == 0 => instructionSet.Group1,
+                InstructionClass.MCI when (data & Masks.GROUP_2_AND) == Masks.GROUP_2_AND => instructionSet.Group2AND,
+                InstructionClass.MCI => instructionSet.Group2OR,
+                InstructionClass.IOT when ((data & Masks.IO) >> 3) == 3 => instructionSet.Keyboard,
+                InstructionClass.IOT when ((data & Masks.IO) >> 3) == 4 => instructionSet.Teleprinter,
                 InstructionClass.IOT => null,
-                _ => new MemoryReferenceInstruction(address, data, memory, registers),
+                _ => instructionSet.MemoryReference,
             };
         }
     }

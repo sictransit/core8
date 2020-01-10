@@ -12,7 +12,7 @@ namespace Core8
         private readonly StringBuilder paper = new StringBuilder();
         private readonly PublisherSocket publisherSocket;
 
-        public Teleprinter(uint id) : base(id)
+        public Teleprinter()
         {
             publisherSocket = new PublisherSocket();
 

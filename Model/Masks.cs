@@ -35,6 +35,9 @@
         public const uint AC
             = 0b_0_111_111_111_111;
 
+        public const uint AC_LINK
+            = LINK | AC;
+
         public const uint AC_HIGH
             = 0b_0_111_111_000_000;
 
@@ -58,9 +61,6 @@
 
         public const uint PRIVILEGED_GROUP_2_FLAGS
             = 0b_000_000_000_110;
-
-        public const uint KEYBOARD_INSTRUCTION_FLAGS
-            = 0b_110_000_011_000;
 
         public const uint KEYBOARD_BUFFER_MASK
             = 0b_000_011_111_111;

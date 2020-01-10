@@ -7,13 +7,6 @@ namespace Core8.Abstract
 {
     public abstract class IODevice : IIODevice
     {
-        protected IODevice(uint id)
-        {
-            Id = id;
-        }
-
-        public uint Id { get; }
-
         private readonly ManualResetEvent flag = new ManualResetEvent(false);
 
         protected ConcurrentQueue<byte> Queue { get; } = new ConcurrentQueue<byte>();
@@ -46,6 +39,11 @@ namespace Core8.Abstract
 
         public void Type(byte[] chars)
         {
+            if (chars is null)
+            {
+                throw new ArgumentNullException(nameof(chars));
+            }
+
             foreach (var c in chars)
             {
                 Type(c);

@@ -17,8 +17,8 @@ namespace Core8
         {
             Memory = new Memory(4096);
             Registers = new Registers();
-            Keyboard = new Keyboard(3);
-            Teleprinter = new Teleprinter(4);
+            Keyboard = new Keyboard();
+            Teleprinter = new Teleprinter();
 
             processor = new Processor(Memory, Registers, Keyboard, Teleprinter);
         }
@@ -33,19 +33,23 @@ namespace Core8
 
         public void DumpMemory()
         {
+            var instructionSet = new InstructionSet(processor, Memory, Registers, Keyboard, Teleprinter);
+
             for (uint address = 0; address < Memory.Size; address++)
             {
                 var data = Memory.Examine(address);
 
-                var instruction = Processor.Decode(address, data, processor, Memory, Registers, Keyboard, Teleprinter);
+                var instruction = Processor.Decode(data, instructionSet);
 
                 if (instruction != null)
                 {
+                    instruction.Load(address, data);
+
                     Log.Debug($"{instruction}");
                 }
                 else
                 {
-                    Log.Debug($"{address.ToOctalString()}: {data.ToOctalString()}");
+                    Log.Debug($"{address.ToOctalString()}:{data.ToOctalString()}");
                 }
             }
         }

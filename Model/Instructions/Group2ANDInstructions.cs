@@ -4,9 +4,9 @@ using Core8.Model.Interfaces;
 
 namespace Core8.Model.Instructions
 {
-    public class Group2ANDInstruction : Group2InstructionBase
+    public class Group2ANDInstructions : Group2InstructionsBase
     {
-        public Group2ANDInstruction(uint address, uint data, IProcessor processor, IRegisters registers) : base(address, data, processor, registers)
+        public Group2ANDInstructions(IProcessor processor, IRegisters registers) : base(processor, registers)
         {
         }
 
@@ -14,7 +14,7 @@ namespace Core8.Model.Instructions
 
         private Group2ANDOpCodes OpCodes => (Group2ANDOpCodes)(Data & Masks.GROUP_2_AND_OR_FLAGS);
 
-        public override void Execute()
+        protected override void Execute()
         {
             bool result = true;
 

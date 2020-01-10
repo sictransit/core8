@@ -13,7 +13,7 @@ namespace Core8
         private volatile uint buffer;
         private readonly SubscriberSocket subscriberSocket;
 
-        public Keyboard(uint id) : base(id)
+        public Keyboard()
         {
             subscriberSocket = new SubscriberSocket();
 

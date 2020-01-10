@@ -21,7 +21,7 @@ namespace Core8.Model.Register
 
         public void Set(uint value)
         {
-            SetRegister(value & (Masks.LINK | Masks.AC));
+            SetRegister(value & Masks.AC_LINK);
         }
 
         public override string ToString()

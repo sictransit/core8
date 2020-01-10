@@ -7,15 +7,13 @@ using System.Linq;
 
 namespace Core8.Model.Instructions
 {
-    public class MemoryReferenceInstruction : InstructionBase
+    public class MemoryReferenceInstructions : InstructionsBase
     {
         private readonly IMemory memory;
-        private readonly IRegisters registers;
 
-        public MemoryReferenceInstruction(uint address, uint data, IMemory memory, IRegisters registers) : base(address, data)
+        public MemoryReferenceInstructions(IMemory memory, IRegisters registers) : base(registers)
         {
             this.memory = memory;
-            this.registers = registers;
         }
 
         private MemoryReferenceOpCode OpCode => (MemoryReferenceOpCode)(Data & Masks.OP_CODE);
@@ -30,7 +28,7 @@ namespace Core8.Model.Instructions
 
         public uint Location => Zero ? (Data & Masks.ADDRESS_WORD) : (Address & Masks.ADDRESS_PAGE) | (Data & Masks.ADDRESS_WORD);
 
-        public override void Execute()
+        protected override void Execute()
         {
             var address = Indirect ? memory.Read(Location, true) : Location;
 
@@ -61,14 +59,14 @@ namespace Core8.Model.Instructions
 
         private void AND(uint address)
         {
-            registers.LINK_AC.SetAccumulator(memory.Read(address) & registers.LINK_AC.Accumulator);
+            Registers.LINK_AC.SetAccumulator(memory.Read(address) & Registers.LINK_AC.Accumulator);
         }
 
         private void DCA(uint address)
         {
-            memory.Write(address, registers.LINK_AC.Accumulator);
+            memory.Write(address, Registers.LINK_AC.Accumulator);
 
-            registers.LINK_AC.SetAccumulator(0);
+            Registers.LINK_AC.SetAccumulator(0);
         }
 
         private void ISZ(uint address)
@@ -77,25 +75,25 @@ namespace Core8.Model.Instructions
 
             if (memory.MB == 0)
             {
-                registers.IF_PC.Increment();
+                Registers.IF_PC.Increment();
             }
         }
 
         private void JMP(uint address)
         {
-            registers.IF_PC.Set(address);
+            Registers.IF_PC.Set(address);
         }
 
         public void JMS(uint address)
         {
-            memory.Write(address, registers.IF_PC.Address);
+            memory.Write(address, Registers.IF_PC.Address);
 
-            registers.IF_PC.Set(address + 1);
+            Registers.IF_PC.Set(address + 1);
         }
 
         private void TAD(uint address)
         {
-            registers.LINK_AC.Set(registers.LINK_AC.Accumulator + memory.Read(address));
+            Registers.LINK_AC.Set(Registers.LINK_AC.Accumulator + memory.Read(address));
         }
 
         public override string ToString()

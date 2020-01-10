@@ -91,7 +91,7 @@ namespace Core8
 
 
             pdp.Load8(7756);
-            
+
             pdp.Start(waitForHalt: false); // Run! RIM loader won't HLT.
 
 
@@ -107,7 +107,7 @@ namespace Core8
             pdp.LoadTape(httpClient.GetByteArrayAsync("https://www.bernhard-baehr.de/pdp8e/MAINDECs/MAINDEC-8E-D0AB-PB").Result); // Load BIN loader
 
             pdp.Load8(7777);
-            
+
             //loggingLevel.MinimumLevel = Serilog.Events.LogEventLevel.Debug;
             pdp.Start();
 
