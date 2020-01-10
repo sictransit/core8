@@ -1,5 +1,6 @@
 ﻿using Core8.Model;
 using Core8.Model.Extensions;
+using Core8.Model.Instructions;
 using Core8.Model.Interfaces;
 using Serilog;
 using System;
@@ -33,18 +34,16 @@ namespace Core8
 
         public void DumpMemory()
         {
-            var instructionSet = new InstructionSet(processor, Memory, Registers, Keyboard, Teleprinter);
+            var instructionFactory = new InstructionFactory(processor, Memory, Registers, Keyboard, Teleprinter);
 
             for (uint address = 0; address < Memory.Size; address++)
             {
                 var data = Memory.Examine(address);
 
-                var instruction = Processor.Decode(data, instructionSet);
+                var instruction = instructionFactory.Fetch(address, data);
 
                 if (instruction != null)
                 {
-                    instruction.Load(address, data);
-
                     Log.Debug($"{instruction}");
                 }
                 else

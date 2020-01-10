@@ -87,7 +87,7 @@ namespace Core8
         {
             ToggleRIMLowSpeedLoader(pdp); // Toggle RIM loader
 
-            pdp.LoadTape(File.ReadAllBytes("tapes/binLoader.rim")); // Load BIN loader
+            pdp.LoadTape(File.ReadAllBytes("tapes/binLoader.rim.bin")); // Load BIN loader
 
 
             pdp.Load8(7756);
@@ -104,9 +104,12 @@ namespace Core8
 
             pdp.Clear();
 
-            pdp.LoadTape(httpClient.GetByteArrayAsync("https://www.bernhard-baehr.de/pdp8e/MAINDECs/MAINDEC-8E-D0AB-PB").Result); // Load BIN loader
+            pdp.LoadTape(File.ReadAllBytes(@"tapes/MAINDEC-8E-D0AB-PB.bin"));
+            //pdp.LoadTape(httpClient.GetByteArrayAsync("https://www.bernhard-baehr.de/pdp8e/MAINDECs/MAINDEC-8E-D0AB-PB").Result); // Load BIN loader
 
             pdp.Load8(7777);
+
+            //loggingLevel.MinimumLevel = Serilog.Events.LogEventLevel.Debug;
 
             //loggingLevel.MinimumLevel = Serilog.Events.LogEventLevel.Debug;
             pdp.Start();

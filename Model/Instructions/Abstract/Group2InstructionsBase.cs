@@ -7,7 +7,7 @@ namespace Core8.Model.Instructions.Abstract
     {
         private readonly IProcessor processor;
 
-        public Group2InstructionsBase(IProcessor processor, IRegisters registers) : base(registers)
+        internal Group2InstructionsBase(IProcessor processor, IRegisters registers) : base(registers)
         {
             this.processor = processor;
         }
@@ -16,7 +16,7 @@ namespace Core8.Model.Instructions.Abstract
 
         private Group2PrivilegedOpCodes OpCodes => (Group2PrivilegedOpCodes)(Data & Masks.PRIVILEGED_GROUP_2_FLAGS);
 
-        protected override void Execute()
+        public override void Execute()
         {
             if (OpCodes.HasFlag(Group2PrivilegedOpCodes.OSR))
             {

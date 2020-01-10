@@ -9,7 +9,7 @@ namespace Core8.Model.Instructions
     {
         private readonly IKeyboard keyboard;
 
-        public KeyboardInstructions(IRegisters registers, IKeyboard keyboard) : base(registers)
+        internal KeyboardInstructions(IRegisters registers, IKeyboard keyboard) : base(registers)
         {
             this.keyboard = keyboard;
         }
@@ -18,7 +18,7 @@ namespace Core8.Model.Instructions
 
         private KeyboardOpCode OpCode => (KeyboardOpCode)(Data & Masks.IO_OPCODE);
 
-        protected override void Execute()
+        public override void Execute()
         {
             switch (OpCode)
             {
@@ -56,14 +56,14 @@ namespace Core8.Model.Instructions
 
         private void KRB()
         {
-            Registers.LINK_AC.SetAccumulator(keyboard.Buffer);
+            Registers.LINK_AC.SetAccumulator(keyboard.GetBuffer());
 
             keyboard.ClearFlag();
         }
 
         private void KRS()
         {
-            Registers.LINK_AC.SetAccumulator(Registers.LINK_AC.Accumulator | keyboard.Buffer);
+            Registers.LINK_AC.SetAccumulator(Registers.LINK_AC.Accumulator | keyboard.GetBuffer());
         }
 
         private void KSF()

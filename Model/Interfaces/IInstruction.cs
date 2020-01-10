@@ -8,6 +8,6 @@
 
         void Load(uint address, uint data);
 
-        void LoadAndExecute(uint address, uint data);
+        void Execute();
     }
 }

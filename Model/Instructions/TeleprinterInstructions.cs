@@ -9,7 +9,7 @@ namespace Core8.Model.Instructions
     {
         private readonly ITeleprinter teleprinter;
 
-        public TeleprinterInstructions(IRegisters registers, ITeleprinter teleprinter) : base(registers)
+        internal TeleprinterInstructions(IRegisters registers, ITeleprinter teleprinter) : base(registers)
         {
             this.teleprinter = teleprinter;
         }
@@ -18,7 +18,7 @@ namespace Core8.Model.Instructions
 
         private TeleprinterOpCode OpCode => (TeleprinterOpCode)(Data & Masks.IO_OPCODE);
 
-        protected override void Execute()
+        public override void Execute()
         {
             switch (OpCode)
             {

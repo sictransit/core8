@@ -14,7 +14,7 @@ namespace Core8.Model.Instructions.Abstract
 
         public uint Data { get; private set; }
 
-        protected abstract void Execute();
+        public abstract void Execute();
 
         protected abstract string OpCodeText { get; }
 
@@ -24,13 +24,6 @@ namespace Core8.Model.Instructions.Abstract
         {
             Address = address;
             Data = data;
-        }
-
-        public void LoadAndExecute(uint address, uint data)
-        {
-            Load(address, data);
-
-            Execute();
         }
 
         public override string ToString()

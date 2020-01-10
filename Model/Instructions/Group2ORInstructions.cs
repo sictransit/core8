@@ -6,7 +6,7 @@ namespace Core8.Model.Instructions
 {
     public class Group2ORInstructions : Group2InstructionsBase
     {
-        public Group2ORInstructions(IProcessor processor, IRegisters registers) : base(processor, registers)
+        internal Group2ORInstructions(IProcessor processor, IRegisters registers) : base(processor, registers)
         {
         }
 
@@ -14,7 +14,7 @@ namespace Core8.Model.Instructions
 
         private Group2OROpCodes OpCodes => (Group2OROpCodes)(Data & Masks.GROUP_2_AND_OR_FLAGS);
 
-        protected override void Execute()
+        public override void Execute()
         {
             bool result = false;
 

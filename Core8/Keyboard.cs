@@ -21,7 +21,14 @@ namespace Core8
             subscriberSocket.SubscribeToAnyTopic();
         }
 
-        public uint Buffer => buffer & Masks.KEYBOARD_BUFFER_MASK;
+        public uint GetBuffer()
+        {
+            var value = buffer & Masks.KEYBOARD_BUFFER_MASK;
+
+            Log.Information($"Keyboard buffer: {value:00} (dec)");
+
+            return buffer;
+        }
 
         public bool IsTapeLoaded => !Queue.IsEmpty;
 

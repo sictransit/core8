@@ -11,7 +11,7 @@ namespace Core8.Model.Instructions
     {
         private readonly IMemory memory;
 
-        public MemoryReferenceInstructions(IMemory memory, IRegisters registers) : base(registers)
+        internal MemoryReferenceInstructions(IMemory memory, IRegisters registers) : base(registers)
         {
             this.memory = memory;
         }
@@ -28,50 +28,50 @@ namespace Core8.Model.Instructions
 
         public uint Location => Zero ? (Data & Masks.ADDRESS_WORD) : (Address & Masks.ADDRESS_PAGE) | (Data & Masks.ADDRESS_WORD);
 
-        protected override void Execute()
+        public override void Execute()
         {
-            var address = Indirect ? memory.Read(Location, true) : Location;
+            var operand = Indirect ? memory.Read(Location, true) : Location;
 
             switch (OpCode)
             {
                 case MemoryReferenceOpCode.AND:
-                    AND(address);
+                    AND(operand);
                     break;
                 case MemoryReferenceOpCode.DCA:
-                    DCA(address);
+                    DCA(operand);
                     break;
                 case MemoryReferenceOpCode.ISZ:
-                    ISZ(address);
+                    ISZ(operand);
                     break;
                 case MemoryReferenceOpCode.JMP:
-                    JMP(address);
+                    JMP(operand);
                     break;
                 case MemoryReferenceOpCode.JMS:
-                    JMS(address);
+                    JMS(operand);
                     break;
                 case MemoryReferenceOpCode.TAD:
-                    TAD(address);
+                    TAD(operand);
                     break;
                 default:
                     throw new NotImplementedException();
             }
         }
 
-        private void AND(uint address)
+        private void AND(uint operand)
         {
-            Registers.LINK_AC.SetAccumulator(memory.Read(address) & Registers.LINK_AC.Accumulator);
+            Registers.LINK_AC.SetAccumulator(memory.Read(operand) & Registers.LINK_AC.Accumulator);
         }
 
-        private void DCA(uint address)
+        private void DCA(uint operand)
         {
-            memory.Write(address, Registers.LINK_AC.Accumulator);
+            memory.Write(operand, Registers.LINK_AC.Accumulator);
 
             Registers.LINK_AC.SetAccumulator(0);
         }
 
-        private void ISZ(uint address)
+        private void ISZ(uint operand)
         {
-            memory.Write(address, (memory.Read(address) + 1) & Masks.MEM_WORD);
+            memory.Write(operand, (memory.Read(operand) + 1) & Masks.MEM_WORD);
 
             if (memory.MB == 0)
             {
@@ -79,21 +79,21 @@ namespace Core8.Model.Instructions
             }
         }
 
-        private void JMP(uint address)
+        private void JMP(uint operand)
         {
-            Registers.IF_PC.Set(address);
+            Registers.IF_PC.Set(operand);
         }
 
-        public void JMS(uint address)
+        public void JMS(uint operand)
         {
-            memory.Write(address, Registers.IF_PC.Address);
+            memory.Write(operand, Registers.IF_PC.Address);
 
-            Registers.IF_PC.Set(address + 1);
+            Registers.IF_PC.Set(operand + 1);
         }
 
-        private void TAD(uint address)
+        private void TAD(uint operand)
         {
-            Registers.LINK_AC.Set(Registers.LINK_AC.Accumulator + memory.Read(address));
+            Registers.LINK_AC.Set(Registers.LINK_AC.Accumulator + memory.Read(operand));
         }
 
         public override string ToString()

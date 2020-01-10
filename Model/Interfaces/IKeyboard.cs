@@ -4,6 +4,6 @@
     {
         bool IsTapeLoaded { get; }
 
-        uint Buffer { get; }
+        uint GetBuffer();
     }
 }

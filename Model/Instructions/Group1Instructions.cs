@@ -6,7 +6,7 @@ namespace Core8.Model.Instructions
 {
     public class Group1Instructions : InstructionsBase
     {
-        public Group1Instructions(IRegisters registers) : base(registers)
+        internal Group1Instructions(IRegisters registers) : base(registers)
         {
         }
 
@@ -14,7 +14,7 @@ namespace Core8.Model.Instructions
 
         private Group1OpCodes OpCodes => (Group1OpCodes)(Data & Masks.GROUP_1_FLAGS);
 
-        protected override void Execute()
+        public override void Execute()
         {
             void RotateAccumulatorRight()
             {

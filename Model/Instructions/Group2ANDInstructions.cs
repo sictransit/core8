@@ -6,7 +6,7 @@ namespace Core8.Model.Instructions
 {
     public class Group2ANDInstructions : Group2InstructionsBase
     {
-        public Group2ANDInstructions(IProcessor processor, IRegisters registers) : base(processor, registers)
+        internal Group2ANDInstructions(IProcessor processor, IRegisters registers) : base(processor, registers)
         {
         }
 
@@ -14,7 +14,7 @@ namespace Core8.Model.Instructions
 
         private Group2ANDOpCodes OpCodes => (Group2ANDOpCodes)(Data & Masks.GROUP_2_AND_OR_FLAGS);
 
-        protected override void Execute()
+        public override void Execute()
         {
             bool result = true;
 
