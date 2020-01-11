@@ -21,6 +21,11 @@ namespace Core8
 
         public string Printout => paper.ToString();
 
+        public void FormFeed()
+        {
+            paper.Clear();
+        }
+
         public override void Tick()
         {
             if (!IsFlagSet && Queue.TryDequeue(out var item))

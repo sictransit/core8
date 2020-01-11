@@ -21,16 +21,26 @@ namespace Core8.Model.Instructions
                 Registers.LINK_AC.SetAccumulator(0);
             }
 
-            if (OpCodes.HasFlag(Group3OpCodes.MQA))
+            if (OpCodes.HasFlag(Group3OpCodes.SWP))
             {
-                Registers.LINK_AC.SetAccumulator(Registers.MQ.Get | Registers.LINK_AC.Accumulator);
-            }
+                var mq = Registers.MQ.Get;
 
-            if (OpCodes.HasFlag(Group3OpCodes.MQL))
-            {
                 Registers.MQ.Set(Registers.LINK_AC.Accumulator);
+                Registers.LINK_AC.SetAccumulator(mq);
+            }
+            else 
+            {
+                if (OpCodes.HasFlag(Group3OpCodes.MQA))
+                {
+                    Registers.LINK_AC.SetAccumulator(Registers.MQ.Get | Registers.LINK_AC.Accumulator);
+                }
 
-                Registers.LINK_AC.SetAccumulator(0);
+                if (OpCodes.HasFlag(Group3OpCodes.MQL))
+                {
+                    Registers.MQ.Set(Registers.LINK_AC.Accumulator);
+
+                    Registers.LINK_AC.SetAccumulator(0);
+                }
             }
         }
     }

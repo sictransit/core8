@@ -7,6 +7,7 @@ namespace Core8.Model.Enums
     {
         MQL = 1 << 4,
         MQA = 1 << 6,
+        SWP = 1 << 4 | 1 << 6,
         CLA = 1 << 7,
     }
 }

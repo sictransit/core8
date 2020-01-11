@@ -3,5 +3,7 @@
     public interface ITeleprinter : IIODevice
     {
         string Printout { get; }
+
+        void FormFeed();
     }
 }

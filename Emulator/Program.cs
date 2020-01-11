@@ -111,19 +111,27 @@ namespace Core8
             
 
             pdp.Start();
-            loggingLevel.MinimumLevel = Serilog.Events.LogEventLevel.Debug;
+            //loggingLevel.MinimumLevel = Serilog.Events.LogEventLevel.Debug;
             //Log.Information(pdp.Memory.ToString());
             Log.Information(pdp.Registers.LINK_AC.ToString());
 
             pdp.Load8(0200);
             pdp.Toggle8(7777);
             pdp.Start();
-            pdp.Start();
+            pdp.Start(waitForHalt:false);
+
+            while (true) 
+            {
+                Log.Information($"Teleprinter: {pdp.Teleprinter.Printout}");
+                pdp.Teleprinter.FormFeed();
+                
+                Thread.Sleep(1000);
+            }
 
 
             //pdp.Start();
-            
-            pdp.DumpMemory();
+
+            //pdp.DumpMemory();
 
 
         }

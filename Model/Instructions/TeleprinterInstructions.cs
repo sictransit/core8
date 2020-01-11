@@ -25,6 +25,9 @@ namespace Core8.Model.Instructions
                 case TeleprinterOpCode.TLS:
                     TLS();
                     break;
+                case TeleprinterOpCode.TCF:
+                    TCF();
+                    break;
                 case TeleprinterOpCode.TSF:
                     TSF();
                     break;
@@ -39,6 +42,11 @@ namespace Core8.Model.Instructions
 
             teleprinter.Type((byte)c);
 
+            teleprinter.ClearFlag();
+        }
+
+        private void TCF()
+        {
             teleprinter.ClearFlag();
         }
 
