@@ -101,29 +101,28 @@ namespace Core8
 
             pdp.Stop(); // HLT
 
-            pdp.DumpMemory();
+            //pdp.DumpMemory();
 
             pdp.Clear();
 
-            pdp.LoadTape(File.ReadAllBytes(@"tapes/hello_world.bin"));
+            pdp.LoadTape(File.ReadAllBytes(@"tapes/MAINDEC-8E-D0AB-PB.bin"));
 
             pdp.Load8(7777);
-            loggingLevel.MinimumLevel = Serilog.Events.LogEventLevel.Debug;
+            
 
             pdp.Start();
-
+            loggingLevel.MinimumLevel = Serilog.Events.LogEventLevel.Debug;
             //Log.Information(pdp.Memory.ToString());
             Log.Information(pdp.Registers.LINK_AC.ToString());
 
             pdp.Load8(0200);
+            pdp.Toggle8(7777);
             pdp.Start();
 
-            pdp.DumpMemory();
 
-            Log.Information(pdp.Teleprinter.Printout);
-
+            pdp.Start();
             
-            //pdp.DumpMemory();
+            pdp.DumpMemory();
 
 
         }

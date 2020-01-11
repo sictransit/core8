@@ -25,7 +25,7 @@ namespace Core8
         {
             var value = buffer & Masks.KEYBOARD_BUFFER_MASK;
 
-            Log.Information($"Keyboard buffer: {value:00} (dec)");
+            Log.Debug($"Keyboard buffer: {value:00} (dec)");
 
             return buffer;
         }
@@ -47,7 +47,7 @@ namespace Core8
 
                     SetFlag();
 
-                    Log.Information($"Reader queue: {Queue.Count}");
+                    Log.Debug($"Reader queue: {Queue.Count}");
                 }
             }
         }

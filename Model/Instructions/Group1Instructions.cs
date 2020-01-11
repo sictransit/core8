@@ -58,7 +58,7 @@ namespace Core8.Model.Instructions
 
             if (OpCodes.HasFlag(Group1OpCodes.IAC))
             {
-                Registers.LINK_AC.Set(Registers.LINK_AC.Accumulator + 1);
+                Registers.LINK_AC.Set(Registers.LINK_AC.Data + 1);
             }
 
             if (OpCodes.HasFlag(Group1OpCodes.RAR))
