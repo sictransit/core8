@@ -108,7 +108,7 @@ namespace Core8
             pdp.LoadTape(File.ReadAllBytes(@"tapes/MAINDEC-8E-D0AB-PB.bin"));
 
             pdp.Load8(7777);
-            
+
 
             pdp.Start();
             //loggingLevel.MinimumLevel = Serilog.Events.LogEventLevel.Debug;
@@ -118,13 +118,13 @@ namespace Core8
             pdp.Load8(0200);
             pdp.Toggle8(7777);
             pdp.Start();
-            pdp.Start(waitForHalt:false);
+            pdp.Start(waitForHalt: false);
 
-            while (true) 
+            while (true)
             {
                 Log.Information($"Teleprinter: {pdp.Teleprinter.Printout}");
                 pdp.Teleprinter.FormFeed();
-                
+
                 Thread.Sleep(1000);
             }
 

@@ -7,7 +7,7 @@ namespace Core8.Model.Register
     {
         public void Set(uint data)
         {
-            SetRegister(data & Masks.MEM_WORD);
+            Data = data & Masks.MEM_WORD;
 
             Log.Debug(this.ToString());
         }

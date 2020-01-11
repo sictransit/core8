@@ -40,9 +40,7 @@ namespace Core8
             {
                 var data = Memory.Examine(address);
 
-                var instruction = instructionFactory.Fetch(address, data);
-
-                if (instruction != null)
+                if (instructionFactory.TryFetch(address, data, out var instruction))
                 {
                     Log.Information($"{instruction}");
                 }
@@ -58,6 +56,7 @@ namespace Core8
             Keyboard.Clear();
             Teleprinter.Clear();
             Registers.LINK_AC.Clear();
+            Registers.MQ.Clear();
         }
 
         public void Deposit8(uint data)
@@ -123,7 +122,11 @@ namespace Core8
 
         public void Start(bool waitForHalt = true)
         {
-            cpuThread = new Thread(processor.Run);
+            cpuThread = new Thread(processor.Run)
+            {
+                IsBackground = true,
+                Priority = ThreadPriority.AboveNormal
+            };
 
             cpuThread.Start();
 

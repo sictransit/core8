@@ -49,16 +49,16 @@ namespace Core8.Model.Instructions
             teleprinterInstructions = new TeleprinterInstructions(registers, teleprinter);
         }
 
-        public IInstruction Fetch(uint address, uint data)
+        public bool TryFetch(uint address, uint data, out IInstruction instruction)
         {
-            var instruction = Decode(data);
+            instruction = Decode(data);
 
             if (instruction != null)
             {
                 instruction.Load(address, data);
             }
 
-            return instruction;
+            return instruction != null;
         }
 
         private IInstruction Decode(uint data)
@@ -66,7 +66,7 @@ namespace Core8.Model.Instructions
             return (InstructionClass)(data & Masks.OP_CODE) switch
             {
                 InstructionClass.MCI when (data & Masks.GROUP) == 0 => group1Instructions,
-                InstructionClass.MCI when ((data & Masks.GROUP_3) == Masks.GROUP_3)  && ((data & Masks.GROUP_3_EAE) == 0)=> group3Instructions,
+                InstructionClass.MCI when ((data & Masks.GROUP_3) == Masks.GROUP_3) && ((data & Masks.GROUP_3_EAE) == 0) => group3Instructions,
                 InstructionClass.MCI when (data & Masks.GROUP_3) == Masks.GROUP_3 => null,
                 InstructionClass.MCI when (data & Masks.GROUP_2_AND) == Masks.GROUP_2_AND => group2ANDInstructions,
                 InstructionClass.MCI => group2ORInstructions,

@@ -60,12 +60,19 @@ namespace Core8
 
             Log.Information("RUN");
 
+            var cnt = 0;
+
             while (running.WaitOne(TimeSpan.Zero))
             {
                 FetchAndExecute();
 
-                teleprinter.Tick();
-                keyboard.Tick();
+                if (cnt++ > 100)
+                {
+                    teleprinter.Tick();
+                    keyboard.Tick();
+
+                    cnt = 0;
+                }
             }
 
             Log.Information("HLT");
@@ -79,9 +86,7 @@ namespace Core8
 
             registers.IF_PC.Increment();
 
-            var instruction = instructionFactory.Fetch(address, data);
-
-            if (instruction != null)
+            if (instructionFactory.TryFetch(address, data, out var instruction))
             {
                 Log.Debug(instruction.ToString());
 

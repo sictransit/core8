@@ -32,11 +32,6 @@ namespace Core8
 
         public uint Read(uint address, bool indirect = false)
         {
-            if (address > Size)
-            {
-                throw new ArgumentOutOfRangeException(nameof(address));
-            }
-
             if (indirect && (address >= 8) && (address <= 15))
             {
                 Write(address, Examine(address) + 1);

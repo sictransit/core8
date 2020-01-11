@@ -9,6 +9,15 @@ namespace Core8.Model.Register
 
         public uint Accumulator => Data & Masks.AC;
 
+        public void RAR()
+        {
+            Set(((Data >> 1) & Masks.AC) + ((Data & Masks.FLAG) << 12));
+        }
+
+        public void RAL()
+        {
+            Set(((Data << 1) & Masks.AC_LINK) + ((Data & Masks.LINK) >> 12));
+        }
 
         public void SetAccumulator(uint value)
         {
@@ -22,7 +31,7 @@ namespace Core8.Model.Register
 
         public void Set(uint value)
         {
-            SetRegister(value & Masks.AC_LINK);
+            Data = value & Masks.AC_LINK;
 
             Log.Debug(this.ToString());
         }

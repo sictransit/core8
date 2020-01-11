@@ -28,7 +28,7 @@ namespace Core8.Model.Instructions
                 Registers.MQ.Set(Registers.LINK_AC.Accumulator);
                 Registers.LINK_AC.SetAccumulator(mq);
             }
-            else 
+            else
             {
                 if (OpCodes.HasFlag(Group3OpCodes.MQA))
                 {

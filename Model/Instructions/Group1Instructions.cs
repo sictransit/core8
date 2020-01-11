@@ -16,25 +16,7 @@ namespace Core8.Model.Instructions
 
         public override void Execute()
         {
-            void RotateAccumulatorRight()
-            {
-                var acc = Registers.LINK_AC.Data;
 
-                var result = (acc >> 1) & Masks.AC;
-                result += (acc & Masks.FLAG) << 12;
-
-                Registers.LINK_AC.Set(result);
-            }
-
-            void RotateAccumulatorLeft()
-            {
-                var acc = Registers.LINK_AC.Data;
-
-                var result = (acc << 1) & (Masks.AC_LINK);
-                result += (acc & Masks.LINK) >> 12;
-
-                Registers.LINK_AC.Set(result);
-            }
 
             if (OpCodes.HasFlag(Group1OpCodes.CLA))
             {
@@ -63,21 +45,21 @@ namespace Core8.Model.Instructions
 
             if (OpCodes.HasFlag(Group1OpCodes.RAR))
             {
-                RotateAccumulatorRight();
+                Registers.LINK_AC.RAR();
 
                 if (OpCodes.HasFlag(Group1OpCodes.BSW))
                 {
-                    RotateAccumulatorRight();
+                    Registers.LINK_AC.RAR();
                 }
             }
 
             if (OpCodes.HasFlag(Group1OpCodes.RAL))
             {
-                RotateAccumulatorLeft();
+                Registers.LINK_AC.RAL();
 
                 if (OpCodes.HasFlag(Group1OpCodes.BSW))
                 {
-                    RotateAccumulatorLeft();
+                    Registers.LINK_AC.RAL();
                 }
             }
 
