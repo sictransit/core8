@@ -1,4 +1,6 @@
-﻿namespace Core8.Model.Register
+﻿using Serilog;
+
+namespace Core8.Model.Register
 {
     public abstract class RegisterBase
     {
@@ -6,9 +8,7 @@
 
         protected void SetRegister(uint data)
         {
-            Data = data;
-
-            //Log.Debug(this.ToString());
+            Data = data;            
         }
 
         public void Clear()

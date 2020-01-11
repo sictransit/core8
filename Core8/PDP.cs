@@ -44,11 +44,11 @@ namespace Core8
 
                 if (instruction != null)
                 {
-                    Log.Debug($"{instruction}");
+                    Log.Information($"{instruction}");
                 }
                 else
                 {
-                    Log.Debug($"{address.ToOctalString()}:{data.ToOctalString()}");
+                    Log.Information($"{address.ToOctalString()}:{data.ToOctalString()}");
                 }
             }
         }

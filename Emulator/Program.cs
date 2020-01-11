@@ -19,6 +19,7 @@ namespace Core8
 
             Log.Logger = new LoggerConfiguration()
                 .WriteTo.Console()
+                .WriteTo.File("emulator.log")
                 .MinimumLevel.ControlledBy(loggingLevel)
                 .CreateLogger();
 
@@ -87,13 +88,11 @@ namespace Core8
         {
             ToggleRIMLowSpeedLoader(pdp); // Toggle RIM loader
 
-            pdp.LoadTape(File.ReadAllBytes("tapes/binLoader.rim.bin")); // Load BIN loader
-
+            pdp.LoadTape(File.ReadAllBytes(@"tapes/dec-08-lbaa-pm_5-10-67.bin")); // Load BIN loader
 
             pdp.Load8(7756);
 
             pdp.Start(waitForHalt: false); // Run! RIM loader won't HLT.
-
 
             while (pdp.Keyboard.IsTapeLoaded) // While there is tape to be read ...
             {
@@ -102,35 +101,31 @@ namespace Core8
 
             pdp.Stop(); // HLT
 
+            pdp.DumpMemory();
+
             pdp.Clear();
 
-            pdp.LoadTape(File.ReadAllBytes(@"tapes/MAINDEC-8E-D0AB-PB.bin"));
-            //pdp.LoadTape(httpClient.GetByteArrayAsync("https://www.bernhard-baehr.de/pdp8e/MAINDECs/MAINDEC-8E-D0AB-PB").Result); // Load BIN loader
+            pdp.LoadTape(File.ReadAllBytes(@"tapes/hello_world.bin"));
 
             pdp.Load8(7777);
+            loggingLevel.MinimumLevel = Serilog.Events.LogEventLevel.Debug;
 
-            //loggingLevel.MinimumLevel = Serilog.Events.LogEventLevel.Debug;
-
-            //loggingLevel.MinimumLevel = Serilog.Events.LogEventLevel.Debug;
             pdp.Start();
 
-            Log.Information(pdp.Memory.ToString());
+            //Log.Information(pdp.Memory.ToString());
             Log.Information(pdp.Registers.LINK_AC.ToString());
 
             pdp.Load8(0200);
-            pdp.Toggle8(7777);
-            pdp.Clear();
+            pdp.Start();
 
-            loggingLevel.MinimumLevel = Serilog.Events.LogEventLevel.Debug;
             pdp.DumpMemory();
 
-            pdp.Start();
+            Log.Information(pdp.Teleprinter.Printout);
 
-            Log.Information(pdp.Memory.ToString());
-            Log.Information(pdp.Registers.LINK_AC.ToString());
-
-            pdp.Start();
+            
             //pdp.DumpMemory();
+
+
         }
 
 
@@ -174,9 +169,6 @@ namespace Core8
             pdp.Deposit8(3376);
             pdp.Deposit8(5356);
             pdp.Deposit8(0);
-            pdp.Deposit8(0);
-
-
         }
     }
 }

@@ -1,6 +1,7 @@
 ﻿using Core8.Model;
 using Core8.Model.Extensions;
 using Core8.Model.Interfaces;
+using Serilog;
 using System;
 
 namespace Core8
@@ -56,6 +57,8 @@ namespace Core8
             MB = data & Masks.MEM_WORD;
 
             ram[address] = MB;
+
+            Log.Debug($"[Write]: {address.ToOctalString()}:{MB.ToOctalString()}");
         }
 
         public override string ToString()
