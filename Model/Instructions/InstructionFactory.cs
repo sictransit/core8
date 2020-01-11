@@ -8,6 +8,7 @@ namespace Core8.Model.Instructions
         private readonly Group1Instructions group1Instructions;
         private readonly Group2ANDInstructions group2ANDInstructions;
         private readonly Group2ORInstructions group2ORInstructions;
+        private readonly Group3Instructions group3Instructions;
         private readonly MemoryReferenceInstructions memoryReferenceInstructions;
         private readonly KeyboardInstructions keyboardInstructions;
         private readonly TeleprinterInstructions teleprinterInstructions;
@@ -42,6 +43,7 @@ namespace Core8.Model.Instructions
             group1Instructions = new Group1Instructions(registers);
             group2ANDInstructions = new Group2ANDInstructions(processor, registers);
             group2ORInstructions = new Group2ORInstructions(processor, registers);
+            group3Instructions = new Group3Instructions(registers);
             memoryReferenceInstructions = new MemoryReferenceInstructions(memory, registers);
             keyboardInstructions = new KeyboardInstructions(registers, keyboard);
             teleprinterInstructions = new TeleprinterInstructions(registers, teleprinter);
@@ -64,6 +66,8 @@ namespace Core8.Model.Instructions
             return (InstructionClass)(data & Masks.OP_CODE) switch
             {
                 InstructionClass.MCI when (data & Masks.GROUP) == 0 => group1Instructions,
+                InstructionClass.MCI when ((data & Masks.GROUP_3) == Masks.GROUP_3)  && ((data & Masks.GROUP_3_EAE) == 0)=> group3Instructions,
+                InstructionClass.MCI when (data & Masks.GROUP_3) == Masks.GROUP_3 => null,
                 InstructionClass.MCI when (data & Masks.GROUP_2_AND) == Masks.GROUP_2_AND => group2ANDInstructions,
                 InstructionClass.MCI => group2ORInstructions,
                 InstructionClass.IOT when (data & Masks.IO) >> 3 == 3 => keyboardInstructions,

@@ -10,6 +10,7 @@ namespace Core8
             LINK_AC = new LINK_AC();
             IF_PC = new IF_PC();
             SR = new SR();
+            MQ = new MQ();
         }
 
         public LINK_AC LINK_AC { get; }
@@ -17,5 +18,7 @@ namespace Core8
         public IF_PC IF_PC { get; }
 
         public SR SR { get; }
+
+        public MQ MQ { get; }
     }
 }

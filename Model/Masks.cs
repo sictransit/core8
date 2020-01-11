@@ -59,6 +59,15 @@
         public const uint GROUP_2_AND_OR_FLAGS
             = 0b_000_011_111_000;
 
+        public const uint GROUP_3
+            = 0b_111_100_000_001;
+        
+        public const uint GROUP_3_EAE
+            = 0b_000_000_101_110;
+
+        public const uint GROUP_3_FLAGS
+            = 0b_000_011_010_000;
+        
         public const uint PRIVILEGED_GROUP_2_FLAGS
             = 0b_000_000_000_110;
 

@@ -118,9 +118,10 @@ namespace Core8
             pdp.Load8(0200);
             pdp.Toggle8(7777);
             pdp.Start();
-
-
             pdp.Start();
+
+
+            //pdp.Start();
             
             pdp.DumpMemory();
 
