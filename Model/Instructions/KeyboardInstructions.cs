@@ -34,6 +34,9 @@ namespace Core8.Model.Instructions
                 case KeyboardOpCode.KRS:
                     KRS();
                     break;
+                case KeyboardOpCode.KIE:
+                    KIE();
+                    break;
                 case KeyboardOpCode.KSF:
                     KSF();
                     break;
@@ -64,6 +67,11 @@ namespace Core8.Model.Instructions
         private void KRS()
         {
             Registers.LINK_AC.SetAccumulator(Registers.LINK_AC.Accumulator | keyboard.GetBuffer());
+        }
+
+        private void KIE()
+        {
+            keyboard.SetDeviceControls(Registers.LINK_AC.Accumulator);
         }
 
         private void KSF()

@@ -17,6 +17,8 @@ namespace Core8
             publisherSocket = new PublisherSocket();
 
             publisherSocket.Connect(@"tcp://127.0.0.1:17233");
+
+            base.SetDeviceControls(0b_011);
         }
 
         public string Printout => paper.ToString();
@@ -24,6 +26,11 @@ namespace Core8
         public void FormFeed()
         {
             paper.Clear();
+        }
+
+        public override void SetDeviceControls(uint data)
+        {
+            base.SetDeviceControls(0b_011);
         }
 
         public override void Tick()

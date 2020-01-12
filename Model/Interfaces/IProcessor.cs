@@ -6,9 +6,13 @@
 
         void Halt();
 
+        void Clear();
+
         void EnableInterrupts();
 
         bool InterruptsEnabled { get; }
+
+        bool InterruptRequested { get; }
 
         void DisableInterrupts();
     }

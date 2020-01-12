@@ -22,6 +22,9 @@ namespace Core8.Model.Instructions
         {
             switch (OpCode)
             {
+                case TeleprinterOpCode.TFL:
+                    TFL();
+                    break;
                 case TeleprinterOpCode.TLS:
                     TLS();
                     break;
@@ -34,6 +37,11 @@ namespace Core8.Model.Instructions
                 default:
                     throw new NotImplementedException();
             }
+        }
+
+        private void TFL()
+        {
+            teleprinter.SetFlag();
         }
 
         private void TLS()

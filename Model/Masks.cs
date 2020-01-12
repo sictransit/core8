@@ -68,6 +68,15 @@
         public const uint GROUP_3_FLAGS
             = 0b_000_011_010_000;
 
+        public const uint MEMORY_MANAGEMENT
+            = 0b_110_010_000_000;
+
+        public const uint INTERRUPT_MASK
+            = 0b_000_111_111_000;
+
+        public const uint INTERRUPT_FLAGS
+            = 0b_000_000_000_111;
+
         public const uint PRIVILEGED_GROUP_2_FLAGS
             = 0b_000_000_000_110;
 
@@ -76,5 +85,8 @@
 
         public const uint TELEPRINTER_BUFFER_MASK
             = 0b_000_001_111_111;
+
+        public const uint IO_DEVICE_CONTROL_MASK
+            = 0b_000_000_000_011;
     }
 }

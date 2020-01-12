@@ -53,10 +53,7 @@ namespace Core8
 
         public void Clear()
         {
-            Keyboard.Clear();
-            Teleprinter.Clear();
-            Registers.LINK_AC.Clear();
-            Registers.MQ.Clear();
+            processor.Clear();
         }
 
         public void Deposit8(uint data)

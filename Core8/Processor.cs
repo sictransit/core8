@@ -15,6 +15,8 @@ namespace Core8
 
         private readonly AutoResetEvent interruptDelay = new AutoResetEvent(false);
 
+        private readonly ManualResetEvent interruptRequested = new ManualResetEvent(false);
+
         private readonly IMemory memory;
 
         private readonly IRegisters registers;
@@ -27,15 +29,34 @@ namespace Core8
 
         public Processor(IMemory memory, IRegisters registers, IKeyboard keyboard, ITeleprinter teleprinter)
         {
-            this.memory = memory;
-            this.registers = registers;
-            this.keyboard = keyboard;
-            this.teleprinter = teleprinter;
+            this.memory = memory ?? throw new ArgumentNullException(nameof(memory));
+            this.registers = registers ?? throw new ArgumentNullException(nameof(registers));
+            this.keyboard = keyboard ?? throw new ArgumentNullException(nameof(keyboard));
+            this.teleprinter = teleprinter ?? throw new ArgumentNullException(nameof(teleprinter));
+
+            teleprinter.SetIRQHook(RequestInterrupt);
+            keyboard.SetIRQHook(RequestInterrupt);
 
             instructionFactory = new InstructionFactory(this, memory, registers, keyboard, teleprinter);
         }
 
         public bool InterruptsEnabled => interruptEnable.WaitOne(TimeSpan.Zero);
+
+        public bool InterruptRequested => interruptRequested.WaitOne(TimeSpan.Zero);
+
+        public void Clear()
+        {
+            keyboard.Clear();
+            teleprinter.Clear();
+            registers.LINK_AC.Clear();
+            registers.MQ.Clear();
+            DisableInterrupts();
+        }
+
+        private void RequestInterrupt()
+        {
+            interruptRequested.Set();
+        }
 
         public void Halt()
         {
@@ -52,6 +73,8 @@ namespace Core8
             interruptDelay.Reset();
 
             interruptEnable.Reset();
+
+            interruptRequested.Reset();
         }
 
         public void Run()
@@ -80,6 +103,8 @@ namespace Core8
 
         public void FetchAndExecute()
         {
+            var enableInterrupts = interruptDelay.WaitOne(TimeSpan.Zero);
+
             var address = registers.IF_PC.Address;
 
             var data = memory.Read(address);
@@ -95,6 +120,11 @@ namespace Core8
             else
             {
                 Log.Warning($"[{address.ToOctalString()}] NOP {data.ToOctalString()}");
+            }
+
+            if (enableInterrupts)
+            {
+                interruptEnable.Set();
             }
         }
 

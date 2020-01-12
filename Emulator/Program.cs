@@ -105,20 +105,20 @@ namespace Core8
 
             pdp.Clear();
 
-            pdp.LoadTape(File.ReadAllBytes(@"tapes/MAINDEC-8E-D0AB-PB.bin"));
+            pdp.LoadTape(File.ReadAllBytes(@"tapes/MAINDEC-8E-D0BB-PB.bin"));
 
             pdp.Load8(7777);
 
 
             pdp.Start();
-            //loggingLevel.MinimumLevel = Serilog.Events.LogEventLevel.Debug;
-            //Log.Information(pdp.Memory.ToString());
+            loggingLevel.MinimumLevel = Serilog.Events.LogEventLevel.Debug;
             Log.Information(pdp.Registers.LINK_AC.ToString());
 
             pdp.Load8(0200);
-            pdp.Toggle8(7777);
-            pdp.Start();
-            pdp.Start(waitForHalt: false);
+            //pdp.Toggle8(7777);
+            //pdp.Start();
+
+            pdp.Start(waitForHalt:false);
 
             while (true)
             {

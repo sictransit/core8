@@ -12,6 +12,7 @@ namespace Core8.Model.Instructions
         private readonly MemoryReferenceInstructions memoryReferenceInstructions;
         private readonly KeyboardInstructions keyboardInstructions;
         private readonly TeleprinterInstructions teleprinterInstructions;
+        private readonly InterruptInstructions interruptInstructions;
 
         public InstructionFactory(IProcessor processor, IMemory memory, IRegisters registers, IKeyboard keyboard, ITeleprinter teleprinter)
         {
@@ -47,6 +48,7 @@ namespace Core8.Model.Instructions
             memoryReferenceInstructions = new MemoryReferenceInstructions(memory, registers);
             keyboardInstructions = new KeyboardInstructions(registers, keyboard);
             teleprinterInstructions = new TeleprinterInstructions(registers, teleprinter);
+            interruptInstructions = new InterruptInstructions(processor, registers);
         }
 
         public bool TryFetch(uint address, uint data, out IInstruction instruction)
@@ -70,6 +72,8 @@ namespace Core8.Model.Instructions
                 InstructionClass.MCI when (data & Masks.GROUP_3) == Masks.GROUP_3 => null,
                 InstructionClass.MCI when (data & Masks.GROUP_2_AND) == Masks.GROUP_2_AND => group2ANDInstructions,
                 InstructionClass.MCI => group2ORInstructions,
+                InstructionClass.IOT when (data & Masks.MEMORY_MANAGEMENT) == Masks.MEMORY_MANAGEMENT => null,
+                InstructionClass.IOT when (data & Masks.INTERRUPT_MASK) == 0 => interruptInstructions,
                 InstructionClass.IOT when (data & Masks.IO) >> 3 == 3 => keyboardInstructions,
                 InstructionClass.IOT when (data & Masks.IO) >> 3 == 4 => teleprinterInstructions,
                 InstructionClass.IOT => null,
