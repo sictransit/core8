@@ -41,7 +41,7 @@ namespace Core8.Model.Instructions
 
         private void TFL()
         {
-            teleprinter.SetFlag();
+            teleprinter.SetOutputFlag();
         }
 
         private void TLS()
@@ -50,17 +50,17 @@ namespace Core8.Model.Instructions
 
             teleprinter.Type((byte)c);
 
-            teleprinter.ClearFlag();
+            teleprinter.ClearOutputFlag();
         }
 
         private void TCF()
         {
-            teleprinter.ClearFlag();
+            teleprinter.ClearOutputFlag();
         }
 
         private void TSF()
         {
-            if (teleprinter.IsFlagSet)
+            if (teleprinter.IsOutputFlagSet)
             {
                 Registers.IF_PC.Increment();
             }

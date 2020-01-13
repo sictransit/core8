@@ -94,7 +94,7 @@ namespace Core8
 
             pdp.Start(waitForHalt: false); // Run! RIM loader won't HLT.
 
-            while (pdp.Keyboard.IsTapeLoaded) // While there is tape to be read ...
+            while (pdp.Teleprinter.IsTapeLoaded) // While there is tape to be read ...
             {
                 Thread.Sleep(200);
             }
@@ -118,7 +118,7 @@ namespace Core8
             //pdp.Toggle8(7777);
             //pdp.Start();
 
-            pdp.Start(waitForHalt:false);
+            pdp.Start(waitForHalt: false);
 
             while (true)
             {

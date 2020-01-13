@@ -70,7 +70,7 @@ namespace Core8.Model.Instructions
 
         private void CAF()
         {
-            processor.Clear(); 
+            processor.Clear();
         }
 
     }

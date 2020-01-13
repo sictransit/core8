@@ -14,7 +14,7 @@ namespace Core8.Model.Instructions
         private readonly TeleprinterInstructions teleprinterInstructions;
         private readonly InterruptInstructions interruptInstructions;
 
-        public InstructionFactory(IProcessor processor, IMemory memory, IRegisters registers, IKeyboard keyboard, ITeleprinter teleprinter)
+        public InstructionFactory(IProcessor processor, IMemory memory, IRegisters registers, ITeleprinter teleprinter)
         {
             if (processor is null)
             {
@@ -31,11 +31,6 @@ namespace Core8.Model.Instructions
                 throw new System.ArgumentNullException(nameof(registers));
             }
 
-            if (keyboard is null)
-            {
-                throw new System.ArgumentNullException(nameof(keyboard));
-            }
-
             if (teleprinter is null)
             {
                 throw new System.ArgumentNullException(nameof(teleprinter));
@@ -46,7 +41,7 @@ namespace Core8.Model.Instructions
             group2ORInstructions = new Group2ORInstructions(processor, registers);
             group3Instructions = new Group3Instructions(registers);
             memoryReferenceInstructions = new MemoryReferenceInstructions(memory, registers);
-            keyboardInstructions = new KeyboardInstructions(registers, keyboard);
+            keyboardInstructions = new KeyboardInstructions(registers, teleprinter);
             teleprinterInstructions = new TeleprinterInstructions(registers, teleprinter);
             interruptInstructions = new InterruptInstructions(processor, registers);
         }

@@ -7,11 +7,11 @@ namespace Core8.Model.Instructions
 {
     public class KeyboardInstructions : InstructionsBase
     {
-        private readonly IKeyboard keyboard;
+        private readonly ITeleprinter teleprinter;
 
-        internal KeyboardInstructions(IRegisters registers, IKeyboard keyboard) : base(registers)
+        internal KeyboardInstructions(IRegisters registers, ITeleprinter teleprinter) : base(registers)
         {
-            this.keyboard = keyboard;
+            this.teleprinter = teleprinter;
         }
 
         protected override string OpCodeText => OpCode.ToString();
@@ -49,34 +49,34 @@ namespace Core8.Model.Instructions
         {
             Registers.LINK_AC.SetAccumulator(0);
 
-            keyboard.ClearFlag();
+            teleprinter.ClearInputFlag();
         }
 
         private void KCF()
         {
-            keyboard.ClearFlag();
+            teleprinter.ClearInputFlag();
         }
 
         private void KRB()
         {
-            Registers.LINK_AC.SetAccumulator(keyboard.GetBuffer());
+            Registers.LINK_AC.SetAccumulator(teleprinter.GetBuffer());
 
-            keyboard.ClearFlag();
+            teleprinter.ClearInputFlag();
         }
 
         private void KRS()
         {
-            Registers.LINK_AC.SetAccumulator(Registers.LINK_AC.Accumulator | keyboard.GetBuffer());
+            Registers.LINK_AC.SetAccumulator(Registers.LINK_AC.Accumulator | teleprinter.GetBuffer());
         }
 
         private void KIE()
         {
-            keyboard.SetDeviceControls(Registers.LINK_AC.Accumulator);
+            teleprinter.SetDeviceControls(Registers.LINK_AC.Accumulator);
         }
 
         private void KSF()
         {
-            if (keyboard.IsFlagSet)
+            if (teleprinter.IsInputFlagSet)
             {
                 Registers.IF_PC.Increment();
             }

@@ -21,23 +21,19 @@ namespace Core8
 
         private readonly IRegisters registers;
 
-        private readonly IKeyboard keyboard;
-
         private readonly ITeleprinter teleprinter;
 
         private readonly InstructionFactory instructionFactory;
 
-        public Processor(IMemory memory, IRegisters registers, IKeyboard keyboard, ITeleprinter teleprinter)
+        public Processor(IMemory memory, IRegisters registers, ITeleprinter teleprinter)
         {
             this.memory = memory ?? throw new ArgumentNullException(nameof(memory));
             this.registers = registers ?? throw new ArgumentNullException(nameof(registers));
-            this.keyboard = keyboard ?? throw new ArgumentNullException(nameof(keyboard));
             this.teleprinter = teleprinter ?? throw new ArgumentNullException(nameof(teleprinter));
 
             teleprinter.SetIRQHook(RequestInterrupt);
-            keyboard.SetIRQHook(RequestInterrupt);
 
-            instructionFactory = new InstructionFactory(this, memory, registers, keyboard, teleprinter);
+            instructionFactory = new InstructionFactory(this, memory, registers, teleprinter);
         }
 
         public bool InterruptsEnabled => interruptEnable.WaitOne(TimeSpan.Zero);
@@ -46,7 +42,6 @@ namespace Core8
 
         public void Clear()
         {
-            keyboard.Clear();
             teleprinter.Clear();
             registers.LINK_AC.Clear();
             registers.MQ.Clear();
@@ -92,7 +87,6 @@ namespace Core8
                 if (cnt++ > 100)
                 {
                     teleprinter.Tick();
-                    keyboard.Tick();
 
                     cnt = 0;
                 }

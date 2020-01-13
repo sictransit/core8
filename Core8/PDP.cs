@@ -18,13 +18,10 @@ namespace Core8
         {
             Memory = new Memory(4096);
             Registers = new Registers();
-            Keyboard = new Keyboard();
             Teleprinter = new Teleprinter();
 
-            processor = new Processor(Memory, Registers, Keyboard, Teleprinter);
+            processor = new Processor(Memory, Registers, Teleprinter);
         }
-
-        public IKeyboard Keyboard { get; }
 
         public ITeleprinter Teleprinter { get; }
 
@@ -34,7 +31,7 @@ namespace Core8
 
         public void DumpMemory()
         {
-            var instructionFactory = new InstructionFactory(processor, Memory, Registers, Keyboard, Teleprinter);
+            var instructionFactory = new InstructionFactory(processor, Memory, Registers, Teleprinter);
 
             for (uint address = 0; address < Memory.Size; address++)
             {
@@ -145,7 +142,7 @@ namespace Core8
                 throw new ArgumentNullException(nameof(tape));
             }
 
-            Keyboard.Type(tape);
+            Teleprinter.Read(tape);
 
             Log.Information($"TAPE: loaded {tape.Length} bytes");
         }
