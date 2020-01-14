@@ -13,7 +13,7 @@ namespace Core8
 
         private readonly ManualResetEvent interruptEnable = new ManualResetEvent(false);
 
-        private readonly AutoResetEvent interruptDelay = new AutoResetEvent(false);
+        private readonly ManualResetEvent interruptDelay = new ManualResetEvent(false);
 
         private readonly ManualResetEvent interruptRequested = new ManualResetEvent(false);
 
@@ -116,8 +116,10 @@ namespace Core8
                 Log.Warning($"[{address.ToOctalString()}] NOP {data.ToOctalString()}");
             }
 
-            if (enableInterrupts)
+            if (enableInterrupts && interruptDelay.WaitOne(TimeSpan.Zero))
             {
+                interruptDelay.Reset();
+
                 interruptEnable.Set();
             }
         }

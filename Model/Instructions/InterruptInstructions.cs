@@ -34,6 +34,9 @@ namespace Core8.Model.Instructions
                 case InterruptOpCode.SRQ:
                     SRQ();
                     break;
+                case InterruptOpCode.GTF:
+                    GTF();
+                    break;
                 case InterruptOpCode.CAF:
                     CAF();
                     break;
@@ -48,6 +51,8 @@ namespace Core8.Model.Instructions
             {
                 Registers.IF_PC.Increment();
             }
+
+            processor.DisableInterrupts();
         }
 
         private void ION()
@@ -66,6 +71,16 @@ namespace Core8.Model.Instructions
             {
                 Registers.IF_PC.Increment();
             }
+        }
+
+        private void GTF()
+        {
+            var acc = Registers.LINK_AC.Link << 11;
+            acc |= (uint)(processor.InterruptRequested ? 1 : 0) << 9;
+            acc |= (uint)(processor.InterruptsEnabled ? 1 : 0) << 7;
+            
+
+            Registers.LINK_AC.SetAccumulator(acc);
         }
 
         private void CAF()
