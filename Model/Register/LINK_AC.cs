@@ -33,7 +33,7 @@ namespace Core8.Model.Register
         {
             Data = value & Masks.AC_LINK;
 
-            Log.Debug(this.ToString());
+            //Log.Debug(this.ToString());
         }
 
         public override string ToString()

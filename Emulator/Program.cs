@@ -99,7 +99,7 @@ namespace Core8
 
             pdp.Clear();
 
-            pdp.LoadTape(File.ReadAllBytes(@"tapes/MAINDEC-8E-D0BB-PB.bin"));
+            pdp.LoadTape(File.ReadAllBytes(@"tapes/MAINDEC-8E-D0CC-PB.bin"));
 
             pdp.Load8(7777);
 
@@ -107,7 +107,15 @@ namespace Core8
 
             pdp.Clear();
 
+            //pdp.Load8(0170);
+
+            //pdp.Deposit8(7777);
+
             pdp.Load8(0200);
+
+            //pdp.Toggle8(0400);
+
+            //loggingLevel.MinimumLevel = Serilog.Events.LogEventLevel.Debug;
 
             pdp.Start(waitForHalt: false);
 
@@ -128,25 +136,6 @@ namespace Core8
         private static void ToggleRIMLowSpeedLoader(PDP pdp)
         {
             pdp.Load8(7756);
-
-            //pdp.Deposit8(6014);
-            //pdp.Deposit8(6011);
-            //pdp.Deposit8(5357);
-            //pdp.Deposit8(6016);
-            //pdp.Deposit8(7106);
-            //pdp.Deposit8(7006);
-            //pdp.Deposit8(7510);
-            //pdp.Deposit8(5357);
-            //pdp.Deposit8(7006);
-            //pdp.Deposit8(6011);
-            //pdp.Deposit8(5367);
-            //pdp.Deposit8(6016);
-            //pdp.Deposit8(7420);
-            //pdp.Deposit8(3776);
-            //pdp.Deposit8(3376);
-            //pdp.Deposit8(5357);
-            //pdp.Deposit8(0);
-            //pdp.Deposit8(0);
 
             pdp.Deposit8(6032);
             pdp.Deposit8(6031);
