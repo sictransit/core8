@@ -12,11 +12,9 @@ namespace Core8
     {
         private Thread cpuThread;
 
-
-
         public PDP()
         {
-            Memory = new Memory(4096);
+            Memory = new Memory();
             Registers = new Registers();
             Teleprinter = new Teleprinter();
 
@@ -39,7 +37,9 @@ namespace Core8
             {
                 var data = Memory.Examine(address);
 
-                if (instructionFactory.TryFetch(address, data, out var instruction))
+                var instruction = instructionFactory.Fetch(address, data);
+
+                if (instruction != null)
                 {
                     Log.Information($"{instruction}");
                 }

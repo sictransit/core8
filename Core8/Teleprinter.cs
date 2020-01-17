@@ -7,7 +7,6 @@ using Serilog;
 using System;
 using System.Collections.Concurrent;
 using System.Text;
-using System.Threading;
 
 namespace Core8
 {
@@ -19,9 +18,6 @@ namespace Core8
         private readonly SubscriberSocket subscriberSocket;
 
         private volatile uint buffer;
-
-        private readonly ManualResetEvent inputFlag = new ManualResetEvent(false);
-        private readonly ManualResetEvent outputFlag = new ManualResetEvent(false);
 
         private ConcurrentQueue<byte> inputQueue { get; } = new ConcurrentQueue<byte>();
         private ConcurrentQueue<byte> outputQueue { get; } = new ConcurrentQueue<byte>();
@@ -40,9 +36,9 @@ namespace Core8
             subscriberSocket.SubscribeToAnyTopic();
         }
 
-        public bool IsInputFlagSet => inputFlag.WaitOne(TimeSpan.Zero);
+        public bool InputFlag { get; private set; }
 
-        public bool IsOutputFlagSet => outputFlag.WaitOne(TimeSpan.Zero);
+        public bool OutputFlag { get; private set; }
 
         public void SetDeviceControls(uint data)
         {
@@ -53,14 +49,14 @@ namespace Core8
         {
             irqHook?.Invoke(false);
 
-            inputFlag.Reset();
+            InputFlag = false;
         }
 
         public void ClearOutputFlag()
         {
             irqHook?.Invoke(false);
 
-            outputFlag.Reset();
+            OutputFlag = false;
         }
 
         public void Clear()
@@ -136,7 +132,7 @@ namespace Core8
                 irqHook?.Invoke(true);
             }
 
-            inputFlag.Set();
+            InputFlag = true;
         }
 
         public void SetOutputFlag()
@@ -146,7 +142,7 @@ namespace Core8
                 irqHook?.Invoke(true);
             }
 
-            outputFlag.Set();
+            OutputFlag = true;
         }
 
         public void FormFeed()
@@ -156,7 +152,7 @@ namespace Core8
 
         public void Tick()
         {
-            if (!IsInputFlagSet)
+            if (!InputFlag)
             {
                 if (subscriberSocket.TryReceiveFrameBytes(TimeSpan.Zero, out var frame))
                 {
@@ -173,7 +169,7 @@ namespace Core8
                 }
             }
 
-            if (!IsOutputFlagSet && outputQueue.TryDequeue(out var output))
+            if (!OutputFlag && outputQueue.TryDequeue(out var output))
             {
                 var data = new[] { output };
 
@@ -181,7 +177,6 @@ namespace Core8
                 {
                     Log.Debug("Failed to send frame.");
                 }
-
 
                 var c = Encoding.ASCII.GetChars(data)[0];
                 paper.Append(c);

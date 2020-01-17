@@ -16,9 +16,9 @@ namespace Core8.Model.Interfaces
 
         void SetOutputFlag();
 
-        bool IsInputFlagSet { get; }
+        bool InputFlag { get; }
 
-        bool IsOutputFlagSet { get; }
+        bool OutputFlag { get; }
 
         bool IsTapeLoaded { get; }
 

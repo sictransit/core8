@@ -3,19 +3,14 @@ using Core8.Model.Instructions;
 using Core8.Model.Interfaces;
 using Serilog;
 using System;
-using System.Threading;
 
 namespace Core8
 {
     public class Processor : IProcessor
     {
-        private readonly ManualResetEvent running = new ManualResetEvent(false);
+        private volatile bool running = false;
 
-        private readonly ManualResetEvent interruptEnable = new ManualResetEvent(false);
-
-        private readonly ManualResetEvent interruptDelay = new ManualResetEvent(false);
-
-        private readonly ManualResetEvent interruptRequested = new ManualResetEvent(false);
+        private bool interruptDelay = false;
 
         private readonly IMemory memory;
 
@@ -36,11 +31,11 @@ namespace Core8
             instructionFactory = new InstructionFactory(this, memory, registers, teleprinter);
         }
 
-        public bool InterruptsEnabled => interruptEnable.WaitOne(TimeSpan.Zero);
+        public bool InterruptsEnabled { get; set; }
 
-        public bool InterruptRequested => interruptRequested.WaitOne(TimeSpan.Zero);
+        public bool InterruptRequested { get; set; }
 
-        public bool InterruptsPending => InterruptsEnabled || interruptDelay.WaitOne(TimeSpan.Zero);
+        public bool InterruptsPending => InterruptsEnabled || interruptDelay;
 
         public void Clear()
         {
@@ -52,44 +47,37 @@ namespace Core8
 
         private void RequestInterrupt(bool state)
         {
-            if (state)
-            {
-                interruptRequested.Set();
-            }
-            else
-            {
-                interruptRequested.Reset();
-            }
+            InterruptRequested = state;
         }
 
         public void Halt()
         {
-            running.Reset();
+            running = false;
         }
 
         public void EnableInterrupts()
         {
-            interruptDelay.Set();
+            interruptDelay = true;
         }
 
         public void DisableInterrupts()
         {
-            interruptDelay.Reset();
+            interruptDelay = false;
 
-            interruptEnable.Reset();
+            InterruptsEnabled = false;
 
-            interruptRequested.Reset();
+            InterruptRequested = false;
         }
 
         public void Run()
         {
-            running.Set();
+            running = true;
 
             Log.Information("RUN");
 
             var cnt = 0;
 
-            while (running.WaitOne(TimeSpan.Zero))
+            while (running)
             {
                 FetchAndExecute();
 
@@ -106,7 +94,7 @@ namespace Core8
 
         public void FetchAndExecute()
         {
-            var enableInterrupts = interruptDelay.WaitOne(TimeSpan.Zero);
+            var enableInterrupts = interruptDelay;
 
             var address = registers.IF_PC.Address;
 
@@ -114,7 +102,9 @@ namespace Core8
 
             registers.IF_PC.Increment();
 
-            if (instructionFactory.TryFetch(address, data, out var instruction))
+            var instruction = instructionFactory.Fetch(address, data);
+
+            if (instruction != null)
             {
                 Log.Debug(instruction.ToString());
 
@@ -122,21 +112,21 @@ namespace Core8
             }
             else
             {
-                Log.Warning($"[{address.ToOctalString()}] NOP {data.ToOctalString()}");
+                Log.Debug($"[{address.ToOctalString()}] NOP {data.ToOctalString()}");
             }
 
-            if (enableInterrupts && interruptDelay.WaitOne(TimeSpan.Zero))
+            if (enableInterrupts && interruptDelay)
             {
-                interruptDelay.Reset();
+                interruptDelay = false;
 
-                interruptEnable.Set();
+                InterruptsEnabled = true;
             }
 
             if (InterruptRequested && InterruptsEnabled)
             {
                 DisableInterrupts();
 
-                memory.Write(0, registers.IF_PC.Address);
+                memory.Write(0, registers.IF_PC.Address); // JMS 0000
 
                 registers.IF_PC.Set(1);
             }

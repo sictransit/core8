@@ -2,7 +2,6 @@
 using Core8.Model.Extensions;
 using Core8.Model.Interfaces;
 using Serilog;
-using System;
 
 namespace Core8
 {
@@ -10,15 +9,9 @@ namespace Core8
     {
         private readonly uint[] ram;
 
-        public Memory(uint size)
+        public Memory()
         {
-            if (size < 4 * 1024 || size > 32 * 1024)
-            {
-                throw new ArgumentOutOfRangeException(nameof(size));
-            }
-
-            ram = new uint[size];
-            Size = size;
+            ram = new uint[4096];
         }
 
         public uint Size { get; private set; }
@@ -44,11 +37,6 @@ namespace Core8
 
         public void Write(uint address, uint data)
         {
-            if (address > Size)
-            {
-                throw new ArgumentOutOfRangeException(nameof(address));
-            }
-
             MB = data & Masks.MEM_WORD;
 
             ram[address] = MB;

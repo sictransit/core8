@@ -46,16 +46,16 @@ namespace Core8.Model.Instructions
             interruptInstructions = new InterruptInstructions(processor, registers);
         }
 
-        public bool TryFetch(uint address, uint data, out IInstruction instruction)
+        public IInstruction Fetch(uint address, uint data)
         {
-            instruction = Decode(data);
+            var instruction = Decode(data);
 
             if (instruction != null)
             {
                 instruction.Load(address, data);
             }
 
-            return instruction != null;
+            return instruction;
         }
 
         private IInstruction Decode(uint data)

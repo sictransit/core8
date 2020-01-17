@@ -60,7 +60,7 @@ namespace Core8.Model.Instructions
 
         private void TSF()
         {
-            if (teleprinter.IsOutputFlagSet)
+            if (teleprinter.OutputFlag)
             {
                 Registers.IF_PC.Increment();
             }

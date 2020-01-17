@@ -76,7 +76,7 @@ namespace Core8.Model.Instructions
 
         private void KSF()
         {
-            if (teleprinter.IsInputFlagSet)
+            if (teleprinter.InputFlag)
             {
                 Registers.IF_PC.Increment();
             }

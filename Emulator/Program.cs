@@ -2,7 +2,6 @@
 using Serilog.Core;
 using System;
 using System.IO;
-using System.Net.Http;
 using System.Threading;
 
 namespace Core8
@@ -10,8 +9,6 @@ namespace Core8
     public class Program
     {
         private static LoggingLevelSwitch loggingLevel = new LoggingLevelSwitch(Serilog.Events.LogEventLevel.Information);
-
-        private static HttpClient httpClient = new HttpClient();
 
         public static void Main(string[] args)
         {
@@ -27,10 +24,9 @@ namespace Core8
 
             Console.WriteLine("Press the any-key when done ...");
 
-            //Console.ReadLine();
+            Console.ReadLine();
 
             TestBIN(pdp);
-            //TestHelloWorld(pdp);
 
             Console.WriteLine("Press the any-key ...");
 
@@ -99,9 +95,7 @@ namespace Core8
                 Thread.Sleep(200);
             }
 
-            pdp.Stop(); // HLT
-
-            //pdp.DumpMemory();
+            pdp.Stop();
 
             pdp.Clear();
 
@@ -109,32 +103,24 @@ namespace Core8
 
             pdp.Load8(7777);
 
-
             pdp.Start();
-            //loggingLevel.MinimumLevel = Serilog.Events.LogEventLevel.Debug;
-            Log.Information(pdp.Registers.LINK_AC.ToString());
 
             pdp.Clear();
 
             pdp.Load8(0200);
-            //pdp.Toggle8(7777);
-            //pdp.Start();
 
             pdp.Start(waitForHalt: false);
 
             while (true)
             {
-                Log.Information($"Teleprinter: {pdp.Teleprinter.Printout}");
-                pdp.Teleprinter.FormFeed();
+                if (!string.IsNullOrEmpty(pdp.Teleprinter.Printout))
+                {
+                    Log.Information($"Teleprinter: {pdp.Teleprinter.Printout}");
+                    pdp.Teleprinter.FormFeed();
+                }
 
-                Thread.Sleep(1000);
+                Thread.Sleep(200);
             }
-
-
-            //pdp.Start();
-
-            //pdp.DumpMemory();
-
 
         }
 
