@@ -37,6 +37,9 @@ namespace Core8.Model.Instructions
                 case InterruptOpCode.GTF:
                     GTF();
                     break;
+                case InterruptOpCode.RTF:
+                    RTF();
+                    break;
                 case InterruptOpCode.CAF:
                     CAF();
                     break;
@@ -77,11 +80,19 @@ namespace Core8.Model.Instructions
         {
             var acc = Registers.LINK_AC.Link << 11;
             acc |= (uint)(processor.InterruptRequested ? 1 : 0) << 9;
-            acc |= (uint)(processor.InterruptsEnabled ? 1 : 0) << 7;
-            
+            acc |= (uint)(processor.InterruptsPending ? 1 : 0) << 7;
+            //acc |= Registers.IF_PC.IF << 5;
 
             Registers.LINK_AC.SetAccumulator(acc);
         }
+
+        private void RTF()
+        {
+            Registers.LINK_AC.SetLink((Registers.LINK_AC.Accumulator >> 11) & Masks.FLAG);
+
+            processor.EnableInterrupts();
+        }
+
 
         private void CAF()
         {

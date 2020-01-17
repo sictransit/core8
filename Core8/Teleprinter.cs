@@ -26,7 +26,7 @@ namespace Core8
         private ConcurrentQueue<byte> inputQueue { get; } = new ConcurrentQueue<byte>();
         private ConcurrentQueue<byte> outputQueue { get; } = new ConcurrentQueue<byte>();
 
-        private Action irqHook = null;
+        private Action<bool> irqHook = null;
 
         private IODeviceControls deviceControls;
 
@@ -51,11 +51,15 @@ namespace Core8
 
         public void ClearInputFlag()
         {
+            irqHook?.Invoke(false);
+
             inputFlag.Reset();
         }
 
         public void ClearOutputFlag()
         {
+            irqHook?.Invoke(false);
+
             outputFlag.Reset();
         }
 
@@ -107,7 +111,7 @@ namespace Core8
         }
 
 
-        public void SetIRQHook(Action irq)
+        public void SetIRQHook(Action<bool> irq)
         {
             irqHook = irq;
         }
@@ -129,7 +133,7 @@ namespace Core8
         {
             if (deviceControls.HasFlag(IODeviceControls.InterruptEnable))
             {
-                irqHook?.Invoke();
+                irqHook?.Invoke(true);
             }
 
             inputFlag.Set();
@@ -139,7 +143,7 @@ namespace Core8
         {
             if (deviceControls.HasFlag(IODeviceControls.InterruptEnable))
             {
-                irqHook?.Invoke();
+                irqHook?.Invoke(true);
             }
 
             outputFlag.Set();

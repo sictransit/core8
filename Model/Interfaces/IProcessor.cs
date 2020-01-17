@@ -12,6 +12,8 @@
 
         bool InterruptsEnabled { get; }
 
+        bool InterruptsPending { get; }
+
         bool InterruptRequested { get; }
 
         void DisableInterrupts();

@@ -28,7 +28,7 @@ namespace Core8.Model.Interfaces
 
         void FormFeed();
 
-        void SetIRQHook(Action irq);
+        void SetIRQHook(Action<bool> irq);
 
         void SetDeviceControls(uint data);
 

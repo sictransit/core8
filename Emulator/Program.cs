@@ -88,7 +88,7 @@ namespace Core8
         {
             ToggleRIMLowSpeedLoader(pdp); // Toggle RIM loader
 
-            pdp.LoadTape(File.ReadAllBytes(@"tapes/dec-08-lbaa-pm_5-10-67.bin")); // Load BIN loader
+            pdp.LoadTape(File.ReadAllBytes(@"tapes/dec-08-lbaa-pm_5-10-67.rim.bin")); // Load BIN loader
 
             pdp.Load8(7756);
 
@@ -111,8 +111,10 @@ namespace Core8
 
 
             pdp.Start();
-            loggingLevel.MinimumLevel = Serilog.Events.LogEventLevel.Debug;
+            //loggingLevel.MinimumLevel = Serilog.Events.LogEventLevel.Debug;
             Log.Information(pdp.Registers.LINK_AC.ToString());
+
+            pdp.Clear();
 
             pdp.Load8(0200);
             //pdp.Toggle8(7777);

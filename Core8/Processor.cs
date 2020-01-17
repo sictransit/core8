@@ -40,6 +40,8 @@ namespace Core8
 
         public bool InterruptRequested => interruptRequested.WaitOne(TimeSpan.Zero);
 
+        public bool InterruptsPending => InterruptsEnabled || interruptDelay.WaitOne(TimeSpan.Zero);
+
         public void Clear()
         {
             teleprinter.Clear();
@@ -48,9 +50,16 @@ namespace Core8
             DisableInterrupts();
         }
 
-        private void RequestInterrupt()
+        private void RequestInterrupt(bool state)
         {
-            interruptRequested.Set();
+            if (state)
+            {
+                interruptRequested.Set();
+            }
+            else
+            {
+                interruptRequested.Reset();
+            }
         }
 
         public void Halt()
@@ -121,6 +130,15 @@ namespace Core8
                 interruptDelay.Reset();
 
                 interruptEnable.Set();
+            }
+
+            if (InterruptRequested && InterruptsEnabled)
+            {
+                DisableInterrupts();
+
+                memory.Write(0, registers.IF_PC.Address);
+
+                registers.IF_PC.Set(1);
             }
         }
 

@@ -12,7 +12,7 @@ namespace Core8
     {
         private Thread cpuThread;
 
-        private readonly IProcessor processor;
+
 
         public PDP()
         {
@@ -20,8 +20,10 @@ namespace Core8
             Registers = new Registers();
             Teleprinter = new Teleprinter();
 
-            processor = new Processor(Memory, Registers, Teleprinter);
+            Processor = new Processor(Memory, Registers, Teleprinter);
         }
+
+        public IProcessor Processor { get; }
 
         public ITeleprinter Teleprinter { get; }
 
@@ -31,7 +33,7 @@ namespace Core8
 
         public void DumpMemory()
         {
-            var instructionFactory = new InstructionFactory(processor, Memory, Registers, Teleprinter);
+            var instructionFactory = new InstructionFactory(Processor, Memory, Registers, Teleprinter);
 
             for (uint address = 0; address < Memory.Size; address++)
             {
@@ -50,7 +52,7 @@ namespace Core8
 
         public void Clear()
         {
-            processor.Clear();
+            Processor.Clear();
         }
 
         public void Deposit8(uint data)
@@ -116,7 +118,7 @@ namespace Core8
 
         public void Start(bool waitForHalt = true)
         {
-            cpuThread = new Thread(processor.Run)
+            cpuThread = new Thread(Processor.Run)
             {
                 IsBackground = true,
                 Priority = ThreadPriority.AboveNormal
@@ -132,7 +134,7 @@ namespace Core8
 
         public void Stop()
         {
-            processor.Halt();
+            Processor.Halt();
         }
 
         public void LoadTape(byte[] tape)
