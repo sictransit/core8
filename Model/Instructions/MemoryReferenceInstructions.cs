@@ -93,7 +93,7 @@ namespace Core8.Model.Instructions
 
         private void TAD(uint operand)
         {
-            Registers.LINK_AC.Set(Registers.LINK_AC.Data + memory.Read(operand));
+            Registers.LINK_AC.AddWithCarry(memory.Read(operand));
         }
 
         public override string ToString()

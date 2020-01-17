@@ -1,5 +1,4 @@
 ﻿using Core8.Model.Extensions;
-using Serilog;
 
 namespace Core8.Model.Register
 {
@@ -11,29 +10,42 @@ namespace Core8.Model.Register
 
         public void RAR()
         {
-            Set(((Data >> 1) & Masks.AC) + ((Data & Masks.FLAG) << 12));
+            Data = ((Data >> 1) & Masks.AC) | ((Data << 12) & Masks.LINK);
         }
 
         public void RAL()
         {
-            Set(((Data << 1) & Masks.AC_LINK) + ((Data & Masks.LINK) >> 12));
+            Data = ((Data << 1) & Masks.AC_LINK) | ((Data >> 12) & Masks.FLAG);
+        }
+
+        public void ComplementLink()
+        {
+            SetLink((Data >> 12) ^ Masks.FLAG);
+        }
+
+        public void ComplementAccumulator()
+        {
+            SetAccumulator(Data ^ Masks.AC);
         }
 
         public void SetAccumulator(uint value)
         {
-            Set((Link << 12) | (value & Masks.AC));
+            Data = (Data & Masks.LINK) | (value & Masks.AC);
         }
 
         public void SetLink(uint value)
         {
-            Set(((value & Masks.FLAG) << 12) | Accumulator);
+            Data = ((value & Masks.FLAG) << 12) | (Data & Masks.AC);
         }
 
-        public void Set(uint value)
+        public void AddWithCarry(uint value)
         {
-            Data = value & Masks.AC_LINK;
+            Data = (Data + value) & Masks.AC_LINK;
+        }
 
-            //Log.Debug(this.ToString());
+        public void IncrementWithCarry()
+        {
+            Data = (Data + 1) & Masks.AC_LINK;
         }
 
         public override string ToString()

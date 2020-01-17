@@ -20,7 +20,7 @@ namespace Core8
 
         public uint Examine(uint address)
         {
-            return ram[address] & Masks.MEM_WORD;
+            return ram[address];
         }
 
         public uint Read(uint address, bool indirect = false)

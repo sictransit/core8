@@ -75,6 +75,5 @@ namespace Core8.Model.Instructions
                 _ => memoryReferenceInstructions,
             };
         }
-
     }
 }

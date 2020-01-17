@@ -16,8 +16,6 @@ namespace Core8.Model.Instructions
 
         public override void Execute()
         {
-
-
             if (OpCodes.HasFlag(Group1OpCodes.CLA))
             {
                 Registers.LINK_AC.SetAccumulator(0);
@@ -30,17 +28,17 @@ namespace Core8.Model.Instructions
 
             if (OpCodes.HasFlag(Group1OpCodes.CMA))
             {
-                Registers.LINK_AC.SetAccumulator(Registers.LINK_AC.Accumulator ^ Masks.AC);
+                Registers.LINK_AC.ComplementAccumulator();
             }
 
             if (OpCodes.HasFlag(Group1OpCodes.CML))
             {
-                Registers.LINK_AC.SetLink(Registers.LINK_AC.Link ^ Masks.FLAG);
+                Registers.LINK_AC.ComplementLink();
             }
 
             if (OpCodes.HasFlag(Group1OpCodes.IAC))
             {
-                Registers.LINK_AC.Set(Registers.LINK_AC.Data + 1);
+                Registers.LINK_AC.IncrementWithCarry();
             }
 
             if (OpCodes.HasFlag(Group1OpCodes.RAR))

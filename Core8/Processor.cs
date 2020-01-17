@@ -81,7 +81,7 @@ namespace Core8
             {
                 FetchAndExecute();
 
-                if (cnt++ > 100)
+                if (cnt++ > 200)
                 {
                     teleprinter.Tick();
 
