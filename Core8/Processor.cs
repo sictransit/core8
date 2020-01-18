@@ -98,7 +98,7 @@ namespace Core8
 
             var address = registers.IF_PC.Address;
 
-            var data = memory.Read(address);
+            var data = memory.Read(0, address);
 
             registers.IF_PC.Increment();
 
@@ -126,7 +126,7 @@ namespace Core8
             {
                 DisableInterrupts();
 
-                memory.Write(0, registers.IF_PC.Address); // JMS 0000
+                memory.Write(0, 0, registers.IF_PC.Address); // JMS 0000
 
                 registers.IF_PC.Set(1);
             }

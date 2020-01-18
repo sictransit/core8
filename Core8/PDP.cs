@@ -33,19 +33,23 @@ namespace Core8
         {
             var instructionFactory = new InstructionFactory(Processor, Memory, Registers, Teleprinter);
 
-            for (uint address = 0; address < Memory.Size; address++)
+            for (uint field = 0; field < Memory.Fields; field++)
             {
-                var data = Memory.Examine(address);
-
-                var instruction = instructionFactory.Fetch(address, data);
-
-                if (instruction != null)
+                for (uint address = 0; address < Memory.Size; address++)
                 {
-                    Log.Information($"{instruction}");
-                }
-                else
-                {
-                    Log.Information($"{address.ToOctalString()}:{data.ToOctalString()}");
+                    var data = Memory.Examine(field, address);
+
+                    var instruction = instructionFactory.Fetch(address, data);
+
+                    if (instruction != null)
+                    {
+                        Log.Information($"{instruction}");
+                    }
+                    else
+                    {
+                        Log.Information($"{address.ToOctalString()}:{data.ToOctalString()}");
+                    }
+
                 }
             }
         }
@@ -71,7 +75,7 @@ namespace Core8
         {
             var data = Registers.SR.Get;
 
-            Memory.Write(Registers.IF_PC.Address, data & Masks.MEM_WORD);
+            Memory.Write(0, Registers.IF_PC.Address, data & Masks.MEM_WORD);
 
             Log.Information($"DEP: {Registers.IF_PC.Address.ToOctalString()} {data.ToOctalString()}");
 
@@ -111,7 +115,7 @@ namespace Core8
 
         public void Exam()
         {
-            Registers.LINK_AC.SetAccumulator(Memory.Read(Registers.IF_PC.Address));
+            Registers.LINK_AC.SetAccumulator(Memory.Read(0, Registers.IF_PC.Address));
 
             Log.Information($"EXAM: {Registers.LINK_AC.ToString()}");
         }

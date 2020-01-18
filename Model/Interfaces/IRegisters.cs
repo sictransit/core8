@@ -11,5 +11,7 @@ namespace Core8.Model.Interfaces
         SR SR { get; }
 
         MQ MQ { get; }
+
+        DF DF { get; }
     }
 }

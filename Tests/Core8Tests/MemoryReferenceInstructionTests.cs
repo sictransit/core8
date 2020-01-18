@@ -120,7 +120,7 @@ namespace Core8.Tests
             Assert.AreEqual(0u, PDP.Registers.LINK_AC.Accumulator);
             Assert.AreEqual(1u, PDP.Registers.LINK_AC.Link);
 
-            Assert.AreEqual(7777u.ToDecimal(), PDP.Memory.Examine(0210u.ToDecimal()));
+            Assert.AreEqual(7777u.ToDecimal(), PDP.Memory.Examine(0, 0210u.ToDecimal()));
         }
 
         [TestMethod]
@@ -139,7 +139,7 @@ namespace Core8.Tests
 
             Assert.AreEqual(4u, PDP.Registers.IF_PC.Word);
 
-            Assert.AreEqual(0201u.ToDecimal(), PDP.Memory.Examine(0202u.ToDecimal()));
+            Assert.AreEqual(0201u.ToDecimal(), PDP.Memory.Examine(0, 0202u.ToDecimal()));
         }
 
         [TestMethod]

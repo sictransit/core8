@@ -30,7 +30,7 @@ namespace Core8.Model.Instructions
 
         public override void Execute()
         {
-            var operand = Indirect ? memory.Read(Location, true) : Location;
+            var operand = Indirect ? memory.Read(0, Location, true) : Location;
 
             switch (OpCode)
             {
@@ -59,19 +59,19 @@ namespace Core8.Model.Instructions
 
         private void AND(uint operand)
         {
-            Registers.LINK_AC.SetAccumulator(memory.Read(operand) & Registers.LINK_AC.Accumulator);
+            Registers.LINK_AC.SetAccumulator(memory.Read(0, operand) & Registers.LINK_AC.Accumulator);
         }
 
         private void DCA(uint operand)
         {
-            memory.Write(operand, Registers.LINK_AC.Accumulator);
+            memory.Write(0, operand, Registers.LINK_AC.Accumulator);
 
             Registers.LINK_AC.SetAccumulator(0);
         }
 
         private void ISZ(uint operand)
         {
-            memory.Write(operand, (memory.Read(operand) + 1) & Masks.MEM_WORD);
+            memory.Write(0, operand, (memory.Read(0, operand) + 1) & Masks.MEM_WORD);
 
             if (memory.MB == 0)
             {
@@ -86,14 +86,14 @@ namespace Core8.Model.Instructions
 
         public void JMS(uint operand)
         {
-            memory.Write(operand, Registers.IF_PC.Address);
+            memory.Write(0, operand, Registers.IF_PC.Address);
 
             Registers.IF_PC.Set(operand + 1);
         }
 
         private void TAD(uint operand)
         {
-            Registers.LINK_AC.AddWithCarry(memory.Read(operand));
+            Registers.LINK_AC.AddWithCarry(memory.Read(0, operand));
         }
 
         public override string ToString()

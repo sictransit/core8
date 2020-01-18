@@ -8,7 +8,16 @@
         public const uint MEM_WORD
             = 0b_111_111_111_111;
 
+        public const uint DF
+            = 0b_000_000_000_111;
+
         public const uint OP_CODE
+            = 0b_111_000_000_000;
+
+        public const uint IOT
+            = 0b_110_000_000_000;
+
+        public const uint MCI
             = 0b_111_000_000_000;
 
         public const uint IO

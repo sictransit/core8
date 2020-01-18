@@ -7,39 +7,48 @@ namespace Core8
 {
     public class Memory : IMemory
     {
-        private readonly uint[] ram;
+        private readonly uint[][] ram;
 
-        public Memory()
+        public Memory(uint fields = 1)
         {
-            ram = new uint[4096];
+            ram = new uint[fields][];
+
+            for (int f = 0; f < fields; f++)
+            {
+                ram[f] = new uint[4096];
+            }
+
+            Fields = fields;
         }
 
         public uint Size { get; private set; }
 
         public uint MB { get; private set; }
+        
+        public uint Fields { get; }
 
-        public uint Examine(uint address)
+        public uint Examine(uint field, uint address)
         {
-            return ram[address];
+            return ram[field][address];
         }
 
-        public uint Read(uint address, bool indirect = false)
+        public uint Read(uint field, uint address, bool indirect = false)
         {
             if (indirect && (address >= 8) && (address <= 15))
             {
-                Write(address, Examine(address) + 1);
+                Write(field, address, Examine(field, address) + 1);
             }
 
-            MB = Examine(address);
+            MB = Examine(field, address);
 
             return MB;
         }
 
-        public void Write(uint address, uint data)
+        public void Write(uint field, uint address, uint data)
         {
             MB = data & Masks.MEM_WORD;
 
-            ram[address] = MB;
+            ram[field][address] = MB;
 
             Log.Debug($"[Write]: {address.ToOctalString()}:{MB.ToOctalString()}");
         }

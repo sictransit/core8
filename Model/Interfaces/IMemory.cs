@@ -2,13 +2,15 @@
 {
     public interface IMemory
     {
-        uint Read(uint address, bool indirect = false);
+        uint Read(uint field, uint address, bool indirect = false);
 
-        uint Examine(uint address);
+        uint Examine(uint field, uint address);
 
-        void Write(uint address, uint data);
+        void Write(uint field, uint address, uint data);
 
         uint Size { get; }
+
+        uint Fields { get; }
 
         uint MB { get; }
     }

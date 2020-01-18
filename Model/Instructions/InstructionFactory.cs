@@ -1,5 +1,4 @@
-﻿using Core8.Model.Enums;
-using Core8.Model.Interfaces;
+﻿using Core8.Model.Interfaces;
 
 namespace Core8.Model.Instructions
 {
@@ -60,18 +59,18 @@ namespace Core8.Model.Instructions
 
         private IInstruction Decode(uint data)
         {
-            return (InstructionClass)(data & Masks.OP_CODE) switch
+            return (data & Masks.OP_CODE) switch
             {
-                InstructionClass.MCI when (data & Masks.GROUP) == 0 => group1Instructions,
-                InstructionClass.MCI when ((data & Masks.GROUP_3) == Masks.GROUP_3) && ((data & Masks.GROUP_3_EAE) == 0) => group3Instructions,
-                InstructionClass.MCI when (data & Masks.GROUP_3) == Masks.GROUP_3 => null,
-                InstructionClass.MCI when (data & Masks.GROUP_2_AND) == Masks.GROUP_2_AND => group2ANDInstructions,
-                InstructionClass.MCI => group2ORInstructions,
-                InstructionClass.IOT when (data & Masks.MEMORY_MANAGEMENT) == Masks.MEMORY_MANAGEMENT => null,
-                InstructionClass.IOT when (data & Masks.INTERRUPT_MASK) == 0 => interruptInstructions,
-                InstructionClass.IOT when (data & Masks.IO) >> 3 == 3 => keyboardInstructions,
-                InstructionClass.IOT when (data & Masks.IO) >> 3 == 4 => teleprinterInstructions,
-                InstructionClass.IOT => null,
+                Masks.MCI when (data & Masks.GROUP) == 0 => group1Instructions,
+                Masks.MCI when ((data & Masks.GROUP_3) == Masks.GROUP_3) && ((data & Masks.GROUP_3_EAE) == 0) => group3Instructions,
+                Masks.MCI when (data & Masks.GROUP_3) == Masks.GROUP_3 => null,
+                Masks.MCI when (data & Masks.GROUP_2_AND) == Masks.GROUP_2_AND => group2ANDInstructions,
+                Masks.MCI => group2ORInstructions,
+                Masks.IOT when (data & Masks.MEMORY_MANAGEMENT) == Masks.MEMORY_MANAGEMENT => null,
+                Masks.IOT when (data & Masks.INTERRUPT_MASK) == 0 => interruptInstructions,
+                Masks.IOT when (data & Masks.IO) >> 3 == 3 => keyboardInstructions,
+                Masks.IOT when (data & Masks.IO) >> 3 == 4 => teleprinterInstructions,
+                Masks.IOT => null,
                 _ => memoryReferenceInstructions,
             };
         }
