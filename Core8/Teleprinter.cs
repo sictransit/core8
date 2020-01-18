@@ -106,7 +106,6 @@ namespace Core8
             inputQueue.Enqueue(c);
         }
 
-
         public void SetIRQHook(Action<bool> irq)
         {
             irqHook = irq;
@@ -156,7 +155,7 @@ namespace Core8
             {
                 if (subscriberSocket.TryReceiveFrameBytes(TimeSpan.Zero, out var frame))
                 {
-                    Type(frame);
+                    Read(frame);
                 }
 
                 if (inputQueue.TryDequeue(out var input))

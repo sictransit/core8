@@ -2,6 +2,7 @@
 using Serilog.Core;
 using System;
 using System.IO;
+using System.Net.Http;
 using System.Threading;
 
 namespace Core8
@@ -9,6 +10,8 @@ namespace Core8
     public class Program
     {
         private static LoggingLevelSwitch loggingLevel = new LoggingLevelSwitch(Serilog.Events.LogEventLevel.Information);
+
+        private static HttpClient httpClient = new HttpClient();
 
         public static void Main(string[] args)
         {
@@ -99,7 +102,7 @@ namespace Core8
 
             pdp.Clear();
 
-            pdp.LoadTape(File.ReadAllBytes(@"tapes/MAINDEC-8E-D0CC-PB.bin"));
+            pdp.LoadTape(httpClient.GetByteArrayAsync(@"https://github.com/PontusPih/TINT8/releases/download/v0.1.0-alpha/tint.bin").Result) ;
 
             pdp.Load8(7777);
 
@@ -117,11 +120,11 @@ namespace Core8
 
             while (true)
             {
-                if (!string.IsNullOrEmpty(pdp.Teleprinter.Printout))
-                {
-                    Log.Information($"Teleprinter: {pdp.Teleprinter.Printout}");
-                    pdp.Teleprinter.FormFeed();
-                }
+                //if (!string.IsNullOrEmpty(pdp.Teleprinter.Printout))
+                //{
+                //    Log.Information($"Teleprinter: {pdp.Teleprinter.Printout}");
+                //    pdp.Teleprinter.FormFeed();
+                //}
 
                 Thread.Sleep(200);
             }
