@@ -18,8 +18,9 @@ namespace Core8
 
         protected override void OnConnected()
         {
-            SendAsync("WELCOME TO THE PDP-8 TERMINAL SERVER\r\n");
+            Log.Information($"Connected: {Socket.RemoteEndPoint}");
 
+            SendAsync("WELCOME TO THE PDP-8 TERMINAL SERVER\r\n");
         }
 
         protected override void OnReceived(byte[] buffer, long offset, long size)
@@ -29,6 +30,8 @@ namespace Core8
             Array.Copy(buffer, offset, frame, 0, size);
 
             publisher.TrySendFrame(frame);
+
+            //Log.Debug(Encoding.ASCII.GetString(frame));
 
             //SendAsync(buffer, offset, size);
         }

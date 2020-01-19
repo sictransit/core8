@@ -110,8 +110,6 @@ namespace Core8
 
             pdp.Clear();
 
-
-
             pdp.Load8(0200);
 
             //loggingLevel.MinimumLevel = Serilog.Events.LogEventLevel.Debug;

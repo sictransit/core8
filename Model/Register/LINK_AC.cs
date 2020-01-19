@@ -8,6 +8,11 @@ namespace Core8.Model.Register
 
         public uint Accumulator => Data & Masks.AC;
 
+        public void ByteSwap()
+        {
+            Data = (Data & Masks.LINK) | ((Data & Masks.AC_HIGH) >> 6) | ((Data & Masks.AC_LOW) << 6);
+        }
+
         public void RAR()
         {
             Data = ((Data >> 1) & Masks.AC) | ((Data << 12) & Masks.LINK);
@@ -26,6 +31,16 @@ namespace Core8.Model.Register
         public void ComplementAccumulator()
         {
             SetAccumulator(Data ^ Masks.AC);
+        }
+
+        public void ClearAccumulator()
+        {
+            Data = (Data & Masks.LINK);
+        }
+
+        public void ClearLink()
+        {
+            Data = (Data & Masks.AC);
         }
 
         public void SetAccumulator(uint value)

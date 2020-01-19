@@ -40,7 +40,7 @@ namespace Core8.Model.Instructions
 
             if (OpCodes.HasFlag(Group2OROpCodes.CLA))
             {
-                Registers.LINK_AC.SetAccumulator(0);
+                Registers.LINK_AC.ClearAccumulator();
             }
 
             base.Execute();

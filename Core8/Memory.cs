@@ -9,7 +9,7 @@ namespace Core8
     {
         private readonly uint[][] ram;
 
-        public Memory(uint fields = 1)
+        public Memory(uint fields = 8)
         {
             ram = new uint[fields][];
 
@@ -24,7 +24,7 @@ namespace Core8
         public uint Size { get; private set; }
 
         public uint MB { get; private set; }
-        
+
         public uint Fields { get; }
 
         public uint Examine(uint field, uint address)

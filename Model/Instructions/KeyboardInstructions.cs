@@ -47,7 +47,7 @@ namespace Core8.Model.Instructions
 
         private void KCC()
         {
-            Registers.LINK_AC.SetAccumulator(0);
+            Registers.LINK_AC.ClearAccumulator();
 
             teleprinter.ClearInputFlag();
         }

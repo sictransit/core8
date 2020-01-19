@@ -6,7 +6,7 @@ namespace Core8
 {
     public class Program
     {
-        private static LoggingLevelSwitch loggingLevel = new LoggingLevelSwitch(Serilog.Events.LogEventLevel.Information);
+        private static LoggingLevelSwitch loggingLevel = new LoggingLevelSwitch(Serilog.Events.LogEventLevel.Debug);
 
         public static void Main(string[] args)
         {

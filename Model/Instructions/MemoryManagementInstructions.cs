@@ -1,9 +1,6 @@
 ﻿using Core8.Model.Enums;
-using Core8.Model.Extensions;
 using Core8.Model.Instructions.Abstract;
 using Core8.Model.Interfaces;
-using System;
-using System.Linq;
 
 namespace Core8.Model.Instructions
 {

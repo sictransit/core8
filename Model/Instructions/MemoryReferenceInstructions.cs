@@ -66,7 +66,7 @@ namespace Core8.Model.Instructions
         {
             memory.Write(0, operand, Registers.LINK_AC.Accumulator);
 
-            Registers.LINK_AC.SetAccumulator(0);
+            Registers.LINK_AC.ClearAccumulator();
         }
 
         private void ISZ(uint operand)

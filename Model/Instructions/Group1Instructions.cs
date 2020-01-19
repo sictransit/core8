@@ -18,12 +18,12 @@ namespace Core8.Model.Instructions
         {
             if (OpCodes.HasFlag(Group1OpCodes.CLA))
             {
-                Registers.LINK_AC.SetAccumulator(0);
+                Registers.LINK_AC.ClearAccumulator();
             }
 
             if (OpCodes.HasFlag(Group1OpCodes.CLL))
             {
-                Registers.LINK_AC.SetLink(0);
+                Registers.LINK_AC.ClearLink();
             }
 
             if (OpCodes.HasFlag(Group1OpCodes.CMA))
@@ -63,11 +63,7 @@ namespace Core8.Model.Instructions
 
             if (OpCodes.HasFlag(Group1OpCodes.BSW) && !OpCodes.HasFlag(Group1OpCodes.RAR) && !OpCodes.HasFlag(Group1OpCodes.RAL))
             {
-                var acc = Registers.LINK_AC.Accumulator;
-
-                var result = (acc & Masks.AC_HIGH) >> 6 | (acc & Masks.AC_LOW) << 6;
-
-                Registers.LINK_AC.SetAccumulator(result);
+                Registers.LINK_AC.ByteSwap();
             }
         }
     }

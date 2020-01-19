@@ -148,6 +148,8 @@ namespace Core8
                 throw new ArgumentNullException(nameof(tape));
             }
 
+
+
             Teleprinter.Read(tape);
 
             Log.Information($"TAPE: loaded {tape.Length} bytes");

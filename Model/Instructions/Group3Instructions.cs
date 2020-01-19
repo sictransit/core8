@@ -18,7 +18,7 @@ namespace Core8.Model.Instructions
         {
             if (OpCodes.HasFlag(Group3OpCodes.CLA))
             {
-                Registers.LINK_AC.SetAccumulator(0);
+                Registers.LINK_AC.ClearAccumulator();
             }
 
             if (OpCodes.HasFlag(Group3OpCodes.SWP))
@@ -39,7 +39,7 @@ namespace Core8.Model.Instructions
                 {
                     Registers.MQ.Set(Registers.LINK_AC.Accumulator);
 
-                    Registers.LINK_AC.SetAccumulator(0);
+                    Registers.LINK_AC.ClearAccumulator();
                 }
             }
         }
