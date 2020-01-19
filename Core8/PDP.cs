@@ -39,7 +39,7 @@ namespace Core8
                 {
                     var data = Memory.Examine(field, address);
 
-                    var instruction = instructionFactory.Fetch(address, data);
+                    var instruction = Processor.Fetch(address);
 
                     if (instruction != null)
                     {

@@ -11,7 +11,7 @@ namespace Core8.Model.Instructions
     {
         private readonly IMemory memory;
 
-        internal MemoryReferenceInstructions(IMemory memory, IRegisters registers) : base(registers)
+        public MemoryReferenceInstructions(IMemory memory, IRegisters registers) : base(registers)
         {
             this.memory = memory;
         }

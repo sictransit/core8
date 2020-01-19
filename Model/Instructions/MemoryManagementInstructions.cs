@@ -8,7 +8,7 @@ namespace Core8.Model.Instructions
     {
         private readonly IMemory memory;
 
-        internal MemoryManagementInstructions(IMemory memory, IRegisters registers) : base(registers)
+        public MemoryManagementInstructions(IMemory memory, IRegisters registers) : base(registers)
         {
             this.memory = memory;
         }
@@ -19,10 +19,13 @@ namespace Core8.Model.Instructions
 
         public override void Execute()
         {
-            //if (OpCodes.HasFlag(Group1OpCodes.CLA))
-            //{
-            //    Registers.LINK_AC.SetAccumulator(0);
-            //}
+            if (OpCodes.HasFlag(MemoryManagementOpCodes.CDF))
+            {
+            }
+
+            if (OpCodes.HasFlag(MemoryManagementOpCodes.CIF))
+            { 
+            }
 
         }
 

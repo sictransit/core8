@@ -102,7 +102,8 @@ namespace Core8
 
             pdp.Clear();
 
-            pdp.LoadTape(httpClient.GetByteArrayAsync(@"https://github.com/PontusPih/TINT8/releases/download/v0.1.0-alpha/tint.bin").Result);
+            pdp.LoadTape(File.ReadAllBytes(@"tapes/MAINDEC-8E-D0BB-PB.bin"));
+            //pdp.LoadTape(httpClient.GetByteArrayAsync(@"https://github.com/PontusPih/TINT8/releases/download/v0.1.0-alpha/tint.bin").Result);
 
             pdp.Load8(7777);
 

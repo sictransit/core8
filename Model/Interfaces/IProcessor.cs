@@ -17,5 +17,7 @@
         bool InterruptRequested { get; }
 
         void DisableInterrupts();
+
+        IInstruction Fetch(uint address);
     }
 }

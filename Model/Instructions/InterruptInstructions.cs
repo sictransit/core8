@@ -9,7 +9,7 @@ namespace Core8.Model.Instructions
     {
         private readonly IProcessor processor;
 
-        internal InterruptInstructions(IProcessor processor, IRegisters registers) : base(registers)
+        public InterruptInstructions(IProcessor processor, IRegisters registers) : base(registers)
         {
             this.processor = processor;
         }

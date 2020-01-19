@@ -6,7 +6,7 @@ namespace Core8.Model.Instructions
 {
     public class Group2ORInstructions : Group2InstructionsBase
     {
-        internal Group2ORInstructions(IProcessor processor, IRegisters registers) : base(processor, registers)
+        public Group2ORInstructions(IProcessor processor, IRegisters registers) : base(processor, registers)
         {
         }
 

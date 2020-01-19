@@ -6,7 +6,7 @@ namespace Core8.Model.Instructions
 {
     public class Group3Instructions : InstructionsBase
     {
-        internal Group3Instructions(IRegisters registers) : base(registers)
+        public Group3Instructions(IRegisters registers) : base(registers)
         {
         }
 

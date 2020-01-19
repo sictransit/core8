@@ -9,7 +9,7 @@ namespace Core8.Model.Instructions
     {
         private readonly ITeleprinter teleprinter;
 
-        internal TeleprinterInstructions(IRegisters registers, ITeleprinter teleprinter) : base(registers)
+        public TeleprinterInstructions(IRegisters registers, ITeleprinter teleprinter) : base(registers)
         {
             this.teleprinter = teleprinter;
         }
