@@ -31,8 +31,6 @@ namespace Core8
 
         public void DumpMemory()
         {
-            var instructionFactory = new InstructionFactory(Processor, Memory, Registers, Teleprinter);
-
             for (uint field = 0; field < Memory.Fields; field++)
             {
                 for (uint address = 0; address < Memory.Size; address++)

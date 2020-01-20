@@ -103,7 +103,9 @@ namespace Core8
             pdp.Clear();
 
             //pdp.LoadTape(File.ReadAllBytes(@"tapes/MAINDEC-8E-D0BB-PB.bin"));
-            pdp.LoadTape(httpClient.GetByteArrayAsync(@"https://github.com/PontusPih/TINT8/releases/download/v0.1.0-alpha/tint.bin").Result);
+            //pdp.LoadTape(httpClient.GetByteArrayAsync(@"https://github.com/PontusPih/TINT8/releases/download/v0.1.0-alpha/tint.bin").Result);
+            pdp.LoadTape(httpClient.GetByteArrayAsync(@"http://svn.so-much-stuff.com/svn/trunk/pdp8/src/decus/focal8-52/part1.bin").Result);
+            //pdp.LoadTape(File.ReadAllBytes(@"C:\Users\micke\source\repos\TINT8\tint.bin"));
 
             pdp.Load8(7777);
 

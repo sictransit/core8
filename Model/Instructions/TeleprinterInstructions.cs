@@ -31,6 +31,9 @@ namespace Core8.Model.Instructions
                 case TeleprinterOpCode.TCF:
                     TCF();
                     break;
+                case TeleprinterOpCode.TPC:
+                    TPC();
+                    break;
                 case TeleprinterOpCode.TSF:
                     TSF();
                     break;
@@ -56,6 +59,13 @@ namespace Core8.Model.Instructions
         private void TCF()
         {
             teleprinter.ClearOutputFlag();
+        }
+
+        private void TPC()
+        {
+            var c = Registers.LINK_AC.Accumulator & Masks.TELEPRINTER_BUFFER_MASK;
+
+            teleprinter.Type((byte)c);
         }
 
         private void TSF()
