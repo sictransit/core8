@@ -9,7 +9,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="NetCoreServer" Version="3.0.3" />
+    <PackageReference Include="NetCoreServer" Version="3.0.4" />
     <PackageReference Include="NetMQ" Version="4.0.0.207" />
     <PackageReference Include="Serilog" Version="2.9.0" />
     <PackageReference Include="Serilog.Sinks.Console" Version="3.1.1" />
