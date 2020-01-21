@@ -4,6 +4,7 @@ using System;
 using System.IO;
 using System.Net.Http;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace Core8
 {
@@ -83,11 +84,11 @@ namespace Core8
         }
 
 
-        public static void TestBIN(PDP pdp)
+        public static async Task TestBIN(PDP pdp)
         {
             ToggleRIMLowSpeedLoader(pdp); // Toggle RIM loader
 
-            pdp.LoadTape(File.ReadAllBytes(@"tapes/dec-08-lbaa-pm_5-10-67.rim.bin")); // Load BIN loader
+            pdp.LoadPaperTape(File.ReadAllBytes(@"tapes/dec-08-lbaa-pm_5-10-67.rim.bin")); // Load BIN loader
 
             pdp.Load8(7756);
 
@@ -102,10 +103,7 @@ namespace Core8
 
             pdp.Clear();
 
-            //pdp.LoadTape(File.ReadAllBytes(@"tapes/MAINDEC-8E-D0BB-PB.bin"));
-            //pdp.LoadTape(httpClient.GetByteArrayAsync(@"https://github.com/PontusPih/TINT8/releases/download/v0.1.0-alpha/tint.bin").Result);
-            pdp.LoadTape(httpClient.GetByteArrayAsync(@"http://svn.so-much-stuff.com/svn/trunk/pdp8/src/decus/focal8-52/part1.bin").Result);
-            //pdp.LoadTape(File.ReadAllBytes(@"C:\Users\micke\source\repos\TINT8\tint.bin"));
+            pdp.LoadPaperTape(await httpClient.GetByteArrayAsync(@"http://svn.so-much-stuff.com/svn/trunk/pdp8/src/decus/focal8-52/part1.bin"));
 
             pdp.Load8(7777);
 
@@ -113,16 +111,11 @@ namespace Core8
 
             //loggingLevel.MinimumLevel = Serilog.Events.LogEventLevel.Debug;
 
-            while (true)
-            {
-                pdp.Clear();
+            pdp.Clear();
 
-                pdp.Load8(0200);
+            pdp.Load8(0200);
 
-                pdp.Start(waitForHalt: true);
-
-                Thread.Sleep(1000);
-            }
+            pdp.Start(waitForHalt: true);
         }
 
 

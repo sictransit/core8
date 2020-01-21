@@ -17,7 +17,12 @@ namespace Core8.Model.Register
             Data = (Data & Masks.IF) | ((Data + 1) & Masks.MEM_WORD);
         }
 
-        public void Set(uint address)
+        public void SetIF(uint address)
+        {
+            Data = ((address << 12) & Masks.IF) | (Data & Masks.MEM_WORD);
+        }
+
+        public void SetPC(uint address)
         {
             Data = (Data & Masks.IF) | (address & Masks.MEM_WORD);
         }

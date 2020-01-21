@@ -81,14 +81,14 @@ namespace Core8.Model.Instructions
 
         private void JMP(uint operand)
         {
-            Registers.IF_PC.Set(operand);
+            Registers.IF_PC.SetPC(operand);
         }
 
         public void JMS(uint operand)
         {
             memory.Write(0, operand, Registers.IF_PC.Address);
 
-            Registers.IF_PC.Set(operand + 1);
+            Registers.IF_PC.SetPC(operand + 1);
         }
 
         private void TAD(uint operand)

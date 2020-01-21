@@ -97,5 +97,12 @@
 
         public const uint IO_DEVICE_CONTROL_MASK
             = 0b_000_000_000_011;
+
+        public const uint MEM_MGMT_CHANGE_FIELD
+            = 0b_000_000_000_011;
+
+        public const uint MEM_MGMT_READ
+            = 0b_000_000_000_100;
+
     }
 }

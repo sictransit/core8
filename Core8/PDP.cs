@@ -1,6 +1,5 @@
 ﻿using Core8.Model;
 using Core8.Model.Extensions;
-using Core8.Model.Instructions;
 using Core8.Model.Interfaces;
 using Serilog;
 using System;
@@ -37,7 +36,7 @@ namespace Core8
                 {
                     var data = Memory.Examine(field, address);
 
-                    var instruction = Processor.Fetch(address);
+                    var instruction = Processor.Debug10(address);
 
                     if (instruction != null)
                     {
@@ -80,7 +79,7 @@ namespace Core8
             Registers.IF_PC.Increment();
         }
 
-        public void Load8(uint address = 0)
+        public void Load8(uint address)
         {
             Load10(address.ToDecimal());
         }
@@ -96,7 +95,7 @@ namespace Core8
         {
             var address = Registers.SR.Get;
 
-            Registers.IF_PC.Set(address);
+            Registers.IF_PC.SetPC(address);
 
             Log.Information($"LOAD: {address.ToOctalString()}");
         }
@@ -139,7 +138,7 @@ namespace Core8
             Processor.Halt();
         }
 
-        public void LoadTape(byte[] tape)
+        public void LoadPaperTape(byte[] tape)
         {
             if (tape is null)
             {

@@ -1,5 +1,3 @@
-using Core8.Model.Extensions;
-using Core8.Model.Instructions;
 using Core8.Tests.Abstract;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
@@ -10,13 +8,32 @@ namespace Core8.Tests
     {
 
         [TestMethod]
-        public void TestOpCodes()
+        public void TestChangeOpCodes()
         {
             PDP.Load8(0200);
-            PDP.Deposit8(6201);
+            PDP.Deposit8(6273);
 
-            //PDP.Processor.Fetch()
+            var i = PDP.Processor.Debug8(0200);
 
-        }      
+            Assert.IsTrue(i.ToString().Contains("CDF"));
+            Assert.IsTrue(i.ToString().Contains("CIF"));
+        }
+
+        [TestMethod]
+        public void TestReadOpCodes()
+        {
+            PDP.Load8(0200);
+            PDP.Deposit8(6214);
+            PDP.Deposit8(6224);
+            PDP.Deposit8(6234);
+            PDP.Deposit8(6244);
+
+            Assert.IsTrue(PDP.Processor.Debug8(0200).ToString().Contains("RDF"));
+            Assert.IsTrue(PDP.Processor.Debug8(0201).ToString().Contains("RIF"));
+            Assert.IsTrue(PDP.Processor.Debug8(0202).ToString().Contains("RIB"));
+            Assert.IsTrue(PDP.Processor.Debug8(0203).ToString().Contains("RMF"));
+            
+        }
+
     }
 }

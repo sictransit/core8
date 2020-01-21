@@ -18,6 +18,8 @@
 
         void DisableInterrupts();
 
-        IInstruction Fetch(uint address);
+        IInstruction Debug8(uint address);
+
+        IInstruction Debug10(uint address);
     }
 }

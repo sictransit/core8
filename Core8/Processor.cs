@@ -98,7 +98,7 @@ namespace Core8
             {
                 FetchAndExecute();
 
-                if (cnt++ > 100)
+                if (cnt++ > 100) // A delay is needed. 100 ticks? 1000 ticks? Some other solution? Don't know yet.
                 {
                     teleprinter.Tick();
 
@@ -135,11 +135,21 @@ namespace Core8
 
                 memory.Write(0, 0, registers.IF_PC.Address); // JMS 0000
 
-                registers.IF_PC.Set(1);
+                registers.IF_PC.SetPC(1);
             }
         }
 
-        public IInstruction Fetch(uint address)
+        public IInstruction Debug8(uint address)
+        {
+            return Debug10(address.ToDecimal());
+        }
+
+        public IInstruction Debug10(uint address)
+        {
+            return Fetch(address);
+        }
+
+        private IInstruction Fetch(uint address)
         {
             var data = memory.Read(0, address);
 
@@ -173,7 +183,7 @@ namespace Core8
                 Masks.MCI when (data & Masks.GROUP_3) == Masks.GROUP_3 => null,
                 Masks.MCI when (data & Masks.GROUP_2_AND) == Masks.GROUP_2_AND => group2ANDInstructions,
                 Masks.MCI => group2ORInstructions,
-                Masks.IOT when (data & Masks.MEMORY_MANAGEMENT) == Masks.MEMORY_MANAGEMENT => null,
+                Masks.IOT when (data & Masks.MEMORY_MANAGEMENT) == Masks.MEMORY_MANAGEMENT => memoryManagementInstructions,
                 Masks.IOT when (data & Masks.INTERRUPT_MASK) == 0 => interruptInstructions,
                 Masks.IOT when (data & Masks.IO) >> 3 == 3 => keyboardInstructions,
                 Masks.IOT when (data & Masks.IO) >> 3 == 4 => teleprinterInstructions,
