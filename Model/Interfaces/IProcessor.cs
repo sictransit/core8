@@ -10,16 +10,22 @@
 
         void EnableInterrupts();
 
+        void DisableInterrupts();
+
+        void PauseInterrupts();
+
+        void ResumeInterrupts();
+
         bool InterruptsEnabled { get; }
 
-        bool InterruptsPending { get; }
+        bool InterruptPending { get; }
 
         bool InterruptRequested { get; }
 
-        void DisableInterrupts();
+        bool InterruptsPaused { get; }
 
-        IInstruction Debug8(uint address);
+        IInstruction Debug8(uint field, uint address);
 
-        IInstruction Debug10(uint address);
+        IInstruction Debug10(uint field, uint address);
     }
 }

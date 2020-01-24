@@ -84,7 +84,7 @@ namespace Core8
         }
 
 
-        public static async Task TestBIN(PDP pdp)
+        public static void TestBIN(PDP pdp)
         {
             ToggleRIMLowSpeedLoader(pdp); // Toggle RIM loader
 
@@ -103,17 +103,19 @@ namespace Core8
 
             pdp.Clear();
 
-            pdp.LoadPaperTape(await httpClient.GetByteArrayAsync(@"http://svn.so-much-stuff.com/svn/trunk/pdp8/src/decus/focal8-52/part1.bin"));
+            pdp.LoadPaperTape(File.ReadAllBytes(@"tapes/MAINDEC-8E-D1FB-PB.bin"));
 
             pdp.Load8(7777);
 
             pdp.Start();
 
-            //loggingLevel.MinimumLevel = Serilog.Events.LogEventLevel.Debug;
-
             pdp.Clear();
 
             pdp.Load8(0200);
+
+            pdp.Start(waitForHalt: true);
+            pdp.Toggle8(0007);
+
 
             pdp.Start(waitForHalt: true);
         }

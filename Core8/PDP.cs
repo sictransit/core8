@@ -32,11 +32,11 @@ namespace Core8
         {
             for (uint field = 0; field < Memory.Fields; field++)
             {
-                for (uint address = 0; address < Memory.Size; address++)
+                for (uint address = 0; address < 4096; address++)
                 {
                     var data = Memory.Examine(field, address);
 
-                    var instruction = Processor.Debug10(address);
+                    var instruction = Processor.Debug10(field, address);
 
                     if (instruction != null)
                     {
@@ -44,7 +44,7 @@ namespace Core8
                     }
                     else
                     {
-                        Log.Information($"{address.ToOctalString()}:{data.ToOctalString()}");
+                        Log.Information($"{field.ToOctalString()} {address.ToOctalString()}:{data.ToOctalString()}");
                     }
 
                 }

@@ -1,4 +1,5 @@
 ﻿using Core8.Model.Extensions;
+using Serilog;
 
 namespace Core8.Model.Register
 {
@@ -14,22 +15,26 @@ namespace Core8.Model.Register
 
         public void Increment()
         {
-            Data = (Data & Masks.IF) | ((Data + 1) & Masks.MEM_WORD);
+            SetPC(Address + 1);
         }
 
         public void SetIF(uint address)
         {
             Data = ((address << 12) & Masks.IF) | (Data & Masks.MEM_WORD);
+
+            Log.Debug(this.ToString());
         }
 
         public void SetPC(uint address)
         {
             Data = (Data & Masks.IF) | (address & Masks.MEM_WORD);
+
+            Log.Debug(this.ToString());
         }
 
         public override string ToString()
         {
-            return string.Format($"[IF_PC] {IF.ToOctalString()} {Page.ToOctalString()} {Word.ToOctalString()}");
+            return string.Format($"[IF_PC] ({IF.ToOctalString()}){Address.ToOctalString()}");
         }
     }
 }

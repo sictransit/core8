@@ -12,6 +12,7 @@ namespace Core8
             SR = new SR();
             MQ = new MQ();
             DF = new DF();
+            IB = new IB();
         }
 
         public LINK_AC LINK_AC { get; }
@@ -23,5 +24,7 @@ namespace Core8
         public MQ MQ { get; }
 
         public DF DF { get; }
+
+        public IB IB { get; }
     }
 }

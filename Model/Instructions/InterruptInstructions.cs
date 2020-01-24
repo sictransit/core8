@@ -80,17 +80,24 @@ namespace Core8.Model.Instructions
         {
             var acc = Registers.LINK_AC.Link << 11;
             acc |= (uint)(processor.InterruptRequested ? 1 : 0) << 9;
-            acc |= (uint)(processor.InterruptsPending ? 1 : 0) << 7;
-            //acc |= Registers.IF_PC.IF << 5;
+            acc |= (uint)(processor.InterruptPending ? 1 : 0) << 7;
+            acc |= Registers.IF_PC.IF << 3;
+            acc |= Registers.DF.Data;
 
             Registers.LINK_AC.SetAccumulator(acc);
         }
 
         private void RTF()
         {
-            Registers.LINK_AC.SetLink((Registers.LINK_AC.Accumulator >> 11) & Masks.FLAG);
+            var acc = Registers.LINK_AC.Accumulator;
+
+            Registers.LINK_AC.SetLink((acc >> 11) & Masks.FLAG);
+
+            Registers.IB.SetIF(acc >> 3);
+            Registers.DF.Set(acc);
 
             processor.EnableInterrupts();
+            processor.PauseInterrupts();
         }
 
 

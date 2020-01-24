@@ -13,7 +13,7 @@ namespace Core8.Tests
             PDP.Load8(0200);
             PDP.Deposit8(6273);
 
-            var i = PDP.Processor.Debug8(0200);
+            var i = PDP.Processor.Debug8(0, 0200);
 
             Assert.IsTrue(i.ToString().Contains("CDF"));
             Assert.IsTrue(i.ToString().Contains("CIF"));
@@ -28,11 +28,11 @@ namespace Core8.Tests
             PDP.Deposit8(6234);
             PDP.Deposit8(6244);
 
-            Assert.IsTrue(PDP.Processor.Debug8(0200).ToString().Contains("RDF"));
-            Assert.IsTrue(PDP.Processor.Debug8(0201).ToString().Contains("RIF"));
-            Assert.IsTrue(PDP.Processor.Debug8(0202).ToString().Contains("RIB"));
-            Assert.IsTrue(PDP.Processor.Debug8(0203).ToString().Contains("RMF"));
-            
+            Assert.IsTrue(PDP.Processor.Debug8(0, 0200).ToString().Contains("RDF"));
+            Assert.IsTrue(PDP.Processor.Debug8(0, 0201).ToString().Contains("RIF"));
+            Assert.IsTrue(PDP.Processor.Debug8(0, 0202).ToString().Contains("RIB"));
+            Assert.IsTrue(PDP.Processor.Debug8(0, 0203).ToString().Contains("RMF"));
+
         }
 
     }

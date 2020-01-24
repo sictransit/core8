@@ -21,8 +21,6 @@ namespace Core8
             Fields = fields;
         }
 
-        public uint Size { get; private set; }
-
         public uint MB { get; private set; }
 
         public uint Fields { get; }
@@ -41,6 +39,8 @@ namespace Core8
 
             MB = Examine(field, address);
 
+            Log.Debug($"[Read]: ({field.ToOctalString()}){address.ToOctalString()}:{MB.ToOctalString()}");
+
             return MB;
         }
 
@@ -50,7 +50,7 @@ namespace Core8
 
             ram[field][address] = MB;
 
-            Log.Debug($"[Write]: {address.ToOctalString()}:{MB.ToOctalString()}");
+            Log.Debug($"[Write]: ({field.ToOctalString()}){address.ToOctalString()}:{MB.ToOctalString()}");
         }
 
         public override string ToString()

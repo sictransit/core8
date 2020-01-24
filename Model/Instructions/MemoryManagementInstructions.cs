@@ -7,10 +7,12 @@ namespace Core8.Model.Instructions
 {
     public class MemoryManagementInstructions : InstructionsBase
     {
+        private readonly IProcessor processor;
         private readonly IMemory memory;
 
-        public MemoryManagementInstructions(IMemory memory, IRegisters registers) : base(registers)
+        public MemoryManagementInstructions(IProcessor processor, IMemory memory, IRegisters registers) : base(registers)
         {
+            this.processor = processor;
             this.memory = memory;
         }
 
@@ -53,7 +55,9 @@ namespace Core8.Model.Instructions
 
                 if (ChangeOpCodes.HasFlag(MemoryManagementChangeOpCodes.CIF))
                 {
-                    Registers.IF_PC.SetIF(Data >> 3);
+                    Registers.IB.SetIF(Data >> 3);
+
+                    processor.PauseInterrupts();
                 }
             }
         }

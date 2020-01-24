@@ -41,18 +41,20 @@ namespace Core8
             group2ANDInstructions = new Group2ANDInstructions(this, registers);
             group2ORInstructions = new Group2ORInstructions(this, registers);
             group3Instructions = new Group3Instructions(registers);
-            memoryReferenceInstructions = new MemoryReferenceInstructions(memory, registers);
-            memoryManagementInstructions = new MemoryManagementInstructions(memory, registers);
+            memoryReferenceInstructions = new MemoryReferenceInstructions(this, memory, registers);
+            memoryManagementInstructions = new MemoryManagementInstructions(this, memory, registers);
             keyboardInstructions = new KeyboardInstructions(registers, teleprinter);
             teleprinterInstructions = new TeleprinterInstructions(registers, teleprinter);
             interruptInstructions = new InterruptInstructions(this, registers);
         }
 
-        public bool InterruptsEnabled { get; set; }
+        public bool InterruptsEnabled { get; private set; }
 
-        public bool InterruptRequested { get; set; }
+        public bool InterruptRequested { get; private set; }
 
-        public bool InterruptsPending => InterruptsEnabled || interruptDelay;
+        public bool InterruptPending => InterruptsEnabled || interruptDelay;
+
+        public bool InterruptsPaused { get; private set; }
 
         public void Clear()
         {
@@ -86,6 +88,16 @@ namespace Core8
             InterruptRequested = false;
         }
 
+        public void PauseInterrupts()
+        {
+            InterruptsPaused = true;
+        }
+
+        public void ResumeInterrupts()
+        {
+            InterruptsPaused = false;
+        }
+
         public void Run()
         {
             running = true;
@@ -113,7 +125,7 @@ namespace Core8
         {
             var enableInterrupts = interruptDelay;
 
-            var instruction = Fetch(registers.IF_PC.Address);
+            var instruction = Fetch(registers.IF_PC.IF, registers.IF_PC.Address);
 
             registers.IF_PC.Increment();
 
@@ -129,35 +141,37 @@ namespace Core8
                 InterruptsEnabled = true;
             }
 
-            if (InterruptRequested && InterruptsEnabled)
+            if (InterruptRequested && InterruptsEnabled && !InterruptsPaused)
             {
                 DisableInterrupts();
 
-                memory.Write(0, 0, registers.IF_PC.Address); // JMS 0000
+                Log.Debug("Interrupt!");
+
+                memory.Write(registers.IF_PC.IF, 0, registers.IF_PC.Address); // JMS 0000
 
                 registers.IF_PC.SetPC(1);
             }
         }
 
-        public IInstruction Debug8(uint address)
+        public IInstruction Debug8(uint field, uint address)
         {
-            return Debug10(address.ToDecimal());
+            return Debug10(field.ToDecimal(), address.ToDecimal());
         }
 
-        public IInstruction Debug10(uint address)
+        public IInstruction Debug10(uint field, uint address)
         {
-            return Fetch(address);
+            return Fetch(field, address);
         }
 
-        private IInstruction Fetch(uint address)
+        private IInstruction Fetch(uint field, uint address)
         {
-            var data = memory.Read(0, address);
+            var data = memory.Read(field, address);
 
             var instruction = Decode(data);
 
             if (instruction != null)
             {
-                instruction.Load(address, data);
+                instruction.Load(field, address, data);
             }
             else
             {

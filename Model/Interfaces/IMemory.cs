@@ -8,8 +8,6 @@
 
         void Write(uint field, uint address, uint data);
 
-        uint Size { get; }
-
         uint Fields { get; }
 
         uint MB { get; }

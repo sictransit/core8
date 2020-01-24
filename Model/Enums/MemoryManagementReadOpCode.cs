@@ -1,7 +1,5 @@
-﻿using System;
-
-namespace Core8.Model.Enums
-{    
+﻿namespace Core8.Model.Enums
+{
     public enum MemoryManagementReadOpCode : uint
     {
         RDF = 0b_110_010_001_100,

@@ -13,5 +13,7 @@ namespace Core8.Model.Interfaces
         MQ MQ { get; }
 
         DF DF { get; }
+
+        IB IB { get; }
     }
 }

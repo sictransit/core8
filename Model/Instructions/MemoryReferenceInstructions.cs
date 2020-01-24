@@ -9,10 +9,12 @@ namespace Core8.Model.Instructions
 {
     public class MemoryReferenceInstructions : InstructionsBase
     {
+        private readonly IProcessor processor;
         private readonly IMemory memory;
 
-        public MemoryReferenceInstructions(IMemory memory, IRegisters registers) : base(registers)
+        public MemoryReferenceInstructions(IProcessor processor, IMemory memory, IRegisters registers) : base(registers)
         {
+            this.processor = processor;
             this.memory = memory;
         }
 
@@ -26,11 +28,22 @@ namespace Core8.Model.Instructions
 
         private bool Zero => !AddressingModes.HasFlag(AddressingModes.Z);
 
-        public uint Location => Zero ? (Data & Masks.ADDRESS_WORD) : (Address & Masks.ADDRESS_PAGE) | (Data & Masks.ADDRESS_WORD);
+        public uint Location => Zero ? (Data & Masks.ADDRESS_WORD) : ((Address & Masks.ADDRESS_PAGE) | (Data & Masks.ADDRESS_WORD));
+
+        private uint ActiveField => Indirect ? Registers.DF.Data : Field;
 
         public override void Execute()
         {
-            var operand = Indirect ? memory.Read(0, Location, true) : Location;
+            var isJump = OpCode == MemoryReferenceOpCode.JMP || OpCode == MemoryReferenceOpCode.JMS;
+
+            if (processor.InterruptsPaused & isJump)
+            {
+                processor.ResumeInterrupts();
+
+                Registers.IF_PC.SetIF(Registers.IB.IF);
+            }
+
+            var operand = Indirect ? memory.Read(isJump ? Field : ActiveField, Location, true) : Location;
 
             switch (OpCode)
             {
@@ -59,19 +72,19 @@ namespace Core8.Model.Instructions
 
         private void AND(uint operand)
         {
-            Registers.LINK_AC.SetAccumulator(memory.Read(0, operand) & Registers.LINK_AC.Accumulator);
+            Registers.LINK_AC.SetAccumulator(memory.Read(ActiveField, operand) & Registers.LINK_AC.Accumulator);
         }
 
         private void DCA(uint operand)
         {
-            memory.Write(0, operand, Registers.LINK_AC.Accumulator);
+            memory.Write(ActiveField, operand, Registers.LINK_AC.Accumulator);
 
             Registers.LINK_AC.ClearAccumulator();
         }
 
         private void ISZ(uint operand)
         {
-            memory.Write(0, operand, (memory.Read(0, operand) + 1) & Masks.MEM_WORD);
+            memory.Write(ActiveField, operand, (memory.Read(ActiveField, operand) + 1) & Masks.MEM_WORD);
 
             if (memory.MB == 0)
             {
@@ -86,14 +99,14 @@ namespace Core8.Model.Instructions
 
         public void JMS(uint operand)
         {
-            memory.Write(0, operand, Registers.IF_PC.Address);
+            memory.Write(Field, operand, Registers.IF_PC.Address);
 
             Registers.IF_PC.SetPC(operand + 1);
         }
 
         private void TAD(uint operand)
         {
-            Registers.LINK_AC.AddWithCarry(memory.Read(0, operand));
+            Registers.LINK_AC.AddWithCarry(memory.Read(ActiveField, operand));
         }
 
         public override string ToString()

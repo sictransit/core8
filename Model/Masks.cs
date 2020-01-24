@@ -11,6 +11,12 @@
         public const uint DF
             = 0b_000_000_000_111;
 
+        public const uint IB_DF
+            = 0b_000_000_000_111;
+
+        public const uint IB_IF
+            = 0b_000_000_111_000;
+
         public const uint OP_CODE
             = 0b_111_000_000_000;
 

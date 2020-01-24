@@ -10,6 +10,8 @@ namespace Core8.Model.Instructions.Abstract
             Registers = registers;
         }
 
+        public uint Field { get; private set; }
+
         public uint Address { get; private set; }
 
         public uint Data { get; private set; }
@@ -20,15 +22,16 @@ namespace Core8.Model.Instructions.Abstract
 
         protected IRegisters Registers { get; }
 
-        public void Load(uint address, uint data)
+        public void Load(uint field, uint address, uint data)
         {
+            Field = field;
             Address = address;
             Data = data;
         }
 
         public override string ToString()
         {
-            return $"{Address.ToOctalString()}:{Data.ToOctalString()} {OpCodeText}";
+            return $"({Field.ToOctalString()}){Address.ToOctalString()}: {Data.ToOctalString()} {OpCodeText}";
         }
     }
 }
