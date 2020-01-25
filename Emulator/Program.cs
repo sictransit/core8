@@ -1,7 +1,6 @@
 ﻿using Serilog;
 using Serilog.Core;
 using System;
-using System.IO;
 using System.Net.Http;
 
 namespace Core8
@@ -41,8 +40,8 @@ namespace Core8
         {
             pdp.Clear();
 
-            pdp.LoadPaperTape(File.ReadAllBytes(@"tapes/hello_world.bin"));
-
+            //pdp.LoadPaperTape(File.ReadAllBytes(@"tapes/hello_world.bin"));
+            pdp.LoadPaperTape(httpClient.GetByteArrayAsync(@"https://github.com/PontusPih/TINT8/releases/download/v0.1.0-alpha/tint.bin").Result);
 
             pdp.Clear();
 

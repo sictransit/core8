@@ -15,7 +15,9 @@ namespace Core8.Tests.MAINDEC.Abstract
 
         protected abstract string[] ExpectedOutput { get; }
 
-        protected abstract TimeSpan Timeout { get; }
+        protected virtual string[] UnexpectedOutput => new string[] { };
+
+        protected abstract TimeSpan MaxRunningTime { get; }
 
         [TestInitialize]
         public void LoadTape()
@@ -35,15 +37,23 @@ namespace Core8.Tests.MAINDEC.Abstract
             sw.Start();
 
             var done = false;
+            var failed = false;
+            var timeout = false;
 
-            while (sw.Elapsed < Timeout && !done)
+            while (!timeout && !done && !failed)
             {
                 done = ExpectedOutput.All(x => PDP.Teleprinter.Printout.Contains(x));
+
+                failed = UnexpectedOutput.Any(x => PDP.Teleprinter.Printout.Contains(x));
+
+                timeout = sw.Elapsed > MaxRunningTime;
 
                 Thread.Sleep(200);
             }
 
             Assert.IsTrue(done);
+            Assert.IsFalse(false);
+            Assert.IsFalse(timeout);
         }
     }
 }

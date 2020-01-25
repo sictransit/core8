@@ -12,7 +12,7 @@ namespace Core8.Tests.MAINDEC
 
         protected override string[] ExpectedOutput => new[] { ((char)7).ToString() };
 
-        protected override TimeSpan Timeout => TimeSpan.FromSeconds(10);
+        protected override TimeSpan MaxRunningTime => TimeSpan.FromSeconds(10);
 
         [TestMethod]
         public void RunTest()
