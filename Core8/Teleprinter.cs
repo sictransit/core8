@@ -19,8 +19,8 @@ namespace Core8
 
         private volatile uint buffer;
 
-        private ConcurrentQueue<byte> inputQueue { get; } = new ConcurrentQueue<byte>();
-        private ConcurrentQueue<byte> outputQueue { get; } = new ConcurrentQueue<byte>();
+        private readonly ConcurrentQueue<byte> inputQueue = new ConcurrentQueue<byte>();
+        private readonly ConcurrentQueue<byte> outputQueue = new ConcurrentQueue<byte>();
 
         private Action<bool> irqHook = null;
 
@@ -75,19 +75,6 @@ namespace Core8
             outputQueue.Enqueue(c);
         }
 
-        private void Type(byte[] chars)
-        {
-            if (chars is null)
-            {
-                throw new ArgumentNullException(nameof(chars));
-            }
-
-            foreach (var c in chars)
-            {
-                Type(c);
-            }
-        }
-
         public void Read(byte[] chars)
         {
             if (chars is null)
@@ -115,9 +102,7 @@ namespace Core8
 
         public uint GetBuffer()
         {
-            var value = buffer & Masks.KEYBOARD_BUFFER_MASK;
-
-            return buffer;
+            return buffer & Masks.KEYBOARD_BUFFER_MASK;
         }
 
         public string Printout => paper.ToString();
@@ -179,6 +164,7 @@ namespace Core8
                 }
 
                 var c = Encoding.ASCII.GetChars(data)[0];
+
                 paper.Append(c);
 
                 SetOutputFlag();

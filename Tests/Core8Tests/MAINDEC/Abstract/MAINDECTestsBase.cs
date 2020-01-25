@@ -57,7 +57,7 @@ namespace Core8.Tests.MAINDEC.Abstract
             {
                 Assert.IsTrue(PDP.Running);
             }
-            
+
             Assert.IsFalse(failed);
 
             if (!ExpectedOutput.Any())

@@ -46,7 +46,9 @@ namespace Core8.Tests
             //pdp.Load8(0177);
             //pdp.Deposit8(7600);
 
-            PDP.DumpMemory();
+            //PDP.DumpMemory();
+
+            PDP.Clear();
 
             PDP.Load8(0200);
             PDP.Start();

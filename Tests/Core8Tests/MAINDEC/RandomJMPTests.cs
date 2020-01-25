@@ -22,8 +22,6 @@ namespace Core8.Tests.MAINDEC
 
             PDP.Clear();
 
-            LoggingLevel.MinimumLevel = Serilog.Events.LogEventLevel.Debug;
-
             StartAndWaitForCompletion();
         }
     }
