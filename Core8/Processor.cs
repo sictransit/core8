@@ -4,7 +4,6 @@ using Core8.Model.Instructions;
 using Core8.Model.Interfaces;
 using Serilog;
 using System;
-using System.Diagnostics;
 
 namespace Core8
 {
@@ -132,10 +131,10 @@ namespace Core8
 
             if (instruction != null)
             {
-                Log.Debug(instruction.ToString());
-
-                if (instruction.Address == 682)
-                { Debugger.Break(); }
+                if (Log.IsEnabled(Serilog.Events.LogEventLevel.Debug))
+                {
+                    Log.Debug(instruction.ToString());
+                }
 
                 instruction.Execute();
             }
@@ -151,7 +150,10 @@ namespace Core8
             {
                 DisableInterrupts();
 
-                Log.Debug("Interrupt!");
+                if (Log.IsEnabled(Serilog.Events.LogEventLevel.Debug))
+                {
+                    Log.Debug("Interrupt!");
+                }
 
                 memory.Write(registers.IF_PC.IF, 0, registers.IF_PC.Address); // JMS 0000
 

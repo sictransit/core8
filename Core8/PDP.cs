@@ -188,7 +188,7 @@ namespace Core8
 
         public void Deposit10(uint data)
         {
-            Registers.SR.Set(data);
+            Registers.SR.SetSR(data);
 
             Deposit();
         }
@@ -211,7 +211,7 @@ namespace Core8
 
         public void Load10(uint address)
         {
-            Registers.SR.Set(address);
+            Registers.SR.SetSR(address);
 
             Load();
         }
@@ -232,7 +232,7 @@ namespace Core8
 
         public void Toggle10(uint word)
         {
-            Registers.SR.Set(word);
+            Registers.SR.SetSR(word);
         }
 
         public void Exam()

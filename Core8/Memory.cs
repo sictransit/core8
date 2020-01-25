@@ -39,7 +39,10 @@ namespace Core8
 
             MB = Examine(field, address);
 
-            Log.Debug($"[Read]: ({field.ToOctalString()}){address.ToOctalString()}:{MB.ToOctalString()}");
+            if (Log.IsEnabled(Serilog.Events.LogEventLevel.Verbose))
+            {
+                Log.Verbose($"[Read]: ({field.ToOctalString()}){address.ToOctalString()}:{MB.ToOctalString()}");
+            }
 
             return MB;
         }
@@ -50,7 +53,10 @@ namespace Core8
 
             ram[field][address] = MB;
 
-            Log.Debug($"[Write]: ({field.ToOctalString()}){address.ToOctalString()}:{MB.ToOctalString()}");
+            if (Log.IsEnabled(Serilog.Events.LogEventLevel.Verbose))
+            {
+                Log.Verbose($"[Write]: ({field.ToOctalString()}){address.ToOctalString()}:{MB.ToOctalString()}");
+            }
         }
 
         public override string ToString()

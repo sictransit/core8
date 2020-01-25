@@ -50,7 +50,7 @@ namespace Core8.Model.Instructions
             {
                 if (ChangeOpCodes.HasFlag(MemoryManagementChangeOpCodes.CDF))
                 {
-                    Registers.DF.Set(Data >> 3);
+                    Registers.DF.SetDF(Data >> 3);
                 }
 
                 if (ChangeOpCodes.HasFlag(MemoryManagementChangeOpCodes.CIF))

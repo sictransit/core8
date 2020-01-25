@@ -117,8 +117,6 @@ namespace Core8
         {
             var value = buffer & Masks.KEYBOARD_BUFFER_MASK;
 
-            Log.Debug($"Keyboard buffer: {value:00} (dec)");
-
             return buffer;
         }
 
@@ -164,7 +162,10 @@ namespace Core8
 
                     SetInputFlag();
 
-                    Log.Debug($"Reader queue: {inputQueue.Count}");
+                    if (Log.IsEnabled(Serilog.Events.LogEventLevel.Debug))
+                    {
+                        Log.Debug($"Reader queue: {inputQueue.Count}");
+                    }
                 }
             }
 
@@ -174,7 +175,7 @@ namespace Core8
 
                 if (!publisherSocket.TrySendFrame(data))
                 {
-                    Log.Debug("Failed to send frame.");
+                    Log.Warning("Failed to send frame.");
                 }
 
                 var c = Encoding.ASCII.GetChars(data)[0];

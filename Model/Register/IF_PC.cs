@@ -1,5 +1,4 @@
 ﻿using Core8.Model.Extensions;
-using Serilog;
 
 namespace Core8.Model.Register
 {
@@ -20,21 +19,17 @@ namespace Core8.Model.Register
 
         public void SetIF(uint address)
         {
-            Data = ((address << 12) & Masks.IF) | (Data & Masks.MEM_WORD);
-
-            Log.Debug(this.ToString());
+            Set(((address << 12) & Masks.IF) | (Data & Masks.MEM_WORD));
         }
 
         public void SetPC(uint address)
         {
-            Data = (Data & Masks.IF) | (address & Masks.MEM_WORD);
-
-            Log.Debug(this.ToString());
+            Set((Data & Masks.IF) | (address & Masks.MEM_WORD));
         }
 
         public override string ToString()
         {
-            return string.Format($"[IF_PC] ({IF.ToOctalString()}){Address.ToOctalString()}");
+            return string.Format($"{base.ToString()} ({IF.ToOctalString()}){Address.ToOctalString()}");
         }
     }
 }

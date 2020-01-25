@@ -2,7 +2,7 @@ using Core8.Tests.MAINDEC.Abstract;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 
-namespace Core8.Tests
+namespace Core8.Tests.MAINDEC
 {
     [TestClass]
     public class InstructionTestPart2 : MAINDECTestsBase

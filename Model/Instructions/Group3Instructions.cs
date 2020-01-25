@@ -25,7 +25,7 @@ namespace Core8.Model.Instructions
             {
                 var mq = Registers.MQ.Get;
 
-                Registers.MQ.Set(Registers.LINK_AC.Accumulator);
+                Registers.MQ.SetMQ(Registers.LINK_AC.Accumulator);
                 Registers.LINK_AC.SetAccumulator(mq);
             }
             else
@@ -37,7 +37,7 @@ namespace Core8.Model.Instructions
 
                 if (OpCodes.HasFlag(Group3OpCodes.MQL))
                 {
-                    Registers.MQ.Set(Registers.LINK_AC.Accumulator);
+                    Registers.MQ.SetMQ(Registers.LINK_AC.Accumulator);
 
                     Registers.LINK_AC.ClearAccumulator();
                 }

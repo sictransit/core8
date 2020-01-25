@@ -10,17 +10,17 @@ namespace Core8.Model.Register
 
         public void ByteSwap()
         {
-            Data = (Data & Masks.LINK) | ((Data & Masks.AC_HIGH) >> 6) | ((Data & Masks.AC_LOW) << 6);
+            Set((Data & Masks.LINK) | ((Data & Masks.AC_HIGH) >> 6) | ((Data & Masks.AC_LOW) << 6));
         }
 
         public void RAR()
         {
-            Data = ((Data >> 1) & Masks.AC) | ((Data << 12) & Masks.LINK);
+            Set(((Data >> 1) & Masks.AC) | ((Data << 12) & Masks.LINK));
         }
 
         public void RAL()
         {
-            Data = ((Data << 1) & Masks.AC_LINK) | ((Data >> 12) & Masks.FLAG);
+            Set(((Data << 1) & Masks.AC_LINK) | ((Data >> 12) & Masks.FLAG));
         }
 
         public void ComplementLink()
@@ -35,38 +35,37 @@ namespace Core8.Model.Register
 
         public void ClearAccumulator()
         {
-            Data = (Data & Masks.LINK);
+            Set(Data & Masks.LINK);
         }
 
         public void ClearLink()
         {
-            Data = (Data & Masks.AC);
+            Set(Data & Masks.AC);
         }
 
         public void SetAccumulator(uint value)
         {
-            Data = (Data & Masks.LINK) | (value & Masks.AC);
+            Set((Data & Masks.LINK) | (value & Masks.AC));
         }
 
         public void SetLink(uint value)
         {
-            Data = ((value & Masks.FLAG) << 12) | (Data & Masks.AC);
+            Set(((value & Masks.FLAG) << 12) | (Data & Masks.AC));
         }
 
         public void AddWithCarry(uint value)
         {
-            Data = (Data + value) & Masks.AC_LINK;
+            Set((Data + value) & Masks.AC_LINK);
         }
 
         public void IncrementWithCarry()
         {
-            //AddWithCarry(Data + 1);
-            Data = (Data + 1) & Masks.AC_LINK;
+            AddWithCarry(1);
         }
 
         public override string ToString()
         {
-            return string.Format($"[LINK_AC] {Link} {Accumulator.ToOctalString()}");
+            return string.Format($"{base.ToString()} {Link} {Accumulator.ToOctalString()}");
         }
     }
 }
