@@ -34,6 +34,9 @@
     <None Update="MAINDEC\Tapes\MAINDEC-8E-D0CC-PB.bin">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Update="MAINDEC\Tapes\MAINDEC-8E-D0HC-PB.bin">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Update="MAINDEC\Tapes\MAINDEC-8E-D1FB-PB.bin">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>

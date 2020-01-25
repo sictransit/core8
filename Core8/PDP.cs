@@ -242,6 +242,8 @@ namespace Core8
             Log.Information($"EXAM: {Registers.LINK_AC.ToString()}");
         }
 
+        public bool Running => cpuThread != null && cpuThread.IsAlive;
+
         public void Start(bool waitForHalt = true)
         {
             cpuThread = new Thread(Processor.Run)

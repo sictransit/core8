@@ -13,11 +13,13 @@ namespace Core8.Tests.MAINDEC.Abstract
     {
         protected abstract string TapeName { get; }
 
-        protected abstract string[] ExpectedOutput { get; }
+        protected virtual string[] ExpectedOutput => new string[] { };
 
         protected virtual string[] UnexpectedOutput => new string[] { };
 
         protected abstract TimeSpan MaxRunningTime { get; }
+
+        protected virtual bool ExpectHLT => false;
 
         [TestInitialize]
         public void LoadTape()
@@ -40,9 +42,9 @@ namespace Core8.Tests.MAINDEC.Abstract
             var failed = false;
             var timeout = false;
 
-            while (!timeout && !done && !failed)
+            while (!timeout && !done && !failed && PDP.Running)
             {
-                done = ExpectedOutput.All(x => PDP.Teleprinter.Printout.Contains(x));
+                done = ExpectedOutput.Any() && ExpectedOutput.All(x => PDP.Teleprinter.Printout.Contains(x));
 
                 failed = UnexpectedOutput.Any(x => PDP.Teleprinter.Printout.Contains(x));
 
@@ -51,9 +53,23 @@ namespace Core8.Tests.MAINDEC.Abstract
                 Thread.Sleep(200);
             }
 
-            Assert.IsTrue(done);
-            Assert.IsFalse(false);
-            Assert.IsFalse(timeout);
+            if (!ExpectHLT)
+            {
+                Assert.IsTrue(PDP.Running);
+            }
+            
+            Assert.IsFalse(failed);
+
+            if (!ExpectedOutput.Any())
+            {
+                Assert.IsFalse(done);
+                Assert.IsTrue(timeout);
+            }
+            else
+            {
+                Assert.IsTrue(done);
+                Assert.IsFalse(timeout);
+            }
         }
     }
 }

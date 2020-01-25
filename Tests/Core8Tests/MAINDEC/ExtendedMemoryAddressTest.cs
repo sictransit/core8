@@ -9,8 +9,6 @@ namespace Core8.Tests.MAINDEC
     {
         protected override string TapeName => @"MAINDEC/tapes/MAINDEC-8E-D1FB-PB.bin";
 
-        protected override string[] ExpectedOutput => new[] { "foo" };
-
         protected override string[] UnexpectedOutput => new[] { "PR LOC   ADDR   GOOD  BAD  TEST" };
 
         protected override TimeSpan MaxRunningTime => TimeSpan.FromSeconds(600);
