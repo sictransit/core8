@@ -4,6 +4,11 @@ namespace Core8.Model.Extensions
 {
     public static class IntExtensions
     {
+        public static uint ToDecimal(this int oct)
+        {
+            return ((uint)oct).ToDecimal();
+        }
+
         public static uint ToDecimal(this uint oct)
         {
             return Convert.ToUInt32(oct.ToString(), 8);

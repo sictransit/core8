@@ -34,36 +34,36 @@ namespace Core8.Model.Instructions
 
         public override void Execute()
         {
-            var isJump = OpCode == MemoryReferenceOpCode.JMP || OpCode == MemoryReferenceOpCode.JMS;
+            var jumping = OpCode == MemoryReferenceOpCode.JMP || OpCode == MemoryReferenceOpCode.JMS;
 
-            if (processor.InterruptsPaused & isJump)
+            if (processor.InterruptsPaused & jumping)
             {
                 processor.ResumeInterrupts();
 
                 Registers.IF_PC.SetIF(Registers.IB.IF);
             }
 
-            var operand = Indirect ? memory.Read(isJump ? Field : ActiveField, Location, true) : Location;
+            var operand = Indirect ? memory.Read(jumping ? Field : ActiveField, Location, true) : Location;
 
             switch (OpCode)
             {
                 case MemoryReferenceOpCode.AND:
                     AND(operand);
                     break;
-                case MemoryReferenceOpCode.DCA:
-                    DCA(operand);
+                case MemoryReferenceOpCode.TAD:
+                    TAD(operand);
                     break;
                 case MemoryReferenceOpCode.ISZ:
                     ISZ(operand);
                     break;
-                case MemoryReferenceOpCode.JMP:
-                    JMP(operand);
+                case MemoryReferenceOpCode.DCA:
+                    DCA(operand);
                     break;
                 case MemoryReferenceOpCode.JMS:
                     JMS(operand);
                     break;
-                case MemoryReferenceOpCode.TAD:
-                    TAD(operand);
+                case MemoryReferenceOpCode.JMP:
+                    JMP(operand);
                     break;
                 default:
                     throw new NotImplementedException();

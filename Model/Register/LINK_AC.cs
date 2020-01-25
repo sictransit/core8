@@ -60,6 +60,7 @@ namespace Core8.Model.Register
 
         public void IncrementWithCarry()
         {
+            //AddWithCarry(Data + 1);
             Data = (Data + 1) & Masks.AC_LINK;
         }
 

@@ -4,6 +4,7 @@ using Core8.Model.Instructions;
 using Core8.Model.Interfaces;
 using Serilog;
 using System;
+using System.Diagnostics;
 
 namespace Core8
 {
@@ -131,7 +132,12 @@ namespace Core8
 
             if (instruction != null)
             {
-                Execute(instruction);
+                Log.Debug(instruction.ToString());
+
+                if (instruction.Address == 682)
+                { Debugger.Break(); }
+
+                instruction.Execute();
             }
 
             if (enableInterrupts && interruptDelay)
@@ -175,17 +181,10 @@ namespace Core8
             }
             else
             {
-                Log.Debug($"[{address.ToOctalString()}] NOP {data.ToOctalString()}");
+                Log.Warning($"[{address.ToOctalString()}] NOP {data.ToOctalString()}");
             }
 
             return instruction;
-        }
-
-        private void Execute(IInstruction instruction)
-        {
-            Log.Debug(instruction.ToString());
-
-            instruction.Execute();
         }
 
         private IInstruction Decode(uint data)

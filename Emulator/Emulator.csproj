@@ -25,18 +25,6 @@
     <None Update="Tapes\MAINDEC-8E-D0AB-PB">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Tapes\MAINDEC-8E-D0AB-PB.bin">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Tapes\MAINDEC-8E-D0BB-PB.bin">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Tapes\MAINDEC-8E-D0CC-PB.bin">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Tapes\MAINDEC-8E-D1FB-PB.bin">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
   </ItemGroup>
 
 </Project>

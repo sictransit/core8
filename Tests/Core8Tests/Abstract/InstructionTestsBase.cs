@@ -1,5 +1,6 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Serilog;
+using Serilog.Core;
 
 namespace Core8.Tests.Abstract
 {
@@ -8,16 +9,19 @@ namespace Core8.Tests.Abstract
     {
         protected PDP PDP { get; private set; }
 
+        public LoggingLevelSwitch LoggingLevel { get; protected set; }
+
         [TestInitialize]
         public void Initialize()
         {
-            PDP = new PDP();
+            LoggingLevel = new LoggingLevelSwitch(Serilog.Events.LogEventLevel.Information);
 
             Log.Logger = new LoggerConfiguration()
                 .WriteTo.Console()
-                .MinimumLevel.Debug()
+                .MinimumLevel.ControlledBy(LoggingLevel)
                 .CreateLogger();
-        }
 
+            PDP = new PDP();
+        }
     }
 }
