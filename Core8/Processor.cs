@@ -35,8 +35,6 @@ namespace Core8
             this.registers = registers ?? throw new ArgumentNullException(nameof(registers));
             this.teleprinter = teleprinter ?? throw new ArgumentNullException(nameof(teleprinter));
 
-            teleprinter.SetIRQHook(RequestInterrupt);
-
             group1Instructions = new Group1Instructions(registers);
             group2ANDInstructions = new Group2ANDInstructions(this, registers);
             group2ORInstructions = new Group2ORInstructions(this, registers);
@@ -48,11 +46,11 @@ namespace Core8
             interruptInstructions = new InterruptInstructions(this, registers);
         }
 
-        public bool InterruptsEnabled { get; private set; }
+        public bool InterruptsEnabled { get; private set; }        
 
-        public bool InterruptRequested { get; private set; }
+        public bool InterruptPending => InterruptsEnabled | interruptDelay;
 
-        public bool InterruptPending => InterruptsEnabled || interruptDelay;
+        public bool InterruptRequested => teleprinter.InterruptRequested;
 
         public bool InterruptsPaused { get; private set; }
 
@@ -62,11 +60,6 @@ namespace Core8
             registers.LINK_AC.Clear();
             registers.MQ.Clear();
             DisableInterrupts();
-        }
-
-        private void RequestInterrupt(bool state)
-        {
-            InterruptRequested = state;
         }
 
         public void Halt()
@@ -137,7 +130,7 @@ namespace Core8
                 InterruptsEnabled = true;
             }
 
-            if (InterruptRequested && InterruptsEnabled && !InterruptsPaused)
+            if (InterruptsEnabled && !InterruptsPaused && teleprinter.InterruptRequested)
             {
                 DisableInterrupts();
 

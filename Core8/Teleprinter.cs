@@ -17,8 +17,6 @@ namespace Core8
 
         private readonly ConcurrentQueue<byte> outputBuffer = new ConcurrentQueue<byte>();
 
-        private Action<bool> irqHook = null;
-
         private IODeviceControls deviceControls;
 
         public Teleprinter()
@@ -30,11 +28,21 @@ namespace Core8
 
         public bool OutputFlag { get; private set; }
 
+        public bool InterruptRequested {get; private set;}
+
         public byte InputBuffer { get; private set; }
 
         public byte OutputBuffer { get; private set; }
 
         public AutoResetEvent OutputAvailable { get; private set; }
+
+        private void RequestInterrupt()
+        {
+            if (deviceControls.HasFlag(IODeviceControls.InterruptEnable))
+            {
+                InterruptRequested = true;
+            }
+        }
 
         public byte[] GetOutputBuffer()
         {
@@ -55,9 +63,7 @@ namespace Core8
 
         public void ClearInputFlag()
         {
-            irqHook?.Invoke(false);
-
-            InputFlag = false;
+            InputFlag = InterruptRequested = false;
 
             if (tapeQueue.TryDequeue(out var b))
             {
@@ -67,9 +73,7 @@ namespace Core8
 
         public void ClearOutputFlag()
         {
-            irqHook?.Invoke(false);
-
-            OutputFlag = false;
+            OutputFlag = InterruptRequested = false;
         }
 
         public void Clear()
@@ -125,33 +129,22 @@ namespace Core8
             }
         }
 
-        public void SetIRQHook(Action<bool> irq)
-        {
-            irqHook = irq;
-        }
-
         public bool IsTapeLoaded => !tapeQueue.IsEmpty;
 
         public string Printout => paper.ToString();
 
         public void SetInputFlag()
         {
-            if (deviceControls.HasFlag(IODeviceControls.InterruptEnable))
-            {
-                irqHook?.Invoke(true);
-            }
-
             InputFlag = true;
+
+            RequestInterrupt();
         }
 
         public void SetOutputFlag()
         {
-            if (deviceControls.HasFlag(IODeviceControls.InterruptEnable))
-            {
-                irqHook?.Invoke(true);
-            }
-
             OutputFlag = true;
+
+            RequestInterrupt();
         }
 
         public void FormFeed()

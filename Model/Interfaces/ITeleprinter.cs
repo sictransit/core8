@@ -25,6 +25,8 @@ namespace Core8.Model.Interfaces
 
         bool OutputFlag { get; }
 
+        bool InterruptRequested { get; }
+
         byte InputBuffer { get; }
 
         byte OutputBuffer { get; }
@@ -36,8 +38,6 @@ namespace Core8.Model.Interfaces
         string Printout { get; }
 
         void FormFeed();
-
-        void SetIRQHook(Action<bool> irq);
 
         void SetDeviceControls(uint data);
 
