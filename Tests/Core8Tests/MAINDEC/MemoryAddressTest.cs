@@ -5,11 +5,13 @@ using System;
 namespace Core8.Tests.MAINDEC
 {
     [TestClass]
-    public class RandomISZTests : MAINDECTestsBase
+    public class MemoryAddressTest : MAINDECTestsBase
     {
-        protected override string TapeName => @"MAINDEC/tapes/MAINDEC-8E-D0FC-PB.bin";
+        protected override string TapeName => @"MAINDEC/tapes/MAINDEC-8E-D1EC-PB.bin";
 
-        protected override string[] ExpectedOutput => new[] { "\r\nFC\u007f\r\nFC\u007f\r\nFC\u007f\r\nFC\u007f\r\nFC\u007f" };
+        protected override string[] ExpectedOutput => new[] { "EC\r\nEC" };
+
+        protected override TimeSpan MaxRunningTime => TimeSpan.FromSeconds(20);
 
         [TestMethod]
         public void RunTest()
@@ -17,6 +19,8 @@ namespace Core8.Tests.MAINDEC
             PDP.Load8(0200);
 
             PDP.Toggle8(0000);
+
+            PDP.Clear();
 
             StartAndWaitForCompletion();
         }

@@ -5,11 +5,11 @@ using System;
 namespace Core8.Tests.MAINDEC
 {
     [TestClass]
-    public class RandomDCATests : MAINDECTestsBase
+    public class RandomTADTest : MAINDECTestsBase
     {
-        protected override string TapeName => @"MAINDEC/tapes/MAINDEC-8E-D0GC-PB.bin";
+        protected override string TapeName => @"MAINDEC/tapes/MAINDEC-8E-D0EB-PB.bin";
 
-        protected override string[] ExpectedOutput => new[] { "\u0007" };
+        protected override string[] ExpectedOutput => new[] { "T\r\nT\r\nT\r\nT\r\nT" };
 
         [TestMethod]
         public void RunTest()

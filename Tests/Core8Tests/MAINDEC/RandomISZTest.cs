@@ -5,13 +5,11 @@ using System;
 namespace Core8.Tests.MAINDEC
 {
     [TestClass]
-    public class RandomJMPTests : MAINDECTestsBase
+    public class RandomISZTest : MAINDECTestsBase
     {
-        protected override string TapeName => @"MAINDEC/tapes/MAINDEC-8E-D0HC-PB.bin";
+        protected override string TapeName => @"MAINDEC/tapes/MAINDEC-8E-D0FC-PB.bin";
 
-        protected override string[] ExpectedOutput => new[] { "HC\r\nHC\r\nHC\r\nHC\r\nHC" };
-
-        protected override string[] UnexpectedOutput => new[] { "Z =" };
+        protected override string[] ExpectedOutput => new[] { "\r\nFC\u007f\r\nFC\u007f\r\nFC\u007f\r\nFC\u007f\r\nFC\u007f" };
 
         [TestMethod]
         public void RunTest()
@@ -19,8 +17,6 @@ namespace Core8.Tests.MAINDEC
             PDP.Load8(0200);
 
             PDP.Toggle8(0000);
-
-            PDP.Clear();
 
             StartAndWaitForCompletion();
         }

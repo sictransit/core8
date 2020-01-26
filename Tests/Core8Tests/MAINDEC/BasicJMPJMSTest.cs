@@ -5,7 +5,7 @@ using System;
 namespace Core8.Tests.MAINDEC
 {
     [TestClass]
-    public class BasicJMPJMSTests : MAINDECTestsBase
+    public class BasicJMPJMSTest : MAINDECTestsBase
     {
         protected override string TapeName => @"MAINDEC/tapes/MAINDEC-8E-D0IB-PB.bin";
 
