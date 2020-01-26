@@ -3,8 +3,6 @@ using NetMQ;
 using NetMQ.Sockets;
 using Serilog;
 using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Threading;
 
 namespace Core8
@@ -19,6 +17,8 @@ namespace Core8
         private readonly Thread publisherThread;
         private readonly Thread subscriberThread;
 
+        private bool publishing;
+        private bool subscribing;
 
         public MQRelay(ITeleprinter teleprinter)
         {
@@ -36,20 +36,34 @@ namespace Core8
             {
                 IsBackground = true
             };
+        }
 
+        public void Start()
+        {
             publisherThread.Start();
             subscriberThread.Start();
         }
 
+        public void Stop()
+        {
+            publishing = false;
+            subscribing = false;
+
+            publisherThread.Join();
+            subscriberThread.Join();
+        }
+
         private void Publish()
         {
+            publishing = true;
+
             publisherSocket.Connect(@"tcp://127.0.0.1:17233");
 
-            while (true)
+            while (publishing)
             {
                 if (teleprinter.OutputAvailable.WaitOne(TimeSpan.FromMilliseconds(200)))
                 {
-                    if (!publisherSocket.TrySendFrame(new[] { (byte)teleprinter.OutputBuffer}))
+                    if (!publisherSocket.TrySendFrame(teleprinter.GetOutputBuffer()))
                     {
                         Log.Debug("Failed to send frame.");
                     }
@@ -59,12 +73,14 @@ namespace Core8
 
         private void Subscribe()
         {
+            subscribing = true;
+
             subscriberSocket.Connect(@"tcp://127.0.0.1:17232");
             subscriberSocket.SubscribeToAnyTopic();
 
-            while (true)
+            while (subscribing)
             {
-                if (subscriberSocket.TryReceiveFrameBytes(TimeSpan.FromMilliseconds(200), out var frame))
+                if (subscriberSocket.TryReceiveFrameBytes(TimeSpan.FromMilliseconds(100), out var frame))
                 {
                     teleprinter.Read(frame[^1]);
                 }

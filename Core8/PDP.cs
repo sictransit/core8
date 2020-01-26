@@ -11,11 +11,16 @@ namespace Core8
     {
         private Thread cpuThread;
 
+        private readonly MQRelay relay;
+
         public PDP()
         {
             Memory = new Memory();
             Registers = new Registers();
             Teleprinter = new Teleprinter();
+
+            relay = new MQRelay(Teleprinter);
+            relay.Start();
 
             Processor = new Processor(Memory, Registers, Teleprinter);
 

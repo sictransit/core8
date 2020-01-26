@@ -38,6 +38,8 @@ namespace Core8
 
         public static void TestBIN(PDP pdp)
         {
+            var adapter = new MQRelay(pdp.Teleprinter);
+
             pdp.Clear();
 
             //pdp.LoadPaperTape(File.ReadAllBytes(@"tapes/hello_world.bin"));

@@ -1,9 +1,9 @@
 ﻿using Core8.Model;
 using Core8.Model.Enums;
 using Core8.Model.Interfaces;
-using Serilog;
 using System;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.Text;
 using System.Threading;
 
@@ -14,6 +14,8 @@ namespace Core8
         private readonly StringBuilder paper = new StringBuilder();
 
         private readonly ConcurrentQueue<byte> tapeQueue = new ConcurrentQueue<byte>();
+
+        private readonly ConcurrentQueue<byte> outputBuffer = new ConcurrentQueue<byte>();
 
         private Action<bool> irqHook = null;
 
@@ -33,6 +35,18 @@ namespace Core8
         public byte OutputBuffer { get; private set; }
 
         public AutoResetEvent OutputAvailable { get; private set; }
+
+        public byte[] GetOutputBuffer()
+        {
+            var buffer = new List<byte>();
+
+            while (outputBuffer.TryDequeue(out var b))
+            {
+                buffer.Add(b);
+            }
+
+            return buffer.ToArray();
+        }
 
         public void SetDeviceControls(uint data)
         {
@@ -72,9 +86,14 @@ namespace Core8
 
         public void Type(byte c)
         {
-            paper.Append((char)c);
-
             OutputBuffer = c;
+        }
+
+        public void InitiateOutput()
+        {
+            paper.Append((char)OutputBuffer);
+
+            outputBuffer.Enqueue(OutputBuffer);
 
             OutputAvailable.Set();
 

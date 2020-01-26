@@ -9,6 +9,8 @@ namespace Core8.Model.Interfaces
 
         void Type(byte c);
 
+        void InitiateOutput();
+
         void Clear();
 
         void ClearInputFlag();
@@ -29,6 +31,8 @@ namespace Core8.Model.Interfaces
 
         AutoResetEvent OutputAvailable { get; }
 
+        byte[] GetOutputBuffer();
+
         string Printout { get; }
 
         void FormFeed();
@@ -38,7 +42,7 @@ namespace Core8.Model.Interfaces
         void SetDeviceControls(uint data);
 
         void MountPaperTape(byte[] chars);
-        
+
         bool IsTapeLoaded { get; }
     }
 }

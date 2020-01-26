@@ -15,8 +15,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TerminalServer", "TerminalS
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Model", "Model\Model.csproj", "{712814F0-3517-4946-8676-C8829E3B5BE5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TeleprinterAdapter", "TeleprinterAdapter\TeleprinterAdapter.csproj", "{EAADB685-832B-4744-ADE0-90CD49D2E743}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -43,10 +41,6 @@ Global
 		{712814F0-3517-4946-8676-C8829E3B5BE5}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{712814F0-3517-4946-8676-C8829E3B5BE5}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{712814F0-3517-4946-8676-C8829E3B5BE5}.Release|Any CPU.Build.0 = Release|Any CPU
-		{EAADB685-832B-4744-ADE0-90CD49D2E743}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{EAADB685-832B-4744-ADE0-90CD49D2E743}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{EAADB685-832B-4744-ADE0-90CD49D2E743}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{EAADB685-832B-4744-ADE0-90CD49D2E743}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

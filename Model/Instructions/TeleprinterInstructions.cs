@@ -54,6 +54,8 @@ namespace Core8.Model.Instructions
             teleprinter.Type((byte)c);
 
             teleprinter.ClearOutputFlag();
+
+            teleprinter.InitiateOutput();
         }
 
         private void TCF()
@@ -66,6 +68,9 @@ namespace Core8.Model.Instructions
             var c = Registers.LINK_AC.Accumulator & Masks.TELEPRINTER_BUFFER_MASK;
 
             teleprinter.Type((byte)c);
+
+            teleprinter.InitiateOutput();
+
         }
 
         private void TSF()
