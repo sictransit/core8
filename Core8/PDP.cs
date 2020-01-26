@@ -272,7 +272,7 @@ namespace Core8
                 throw new ArgumentNullException(nameof(tape));
             }
 
-            Teleprinter.Read(tape);
+            Teleprinter.MountPaperTape(tape);
 
             Log.Information($"TAPE: loaded {tape.Length} bytes");
         }

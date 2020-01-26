@@ -59,14 +59,14 @@ namespace Core8.Model.Instructions
 
         private void KRB()
         {
-            Registers.LINK_AC.SetAccumulator(teleprinter.GetBuffer());
+            Registers.LINK_AC.SetAccumulator(teleprinter.InputBuffer);
 
             teleprinter.ClearInputFlag();
         }
 
         private void KRS()
         {
-            Registers.LINK_AC.SetAccumulator(Registers.LINK_AC.Accumulator | teleprinter.GetBuffer());
+            Registers.LINK_AC.SetAccumulator(Registers.LINK_AC.Accumulator | teleprinter.InputBuffer);
         }
 
         private void KIE()

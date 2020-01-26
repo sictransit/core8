@@ -1,12 +1,11 @@
 ﻿using Core8.Model;
 using Core8.Model.Enums;
 using Core8.Model.Interfaces;
-using NetMQ;
-using NetMQ.Sockets;
 using Serilog;
 using System;
 using System.Collections.Concurrent;
 using System.Text;
+using System.Threading;
 
 namespace Core8
 {
@@ -14,13 +13,7 @@ namespace Core8
     {
         private readonly StringBuilder paper = new StringBuilder();
 
-        private readonly PublisherSocket publisherSocket;
-        private readonly SubscriberSocket subscriberSocket;
-
-        private volatile uint buffer;
-
-        private readonly ConcurrentQueue<byte> inputQueue = new ConcurrentQueue<byte>();
-        private readonly ConcurrentQueue<byte> outputQueue = new ConcurrentQueue<byte>();
+        private readonly ConcurrentQueue<byte> tapeQueue = new ConcurrentQueue<byte>();
 
         private Action<bool> irqHook = null;
 
@@ -28,17 +21,18 @@ namespace Core8
 
         public Teleprinter()
         {
-            publisherSocket = new PublisherSocket();
-            publisherSocket.Connect(@"tcp://127.0.0.1:17233");
-
-            subscriberSocket = new SubscriberSocket();
-            subscriberSocket.Connect(@"tcp://127.0.0.1:17232");
-            subscriberSocket.SubscribeToAnyTopic();
+            OutputAvailable = new AutoResetEvent(false);
         }
 
         public bool InputFlag { get; private set; }
 
         public bool OutputFlag { get; private set; }
+
+        public byte InputBuffer { get; private set; }
+
+        public byte OutputBuffer { get; private set; }
+
+        public AutoResetEvent OutputAvailable { get; private set; }
 
         public void SetDeviceControls(uint data)
         {
@@ -50,6 +44,11 @@ namespace Core8
             irqHook?.Invoke(false);
 
             InputFlag = false;
+
+            if (tapeQueue.TryDequeue(out var b))
+            {
+                Read(b);
+            }
         }
 
         public void ClearOutputFlag()
@@ -66,31 +65,45 @@ namespace Core8
             ClearInputFlag();
             ClearOutputFlag();
 
-            inputQueue.Clear();
-            outputQueue.Clear();
+            tapeQueue.Clear();
+
+            OutputAvailable.Reset();
         }
 
         public void Type(byte c)
         {
-            outputQueue.Enqueue(c);
+            paper.Append((char)c);
+
+            OutputBuffer = c;
+
+            OutputAvailable.Set();
+
+            SetOutputFlag();
         }
 
-        public void Read(byte[] chars)
+        public void MountPaperTape(byte[] chars)
         {
             if (chars is null)
             {
                 throw new ArgumentNullException(nameof(chars));
             }
 
+            tapeQueue.Clear();
+
             foreach (var c in chars)
             {
-                Read(c);
+                tapeQueue.Enqueue(c);
             }
         }
 
         public void Read(byte c)
         {
-            inputQueue.Enqueue(c);
+            if (!InputFlag)
+            {
+                InputBuffer = (byte)(c & Masks.KEYBOARD_BUFFER_MASK);
+
+                SetInputFlag();
+            }
         }
 
         public void SetIRQHook(Action<bool> irq)
@@ -98,12 +111,7 @@ namespace Core8
             irqHook = irq;
         }
 
-        public bool IsTapeLoaded => !inputQueue.IsEmpty;
-
-        public uint GetBuffer()
-        {
-            return buffer & Masks.KEYBOARD_BUFFER_MASK;
-        }
+        public bool IsTapeLoaded => !tapeQueue.IsEmpty;
 
         public string Printout => paper.ToString();
 
@@ -131,45 +139,5 @@ namespace Core8
         {
             paper.Clear();
         }
-
-        public void Tick()
-        {
-            if (!InputFlag)
-            {
-                if (subscriberSocket.TryReceiveFrameBytes(TimeSpan.Zero, out var frame))
-                {
-                    Read(frame);
-                }
-
-                if (inputQueue.TryDequeue(out var input))
-                {
-                    buffer = input;
-
-                    SetInputFlag();
-
-                    if (Log.IsEnabled(Serilog.Events.LogEventLevel.Debug))
-                    {
-                        Log.Debug($"Reader queue: {inputQueue.Count}");
-                    }
-                }
-            }
-
-            if (!OutputFlag && outputQueue.TryDequeue(out var output))
-            {
-                var data = new[] { output };
-
-                if (!publisherSocket.TrySendFrame(data))
-                {
-                    Log.Warning("Failed to send frame.");
-                }
-
-                var c = Encoding.ASCII.GetChars(data)[0];
-
-                paper.Append(c);
-
-                SetOutputFlag();
-            }
-        }
-
     }
 }

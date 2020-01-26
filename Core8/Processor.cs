@@ -104,18 +104,9 @@ namespace Core8
 
             Log.Information("RUN");
 
-            var cnt = 0;
-
             while (running)
             {
                 FetchAndExecute();
-
-                if (cnt++ > 100) // A delay is needed. 100 ticks? 1000 ticks? Some other solution? Don't know yet.
-                {
-                    teleprinter.Tick();
-
-                    cnt = 0;
-                }
             }
 
             Log.Information("HLT");

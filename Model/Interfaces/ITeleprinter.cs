@@ -1,10 +1,13 @@
 ﻿using System;
+using System.Threading;
 
 namespace Core8.Model.Interfaces
 {
     public interface ITeleprinter
     {
-        void Tick();
+        void Read(byte c);
+
+        void Type(byte c);
 
         void Clear();
 
@@ -20,9 +23,11 @@ namespace Core8.Model.Interfaces
 
         bool OutputFlag { get; }
 
-        bool IsTapeLoaded { get; }
+        byte InputBuffer { get; }
 
-        uint GetBuffer();
+        byte OutputBuffer { get; }
+
+        AutoResetEvent OutputAvailable { get; }
 
         string Printout { get; }
 
@@ -32,10 +37,8 @@ namespace Core8.Model.Interfaces
 
         void SetDeviceControls(uint data);
 
-        void Type(byte c);
-
-        void Read(byte[] chars);
-
-        void Read(byte c);
+        void MountPaperTape(byte[] chars);
+        
+        bool IsTapeLoaded { get; }
     }
 }
