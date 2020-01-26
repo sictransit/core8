@@ -11,8 +11,6 @@ namespace Core8.Tests.MAINDEC
 
         protected override string[] ExpectedOutput => new[] { "\r\nFC\u007f\r\nFC\u007f\r\nFC\u007f\r\nFC\u007f\r\nFC\u007f" };
 
-        protected override TimeSpan MaxRunningTime => TimeSpan.FromSeconds(60);
-
         [TestMethod]
         public void RunTest()
         {

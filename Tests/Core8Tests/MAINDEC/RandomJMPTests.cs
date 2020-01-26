@@ -13,8 +13,6 @@ namespace Core8.Tests.MAINDEC
 
         protected override string[] UnexpectedOutput => new[] { "Z =" };
 
-        protected override TimeSpan MaxRunningTime => TimeSpan.FromSeconds(30);
-
         [TestMethod]
         public void RunTest()
         {
