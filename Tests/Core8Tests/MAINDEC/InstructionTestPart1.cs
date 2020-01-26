@@ -1,7 +1,6 @@
 using Core8.Model.Extensions;
 using Core8.Tests.MAINDEC.Abstract;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
 
 namespace Core8.Tests.MAINDEC
 {

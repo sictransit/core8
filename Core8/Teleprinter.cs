@@ -11,30 +11,30 @@ namespace Core8
 {
     public class Teleprinter : ITeleprinter
     {
-        private readonly StringBuilder paper = new StringBuilder();
+        private readonly List<byte> paper = new List<byte>();
 
         private readonly ConcurrentQueue<byte> tapeQueue = new ConcurrentQueue<byte>();
 
-        private readonly ConcurrentQueue<byte> outputBuffer = new ConcurrentQueue<byte>();
+        private readonly ConcurrentQueue<byte> outputCache = new ConcurrentQueue<byte>();
 
         private IODeviceControls deviceControls;
 
         public Teleprinter()
         {
-            OutputAvailable = new AutoResetEvent(false);
+            CachedDataAvailableEvent = new AutoResetEvent(false);
         }
 
         public bool InputFlag { get; private set; }
 
         public bool OutputFlag { get; private set; }
 
-        public bool InterruptRequested {get; private set;}
+        public bool InterruptRequested { get; private set; }
 
         public byte InputBuffer { get; private set; }
 
         public byte OutputBuffer { get; private set; }
 
-        public AutoResetEvent OutputAvailable { get; private set; }
+        public AutoResetEvent CachedDataAvailableEvent { get; private set; }
 
         private void RequestInterrupt()
         {
@@ -44,11 +44,11 @@ namespace Core8
             }
         }
 
-        public byte[] GetOutputBuffer()
+        public byte[] GetCachedOutput()
         {
             var buffer = new List<byte>();
 
-            while (outputBuffer.TryDequeue(out var b))
+            while (outputCache.TryDequeue(out var b))
             {
                 buffer.Add(b);
             }
@@ -85,7 +85,7 @@ namespace Core8
 
             tapeQueue.Clear();
 
-            OutputAvailable.Reset();
+            CachedDataAvailableEvent.Reset();
         }
 
         public void Type(byte c)
@@ -95,11 +95,11 @@ namespace Core8
 
         public void InitiateOutput()
         {
-            paper.Append((char)OutputBuffer);
+            paper.Add(OutputBuffer);
 
-            outputBuffer.Enqueue(OutputBuffer);
+            outputCache.Enqueue(OutputBuffer);
 
-            OutputAvailable.Set();
+            CachedDataAvailableEvent.Set();
 
             SetOutputFlag();
         }
@@ -129,9 +129,7 @@ namespace Core8
             }
         }
 
-        public bool IsTapeLoaded => !tapeQueue.IsEmpty;
-
-        public string Printout => paper.ToString();
+        public string Printout => Encoding.ASCII.GetString(paper.ToArray());
 
         public void SetInputFlag()
         {
@@ -145,11 +143,6 @@ namespace Core8
             OutputFlag = true;
 
             RequestInterrupt();
-        }
-
-        public void FormFeed()
-        {
-            paper.Clear();
         }
     }
 }

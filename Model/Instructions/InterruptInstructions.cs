@@ -100,11 +100,9 @@ namespace Core8.Model.Instructions
             processor.PauseInterrupts();
         }
 
-
         private void CAF()
         {
             processor.Clear();
         }
-
     }
 }

@@ -70,7 +70,6 @@ namespace Core8.Model.Instructions
             teleprinter.Type((byte)c);
 
             teleprinter.InitiateOutput();
-
         }
 
         private void TSF()

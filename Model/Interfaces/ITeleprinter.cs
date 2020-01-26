@@ -1,5 +1,4 @@
-﻿using System;
-using System.Threading;
+﻿using System.Threading;
 
 namespace Core8.Model.Interfaces
 {
@@ -31,18 +30,14 @@ namespace Core8.Model.Interfaces
 
         byte OutputBuffer { get; }
 
-        AutoResetEvent OutputAvailable { get; }
+        AutoResetEvent CachedDataAvailableEvent { get; }
 
-        byte[] GetOutputBuffer();
+        byte[] GetCachedOutput();
 
         string Printout { get; }
-
-        void FormFeed();
 
         void SetDeviceControls(uint data);
 
         void MountPaperTape(byte[] chars);
-
-        bool IsTapeLoaded { get; }
     }
 }

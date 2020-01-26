@@ -61,9 +61,9 @@ namespace Core8
 
             while (publishing)
             {
-                if (teleprinter.OutputAvailable.WaitOne(TimeSpan.FromMilliseconds(200)))
+                if (teleprinter.CachedDataAvailableEvent.WaitOne(TimeSpan.FromMilliseconds(200)))
                 {
-                    if (!publisherSocket.TrySendFrame(teleprinter.GetOutputBuffer()))
+                    if (!publisherSocket.TrySendFrame(teleprinter.GetCachedOutput()))
                     {
                         Log.Debug("Failed to send frame.");
                     }

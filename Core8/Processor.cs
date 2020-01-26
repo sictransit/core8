@@ -46,7 +46,7 @@ namespace Core8
             interruptInstructions = new InterruptInstructions(this, registers);
         }
 
-        public bool InterruptsEnabled { get; private set; }        
+        public bool InterruptsEnabled { get; private set; }
 
         public bool InterruptPending => InterruptsEnabled | interruptDelay;
 
@@ -74,11 +74,7 @@ namespace Core8
 
         public void DisableInterrupts()
         {
-            interruptDelay = false;
-
-            InterruptsEnabled = false;
-
-            //InterruptRequested = false;
+            interruptDelay = InterruptsEnabled = false;
         }
 
         public void PauseInterrupts()
@@ -125,9 +121,7 @@ namespace Core8
 
             if (enableInterrupts && interruptDelay)
             {
-                interruptDelay = false;
-
-                InterruptsEnabled = true;
+                interruptDelay = InterruptsEnabled = false;
             }
 
             if (InterruptsEnabled && !InterruptsPaused && teleprinter.InterruptRequested)
