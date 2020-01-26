@@ -85,7 +85,7 @@ namespace Core8
 
             InterruptsEnabled = false;
 
-            InterruptRequested = false;
+            //InterruptRequested = false;
         }
 
         public void PauseInterrupts()
