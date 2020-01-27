@@ -121,7 +121,8 @@ namespace Core8
 
             if (enableInterrupts && interruptDelay)
             {
-                interruptDelay = InterruptsEnabled = false;
+                interruptDelay = false;
+                InterruptsEnabled = true;
             }
 
             if (InterruptsEnabled && !InterruptsPaused && teleprinter.InterruptRequested)
