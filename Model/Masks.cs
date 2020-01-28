@@ -11,6 +11,9 @@
         public const uint DF
             = 0b_000_000_000_111;
 
+        public const uint IB
+            = 0b_000_000_000_111;
+
         public const uint IB_DF
             = 0b_000_000_000_111;
 

@@ -40,7 +40,7 @@ namespace Core8.Model.Instructions
             {
                 processor.ResumeInterrupts();
 
-                Registers.IF_PC.SetIF(Registers.IB.IF);
+                Registers.IF_PC.SetIF(Registers.IB.Data);
             }
 
             var operand = Indirect ? memory.Read(branching ? Field : ActiveField, Location, true) : Location;

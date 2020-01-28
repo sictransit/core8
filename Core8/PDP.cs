@@ -265,9 +265,14 @@ namespace Core8
             }
         }
 
-        public void Stop()
+        public void Stop(bool waitForHalt = true)
         {
             Processor.Halt();
+
+            if (cpuThread.IsAlive && waitForHalt)
+            {
+                cpuThread.Join();
+            }            
         }
 
         public void MountPaperTape(byte[] tape)

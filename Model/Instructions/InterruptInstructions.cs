@@ -93,7 +93,7 @@ namespace Core8.Model.Instructions
 
             Registers.LINK_AC.SetLink((acc >> 11) & Masks.FLAG);
 
-            Registers.IB.SetIF(acc >> 3);
+            Registers.IB.SetIB(acc >> 3);
             Registers.DF.SetDF(acc);
 
             processor.EnableInterrupts();

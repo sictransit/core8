@@ -15,5 +15,7 @@ namespace Core8.Model.Interfaces
         DF DF { get; }
 
         IB IB { get; }
+
+        SF SF { get; }
     }
 }

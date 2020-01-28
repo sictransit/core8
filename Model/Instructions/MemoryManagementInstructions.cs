@@ -55,7 +55,7 @@ namespace Core8.Model.Instructions
 
                 if (ChangeOpCodes.HasFlag(MemoryManagementChangeOpCodes.CIF))
                 {
-                    Registers.IB.SetIF(Data >> 3);
+                    Registers.IB.SetIB(Data >> 3);
 
                     processor.PauseInterrupts();
                 }

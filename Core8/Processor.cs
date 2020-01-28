@@ -127,18 +127,29 @@ namespace Core8
 
             if (InterruptsEnabled && !InterruptsPaused && teleprinter.InterruptRequested)
             {
-                DisableInterrupts();
-
-                if (Log.IsEnabled(Serilog.Events.LogEventLevel.Debug))
-                {
-                    Log.Debug("Interrupt!");
-                }
-
-                memory.Write(0, 0, registers.IF_PC.Address); // JMS 0000
-
-                registers.IF_PC.SetIF(0);
-                registers.IF_PC.SetPC(1);
+                Interrupt();
             }
+        }
+
+        private void Interrupt()
+        {
+            DisableInterrupts();
+
+            if (Log.IsEnabled(Serilog.Events.LogEventLevel.Debug))
+            {
+                Log.Debug("Interrupt!");
+            }
+
+            memory.Write(0, 0, registers.IF_PC.Address); // JMS 0000
+
+            registers.SF.SetIF(registers.IF_PC.IF);
+            registers.SF.SetDF(registers.DF.Data);
+            
+            registers.DF.Clear();
+            registers.IB.Clear();
+            registers.IF_PC.SetIF(0);
+
+            registers.IF_PC.SetPC(1);
         }
 
         public IInstruction Debug8(uint field, uint address)
