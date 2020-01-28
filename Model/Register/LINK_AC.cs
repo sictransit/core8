@@ -10,7 +10,7 @@ namespace Core8.Model.Register
 
         public void ByteSwap()
         {
-            Set((Data & Masks.LINK) | ((Data & Masks.AC_HIGH) >> 6) | ((Data & Masks.AC_LOW) << 6));
+            SetAccumulator(((Data & Masks.AC_HIGH) >> 6) | ((Data & Masks.AC_LOW) << 6));
         }
 
         public void RAR()

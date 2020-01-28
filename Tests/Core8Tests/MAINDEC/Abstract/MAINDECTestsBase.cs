@@ -70,6 +70,8 @@ namespace Core8.Tests.MAINDEC.Abstract
                 Assert.IsTrue(done);
                 Assert.IsFalse(timeout);
             }
+
+            PDP.Stop();
         }
     }
 }
