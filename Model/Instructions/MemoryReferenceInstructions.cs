@@ -34,16 +34,16 @@ namespace Core8.Model.Instructions
 
         public override void Execute()
         {
-            var jumping = OpCode == MemoryReferenceOpCode.JMP || OpCode == MemoryReferenceOpCode.JMS;
+            var branching = OpCode == MemoryReferenceOpCode.JMP || OpCode == MemoryReferenceOpCode.JMS;
 
-            if (processor.InterruptsPaused & jumping)
+            if (processor.InterruptsPaused & branching)
             {
                 processor.ResumeInterrupts();
 
                 Registers.IF_PC.SetIF(Registers.IB.IF);
             }
 
-            var operand = Indirect ? memory.Read(jumping ? Field : ActiveField, Location, true) : Location;
+            var operand = Indirect ? memory.Read(branching ? Field : ActiveField, Location, true) : Location;
 
             switch (OpCode)
             {

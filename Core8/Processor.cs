@@ -134,8 +134,9 @@ namespace Core8
                     Log.Debug("Interrupt!");
                 }
 
-                memory.Write(registers.IF_PC.IF, 0, registers.IF_PC.Address); // JMS 0000
+                memory.Write(0, 0, registers.IF_PC.Address); // JMS 0000
 
+                registers.IF_PC.SetIF(0);
                 registers.IF_PC.SetPC(1);
             }
         }
