@@ -13,6 +13,8 @@ namespace Core8
 
         private bool interruptDelay = false;
 
+        private bool singleStep = false;
+
         private readonly IMemory memory;
 
         private readonly IRegisters registers;
@@ -53,6 +55,11 @@ namespace Core8
         public bool InterruptRequested => teleprinter.InterruptRequested;
 
         public bool InterruptsPaused { get; private set; }
+
+        public void SingleStep(bool state)
+        {
+            singleStep = state;
+        }
 
         public void Clear()
         {
@@ -96,6 +103,11 @@ namespace Core8
             while (running)
             {
                 FetchAndExecute();
+
+                if (singleStep)
+                {
+                    break;
+                }
             }
 
             Log.Information("HLT");

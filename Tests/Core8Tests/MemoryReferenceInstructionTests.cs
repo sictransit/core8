@@ -23,7 +23,7 @@ namespace Core8.Tests
 
             PDP.Load8(0200);
 
-            PDP.Start();
+            PDP.Continue();
 
             Assert.AreEqual(0770u.ToDecimal(), PDP.Registers.LINK_AC.Accumulator);
         }
@@ -40,7 +40,7 @@ namespace Core8.Tests
 
             PDP.Load8(0200);
 
-            PDP.Start();
+            PDP.Continue();
 
             Assert.AreEqual(1234u.ToDecimal(), PDP.Registers.LINK_AC.Accumulator);
         }
@@ -59,7 +59,7 @@ namespace Core8.Tests
 
             PDP.Load8(0200);
 
-            PDP.Start();
+            PDP.Continue();
 
             Assert.AreEqual(0u, PDP.Registers.LINK_AC.Accumulator);
             Assert.AreEqual(1u, PDP.Registers.LINK_AC.Link);
@@ -77,7 +77,7 @@ namespace Core8.Tests
 
             PDP.Load8(0200);
 
-            PDP.Start();
+            PDP.Continue();
 
             Assert.AreEqual(2u, PDP.Registers.IF_PC.Word);
         }
@@ -94,7 +94,7 @@ namespace Core8.Tests
 
             PDP.Load8(0200);
 
-            PDP.Start();
+            PDP.Continue();
 
             Assert.AreEqual(3u, PDP.Registers.IF_PC.Word);
         }
@@ -115,7 +115,7 @@ namespace Core8.Tests
 
             PDP.Load8(0200);
 
-            PDP.Start();
+            PDP.Continue();
 
             Assert.AreEqual(0u, PDP.Registers.LINK_AC.Accumulator);
             Assert.AreEqual(1u, PDP.Registers.LINK_AC.Link);
@@ -135,7 +135,7 @@ namespace Core8.Tests
 
             PDP.Load8(0200);
 
-            PDP.Start();
+            PDP.Continue();
 
             Assert.AreEqual(4u, PDP.Registers.IF_PC.Word);
 
@@ -153,7 +153,7 @@ namespace Core8.Tests
 
             PDP.Load8(0200);
 
-            PDP.Start();
+            PDP.Continue();
 
             Assert.AreEqual(3u, PDP.Registers.IF_PC.Word);
         }

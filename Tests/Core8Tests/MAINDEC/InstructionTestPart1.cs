@@ -18,7 +18,7 @@ namespace Core8.Tests.MAINDEC
 
             PDP.Toggle8(7777);
 
-            PDP.Start();
+            PDP.Continue();
 
             Assert.AreEqual(0147.ToDecimal(), PDP.Registers.IF_PC.Address);
 

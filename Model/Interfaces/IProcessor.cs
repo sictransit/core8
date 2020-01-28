@@ -27,5 +27,7 @@
         IInstruction Debug8(uint field, uint address);
 
         IInstruction Debug10(uint field, uint address);
+
+        void SingleStep(bool state);
     }
 }

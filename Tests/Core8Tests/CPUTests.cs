@@ -51,7 +51,7 @@ namespace Core8.Tests
             PDP.Clear();
 
             PDP.Load8(0200);
-            PDP.Start();
+            PDP.Continue();
 
             Assert.AreEqual("HELLO WORLD!", PDP.Teleprinter.Printout);
 
@@ -74,7 +74,7 @@ namespace Core8.Tests
 
             PDP.Load8(0200);
 
-            PDP.Start();
+            PDP.Continue();
 
             Assert.IsTrue(PDP.Registers.LINK_AC.Accumulator == length);
         }
@@ -93,7 +93,7 @@ namespace Core8.Tests
             PDP.Deposit8(0003);
 
             PDP.Load8(0200);
-            PDP.Start();
+            PDP.Continue();
 
             PDP.Load8(0207);
             PDP.Exam();
@@ -115,7 +115,7 @@ namespace Core8.Tests
             PDP.Deposit8(0003);
 
             PDP.Load8(0000);
-            PDP.Start();
+            PDP.Continue();
 
             PDP.Load8(0007);
             PDP.Exam();

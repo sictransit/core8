@@ -18,7 +18,7 @@ namespace Core8.Tests.MAINDEC
         {
             PDP.Load8(0200);
 
-            PDP.Start();
+            PDP.Continue();
 
             Assert.IsTrue(PDP.Teleprinter.Printout.Contains("EA8-E EXT MEM ADDR TEST"));
             Assert.IsTrue(PDP.Teleprinter.Printout.Contains("SETUP SR & CONT"));

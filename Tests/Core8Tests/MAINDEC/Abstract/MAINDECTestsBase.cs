@@ -33,7 +33,7 @@ namespace Core8.Tests.MAINDEC.Abstract
 
         protected void StartAndWaitForCompletion()
         {
-            PDP.Start(waitForHalt: false);
+            PDP.Continue(waitForHalt: false);
 
             var sw = new Stopwatch();
             sw.Start();
@@ -71,7 +71,7 @@ namespace Core8.Tests.MAINDEC.Abstract
                 Assert.IsFalse(timeout);
             }
 
-            PDP.Stop();
+            PDP.Halt();
         }
     }
 }

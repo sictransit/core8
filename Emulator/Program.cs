@@ -49,7 +49,7 @@ namespace Core8
 
             pdp.Load8(0200);
 
-            pdp.Start(waitForHalt: true);
+            pdp.Continue(waitForHalt: true);
         }
 
 

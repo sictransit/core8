@@ -27,6 +27,8 @@ namespace Core8
             ToggleRIMAndBinLoader();
         }
 
+        public bool Running => cpuThread != null && cpuThread.IsAlive;
+
         public IProcessor Processor { get; }
 
         public ITeleprinter Teleprinter { get; }
@@ -247,9 +249,7 @@ namespace Core8
             Log.Information($"EXAM: {Registers.LINK_AC.ToString()}");
         }
 
-        public bool Running => cpuThread != null && cpuThread.IsAlive;
-
-        public void Start(bool waitForHalt = true)
+        public void Continue(bool waitForHalt = true)
         {
             cpuThread = new Thread(Processor.Run)
             {
@@ -259,17 +259,22 @@ namespace Core8
 
             cpuThread.Start();
 
-            if (waitForHalt)
+            if (Running & waitForHalt)
             {
                 cpuThread.Join();
             }
         }
 
-        public void Stop(bool waitForHalt = true)
+        public void SingleStep(bool state)
+        {
+            Processor.SingleStep(state);
+        }
+
+        public void Halt(bool waitForHalt = true)
         {
             Processor.Halt();
 
-            if (cpuThread.IsAlive && waitForHalt)
+            if (Running && waitForHalt)
             {
                 cpuThread.Join();
             }
@@ -293,7 +298,7 @@ namespace Core8
 
             Load8(7777);
 
-            Start();
+            Continue();
         }
     }
 }

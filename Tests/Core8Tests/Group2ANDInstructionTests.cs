@@ -19,7 +19,7 @@ namespace Core8.Tests
 
             PDP.Registers.LINK_AC.SetAccumulator(0b_011_111_111_111);
 
-            PDP.Start();
+            PDP.Continue();
 
             Assert.AreEqual((uint)131, PDP.Registers.IF_PC.Address);
             Assert.AreEqual((uint)0, PDP.Registers.LINK_AC.Accumulator);
@@ -38,7 +38,7 @@ namespace Core8.Tests
 
             PDP.Registers.LINK_AC.SetAccumulator(0b_111_111_111_111);
 
-            PDP.Start();
+            PDP.Continue();
 
             Assert.AreEqual((uint)130, PDP.Registers.IF_PC.Address);
             Assert.AreEqual((uint)0, PDP.Registers.LINK_AC.Accumulator);
@@ -57,7 +57,7 @@ namespace Core8.Tests
 
             PDP.Registers.LINK_AC.SetAccumulator(0b_000_000_000_001);
 
-            PDP.Start();
+            PDP.Continue();
 
             Assert.AreEqual((uint)131, PDP.Registers.IF_PC.Address);
             Assert.AreEqual((uint)0, PDP.Registers.LINK_AC.Accumulator);
@@ -76,7 +76,7 @@ namespace Core8.Tests
 
             PDP.Registers.LINK_AC.SetLink(1);
 
-            PDP.Start();
+            PDP.Continue();
 
             Assert.AreEqual((uint)130, PDP.Registers.IF_PC.Address);
             Assert.AreEqual((uint)1, PDP.Registers.LINK_AC.Link);
@@ -95,7 +95,7 @@ namespace Core8.Tests
 
             PDP.Registers.LINK_AC.SetLink(0);
 
-            PDP.Start();
+            PDP.Continue();
 
             Assert.AreEqual((uint)131, PDP.Registers.IF_PC.Address);
             Assert.AreEqual((uint)0, PDP.Registers.LINK_AC.Link);
@@ -114,7 +114,7 @@ namespace Core8.Tests
 
             PDP.Registers.LINK_AC.SetAccumulator(0b_000_000_000_000);
 
-            PDP.Start();
+            PDP.Continue();
 
             Assert.AreEqual((uint)130, PDP.Registers.IF_PC.Address);
             Assert.AreEqual((uint)0, PDP.Registers.LINK_AC.Accumulator);
