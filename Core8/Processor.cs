@@ -144,7 +144,7 @@ namespace Core8
 
             registers.SF.SetIF(registers.IF_PC.IF);
             registers.SF.SetDF(registers.DF.Data);
-            
+
             registers.DF.Clear();
             registers.IB.Clear();
             registers.IF_PC.SetIF(0);

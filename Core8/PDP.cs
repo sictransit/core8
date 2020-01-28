@@ -272,7 +272,7 @@ namespace Core8
             if (cpuThread.IsAlive && waitForHalt)
             {
                 cpuThread.Join();
-            }            
+            }
         }
 
         public void MountPaperTape(byte[] tape)

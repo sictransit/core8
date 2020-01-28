@@ -1,6 +1,6 @@
 ﻿using Serilog;
 
-namespace Core8.Model.Register
+namespace Core8.Model.Register.Abstract
 {
     public abstract class RegisterBase
     {
@@ -12,7 +12,7 @@ namespace Core8.Model.Register
 
             if (Log.IsEnabled(Serilog.Events.LogEventLevel.Verbose))
             {
-                Log.Verbose(this.ToString());
+                Log.Verbose(ToString());
             }
         }
 
