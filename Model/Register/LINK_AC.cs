@@ -49,6 +49,11 @@ namespace Core8.Model.Register
             Set((Data & Masks.LINK) | (value & Masks.AC));
         }
 
+        public void ORAccumulator(uint value)
+        {
+            Set(Data | (value & Masks.AC));
+        }
+
         public void SetLink(uint value)
         {
             Set(((value & Masks.FLAG) << 12) | (Data & Masks.AC));

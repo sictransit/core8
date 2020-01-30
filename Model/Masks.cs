@@ -23,6 +23,9 @@
         public const uint SF_IF
             = 0b_000_000_111_000;
 
+        public const uint SF_UF
+            = 0b_000_001_000_000;
+
         public const uint OP_CODE
             = 0b_111_000_000_000;
 

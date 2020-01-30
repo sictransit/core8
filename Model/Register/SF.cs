@@ -9,6 +9,8 @@ namespace Core8.Model.Register
 
         public uint IF => (Data & Masks.SF_IF) >> 3;
 
+        public uint UF => (Data & Masks.SF_UF) >> 6;
+
         public void SetDF(uint value)
         {
             Set((Data & Masks.SF_IF) | (value & Masks.SF_DF));
@@ -17,6 +19,11 @@ namespace Core8.Model.Register
         public void SetIF(uint value)
         {
             Set(((value << 3) & Masks.SF_IF) | (Data & Masks.SF_DF));
+        }
+
+        public void SetUF(uint value)
+        {
+            Set(((value & Masks.FLAG) << 6) | (Data & (Masks.SF_IF | Masks.SF_DF)));
         }
 
         public override string ToString()

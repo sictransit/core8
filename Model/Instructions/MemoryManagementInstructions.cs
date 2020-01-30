@@ -74,17 +74,17 @@ namespace Core8.Model.Instructions
 
         private void RDF()
         {
-            Registers.LINK_AC.SetAccumulator(Registers.LINK_AC.Accumulator | (Registers.DF.Data << 3));
+            Registers.LINK_AC.ORAccumulator(Registers.DF.Data << 3);
         }
 
         private void RIB()
         {
-            throw new NotImplementedException();
+            Registers.LINK_AC.ORAccumulator(Registers.SF.Data);
         }
 
         private void RIF()
         {
-            Registers.LINK_AC.SetAccumulator(Registers.LINK_AC.Accumulator | (Registers.IF_PC.IF << 3));
+            Registers.LINK_AC.ORAccumulator(Registers.IF_PC.IF << 3);
         }
 
         private void RMF()
