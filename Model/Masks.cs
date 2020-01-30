@@ -14,10 +14,13 @@
         public const uint IB
             = 0b_000_000_000_111;
 
-        public const uint IB_DF
+        public const uint UB
+            = 0b_000_000_000_001;
+
+        public const uint SF_DF
             = 0b_000_000_000_111;
 
-        public const uint IB_IF
+        public const uint SF_IF
             = 0b_000_000_111_000;
 
         public const uint OP_CODE

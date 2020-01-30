@@ -13,6 +13,7 @@ namespace Core8
             MQ = new MQ();
             DF = new DF();
             IB = new IB();
+            UB = new UB();
             SF = new SF();
         }
 
@@ -27,6 +28,8 @@ namespace Core8
         public DF DF { get; }
 
         public IB IB { get; }
+
+        public UB UB { get; }
 
         public SF SF { get; }
     }

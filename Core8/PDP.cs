@@ -160,9 +160,9 @@ namespace Core8
             Deposit8(5301); // JMP (7701)
         }
 
-        public void DumpMemory()
+        public void DumpMemory(uint fromField = 0, uint toField = 0)
         {
-            for (uint field = 0; field < Memory.Fields; field++)
+            for (uint field = fromField; field < toField + 1; field++)
             {
                 for (uint address = 0; address < 4096; address++)
                 {

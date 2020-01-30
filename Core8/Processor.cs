@@ -52,7 +52,9 @@ namespace Core8
 
         public bool InterruptPending => InterruptsEnabled | interruptDelay;
 
-        public bool InterruptRequested => teleprinter.InterruptRequested;
+        public bool DeviceInterruptRequested => teleprinter.InterruptRequested;
+
+        public bool UserInterruptRequested { get; private set; }
 
         public bool InterruptsPaused { get; private set; }
 
@@ -137,7 +139,7 @@ namespace Core8
                 InterruptsEnabled = true;
             }
 
-            if (InterruptsEnabled && !InterruptsPaused && teleprinter.InterruptRequested)
+            if (InterruptsEnabled && DeviceInterruptRequested && !InterruptsPaused )
             {
                 Interrupt();
             }

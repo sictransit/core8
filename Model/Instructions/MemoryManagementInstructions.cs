@@ -42,6 +42,16 @@ namespace Core8.Model.Instructions
                     case MemoryManagementReadOpCode.RMF:
                         RMF();
                         break;
+                    case MemoryManagementReadOpCode.SINT:
+                        SINT();
+                        break;
+                    case MemoryManagementReadOpCode.CUF:
+                        CUF();
+                        break;
+                    case MemoryManagementReadOpCode.SUF:
+                        SUF();
+                        break;
+
                     default:
                         throw new NotImplementedException();
                 }
@@ -80,6 +90,28 @@ namespace Core8.Model.Instructions
         private void RMF()
         {
             throw new NotImplementedException();
+        }
+
+        private void SINT()
+        {
+            if (processor.UserInterruptRequested)
+            {
+                Registers.IF_PC.Increment();
+            }
+        }
+
+        private void CUF()
+        {
+            Registers.UB.Clear();
+
+            processor.PauseInterrupts();
+        }
+
+        private void SUF()
+        {
+            Registers.UB.SetUB(1);
+
+            processor.PauseInterrupts();
         }
     }
 
