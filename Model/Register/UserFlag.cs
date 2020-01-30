@@ -3,16 +3,14 @@ using Core8.Model.Register.Abstract;
 
 namespace Core8.Model.Register
 {
-    public class SwitchRegister : RegisterBase
+    public class UserFlag : RegisterBase
     {
-        public void SetSR(uint data)
+        protected override string ShortName => "UF";
+
+        public void SetUB(uint value)
         {
-            Set(data & Masks.MEM_WORD);
+            Set(value & Masks.UF);
         }
-
-        public uint Get => Data & Masks.MEM_WORD;
-
-        protected override string ShortName => "SR";
 
         public override string ToString()
         {

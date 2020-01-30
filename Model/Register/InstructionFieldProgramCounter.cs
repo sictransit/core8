@@ -13,6 +13,8 @@ namespace Core8.Model.Register
 
         public uint Word => Data & Masks.ADDRESS_WORD;
 
+        protected override string ShortName => "PC";
+
         public void Increment()
         {
             SetPC(Address + 1);

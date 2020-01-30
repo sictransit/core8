@@ -20,6 +20,11 @@ namespace Core8.Model.Instructions
 
         public override void Execute()
         {
+            if (Registers.UF.Data != 0)
+            {
+                return;
+            }
+
             switch (OpCode)
             {
                 case InterruptOpCode.SKON:
@@ -95,6 +100,7 @@ namespace Core8.Model.Instructions
 
             Registers.IB.SetIB(acc >> 3);
             Registers.DF.SetDF(acc);
+            Registers.UB.SetUB(acc >> 6);
 
             processor.EnableInterrupts();
             processor.PauseInterrupts();

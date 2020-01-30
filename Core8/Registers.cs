@@ -14,6 +14,7 @@ namespace Core8
             DF = new DataField();
             IB = new InstructionBuffer();
             UB = new UserBuffer();
+            UF = new UserFlag();
             SF = new SaveField();
         }
 
@@ -30,6 +31,8 @@ namespace Core8
         public InstructionBuffer IB { get; }
 
         public UserBuffer UB { get; }
+
+        public UserFlag UF { get; }
 
         public SaveField SF { get; }
     }

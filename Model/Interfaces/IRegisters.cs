@@ -18,6 +18,8 @@ namespace Core8.Model.Interfaces
         
         UserBuffer UB { get; }
 
+        UserFlag UF { get; }
+
         SaveField SF { get; }
     }
 }

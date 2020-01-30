@@ -17,6 +17,9 @@
         public const uint UB
             = 0b_000_000_000_001;
 
+        public const uint UF
+            = 0b_000_000_000_001;
+
         public const uint SF_DF
             = 0b_000_000_000_111;
 

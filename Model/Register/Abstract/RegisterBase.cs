@@ -6,6 +6,8 @@ namespace Core8.Model.Register.Abstract
     {
         public uint Data { get; private set; }
 
+        protected abstract string ShortName { get; }
+
         protected void Set(uint value)
         {
             Data = value;
@@ -23,7 +25,7 @@ namespace Core8.Model.Register.Abstract
 
         public override string ToString()
         {
-            return $"[{GetType().Name}]";
+            return $"[{ShortName}]";
         }
     }
 }

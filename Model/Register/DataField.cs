@@ -5,6 +5,8 @@ namespace Core8.Model.Register
 {
     public class DataField : RegisterBase
     {
+        protected override string ShortName => "DF";
+
         public void SetDF(uint value)
         {
             Set(value & Masks.DF);

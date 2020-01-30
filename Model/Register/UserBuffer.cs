@@ -5,6 +5,8 @@ namespace Core8.Model.Register
 {
     public class UserBuffer : RegisterBase
     {
+        protected override string ShortName => "UB";
+
         public void SetUB(uint value)
         {
             Set(value & Masks.UB);

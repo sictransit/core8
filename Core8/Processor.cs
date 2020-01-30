@@ -164,6 +164,8 @@ namespace Core8
 
             registers.DF.Clear();
             registers.IB.Clear();
+            registers.UF.Clear();
+            registers.UB.Clear();
 
             registers.IF_PC.SetIF(0);
 

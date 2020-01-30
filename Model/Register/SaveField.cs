@@ -11,6 +11,8 @@ namespace Core8.Model.Register
 
         public uint UF => (Data & Masks.SF_UF) >> 6;
 
+        protected override string ShortName => "SF";
+
         public void SetDF(uint value)
         {
             Set((Data & Masks.SF_IF) | (value & Masks.SF_DF));

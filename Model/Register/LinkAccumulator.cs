@@ -9,6 +9,8 @@ namespace Core8.Model.Register
 
         public uint Accumulator => Data & Masks.AC;
 
+        protected override string ShortName => "LAC";
+
         public void ByteSwap()
         {
             SetAccumulator(((Data & Masks.AC_HIGH) >> 6) | ((Data & Masks.AC_LOW) << 6));
