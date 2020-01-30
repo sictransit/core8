@@ -4,20 +4,20 @@ namespace Core8.Model.Interfaces
 {
     public interface IRegisters
     {
-        LINK_AC LINK_AC { get; }
+        LinkAccumulator LINK_AC { get; }
 
-        IF_PC IF_PC { get; }
+        InstructionFieldProgramCounter IF_PC { get; }
 
-        SR SR { get; }
+        SwitchRegister SR { get; }
 
-        MQ MQ { get; }
+        MultiplierQuotient MQ { get; }
 
-        DF DF { get; }
+        DataField DF { get; }
 
-        IB IB { get; }
+        InstructionBuffer IB { get; }
         
-        UB UB { get; }
+        UserBuffer UB { get; }
 
-        SF SF { get; }
+        SaveField SF { get; }
     }
 }

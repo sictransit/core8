@@ -3,7 +3,7 @@ using Core8.Model.Register.Abstract;
 
 namespace Core8.Model.Register
 {
-    public class SF : RegisterBase
+    public class SaveField : RegisterBase
     {
         public uint DF => Data & Masks.SF_DF;
 

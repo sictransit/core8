@@ -3,7 +3,7 @@ using Core8.Model.Register.Abstract;
 
 namespace Core8.Model.Register
 {
-    public class MQ : RegisterBase
+    public class MultiplierQuotient : RegisterBase
     {
         public void SetMQ(uint data)
         {

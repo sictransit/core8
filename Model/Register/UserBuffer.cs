@@ -3,14 +3,12 @@ using Core8.Model.Register.Abstract;
 
 namespace Core8.Model.Register
 {
-    public class SR : RegisterBase
+    public class UserBuffer : RegisterBase
     {
-        public void SetSR(uint data)
+        public void SetUB(uint value)
         {
-            Set(data & Masks.MEM_WORD);
+            Set(value & Masks.UB);
         }
-
-        public uint Get => Data & Masks.MEM_WORD;
 
         public override string ToString()
         {

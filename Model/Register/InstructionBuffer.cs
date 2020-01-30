@@ -3,11 +3,11 @@ using Core8.Model.Register.Abstract;
 
 namespace Core8.Model.Register
 {
-    public class DF : RegisterBase
+    public class InstructionBuffer : RegisterBase
     {
-        public void SetDF(uint value)
+        public void SetIB(uint value)
         {
-            Set(value & Masks.DF);
+            Set(value & Masks.IB);
         }
 
         public override string ToString()

@@ -3,12 +3,14 @@ using Core8.Model.Register.Abstract;
 
 namespace Core8.Model.Register
 {
-    public class IB : RegisterBase
+    public class SwitchRegister : RegisterBase
     {
-        public void SetIB(uint value)
+        public void SetSR(uint data)
         {
-            Set(value & Masks.IB);
+            Set(data & Masks.MEM_WORD);
         }
+
+        public uint Get => Data & Masks.MEM_WORD;
 
         public override string ToString()
         {

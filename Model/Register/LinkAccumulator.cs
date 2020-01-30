@@ -3,7 +3,7 @@ using Core8.Model.Register.Abstract;
 
 namespace Core8.Model.Register
 {
-    public class LINK_AC : RegisterBase
+    public class LinkAccumulator : RegisterBase
     {
         public uint Link => (Data & Masks.LINK) >> 12;
 

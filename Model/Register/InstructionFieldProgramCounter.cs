@@ -3,7 +3,7 @@ using Core8.Model.Register.Abstract;
 
 namespace Core8.Model.Register
 {
-    public class IF_PC : RegisterBase
+    public class InstructionFieldProgramCounter : RegisterBase
     {
         public uint Address => Data & Masks.MEM_WORD;
 

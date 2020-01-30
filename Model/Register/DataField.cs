@@ -3,11 +3,11 @@ using Core8.Model.Register.Abstract;
 
 namespace Core8.Model.Register
 {
-    public class UB : RegisterBase
+    public class DataField : RegisterBase
     {
-        public void SetUB(uint value)
+        public void SetDF(uint value)
         {
-            Set(value & Masks.UB);
+            Set(value & Masks.DF);
         }
 
         public override string ToString()

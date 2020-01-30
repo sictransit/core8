@@ -7,30 +7,30 @@ namespace Core8
     {
         public Registers()
         {
-            LINK_AC = new LINK_AC();
-            IF_PC = new IF_PC();
-            SR = new SR();
-            MQ = new MQ();
-            DF = new DF();
-            IB = new IB();
-            UB = new UB();
-            SF = new SF();
+            LINK_AC = new LinkAccumulator();
+            IF_PC = new InstructionFieldProgramCounter();
+            SR = new SwitchRegister();
+            MQ = new MultiplierQuotient();
+            DF = new DataField();
+            IB = new InstructionBuffer();
+            UB = new UserBuffer();
+            SF = new SaveField();
         }
 
-        public LINK_AC LINK_AC { get; }
+        public LinkAccumulator LINK_AC { get; }
 
-        public IF_PC IF_PC { get; }
+        public InstructionFieldProgramCounter IF_PC { get; }
 
-        public SR SR { get; }
+        public SwitchRegister SR { get; }
 
-        public MQ MQ { get; }
+        public MultiplierQuotient MQ { get; }
 
-        public DF DF { get; }
+        public DataField DF { get; }
 
-        public IB IB { get; }
+        public InstructionBuffer IB { get; }
 
-        public UB UB { get; }
+        public UserBuffer UB { get; }
 
-        public SF SF { get; }
+        public SaveField SF { get; }
     }
 }
