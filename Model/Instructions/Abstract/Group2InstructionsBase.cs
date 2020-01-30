@@ -20,7 +20,7 @@ namespace Core8.Model.Instructions.Abstract
         {
             if (OpCodes.HasFlag(Group2PrivilegedOpCodes.OSR))
             {
-                Registers.LINK_AC.SetAccumulator(Registers.LINK_AC.Accumulator | Registers.SR.Get);
+                Registers.LINK_AC.ORAccumulator(Registers.SR.Get);
             }
 
             if (OpCodes.HasFlag(Group2PrivilegedOpCodes.HLT))

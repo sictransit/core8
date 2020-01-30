@@ -51,7 +51,12 @@ namespace Core8.Model.Register
 
         public void ORAccumulator(uint value)
         {
-            Set(Data | (value & Masks.AC));
+            SetAccumulator(Data | value);
+        }
+
+        public void ANDAccumulator(uint value)
+        {
+            SetAccumulator(Data & value);
         }
 
         public void SetLink(uint value)

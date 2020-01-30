@@ -66,7 +66,7 @@ namespace Core8.Model.Instructions
 
         private void KRS()
         {
-            Registers.LINK_AC.SetAccumulator(Registers.LINK_AC.Accumulator | teleprinter.InputBuffer);
+            Registers.LINK_AC.ORAccumulator(teleprinter.InputBuffer);
         }
 
         private void KIE()

@@ -72,7 +72,7 @@ namespace Core8.Model.Instructions
 
         private void AND(uint operand)
         {
-            Registers.LINK_AC.SetAccumulator(memory.Read(ActiveField, operand) & Registers.LINK_AC.Accumulator);
+            Registers.LINK_AC.ANDAccumulator(memory.Read(ActiveField, operand));
         }
 
         private void DCA(uint operand)

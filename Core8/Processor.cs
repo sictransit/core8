@@ -56,6 +56,8 @@ namespace Core8
 
         public bool UserInterruptRequested { get; private set; }
 
+        public bool InterruptRequested => DeviceInterruptRequested | UserInterruptRequested;
+
         public bool InterruptsPaused { get; private set; }
 
         public void SingleStep(bool state)
@@ -100,7 +102,7 @@ namespace Core8
         {
             running = true;
 
-            Log.Information("RUN");
+            Log.Information($"CONT @ {registers.IF_PC}");
 
             while (running)
             {
@@ -112,7 +114,7 @@ namespace Core8
                 }
             }
 
-            Log.Information("HLT");
+            Log.Information($"HLT @ {registers.IF_PC}");
         }
 
         public void FetchAndExecute()
@@ -139,7 +141,7 @@ namespace Core8
                 InterruptsEnabled = true;
             }
 
-            if (InterruptsEnabled && DeviceInterruptRequested && !InterruptsPaused )
+            if (InterruptsEnabled && InterruptRequested && !InterruptsPaused )
             {
                 Interrupt();
             }
@@ -158,9 +160,11 @@ namespace Core8
 
             registers.SF.SetIF(registers.IF_PC.IF);
             registers.SF.SetDF(registers.DF.Data);
+            registers.SF.SetUF(registers.UB.Data);
 
             registers.DF.Clear();
             registers.IB.Clear();
+
             registers.IF_PC.SetIF(0);
 
             registers.IF_PC.SetPC(1);

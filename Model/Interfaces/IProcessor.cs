@@ -20,6 +20,8 @@
 
         bool InterruptPending { get; }
 
+        bool InterruptRequested { get; }
+
         bool DeviceInterruptRequested { get; }
 
         bool UserInterruptRequested { get; }        
