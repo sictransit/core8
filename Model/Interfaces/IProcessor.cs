@@ -22,10 +22,6 @@
 
         bool InterruptRequested { get; }
 
-        bool DeviceInterruptRequested { get; }
-
-        bool UserInterruptRequested { get; }        
-
         bool InterruptsInhibited { get; }
 
         IInstruction Debug8(uint field, uint address);

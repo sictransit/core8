@@ -70,7 +70,7 @@ namespace Core8.Model.Instructions
 
         private void SRQ()
         {
-            if (processor.DeviceInterruptRequested)
+            if (processor.InterruptRequested)
             {
                 Registers.IF_PC.Increment();
             }
@@ -79,7 +79,7 @@ namespace Core8.Model.Instructions
         private void GTF()
         {
             var acc = Registers.LINK_AC.Link << 11;
-            acc |= (uint)(processor.DeviceInterruptRequested ? 1 : 0) << 9;
+            acc |= (uint)(processor.InterruptRequested ? 1 : 0) << 9;
             acc |= (uint)(processor.InterruptPending ? 1 : 0) << 7;
             acc |= Registers.SF.Data;            
 

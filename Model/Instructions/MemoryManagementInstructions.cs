@@ -94,7 +94,7 @@ namespace Core8.Model.Instructions
 
         private void SINT()
         {
-            if (processor.UserInterruptRequested)
+            if (processor.InterruptRequested)
             {
                 Registers.IF_PC.Increment();
             }

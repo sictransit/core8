@@ -13,6 +13,8 @@ namespace Core8
         private volatile bool running = false;
 
         private bool interruptDelay = false;
+        
+        private bool userInterruptRequested = false;
 
         private bool singleStep = false;
 
@@ -53,11 +55,7 @@ namespace Core8
 
         public bool InterruptPending => InterruptsEnabled | interruptDelay;
 
-        public bool DeviceInterruptRequested => teleprinter.InterruptRequested;
-
-        public bool UserInterruptRequested { get; private set; }
-
-        public bool InterruptRequested => DeviceInterruptRequested | UserInterruptRequested;
+        public bool InterruptRequested => teleprinter.InterruptRequested | userInterruptRequested;
 
         public bool InterruptsInhibited { get; private set; }
 
@@ -86,7 +84,7 @@ namespace Core8
 
         public void DisableInterrupts()
         {
-            interruptDelay = InterruptsEnabled = UserInterruptRequested = false;
+            interruptDelay = InterruptsEnabled = userInterruptRequested = false;
         }
 
         public void InhibitInterrupts()
@@ -128,7 +126,7 @@ namespace Core8
 
             if (registers.UF.Data != 0 && instruction?.Privileged == true)
             {
-                UserInterruptRequested = true;
+                userInterruptRequested = true;
             }
             else
             {
