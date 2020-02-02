@@ -26,7 +26,7 @@ namespace Core8.Tests.MAINDEC
 
             //StartAndWaitForCompletion();
 
-            PDP.SetBreakpoint8(2113);
+            PDP.SetBreakpoint8(2077);
 
             PDP.Continue();
 

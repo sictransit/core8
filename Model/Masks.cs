@@ -122,5 +122,8 @@
         public const uint MEM_MGMT_READ
             = 0b_000_000_000_100;
 
+        public const uint JMX
+            = 0b_100_00_0000000;
+
     }
 }

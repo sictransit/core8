@@ -34,40 +34,53 @@ namespace Core8.Model.Instructions
 
         public override void Execute()
         {
-            var branching = OpCode == MemoryReferenceOpCode.JMP || OpCode == MemoryReferenceOpCode.JMS;
+            uint operand;
 
-            if (processor.InterruptsInhibited & branching)
+            if ((Data & Masks.JMX) != 0)
             {
-                processor.ResumeInterrupts();
+                if (processor.InterruptsInhibited)
+                {
+                    processor.ResumeInterrupts();
 
-                Registers.IF_PC.SetIF(Registers.IB.Data);
-                Registers.UF.SetUB(Registers.UB.Data);
+                    Registers.IF_PC.SetIF(Registers.IB.Data);
+                    Registers.UF.SetUB(Registers.UB.Data);
+                }
+
+                operand = Indirect ? memory.Read(Field, Location, true) : Location;
+
+                switch (OpCode)
+                {
+                    case MemoryReferenceOpCode.JMS:
+                        JMS(operand);
+                        break;
+                    case MemoryReferenceOpCode.JMP:
+                        JMP(operand);
+                        break;
+                    default:
+                        throw new NotImplementedException();
+                }
             }
-
-            var operand = Indirect ? memory.Read(branching ? Field : ActiveField, Location, true) : Location;
-
-            switch (OpCode)
+            else
             {
-                case MemoryReferenceOpCode.AND:
-                    AND(operand);
-                    break;
-                case MemoryReferenceOpCode.TAD:
-                    TAD(operand);
-                    break;
-                case MemoryReferenceOpCode.ISZ:
-                    ISZ(operand);
-                    break;
-                case MemoryReferenceOpCode.DCA:
-                    DCA(operand);
-                    break;
-                case MemoryReferenceOpCode.JMS:
-                    JMS(operand);
-                    break;
-                case MemoryReferenceOpCode.JMP:
-                    JMP(operand);
-                    break;
-                default:
-                    throw new NotImplementedException();
+                operand = Indirect ? memory.Read(ActiveField, Location, true) : Location;
+
+                switch (OpCode)
+                {
+                    case MemoryReferenceOpCode.AND:
+                        AND(operand);
+                        break;
+                    case MemoryReferenceOpCode.TAD:
+                        TAD(operand);
+                        break;
+                    case MemoryReferenceOpCode.ISZ:
+                        ISZ(operand);
+                        break;
+                    case MemoryReferenceOpCode.DCA:
+                        DCA(operand);
+                        break;
+                    default:
+                        throw new NotImplementedException();
+                }
             }
         }
 

@@ -34,6 +34,6 @@
 
         IInstruction Debug10(uint field, uint address);
 
-        void SingleStep(bool state);        
+        void SingleStep(bool state);
     }
 }
