@@ -12,7 +12,7 @@
 
         void DisableInterrupts();
 
-        void PauseInterrupts();
+        void InhibitInterrupts();
 
         void ResumeInterrupts();
 
@@ -26,7 +26,7 @@
 
         bool UserInterruptRequested { get; }        
 
-        bool InterruptsPaused { get; }
+        bool InterruptsInhibited { get; }
 
         IInstruction Debug8(uint field, uint address);
 

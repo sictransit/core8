@@ -36,7 +36,7 @@ namespace Core8.Model.Instructions
         {
             var branching = OpCode == MemoryReferenceOpCode.JMP || OpCode == MemoryReferenceOpCode.JMS;
 
-            if (processor.InterruptsPaused & branching)
+            if (processor.InterruptsInhibited & branching)
             {
                 processor.ResumeInterrupts();
 

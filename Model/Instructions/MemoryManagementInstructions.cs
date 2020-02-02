@@ -67,7 +67,7 @@ namespace Core8.Model.Instructions
                 {
                     Registers.IB.SetIB(Data >> 3);
 
-                    processor.PauseInterrupts();
+                    processor.InhibitInterrupts();
                 }
             }
         }
@@ -79,7 +79,7 @@ namespace Core8.Model.Instructions
 
         private void RIB()
         {
-            Registers.LINK_AC.ORAccumulator(Registers.SF.Data);
+            Registers.LINK_AC.ORAccumulator(Registers.SF.Data & (Masks.SF_IF | Masks.SF_DF));
         }
 
         private void RIF()
@@ -102,16 +102,17 @@ namespace Core8.Model.Instructions
 
         private void CUF()
         {
+            Registers.UF.Clear();
             Registers.UB.Clear();
 
-            processor.PauseInterrupts();
+            //processor.InhibitInterrupts();
         }
 
         private void SUF()
         {
             Registers.UB.SetUB(1);
 
-            processor.PauseInterrupts();
+            processor.InhibitInterrupts();
         }
     }
 

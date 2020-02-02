@@ -4,6 +4,7 @@ using Core8.Model.Instructions;
 using Core8.Model.Interfaces;
 using Serilog;
 using System;
+using System.Diagnostics;
 
 namespace Core8
 {
@@ -58,7 +59,7 @@ namespace Core8
 
         public bool InterruptRequested => DeviceInterruptRequested | UserInterruptRequested;
 
-        public bool InterruptsPaused { get; private set; }
+        public bool InterruptsInhibited { get; private set; }
 
         public void SingleStep(bool state)
         {
@@ -85,17 +86,17 @@ namespace Core8
 
         public void DisableInterrupts()
         {
-            interruptDelay = InterruptsEnabled = false;
+            interruptDelay = InterruptsEnabled = UserInterruptRequested = false;
         }
 
-        public void PauseInterrupts()
+        public void InhibitInterrupts()
         {
-            InterruptsPaused = true;
+            InterruptsInhibited = true;
         }
 
         public void ResumeInterrupts()
         {
-            InterruptsPaused = false;
+            InterruptsInhibited = false;
         }
 
         public void Run()
@@ -147,7 +148,7 @@ namespace Core8
                     InterruptsEnabled = true;
                 }
 
-                if (InterruptsEnabled && InterruptRequested && !InterruptsPaused)
+                if (InterruptsEnabled && InterruptRequested && !InterruptsInhibited)
                 {
                     Interrupt();
                 }
