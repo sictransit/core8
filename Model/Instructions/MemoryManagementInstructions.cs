@@ -10,7 +10,7 @@ namespace Core8.Model.Instructions
         private readonly IProcessor processor;
         private readonly IMemory memory;
 
-        public MemoryManagementInstructions(IProcessor processor, IMemory memory, IRegisters registers) : base(registers)
+        public MemoryManagementInstructions(IProcessor processor, IMemory memory, IRegisters registers) : base(registers, true)
         {
             this.processor = processor;
             this.memory = memory;

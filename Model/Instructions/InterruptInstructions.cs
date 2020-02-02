@@ -9,7 +9,7 @@ namespace Core8.Model.Instructions
     {
         private readonly IProcessor processor;
 
-        public InterruptInstructions(IProcessor processor, IRegisters registers) : base(registers)
+        public InterruptInstructions(IProcessor processor, IRegisters registers) : base(registers, true)
         {
             this.processor = processor;
         }
@@ -84,9 +84,8 @@ namespace Core8.Model.Instructions
         private void GTF()
         {
             var acc = Registers.LINK_AC.Link << 11;
-            acc |= (uint)(processor.InterruptRequested ? 1 : 0) << 9;
+            acc |= (uint)(processor.DeviceInterruptRequested ? 1 : 0) << 9;
             acc |= (uint)(processor.InterruptPending ? 1 : 0) << 7;
-            acc |= (uint)(processor.UserInterruptRequested ? 1 : 0) << 6;
             acc |= Registers.SF.Data;            
 
             Registers.LINK_AC.SetAccumulator(acc);
@@ -103,7 +102,7 @@ namespace Core8.Model.Instructions
             Registers.UB.SetUB(acc >> 6);
 
             processor.EnableInterrupts();
-            processor.PauseInterrupts();
+            //processor.PauseInterrupts();
         }
 
         private void CAF()

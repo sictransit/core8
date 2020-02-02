@@ -125,25 +125,32 @@ namespace Core8
 
             registers.IF_PC.Increment();
 
-            if (instruction != null)
+            if (registers.UF.Data != 0 && instruction?.Privileged == true)
             {
-                if (Log.IsEnabled(Serilog.Events.LogEventLevel.Debug))
+                UserInterruptRequested = true;
+            }
+            else
+            {
+                if (instruction != null)
                 {
-                    Log.Debug(instruction.ToString());
+                    if (Log.IsEnabled(Serilog.Events.LogEventLevel.Debug))
+                    {
+                        Log.Debug(instruction.ToString());
+                    }
+
+                    instruction.Execute();
                 }
 
-                instruction.Execute();
-            }
+                if (enableInterrupts && interruptDelay)
+                {
+                    interruptDelay = false;
+                    InterruptsEnabled = true;
+                }
 
-            if (enableInterrupts && interruptDelay)
-            {
-                interruptDelay = false;
-                InterruptsEnabled = true;
-            }
-
-            if (InterruptsEnabled && InterruptRequested && !InterruptsPaused )
-            {
-                Interrupt();
+                if (InterruptsEnabled && InterruptRequested && !InterruptsPaused)
+                {
+                    Interrupt();
+                }
             }
         }
 
@@ -160,7 +167,7 @@ namespace Core8
 
             registers.SF.SetIF(registers.IF_PC.IF);
             registers.SF.SetDF(registers.DF.Data);
-            registers.SF.SetUF(registers.UB.Data);
+            registers.SF.SetUF(registers.UF.Data);
 
             registers.DF.Clear();
             registers.IB.Clear();

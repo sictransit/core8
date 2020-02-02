@@ -16,6 +16,8 @@ namespace Core8.Model.Instructions.Abstract
 
         private Group2PrivilegedOpCodes OpCodes => (Group2PrivilegedOpCodes)(Data & Masks.PRIVILEGED_GROUP_2_FLAGS);
 
+        public override bool Privileged => OpCodes.HasFlag(Group2PrivilegedOpCodes.OSR) || OpCodes.HasFlag(Group2PrivilegedOpCodes.HLT);
+
         public override void Execute()
         {
             if (OpCodes.HasFlag(Group2PrivilegedOpCodes.OSR))
