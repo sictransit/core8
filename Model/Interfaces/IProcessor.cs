@@ -8,6 +8,12 @@
 
         void Clear();
 
+        void SetBreakpoint(uint address);
+
+        void RemoveBreakpoint(uint address);
+
+        void RemoveAllBreakpoints();
+
         void EnableInterrupts();
 
         void DisableInterrupts();
@@ -28,6 +34,6 @@
 
         IInstruction Debug10(uint field, uint address);
 
-        void SingleStep(bool state);
+        void SingleStep(bool state);        
     }
 }

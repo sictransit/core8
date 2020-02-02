@@ -27,7 +27,14 @@ namespace Core8
 
         public uint Examine(uint field, uint address)
         {
-            return ram[field][address];
+            MB = ram[field][address];
+
+            if (Log.IsEnabled(Serilog.Events.LogEventLevel.Verbose))
+            {
+                Log.Verbose($"[Read]: ({field.ToOctalString()}){address.ToOctalString()}:{MB.ToOctalString()}");
+            }
+
+            return MB;
         }
 
         public uint Read(uint field, uint address, bool indirect = false)
@@ -36,12 +43,9 @@ namespace Core8
             {
                 Write(field, address, Examine(field, address) + 1);
             }
-
-            MB = Examine(field, address);
-
-            if (Log.IsEnabled(Serilog.Events.LogEventLevel.Verbose))
+            else
             {
-                Log.Verbose($"[Read]: ({field.ToOctalString()}){address.ToOctalString()}:{MB.ToOctalString()}");
+                Examine(field, address);
             }
 
             return MB;

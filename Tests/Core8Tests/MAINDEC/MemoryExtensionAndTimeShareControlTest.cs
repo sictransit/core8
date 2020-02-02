@@ -9,7 +9,7 @@ namespace Core8.Tests.MAINDEC
     {
         protected override string TapeName => @"MAINDEC/tapes/MAINDEC-8E-D1HA-PB.bin";
 
-        protected override string[] ExpectedOutput => new[] { "\u0007" };        
+        protected override string[] ExpectedOutput => new[] { "\u0007" };
 
         protected override TimeSpan MaxRunningTime => TimeSpan.FromSeconds(60);
 
@@ -24,7 +24,17 @@ namespace Core8.Tests.MAINDEC
 
             //LoggingLevel.MinimumLevel = Serilog.Events.LogEventLevel.Debug;
 
-            StartAndWaitForCompletion();
+            //StartAndWaitForCompletion();
+
+            PDP.SetBreakpoint8(2113);
+
+            PDP.Continue();
+
+            LoggingLevel.MinimumLevel = Serilog.Events.LogEventLevel.Verbose;
+
+            PDP.RemoveAllBreakpoints();
+
+            PDP.Continue();
         }
     }
 }

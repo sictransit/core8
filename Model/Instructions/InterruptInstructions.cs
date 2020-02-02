@@ -19,7 +19,7 @@ namespace Core8.Model.Instructions
         private InterruptOpCode OpCode => (InterruptOpCode)(Data & Masks.INTERRUPT_FLAGS);
 
         public override void Execute()
-        {           
+        {
             switch (OpCode)
             {
                 case InterruptOpCode.SKON:
@@ -81,7 +81,7 @@ namespace Core8.Model.Instructions
             var acc = Registers.LINK_AC.Link << 11;
             acc |= (uint)(processor.InterruptRequested ? 1 : 0) << 9;
             acc |= (uint)(processor.InterruptPending ? 1 : 0) << 7;
-            acc |= Registers.SF.Data;            
+            acc |= Registers.SF.Data;
 
             Registers.LINK_AC.SetAccumulator(acc);
         }

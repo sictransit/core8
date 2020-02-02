@@ -4,7 +4,7 @@ using Core8.Model.Instructions;
 using Core8.Model.Interfaces;
 using Serilog;
 using System;
-using System.Diagnostics;
+using System.Collections.Generic;
 
 namespace Core8
 {
@@ -13,7 +13,7 @@ namespace Core8
         private volatile bool running = false;
 
         private bool interruptDelay = false;
-        
+
         private bool userInterruptRequested = false;
 
         private bool singleStep = false;
@@ -23,6 +23,8 @@ namespace Core8
         private readonly IRegisters registers;
 
         private readonly ITeleprinter teleprinter;
+
+        private readonly HashSet<uint> breakpoints = new HashSet<uint>();
 
         private readonly Group1Instructions group1Instructions;
         private readonly Group2ANDInstructions group2ANDInstructions;
@@ -105,6 +107,11 @@ namespace Core8
 
             while (running)
             {
+                if (breakpoints.Contains(registers.IF_PC.Data))
+                {
+                    break;
+                }
+
                 FetchAndExecute();
 
                 if (singleStep)
@@ -112,6 +119,8 @@ namespace Core8
                     break;
                 }
             }
+
+            running = false;
 
             Log.Information($"HLT @ {registers.IF_PC}");
         }
@@ -224,5 +233,19 @@ namespace Core8
             };
         }
 
+        public void SetBreakpoint(uint address)
+        {
+            breakpoints.Add(address);
+        }
+
+        public void RemoveBreakpoint(uint address)
+        {
+            breakpoints.Remove(address);
+        }
+
+        public void RemoveAllBreakpoints()
+        {
+            breakpoints.Clear();
+        }
     }
 }

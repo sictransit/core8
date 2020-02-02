@@ -15,7 +15,7 @@ namespace Core8.Model.Interfaces
         DataField DF { get; }
 
         InstructionBuffer IB { get; }
-        
+
         UserBuffer UB { get; }
 
         UserFlag UF { get; }

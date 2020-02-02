@@ -242,6 +242,21 @@ namespace Core8
             Registers.SR.SetSR(word);
         }
 
+        public void SetBreakpoint8(uint address)
+        {
+            Processor.SetBreakpoint(address.ToDecimal());
+        }
+
+        public void RemoveBreakpoint8(uint address)
+        {
+            Processor.RemoveBreakpoint(address.ToDecimal());
+        }
+
+        public void RemoveAllBreakpoints()
+        {
+            Processor.RemoveAllBreakpoints();
+        }
+
         public void Exam()
         {
             Registers.LINK_AC.SetAccumulator(Memory.Read(0, Registers.IF_PC.Address));
