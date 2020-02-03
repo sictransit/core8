@@ -30,6 +30,9 @@ namespace Core8.Model.Instructions
             {
                 switch (ReadOpCode)
                 {
+                    case MemoryManagementReadOpCode.CINT:
+                        CINT();
+                        break;
                     case MemoryManagementReadOpCode.RDF:
                         RDF();
                         break;
@@ -72,6 +75,11 @@ namespace Core8.Model.Instructions
             }
         }
 
+        private void CINT()
+        {
+            processor.ClearUserInterrupt();
+        }
+
         private void RDF()
         {
             Registers.LINK_AC.ORAccumulator(Registers.DF.Data << 3);
@@ -89,12 +97,16 @@ namespace Core8.Model.Instructions
 
         private void RMF()
         {
-            throw new NotImplementedException();
+            Registers.IB.SetIB(Registers.SF.IF);
+            Registers.DF.SetDF(Registers.SF.DF);
+            Registers.UB.SetUB(Registers.SF.UF);
+
+            processor.InhibitInterrupts();
         }
 
         private void SINT()
         {
-            if (processor.InterruptRequested)
+            if (processor.UserInterruptRequested)
             {
                 Registers.IF_PC.Increment();
             }
@@ -102,10 +114,9 @@ namespace Core8.Model.Instructions
 
         private void CUF()
         {
-            Registers.UF.Clear();
             Registers.UB.Clear();
 
-            //processor.InhibitInterrupts();
+            processor.InhibitInterrupts();
         }
 
         private void SUF()
