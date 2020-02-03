@@ -14,7 +14,7 @@
 
         void RemoveAllBreakpoints();
 
-        void EnableInterrupts();
+        void EnableInterrupts(bool delay = true);
 
         void DisableInterrupts();
 
@@ -22,11 +22,15 @@
 
         void ResumeInterrupts();
 
+        void ClearUserInterrupt();
+
         bool InterruptsEnabled { get; }
 
         bool InterruptPending { get; }
 
         bool InterruptRequested { get; }
+
+        bool UserInterruptRequested { get; }
 
         bool InterruptsInhibited { get; }
 

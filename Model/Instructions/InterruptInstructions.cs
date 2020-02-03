@@ -96,7 +96,7 @@ namespace Core8.Model.Instructions
             Registers.DF.SetDF(acc);
             Registers.UB.SetUB(acc >> 6);
 
-            processor.EnableInterrupts();
+            processor.EnableInterrupts(false);
             processor.InhibitInterrupts();
         }
 

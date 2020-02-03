@@ -34,7 +34,7 @@ namespace Core8.Model.Instructions.Abstract
 
         public override string ToString()
         {
-            return $"({Field.ToOctalString()}){Address.ToOctalString()}: {Data.ToOctalString()} {OpCodeText}";
+            return $"({Field.ToOctalString(1)}){Address.ToOctalString()}:{Data.ToOctalString()} {OpCodeText}";
         }
     }
 }

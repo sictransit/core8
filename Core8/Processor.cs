@@ -61,6 +61,8 @@ namespace Core8
 
         public bool InterruptsInhibited { get; private set; }
 
+        public bool UserInterruptRequested => userInterruptRequested;
+
         public void SingleStep(bool state)
         {
             singleStep = state;
@@ -79,14 +81,21 @@ namespace Core8
             running = false;
         }
 
-        public void EnableInterrupts()
+        public void EnableInterrupts(bool delay = true)
         {
-            interruptDelay = true;
+            if (delay)
+            {
+                interruptDelay = true;
+            }
+            else
+            {
+                InterruptsEnabled = true;
+            }
         }
 
         public void DisableInterrupts()
         {
-            interruptDelay = InterruptsEnabled = userInterruptRequested = false;
+            InterruptsEnabled = userInterruptRequested = false;
         }
 
         public void InhibitInterrupts()
@@ -127,19 +136,28 @@ namespace Core8
 
         public void FetchAndExecute()
         {
-            var enableInterrupts = interruptDelay;
+            if (InterruptsEnabled && InterruptRequested && !InterruptsInhibited)
+            {
+                Interrupt();
+            }
+
+            if (interruptDelay)
+            {
+                interruptDelay = false;
+                InterruptsEnabled = true;
+            }
 
             var instruction = Fetch(registers.IF_PC.IF, registers.IF_PC.Address);
 
             registers.IF_PC.Increment();
 
-            if (registers.UF.Data != 0 && instruction?.Privileged == true)
+            if (instruction != null)
             {
-                userInterruptRequested = true;
-            }
-            else
-            {
-                if (instruction != null)
+                if (registers.UF.Data != 0 && instruction.Privileged == true)
+                {
+                    userInterruptRequested = true;
+                }
+                else
                 {
                     if (Log.IsEnabled(Serilog.Events.LogEventLevel.Debug))
                     {
@@ -148,24 +166,11 @@ namespace Core8
 
                     instruction.Execute();
                 }
-
-                if (enableInterrupts && interruptDelay)
-                {
-                    interruptDelay = false;
-                    InterruptsEnabled = true;
-                }
-
-                if (InterruptsEnabled && InterruptRequested && !InterruptsInhibited)
-                {
-                    Interrupt();
-                }
             }
         }
 
         private void Interrupt()
         {
-            DisableInterrupts();
-
             if (Log.IsEnabled(Serilog.Events.LogEventLevel.Debug))
             {
                 Log.Debug("Interrupt!");
@@ -185,6 +190,8 @@ namespace Core8
             registers.IF_PC.SetIF(0);
 
             registers.IF_PC.SetPC(1);
+
+            DisableInterrupts();
         }
 
         public IInstruction Debug8(uint field, uint address)
@@ -246,6 +253,11 @@ namespace Core8
         public void RemoveAllBreakpoints()
         {
             breakpoints.Clear();
+        }
+
+        public void ClearUserInterrupt()
+        {
+            userInterruptRequested = false;
         }
     }
 }
