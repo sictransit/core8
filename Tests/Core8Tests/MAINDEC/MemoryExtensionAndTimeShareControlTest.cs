@@ -26,15 +26,15 @@ namespace Core8.Tests.MAINDEC
 
             //StartAndWaitForCompletion();
 
-            PDP.SetBreakpoint8(2113);
+            //PDP.SetBreakpoint8(2113);
 
-            PDP.Continue();
+            //LoggingLevel.MinimumLevel = Serilog.Events.LogEventLevel.Debug;
 
-            LoggingLevel.MinimumLevel = Serilog.Events.LogEventLevel.Verbose;
+            PDP.Continue();            
 
-            PDP.RemoveAllBreakpoints();
+            //PDP.RemoveAllBreakpoints();
 
-            PDP.Continue();
+            //PDP.Continue();
         }
     }
 }

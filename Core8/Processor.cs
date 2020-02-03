@@ -127,19 +127,28 @@ namespace Core8
 
         public void FetchAndExecute()
         {
-            var enableInterrupts = interruptDelay;
+            if (InterruptsEnabled && InterruptRequested && !InterruptsInhibited)
+            {
+                Interrupt();
+            }
+
+            if (interruptDelay)
+            {
+                interruptDelay = false;
+                InterruptsEnabled = true;
+            }
 
             var instruction = Fetch(registers.IF_PC.IF, registers.IF_PC.Address);
 
             registers.IF_PC.Increment();
 
-            if (registers.UF.Data != 0 && instruction?.Privileged == true)
+            if (instruction != null)
             {
-                userInterruptRequested = true;
-            }
-            else
-            {
-                if (instruction != null)
+                if (registers.UF.Data != 0 && instruction.Privileged == true)
+                {
+                    userInterruptRequested = true;
+                }
+                else
                 {
                     if (Log.IsEnabled(Serilog.Events.LogEventLevel.Debug))
                     {
@@ -147,17 +156,6 @@ namespace Core8
                     }
 
                     instruction.Execute();
-                }
-
-                if (enableInterrupts && interruptDelay)
-                {
-                    interruptDelay = false;
-                    InterruptsEnabled = true;
-                }
-
-                if (InterruptsEnabled && InterruptRequested && !InterruptsInhibited)
-                {
-                    Interrupt();
                 }
             }
         }

@@ -31,7 +31,7 @@ namespace Core8
 
             if (Log.IsEnabled(Serilog.Events.LogEventLevel.Verbose))
             {
-                Log.Verbose($"[Read]: ({field.ToOctalString()}){address.ToOctalString()}:{MB.ToOctalString()}");
+                Log.Verbose($"[Read]: ({field.ToOctalString(1)}){address.ToOctalString()}:{MB.ToOctalString()}");
             }
 
             return MB;
@@ -59,7 +59,7 @@ namespace Core8
 
             if (Log.IsEnabled(Serilog.Events.LogEventLevel.Verbose))
             {
-                Log.Verbose($"[Write]: ({field.ToOctalString()}){address.ToOctalString()}:{MB.ToOctalString()}");
+                Log.Verbose($"[Write]: ({field.ToOctalString(1)}){address.ToOctalString()}:{MB.ToOctalString()}");
             }
         }
 

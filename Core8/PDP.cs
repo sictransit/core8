@@ -176,7 +176,7 @@ namespace Core8
                     }
                     else
                     {
-                        Log.Information($"({field.ToOctalString()}){address.ToOctalString()}:{data.ToOctalString()}");
+                        Log.Information($"({field.ToOctalString(1)}){address.ToOctalString()}:{data.ToOctalString()}");
                     }
 
                 }
@@ -206,7 +206,7 @@ namespace Core8
 
             Memory.Write(0, Registers.IF_PC.Address, data & Masks.MEM_WORD);
 
-            Log.Information($"DEP: {Registers.IF_PC.Address.ToOctalString()} {data.ToOctalString()}");
+            Log.Information($"DEP: {Registers.IF_PC} {data.ToOctalString()}");
 
             Registers.IF_PC.Increment();
         }
@@ -229,7 +229,7 @@ namespace Core8
 
             Registers.IF_PC.SetPC(address);
 
-            Log.Information($"LOAD: {address.ToOctalString()}");
+            Log.Information($"LOAD: {Registers.IF_PC}");
         }
 
         public void Toggle8(uint word)
@@ -261,7 +261,7 @@ namespace Core8
         {
             Registers.LINK_AC.SetAccumulator(Memory.Read(0, Registers.IF_PC.Address));
 
-            Log.Information($"EXAM: {Registers.LINK_AC.ToString()}");
+            Log.Information($"EXAM: {Registers.LINK_AC}");
         }
 
         public void Continue(bool waitForHalt = true)

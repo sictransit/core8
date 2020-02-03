@@ -19,9 +19,9 @@ namespace Core8.Model.Extensions
             return dec == 0 ? 0 : dec % 8 + 10 * (dec / 8).ToOctal();
         }
 
-        public static string ToOctalString(this uint dec)
+        public static string ToOctalString(this uint dec, int digits = 4)
         {
-            return dec.ToOctal().ToString("d4");
+            return dec.ToOctal().ToString($"d{digits}");
         }
     }
 
