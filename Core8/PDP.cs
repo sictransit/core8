@@ -166,19 +166,9 @@ namespace Core8
             {
                 for (uint address = 0; address < 4096; address++)
                 {
-                    var data = Memory.Examine(field, address);
-
                     var instruction = Processor.Debug10(field, address);
 
-                    if (instruction != null)
-                    {
-                        Log.Information($"{instruction}");
-                    }
-                    else
-                    {
-                        Log.Information($"({field.ToOctalString(1)}){address.ToOctalString()}:{data.ToOctalString()}");
-                    }
-
+                    Log.Information(instruction.ToString());
                 }
             }
         }

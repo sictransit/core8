@@ -8,10 +8,10 @@
 
         uint Data { get; }
 
-        void Load(uint field, uint address, uint data);
+        IInstruction Load(uint field, uint address, uint data);
 
         void Execute();
 
-        bool Privileged { get; }
+        bool UserModeInterrupt { get; }
     }
 }

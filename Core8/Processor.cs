@@ -35,6 +35,7 @@ namespace Core8
         private readonly KeyboardInstructions keyboardInstructions;
         private readonly TeleprinterInstructions teleprinterInstructions;
         private readonly InterruptInstructions interruptInstructions;
+        private readonly NoOperationInstruction noOperationInstruction;
 
         public Processor(IMemory memory, IRegisters registers, ITeleprinter teleprinter)
         {
@@ -51,6 +52,7 @@ namespace Core8
             keyboardInstructions = new KeyboardInstructions(registers, teleprinter);
             teleprinterInstructions = new TeleprinterInstructions(registers, teleprinter);
             interruptInstructions = new InterruptInstructions(this, registers);
+            noOperationInstruction = new NoOperationInstruction(registers);
         }
 
         public bool InterruptsEnabled { get; private set; }
@@ -73,6 +75,7 @@ namespace Core8
             teleprinter.Clear();
             registers.LINK_AC.Clear();
             registers.MQ.Clear();
+            userInterruptRequested = false;
             DisableInterrupts();
         }
 
@@ -83,8 +86,10 @@ namespace Core8
 
         public void EnableInterrupts(bool delay = true)
         {
+            Log.Debug($"Interrupts enabled (delay: {delay})");
+            
             if (delay)
-            {
+            {                
                 interruptDelay = true;
             }
             else
@@ -95,16 +100,22 @@ namespace Core8
 
         public void DisableInterrupts()
         {
-            InterruptsEnabled = userInterruptRequested = false;
+            Log.Debug($"Interrupts disbled");
+
+            InterruptsEnabled = false;
         }
 
         public void InhibitInterrupts()
         {
+            Log.Debug($"Interrupts inhibited");
+
             InterruptsInhibited = true;
         }
 
         public void ResumeInterrupts()
         {
+            Log.Debug($"Interrupts resumed");
+
             InterruptsInhibited = false;
         }
 
@@ -151,21 +162,16 @@ namespace Core8
 
             registers.IF_PC.Increment();
 
-            if (instruction != null)
+            if (Log.IsEnabled(Serilog.Events.LogEventLevel.Debug))
             {
-                if (registers.UF.Data != 0 && instruction.Privileged == true)
-                {
-                    userInterruptRequested = true;
-                }
-                else
-                {
-                    if (Log.IsEnabled(Serilog.Events.LogEventLevel.Debug))
-                    {
-                        Log.Debug(instruction.ToString());
-                    }
+                Log.Debug(instruction.ToString());
+            }
 
-                    instruction.Execute();
-                }
+            instruction.Execute();
+
+            if (instruction.UserModeInterrupt)
+            {
+                userInterruptRequested = true;
             }
         }
 
@@ -210,16 +216,7 @@ namespace Core8
 
             var instruction = Decode(data);
 
-            if (instruction != null)
-            {
-                instruction.Load(field, address, data);
-            }
-            else
-            {
-                Log.Warning($"[{address.ToOctalString()}] NOP {data.ToOctalString()}");
-            }
-
-            return instruction;
+            return instruction.Load(field, address, data);
         }
 
         private IInstruction Decode(uint data)
@@ -235,7 +232,7 @@ namespace Core8
                 Masks.IOT when (data & Masks.INTERRUPT_MASK) == 0 => interruptInstructions,
                 Masks.IOT when (data & Masks.IO) >> 3 == 3 => keyboardInstructions,
                 Masks.IOT when (data & Masks.IO) >> 3 == 4 => teleprinterInstructions,
-                Masks.IOT => null,
+                Masks.IOT => noOperationInstruction,
                 _ => memoryReferenceInstructions,
             };
         }

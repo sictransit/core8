@@ -9,7 +9,7 @@ namespace Core8.Model.Instructions
     {
         private readonly ITeleprinter teleprinter;
 
-        public TeleprinterInstructions(IRegisters registers, ITeleprinter teleprinter) : base(registers, true)
+        public TeleprinterInstructions(IRegisters registers, ITeleprinter teleprinter) : base(registers)
         {
             this.teleprinter = teleprinter;
         }
@@ -20,6 +20,14 @@ namespace Core8.Model.Instructions
 
         public override void Execute()
         {
+            if (UserMode)
+            {
+                UserModeInterrupt = true;
+                return;
+            }
+
+            UserModeInterrupt = false;
+
             switch (OpCode)
             {
                 case TeleprinterOpCode.TFL:

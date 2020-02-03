@@ -5,10 +5,9 @@ namespace Core8.Model.Instructions.Abstract
 {
     public abstract class InstructionsBase : IInstruction
     {
-        protected InstructionsBase(IRegisters registers, bool privileged = false)
+        protected InstructionsBase(IRegisters registers)
         {
             Registers = registers;
-            Privileged = privileged;
         }
 
         public uint Field { get; private set; }
@@ -17,24 +16,30 @@ namespace Core8.Model.Instructions.Abstract
 
         public uint Data { get; private set; }
 
-        public virtual bool Privileged { get; }
-
         public abstract void Execute();
+
+        protected bool UserMode => Registers.UF.Data != 0;
+
+        public bool UserModeInterrupt { get; protected set; }
 
         protected abstract string OpCodeText { get; }
 
         protected IRegisters Registers { get; }
 
-        public void Load(uint field, uint address, uint data)
+        public IInstruction Load(uint field, uint address, uint data)
         {
             Field = field;
             Address = address;
             Data = data;
+
+            return this;
         }
 
         public override string ToString()
         {
-            return $"({Field.ToOctalString(1)}){Address.ToOctalString()}:{Data.ToOctalString()} {OpCodeText}";
+            var irq = UserModeInterrupt ? " (privileged, interrupt)" : string.Empty;
+
+            return $"({Field.ToOctalString(1)}){Address.ToOctalString()}:{Data.ToOctalString()} {OpCodeText}{irq}";
         }
     }
 }

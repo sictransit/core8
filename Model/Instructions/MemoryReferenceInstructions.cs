@@ -44,7 +44,7 @@ namespace Core8.Model.Instructions
                 Registers.UF.SetUF(Registers.UB.Data);
             }
 
-            var operand = Indirect ? memory.Read(branching ? Field : ActiveField, Location, true) : Location;
+            var operand = Indirect ? memory.Read(branching ? Registers.IF_PC.IF : ActiveField, Location, true) : Location;
 
             switch (OpCode)
             {
@@ -100,7 +100,7 @@ namespace Core8.Model.Instructions
 
         public void JMS(uint operand)
         {
-            memory.Write(Field, operand, Registers.IF_PC.Address);
+            memory.Write(Registers.IF_PC.IF, operand, Registers.IF_PC.Address);
 
             Registers.IF_PC.SetPC(operand + 1);
         }

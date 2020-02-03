@@ -9,7 +9,7 @@ namespace Core8.Model.Instructions
     {
         private readonly ITeleprinter teleprinter;
 
-        public KeyboardInstructions(IRegisters registers, ITeleprinter teleprinter) : base(registers, true)
+        public KeyboardInstructions(IRegisters registers, ITeleprinter teleprinter) : base(registers)
         {
             this.teleprinter = teleprinter;
         }
@@ -20,6 +20,14 @@ namespace Core8.Model.Instructions
 
         public override void Execute()
         {
+            if (UserMode)
+            {
+                UserModeInterrupt = true;
+                return;
+            }
+
+            UserModeInterrupt = false;
+
             switch (OpCode)
             {
                 case KeyboardOpCode.KCC:

@@ -9,7 +9,7 @@ namespace Core8.Model.Instructions
     {
         private readonly IProcessor processor;
 
-        public InterruptInstructions(IProcessor processor, IRegisters registers) : base(registers, true)
+        public InterruptInstructions(IProcessor processor, IRegisters registers) : base(registers)
         {
             this.processor = processor;
         }
@@ -20,6 +20,14 @@ namespace Core8.Model.Instructions
 
         public override void Execute()
         {
+            if (UserMode)
+            {
+                UserModeInterrupt = true;
+                return;
+            }
+
+            UserModeInterrupt = false;
+
             switch (OpCode)
             {
                 case InterruptOpCode.SKON:

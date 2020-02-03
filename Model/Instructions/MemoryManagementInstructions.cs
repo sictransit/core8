@@ -10,7 +10,7 @@ namespace Core8.Model.Instructions
         private readonly IProcessor processor;
         private readonly IMemory memory;
 
-        public MemoryManagementInstructions(IProcessor processor, IMemory memory, IRegisters registers) : base(registers, true)
+        public MemoryManagementInstructions(IProcessor processor, IMemory memory, IRegisters registers) : base(registers)
         {
             this.processor = processor;
             this.memory = memory;
@@ -26,6 +26,14 @@ namespace Core8.Model.Instructions
 
         public override void Execute()
         {
+            if (UserMode)
+            {
+                UserModeInterrupt = true;
+                return;
+            }
+
+            UserModeInterrupt = false;
+
             if (IsReadInstruction)
             {
                 switch (ReadOpCode)
