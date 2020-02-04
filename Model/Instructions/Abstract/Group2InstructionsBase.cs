@@ -20,8 +20,8 @@ namespace Core8.Model.Instructions.Abstract
         {
             if (OpCodes != 0 && UserMode)
             {
-                    UserModeInterrupt = true;
-                    return;
+                UserModeInterrupt = true;
+                return;
             }
 
             UserModeInterrupt = false;

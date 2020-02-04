@@ -87,9 +87,9 @@ namespace Core8
         public void EnableInterrupts(bool delay = true)
         {
             Log.Debug($"Interrupts enabled (delay: {delay})");
-            
+
             if (delay)
-            {                
+            {
                 interruptDelay = true;
             }
             else

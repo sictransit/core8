@@ -53,14 +53,12 @@ namespace Core8.Tests.MAINDEC.Abstract
                 Thread.Sleep(200);
             }
 
-            var running = PDP.Running;
-
-            PDP.Halt();
-
             if (!ExpectHLT)
             {
-                Assert.IsTrue(running);
+                Assert.IsTrue(PDP.Running);
             }
+
+            PDP.Halt();
 
             Assert.IsFalse(failed);
 
