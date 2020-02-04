@@ -86,7 +86,7 @@ namespace Core8
 
         public void EnableInterrupts(bool delay = true)
         {
-            Log.Debug($"Interrupts enabled (delay: {delay})");
+            Log.Debug($"Interrupts enabled (delay: {delay}, irq: {InterruptRequested})");
 
             if (delay)
             {
@@ -100,21 +100,21 @@ namespace Core8
 
         public void DisableInterrupts()
         {
-            Log.Debug($"Interrupts disbled");
+            Log.Debug($"Interrupts disbled (irq: {InterruptRequested})");
 
             InterruptsEnabled = false;
         }
 
         public void InhibitInterrupts()
         {
-            Log.Debug($"Interrupts inhibited");
+            Log.Debug($"Interrupts inhibited (irq: {InterruptRequested})");
 
             InterruptsInhibited = true;
         }
 
         public void ResumeInterrupts()
         {
-            Log.Debug($"Interrupts resumed");
+            Log.Debug($"Interrupts resumed (irq: {InterruptRequested})");
 
             InterruptsInhibited = false;
         }
