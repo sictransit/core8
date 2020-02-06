@@ -10,8 +10,6 @@ namespace Core8.Model.Instructions.Abstract
             Registers = registers;
         }
 
-        public uint Field { get; private set; }
-
         public uint Address { get; private set; }
 
         public uint Data { get; private set; }
@@ -26,9 +24,8 @@ namespace Core8.Model.Instructions.Abstract
 
         protected IRegisters Registers { get; }
 
-        public IInstruction Load(uint field, uint address, uint data)
+        public IInstruction Load(uint address, uint data)
         {
-            Field = field;
             Address = address;
             Data = data;
 
@@ -39,7 +36,7 @@ namespace Core8.Model.Instructions.Abstract
         {
             var irq = UserModeInterrupt ? " (privileged, interrupt)" : string.Empty;
 
-            return $"({Field.ToOctalString(1)}){Address.ToOctalString()}:{Data.ToOctalString()} {OpCodeText}{irq}";
+            return $"{Address.ToOctalString(5)}:{Data.ToOctalString()} {OpCodeText}{irq}";
         }
     }
 }

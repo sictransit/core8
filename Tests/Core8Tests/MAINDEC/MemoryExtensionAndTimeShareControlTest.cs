@@ -11,7 +11,7 @@ namespace Core8.Tests.MAINDEC
 
         protected override string[] ExpectedOutput => new[] { "\u0007" };
 
-        protected override TimeSpan MaxRunningTime => TimeSpan.FromSeconds(60);
+        protected override TimeSpan MaxRunningTime => TimeSpan.FromSeconds(600);
 
         [TestMethod]
         public void RunTest()
@@ -22,19 +22,21 @@ namespace Core8.Tests.MAINDEC
 
             PDP.Clear();
 
-            LoggingLevel.MinimumLevel = Serilog.Events.LogEventLevel.Information;
+            //LoggingLevel.MinimumLevel = Serilog.Events.LogEventLevel.Information;
 
-            StartAndWaitForCompletion();
+            //PDP.SetBreakpoint8(3400);
 
-            //PDP.SetBreakpoint8(2113);
+            //PDP.Continue();
+
+            //PDP.RemoveAllBreakpoints();
 
             //LoggingLevel.MinimumLevel = Serilog.Events.LogEventLevel.Debug;
 
             //PDP.Continue();            
 
-            //PDP.RemoveAllBreakpoints();
+            StartAndWaitForCompletion();
 
-            //PDP.Continue();
+            
         }
     }
 }

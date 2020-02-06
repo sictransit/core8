@@ -28,66 +28,81 @@ namespace Core8.Model.Instructions
 
         private bool Zero => !AddressingModes.HasFlag(AddressingModes.Z);
 
-        public uint Location => Zero ? (Data & Masks.ADDRESS_WORD) : ((Address & Masks.ADDRESS_PAGE) | (Data & Masks.ADDRESS_WORD));
+        private uint Word => (Data & Masks.ADDRESS_WORD);
 
-        private uint ActiveField => Indirect ? Registers.DF.Data : Field;
+        private uint Page => (Address & Masks.ADDRESS_PAGE);
+
+        private uint Field => (Address & Masks.IF);
+
+        public uint Location => Field | (Zero ? Word : (Page | Word));
 
         public override void Execute()
         {
-            var branching = OpCode == MemoryReferenceOpCode.JMP || OpCode == MemoryReferenceOpCode.JMS;
-
-            if (processor.InterruptsInhibited & branching)
+            if (OpCode == MemoryReferenceOpCode.JMP || OpCode == MemoryReferenceOpCode.JMS)
             {
-                processor.ResumeInterrupts();
 
-                Registers.IF_PC.SetIF(Registers.IB.Data);
-                Registers.UF.SetUF(Registers.UB.Data);
+                if (processor.InterruptsInhibited)
+                {
+                    processor.ResumeInterrupts();
+
+                    Registers.IF_PC.SetIF(Registers.IB.Data);
+                    Registers.UF.SetUF(Registers.UB.Data);
+                }
+
+                var operand = Indirect ? (Registers.IF_PC.IF << 12) | memory.Read(Location, true) : Location;
+
+
+                switch (OpCode)
+                {
+                    case MemoryReferenceOpCode.JMS:
+                        JMS(operand);
+                        break;
+                    case MemoryReferenceOpCode.JMP:
+                        JMP(operand);
+                        break;
+                    default:
+                        throw new NotImplementedException();
+                }
             }
-
-            var operand = Indirect ? memory.Read(branching ? Registers.IF_PC.IF : ActiveField, Location, true) : Location;
-
-            switch (OpCode)
+            else
             {
-                case MemoryReferenceOpCode.AND:
-                    AND(operand);
-                    break;
-                case MemoryReferenceOpCode.TAD:
-                    TAD(operand);
-                    break;
-                case MemoryReferenceOpCode.ISZ:
-                    ISZ(operand);
-                    break;
-                case MemoryReferenceOpCode.DCA:
-                    DCA(operand);
-                    break;
-                case MemoryReferenceOpCode.JMS:
-                    JMS(operand);
-                    break;
-                case MemoryReferenceOpCode.JMP:
-                    JMP(operand);
-                    break;
-                default:
-                    throw new NotImplementedException();
+                var operand = Indirect ? (Registers.DF.Data << 12) | memory.Read(Location, true) : Location;
+
+                switch (OpCode)
+                {
+                    case MemoryReferenceOpCode.AND:
+                        AND(operand);
+                        break;
+                    case MemoryReferenceOpCode.TAD:
+                        TAD(operand);
+                        break;
+                    case MemoryReferenceOpCode.ISZ:
+                        ISZ(operand);
+                        break;
+                    case MemoryReferenceOpCode.DCA:
+                        DCA(operand);
+                        break;
+                    default:
+                        throw new NotImplementedException();
+                }
             }
         }
 
         private void AND(uint operand)
         {
-            Registers.LINK_AC.ANDAccumulator(memory.Read(ActiveField, operand));
+            Registers.LINK_AC.ANDAccumulator(memory.Read(operand));
         }
 
         private void DCA(uint operand)
         {
-            memory.Write(ActiveField, operand, Registers.LINK_AC.Accumulator);
+            memory.Write(operand, Registers.LINK_AC.Accumulator);
 
             Registers.LINK_AC.ClearAccumulator();
         }
 
         private void ISZ(uint operand)
         {
-            memory.Write(ActiveField, operand, (memory.Read(ActiveField, operand) + 1) & Masks.MEM_WORD);
-
-            if (memory.MB == 0)
+            if (memory.Write(operand, (memory.Read(operand) + 1) & Masks.MEM_WORD) == 0)
             {
                 Registers.IF_PC.Increment();
             }
@@ -95,19 +110,19 @@ namespace Core8.Model.Instructions
 
         private void JMP(uint operand)
         {
-            Registers.IF_PC.SetPC(operand);
+            Registers.IF_PC.Jump(operand);
         }
 
         public void JMS(uint operand)
         {
-            memory.Write(Registers.IF_PC.IF, operand, Registers.IF_PC.Address);
+            memory.Write(operand, Registers.IF_PC.Address);
 
-            Registers.IF_PC.SetPC(operand + 1);
+            Registers.IF_PC.Jump(operand + 1);
         }
 
         private void TAD(uint operand)
         {
-            Registers.LINK_AC.AddWithCarry(memory.Read(ActiveField, operand));
+            Registers.LINK_AC.AddWithCarry(memory.Read(operand));
         }
 
         public override string ToString()

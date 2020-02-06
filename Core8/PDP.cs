@@ -160,16 +160,13 @@ namespace Core8
             Deposit8(5301); // JMP (7701)
         }
 
-        public void DumpMemory(uint fromField = 0, uint toField = 0)
+        public void DumpMemory(uint fromAddress = 0, uint toAddress = 4096)
         {
-            for (uint field = fromField; field < toField + 1; field++)
+            for (uint a = fromAddress; a < toAddress; a++)
             {
-                for (uint address = 0; address < 4096; address++)
-                {
-                    var instruction = Processor.Debug10(field, address);
+                var instruction = Processor.Debug10(a);
 
-                    Log.Information(instruction.ToString());
-                }
+                Log.Information(instruction.ToString());
             }
         }
 
@@ -194,7 +191,7 @@ namespace Core8
         {
             var data = Registers.SR.Get;
 
-            Memory.Write(0, Registers.IF_PC.Address, data & Masks.MEM_WORD);
+            Memory.Write(Registers.IF_PC.Address, data & Masks.MEM_WORD);
 
             Log.Information($"DEP: {Registers.IF_PC} {data.ToOctalString()}");
 
@@ -249,7 +246,7 @@ namespace Core8
 
         public void Exam()
         {
-            Registers.LINK_AC.SetAccumulator(Memory.Read(0, Registers.IF_PC.Address));
+            Registers.LINK_AC.SetAccumulator(Memory.Read(Registers.IF_PC.Address));
 
             Log.Information($"EXAM: {Registers.LINK_AC}");
         }

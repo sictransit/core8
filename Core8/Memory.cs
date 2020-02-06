@@ -7,65 +7,47 @@ namespace Core8
 {
     public class Memory : IMemory
     {
-        private readonly uint[][] ram;
+        private readonly uint[] ram;
 
         public Memory(uint fields = 8)
         {
-            ram = new uint[fields][];
-
-            for (int f = 0; f < fields; f++)
-            {
-                ram[f] = new uint[4096];
-            }
-
-            Fields = fields;
+            ram = new uint[fields*4096];
         }
 
-        public uint MB { get; private set; }
-
-        public uint Fields { get; }
-
-        public uint Examine(uint field, uint address)
+        public uint Examine(uint address)
         {
-            MB = ram[field][address];
+            var data = ram[address] & Masks.MEM_WORD;
 
             if (Log.IsEnabled(Serilog.Events.LogEventLevel.Verbose))
             {
-                Log.Verbose($"[Read]: ({field.ToOctalString(1)}){address.ToOctalString()}:{MB.ToOctalString()}");
+                Log.Verbose($"[Read]: {address.ToOctalString(5)}:{data.ToOctalString()}");
             }
 
-            return MB;
+            return data;
         }
 
-        public uint Read(uint field, uint address, bool indirect = false)
+        public uint Read(uint address, bool indirect = false)
         {
-            if (indirect && (address >= 8) && (address <= 15))
+            if (indirect && ((address & Masks.MEM_WORD) <= Masks.MEM_AUTO_INC_FLAG))
             {
-                Write(field, address, Examine(field, address) + 1);
-            }
-            else
-            {
-                Examine(field, address);
+                return Write(address, Examine(address) + 1);
             }
 
-            return MB;
+            return Examine(address);
         }
 
-        public void Write(uint field, uint address, uint data)
+        public uint Write(uint address, uint data)
         {
-            MB = data & Masks.MEM_WORD;
+            var value = data & Masks.MEM_WORD;
 
-            ram[field][address] = MB;
+            ram[address] = value;
 
             if (Log.IsEnabled(Serilog.Events.LogEventLevel.Verbose))
             {
-                Log.Verbose($"[Write]: ({field.ToOctalString(1)}){address.ToOctalString()}:{MB.ToOctalString()}");
+                Log.Verbose($"[Write]: {address.ToOctalString(5)}:{value.ToOctalString()}");
             }
-        }
 
-        public override string ToString()
-        {
-            return string.Format($"[RAM] {MB.ToOctalString()}");
+            return value;
         }
     }
 }

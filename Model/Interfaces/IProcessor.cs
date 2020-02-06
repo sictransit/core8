@@ -34,9 +34,9 @@
 
         bool InterruptsInhibited { get; }
 
-        IInstruction Debug8(uint field, uint address);
+        IInstruction Debug8(uint address);
 
-        IInstruction Debug10(uint field, uint address);
+        IInstruction Debug10(uint address);
 
         void SingleStep(bool state);
     }

@@ -5,13 +5,11 @@ namespace Core8.Model.Register
 {
     public class InstructionFieldProgramCounter : RegisterBase
     {
+        public uint IF_PC => Data & (Masks.IF | Masks.MEM_WORD);
+
         public uint Address => Data & Masks.MEM_WORD;
 
         public uint IF => (Data & Masks.IF) >> 12;
-
-        public uint Page => (Data & Masks.ADDRESS_PAGE) >> 7;
-
-        public uint Word => Data & Masks.ADDRESS_WORD;
 
         protected override string ShortName => "PC";
 
@@ -30,9 +28,14 @@ namespace Core8.Model.Register
             Set((Data & Masks.IF) | (address & Masks.MEM_WORD));
         }
 
+        public void Jump(uint address)
+        {
+            Set(address & (Masks.IF | Masks.MEM_WORD));
+        }
+
         public override string ToString()
         {
-            return string.Format($"{base.ToString()} ({IF.ToOctalString(1)}){Address.ToOctalString()}");
+            return string.Format($"{base.ToString()} {IF_PC.ToOctalString(5)}");
         }
     }
 }

@@ -158,7 +158,7 @@ namespace Core8
                 InterruptsEnabled = true;
             }
 
-            var instruction = Fetch(registers.IF_PC.IF, registers.IF_PC.Address);
+            var instruction = Fetch(registers.IF_PC.IF_PC);
 
             registers.IF_PC.Increment();
 
@@ -182,7 +182,7 @@ namespace Core8
                 Log.Debug("Interrupt!");
             }
 
-            memory.Write(0, 0, registers.IF_PC.Address); // JMS 0000
+            memory.Write(0, registers.IF_PC.Address); // JMS 0000
 
             registers.SF.SetIF(registers.IF_PC.IF);
             registers.SF.SetDF(registers.DF.Data);
@@ -200,23 +200,23 @@ namespace Core8
             DisableInterrupts();
         }
 
-        public IInstruction Debug8(uint field, uint address)
+        public IInstruction Debug8(uint address)
         {
-            return Debug10(field.ToDecimal(), address.ToDecimal());
+            return Debug10(address.ToDecimal());
         }
 
-        public IInstruction Debug10(uint field, uint address)
+        public IInstruction Debug10(uint address)
         {
-            return Fetch(field, address);
+            return Fetch(address);
         }
 
-        private IInstruction Fetch(uint field, uint address)
+        private IInstruction Fetch(uint address)
         {
-            var data = memory.Read(field, address);
+            var data = memory.Read(address);
 
             var instruction = Decode(data);
 
-            return instruction.Load(field, address, data);
+            return instruction.Load(address, data);
         }
 
         private IInstruction Decode(uint data)
