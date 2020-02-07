@@ -49,7 +49,7 @@ namespace Core8.Model.Instructions
                     Registers.UF.SetUF(Registers.UB.Data);
                 }
 
-                var operand = Indirect ? (Registers.IF_PC.IF << 12) | memory.Read(Location, true) : Location;
+                var operand = Indirect ? Field | memory.Read(Location, true) : Location;
 
 
                 switch (OpCode)

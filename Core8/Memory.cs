@@ -28,7 +28,7 @@ namespace Core8
 
         public uint Read(uint address, bool indirect = false)
         {
-            if (indirect && ((address & Masks.MEM_WORD) <= Masks.MEM_AUTO_INC_FLAG))
+            if (indirect && ((address & Masks.MEM_WORD) >= 8) && ((address & Masks.MEM_WORD) <= 15))
             {
                 return Write(address, Examine(address) + 1);
             }
