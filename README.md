@@ -17,7 +17,10 @@ The following MAINDEC diagnostics have been tested and run successfully:
  * `MAINDEC-8E-D0JC-PB`: Random JMP-JMS Test 
  * `MAINDEC-8E-D1EC-PB`: Memory Address Test 
 
-32 kW extended memory is still in early alpha, so related tests are failing spectacularly.
+32 kW extended memory and time-sharing (KM8-E) is also coming along:
+
+ * `MAINDEC-8E-D1FB-PB`: Extended Memory Address Test
+ * `MAINDEC-8E-D1HA-PB`: Memory Extension and Time Share Control Test
  
 As a bonus, the emulator is stable enough to run [TINT8](https://github.com/PontusPih/TINT8), the PDP-8 version of a popular tile-matching puzzle video game.
 
