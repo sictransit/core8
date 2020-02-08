@@ -3,15 +3,15 @@ using Core8.Model.Interfaces;
 
 namespace Core8.Model.Instructions
 {
-    public class NoOperationInstruction : InstructionsBase
+    public class PrivilegedNoOperationInstruction : PrivilegedInstructionsBase
     {
-        public NoOperationInstruction(IProcessor processor) : base(processor)
+        public PrivilegedNoOperationInstruction(IProcessor processor) : base(processor)
         {
         }
 
         protected override string OpCodeText => "NOP";
 
-        public override void Execute()
+        protected override void PrivilegedExecute()
         {
         }
     }

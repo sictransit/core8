@@ -6,7 +6,7 @@ namespace Core8.Model.Instructions
 {
     public class Group1Instructions : InstructionsBase
     {
-        public Group1Instructions(IRegisters registers) : base(registers)
+        public Group1Instructions(IProcessor processor) : base(processor)
         {
         }
 
@@ -18,52 +18,52 @@ namespace Core8.Model.Instructions
         {
             if (OpCodes.HasFlag(Group1OpCodes.CLA))
             {
-                Registers.LINK_AC.ClearAccumulator();
+                Register.LINK_AC.ClearAccumulator();
             }
 
             if (OpCodes.HasFlag(Group1OpCodes.CLL))
             {
-                Registers.LINK_AC.ClearLink();
+                Register.LINK_AC.ClearLink();
             }
 
             if (OpCodes.HasFlag(Group1OpCodes.CMA))
             {
-                Registers.LINK_AC.ComplementAccumulator();
+                Register.LINK_AC.ComplementAccumulator();
             }
 
             if (OpCodes.HasFlag(Group1OpCodes.CML))
             {
-                Registers.LINK_AC.ComplementLink();
+                Register.LINK_AC.ComplementLink();
             }
 
             if (OpCodes.HasFlag(Group1OpCodes.IAC))
             {
-                Registers.LINK_AC.IncrementWithCarry();
+                Register.LINK_AC.IncrementWithCarry();
             }
 
             if (OpCodes.HasFlag(Group1OpCodes.RAR))
             {
-                Registers.LINK_AC.RAR();
+                Register.LINK_AC.RAR();
 
                 if (OpCodes.HasFlag(Group1OpCodes.BSW))
                 {
-                    Registers.LINK_AC.RAR();
+                    Register.LINK_AC.RAR();
                 }
             }
 
             if (OpCodes.HasFlag(Group1OpCodes.RAL))
             {
-                Registers.LINK_AC.RAL();
+                Register.LINK_AC.RAL();
 
                 if (OpCodes.HasFlag(Group1OpCodes.BSW))
                 {
-                    Registers.LINK_AC.RAL();
+                    Register.LINK_AC.RAL();
                 }
             }
 
             if (OpCodes.HasFlag(Group1OpCodes.BSW) && !OpCodes.HasFlag(Group1OpCodes.RAR) && !OpCodes.HasFlag(Group1OpCodes.RAL))
             {
-                Registers.LINK_AC.ByteSwap();
+                Register.LINK_AC.ByteSwap();
             }
         }
     }

@@ -12,17 +12,7 @@ namespace Core8
     {
         private volatile bool running = false;
 
-        private bool interruptDelay = false;
-
-        private bool userInterruptRequested = false;
-
         private bool singleStep = false;
-
-        private readonly IMemory memory;
-
-        private readonly IRegisters registers;
-
-        private readonly ITeleprinter teleprinter;
 
         private readonly HashSet<uint> breakpoints = new HashSet<uint>();
 
@@ -36,34 +26,37 @@ namespace Core8
         private readonly TeleprinterInstructions teleprinterInstructions;
         private readonly InterruptInstructions interruptInstructions;
         private readonly NoOperationInstruction noOperationInstruction;
+        private readonly PrivilegedNoOperationInstruction privilegedNoOperationInstruction;
 
         public Processor(IMemory memory, IRegisters registers, ITeleprinter teleprinter)
         {
-            this.memory = memory ?? throw new ArgumentNullException(nameof(memory));
-            this.registers = registers ?? throw new ArgumentNullException(nameof(registers));
-            this.teleprinter = teleprinter ?? throw new ArgumentNullException(nameof(teleprinter));
+            Memory = memory ?? throw new ArgumentNullException(nameof(memory));
+            Teleprinter = teleprinter ?? throw new ArgumentNullException(nameof(teleprinter));
+            Registers = registers ?? throw new ArgumentNullException(nameof(registers));
 
-            group1Instructions = new Group1Instructions(registers);
-            group2ANDInstructions = new Group2ANDInstructions(this, registers);
-            group2ORInstructions = new Group2ORInstructions(this, registers);
-            group3Instructions = new Group3Instructions(registers);
-            memoryReferenceInstructions = new MemoryReferenceInstructions(this, memory, registers);
-            memoryManagementInstructions = new MemoryManagementInstructions(this, memory, registers);
-            keyboardInstructions = new KeyboardInstructions(registers, teleprinter);
-            teleprinterInstructions = new TeleprinterInstructions(registers, teleprinter);
-            interruptInstructions = new InterruptInstructions(this, registers);
-            noOperationInstruction = new NoOperationInstruction(registers);
+            Interrupts = new Interrupts(registers, memory, teleprinter);
+
+            group1Instructions = new Group1Instructions(this);
+            group3Instructions = new Group3Instructions(this);
+            memoryReferenceInstructions = new MemoryReferenceInstructions(this);
+            noOperationInstruction = new NoOperationInstruction(this);
+
+            group2ANDInstructions = new Group2ANDInstructions(this);
+            group2ORInstructions = new Group2ORInstructions(this);
+            memoryManagementInstructions = new MemoryManagementInstructions(this);
+            keyboardInstructions = new KeyboardInstructions(this);
+            teleprinterInstructions = new TeleprinterInstructions(this);
+            interruptInstructions = new InterruptInstructions(this);
+            privilegedNoOperationInstruction = new PrivilegedNoOperationInstruction(this);
         }
 
-        public bool InterruptsEnabled { get; private set; }
+        public IInterrupts Interrupts { get; private set; }
 
-        public bool InterruptPending => InterruptsEnabled | interruptDelay;
+        public IRegisters Registers { get; private set; }
 
-        public bool InterruptRequested => teleprinter.InterruptRequested | userInterruptRequested;
+        public ITeleprinter Teleprinter { get; private set; }
 
-        public bool InterruptsInhibited { get; private set; }
-
-        public bool UserInterruptRequested => userInterruptRequested;
+        public IMemory Memory { get; private set; }
 
         public void SingleStep(bool state)
         {
@@ -72,10 +65,10 @@ namespace Core8
 
         public void Clear()
         {
-            teleprinter.Clear();
-            registers.LINK_AC.Clear();
-            userInterruptRequested = false;
-            DisableInterrupts();
+            Teleprinter.Clear();
+            Registers.LINK_AC.Clear();
+            Interrupts.ClearUser();
+            Interrupts.Disable();
         }
 
         public void Halt()
@@ -83,62 +76,15 @@ namespace Core8
             running = false;
         }
 
-        public void EnableInterrupts(bool delay = true)
-        {
-            if (Log.IsEnabled(Serilog.Events.LogEventLevel.Debug))
-            {
-                Log.Debug($"Interrupts enabled (delay: {delay}, irq: {InterruptRequested})");
-            }
-
-            if (delay)
-            {
-                interruptDelay = true;
-            }
-            else
-            {
-                InterruptsEnabled = true;
-            }
-        }
-
-        public void DisableInterrupts()
-        {
-            if (Log.IsEnabled(Serilog.Events.LogEventLevel.Debug))
-            {
-                Log.Debug($"Interrupts disbled (irq: {InterruptRequested})");
-            }
-
-            InterruptsEnabled = false;
-        }
-
-        public void InhibitInterrupts()
-        {
-            if (Log.IsEnabled(Serilog.Events.LogEventLevel.Debug))
-            {
-                Log.Debug($"Interrupts inhibited (irq: {InterruptRequested})");
-            }
-
-            InterruptsInhibited = true;
-        }
-
-        public void ResumeInterrupts()
-        {
-            if (Log.IsEnabled(Serilog.Events.LogEventLevel.Debug))
-            {
-                Log.Debug($"Interrupts resumed (irq: {InterruptRequested})");
-            }
-
-            InterruptsInhibited = false;
-        }
-
         public void Run()
         {
             running = true;
 
-            Log.Information($"CONT @ {registers.IF_PC}");
+            Log.Information($"CONT @ {Registers.IF_PC}");
 
             while (running)
             {
-                if (breakpoints.Contains(registers.IF_PC.Data))
+                if (breakpoints.Contains(Registers.IF_PC.Data))
                 {
                     Log.Information($"Breakpoint hit!");
 
@@ -164,30 +110,16 @@ namespace Core8
 
             running = false;
 
-            Log.Information($"HLT @ {registers.IF_PC}");
+            Log.Information($"HLT @ {Registers.IF_PC}");
         }
 
         public void FetchAndExecute()
         {
-            if (InterruptsEnabled && InterruptRequested && !InterruptsInhibited)
-            {
-                Interrupt();
-            }
+            Interrupts.Interrupt();
 
-            if (interruptDelay)
-            {
-                interruptDelay = false;
-                InterruptsEnabled = true;
+            var instruction = Fetch(Registers.IF_PC.IF_PC);
 
-                if (Log.IsEnabled(Serilog.Events.LogEventLevel.Debug))
-                {
-                    Log.Debug($"Interrupts enabled (irq: {InterruptRequested})");
-                }
-            }
-
-            var instruction = Fetch(registers.IF_PC.IF_PC);
-
-            registers.IF_PC.Increment();
+            Registers.IF_PC.Increment();
 
             if (Log.IsEnabled(Serilog.Events.LogEventLevel.Debug))
             {
@@ -195,41 +127,6 @@ namespace Core8
             }
 
             instruction.Execute();
-
-            if (instruction.UserModeInterrupt)
-            {
-                userInterruptRequested = true;
-
-                if (Log.IsEnabled(Serilog.Events.LogEventLevel.Debug))
-                {
-                    Log.Debug($"User interrupt set (irq: {InterruptRequested})");
-                }
-            }
-        }
-
-        private void Interrupt()
-        {
-            if (Log.IsEnabled(Serilog.Events.LogEventLevel.Debug))
-            {
-                Log.Debug("Interrupt!");
-            }
-
-            memory.Write(0, registers.IF_PC.Address); // JMS 0000
-
-            registers.SF.SetIF(registers.IF_PC.IF);
-            registers.SF.SetDF(registers.DF.Data);
-            registers.SF.SetUF(registers.UF.Data);
-
-            registers.DF.Clear();
-            registers.IB.Clear();
-            registers.UF.Clear();
-            registers.UB.Clear();
-
-            registers.IF_PC.SetIF(0);
-
-            registers.IF_PC.SetPC(1);
-
-            DisableInterrupts();
         }
 
         public IInstruction Debug8(uint address)
@@ -244,7 +141,7 @@ namespace Core8
 
         private IInstruction Fetch(uint address)
         {
-            var data = memory.Read(address);
+            var data = Memory.Read(address);
 
             var instruction = Decode(data);
 
@@ -264,7 +161,7 @@ namespace Core8
                 Masks.IOT when (data & Masks.INTERRUPT_MASK) == 0 => interruptInstructions,
                 Masks.IOT when (data & Masks.IO) >> 3 == 3 => keyboardInstructions,
                 Masks.IOT when (data & Masks.IO) >> 3 == 4 => teleprinterInstructions,
-                Masks.IOT => noOperationInstruction,
+                Masks.IOT => privilegedNoOperationInstruction,
                 _ => memoryReferenceInstructions,
             };
         }
@@ -284,16 +181,6 @@ namespace Core8
         public void RemoveAllBreakpoints()
         {
             breakpoints.Clear();
-        }
-
-        public void ClearUserInterrupt()
-        {
-            userInterruptRequested = false;
-
-            if (Log.IsEnabled(Serilog.Events.LogEventLevel.Debug))
-            {
-                Log.Debug($"User interrupt cleared (irq: {InterruptRequested})");
-            }
         }
     }
 }

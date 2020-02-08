@@ -5,15 +5,11 @@ using System;
 
 namespace Core8.Model.Instructions
 {
-    public class MemoryManagementInstructions : InstructionsBase
+    public class MemoryManagementInstructions : PrivilegedInstructionsBase
     {
-        private readonly IProcessor processor;
-        private readonly IMemory memory;
-
-        public MemoryManagementInstructions(IProcessor processor, IMemory memory, IRegisters registers) : base(registers)
+        public MemoryManagementInstructions(IProcessor processor) : base(processor)
         {
-            this.processor = processor;
-            this.memory = memory;
+
         }
 
         protected override string OpCodeText => IsReadInstruction ? ReadOpCode.ToString() : ChangeOpCodes.ToString();
@@ -24,16 +20,8 @@ namespace Core8.Model.Instructions
 
         private bool IsReadInstruction => (Data & Masks.MEM_MGMT_READ) == Masks.MEM_MGMT_READ;
 
-        public override void Execute()
+        protected override void PrivilegedExecute()
         {
-            if (UserMode)
-            {
-                UserModeInterrupt = true;
-                return;
-            }
-
-            UserModeInterrupt = false;
-
             if (IsReadInstruction)
             {
                 switch (ReadOpCode)
@@ -71,69 +59,69 @@ namespace Core8.Model.Instructions
             {
                 if (ChangeOpCodes.HasFlag(MemoryManagementChangeOpCodes.CDF))
                 {
-                    Registers.DF.SetDF(Data >> 3);
+                    Register.DF.SetDF(Data >> 3);
                 }
 
                 if (ChangeOpCodes.HasFlag(MemoryManagementChangeOpCodes.CIF))
                 {
-                    Registers.IB.SetIB(Data >> 3);
+                    Register.IB.SetIB(Data >> 3);
 
-                    processor.InhibitInterrupts();
+                    Interrupts.Suspend();
                 }
             }
         }
 
         private void CINT()
         {
-            processor.ClearUserInterrupt();
+            Interrupts.ClearUser();
         }
 
         private void RDF()
         {
-            Registers.LINK_AC.ORAccumulator(Registers.DF.Data << 3);
+            Register.LINK_AC.ORAccumulator(Register.DF.Data << 3);
         }
 
         private void RIB()
         {
-            Registers.LINK_AC.ORAccumulator(Registers.SF.Data & (Masks.SF_UF | Masks.SF_IF | Masks.SF_DF));
-
-            //Registers.LINK_AC.ORAccumulator(Registers.SF.Data & (Masks.SF_IF | Masks.SF_DF));
+            Register.LINK_AC.ORAccumulator(Register.SF.Data & (Masks.SF_UF | Masks.SF_IF | Masks.SF_DF));
         }
 
         private void RIF()
         {
-            Registers.LINK_AC.ORAccumulator(Registers.IF_PC.IF << 3);
+            Register.LINK_AC.ORAccumulator(Register.IF_PC.IF << 3);
         }
 
         private void RMF()
         {
-            Registers.IB.SetIB(Registers.SF.IF);
-            Registers.DF.SetDF(Registers.SF.DF);
-            Registers.UB.SetUB(Registers.SF.UF);
+            var sf = Register.SF;
 
-            processor.InhibitInterrupts();
+            Register.IB.SetIB(sf.IF);
+            Register.DF.SetDF(sf.DF);
+            Register.UB.SetUB(sf.UF);
+
+            Interrupts.Suspend();
         }
 
         private void SINT()
         {
-            if (processor.UserInterruptRequested)
+            if (Interrupts.UserRequested)
             {
-                Registers.IF_PC.Increment();
+                Register.IF_PC.Increment();
             }
         }
 
         private void CUF()
         {
-            Registers.UB.Clear();
+            Register.UB.Clear();
 
-            processor.InhibitInterrupts();
+            Interrupts.Suspend();
         }
 
         private void SUF()
         {
-            Registers.UB.SetUB(1);
+            Register.UB.SetUB(1);
 
-            processor.InhibitInterrupts();
+            Interrupts.Suspend();
         }
     }
 

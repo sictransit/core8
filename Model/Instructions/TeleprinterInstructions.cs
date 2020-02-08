@@ -5,29 +5,18 @@ using System;
 
 namespace Core8.Model.Instructions
 {
-    public class TeleprinterInstructions : InstructionsBase
+    public class TeleprinterInstructions : TeleprinterInstructionsBase
     {
-        private readonly ITeleprinter teleprinter;
-
-        public TeleprinterInstructions(IRegisters registers, ITeleprinter teleprinter) : base(registers)
+        public TeleprinterInstructions(IProcessor processor) : base(processor)
         {
-            this.teleprinter = teleprinter;
         }
 
         protected override string OpCodeText => OpCode.ToString();
 
         private TeleprinterOpCode OpCode => (TeleprinterOpCode)(Data & Masks.IO_OPCODE);
 
-        public override void Execute()
+        protected override void PrivilegedExecute()
         {
-            if (UserMode)
-            {
-                UserModeInterrupt = true;
-                return;
-            }
-
-            UserModeInterrupt = false;
-
             switch (OpCode)
             {
                 case TeleprinterOpCode.TFL:
@@ -52,39 +41,39 @@ namespace Core8.Model.Instructions
 
         private void TFL()
         {
-            teleprinter.SetOutputFlag();
+            Teleprinter.SetOutputFlag();
         }
 
         private void TLS()
         {
-            var c = Registers.LINK_AC.Accumulator & Masks.TELEPRINTER_BUFFER_MASK;
+            var c = Register.LINK_AC.Accumulator & Masks.TELEPRINTER_BUFFER_MASK;
 
-            teleprinter.Type((byte)c);
+            Teleprinter.Type((byte)c);
 
-            teleprinter.ClearOutputFlag();
+            Teleprinter.ClearOutputFlag();
 
-            teleprinter.InitiateOutput();
+            Teleprinter.InitiateOutput();
         }
 
         private void TCF()
         {
-            teleprinter.ClearOutputFlag();
+            Teleprinter.ClearOutputFlag();
         }
 
         private void TPC()
         {
-            var c = Registers.LINK_AC.Accumulator & Masks.TELEPRINTER_BUFFER_MASK;
+            var c = Register.LINK_AC.Accumulator & Masks.TELEPRINTER_BUFFER_MASK;
 
-            teleprinter.Type((byte)c);
+            Teleprinter.Type((byte)c);
 
-            teleprinter.InitiateOutput();
+            Teleprinter.InitiateOutput();
         }
 
         private void TSF()
         {
-            if (teleprinter.OutputFlag)
+            if (Teleprinter.OutputFlag)
             {
-                Registers.IF_PC.Increment();
+                Register.IF_PC.Increment();
             }
         }
     }

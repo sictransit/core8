@@ -9,7 +9,7 @@ namespace Core8.Tests.MAINDEC
     {
         protected override string TapeName => @"MAINDEC/tapes/MAINDEC-8E-D1EC-PB.bin";
 
-        protected override string[] ExpectedOutput => new[] { "EC\r\nEC" };
+        protected override string[] ExpectedOutput => new[] { "\r\nEC" };
 
         protected override TimeSpan MaxRunningTime => TimeSpan.FromSeconds(20);
 

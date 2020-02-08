@@ -10,7 +10,7 @@ namespace Core8.Tests.MAINDEC
 
         protected override string[] UnexpectedOutput => new[] { "PR LOC   ADDR   GOOD  BAD  TEST" };
 
-        protected override string[] ExpectedOutput => new[] { "5\r\n5" };
+        protected override string[] ExpectedOutput => new[] { "\r\n5" };
 
         [TestMethod]
         public void RunTest()
@@ -19,8 +19,8 @@ namespace Core8.Tests.MAINDEC
 
             PDP.Continue();
 
-            Assert.IsTrue(PDP.Teleprinter.Printout.Contains("EA8-E EXT MEM ADDR TEST"));
-            Assert.IsTrue(PDP.Teleprinter.Printout.Contains("SETUP SR & CONT"));
+            Assert.IsTrue(PDP.Processor.Teleprinter.Printout.Contains("EA8-E EXT MEM ADDR TEST"));
+            Assert.IsTrue(PDP.Processor.Teleprinter.Printout.Contains("SETUP SR & CONT"));
 
             PDP.Toggle8(0007);
 

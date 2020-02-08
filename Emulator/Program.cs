@@ -38,7 +38,7 @@ namespace Core8
 
         public static void TestBIN(PDP pdp)
         {
-            var adapter = new MQRelay(pdp.Teleprinter);
+            var adapter = new MQRelay(pdp.Processor.Teleprinter);
 
             pdp.Clear();
 

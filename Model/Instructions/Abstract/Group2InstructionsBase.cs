@@ -3,13 +3,10 @@ using Core8.Model.Interfaces;
 
 namespace Core8.Model.Instructions.Abstract
 {
-    public abstract class Group2InstructionsBase : InstructionsBase
+    public abstract class Group2InstructionsBase : PrivilegedInstructionsBase
     {
-        private readonly IProcessor processor;
-
-        internal Group2InstructionsBase(IProcessor processor, IRegisters registers) : base(registers)
+        internal Group2InstructionsBase(IProcessor processor) : base(processor)
         {
-            this.processor = processor;
         }
 
         protected override string OpCodeText => OpCodes != 0 ? OpCodes.ToString() : string.Empty;
@@ -18,22 +15,22 @@ namespace Core8.Model.Instructions.Abstract
 
         public override void Execute()
         {
-            if (OpCodes != 0 && UserMode)
+            if (OpCodes != 0)
             {
-                UserModeInterrupt = true;
-                return;
+                base.Execute();
             }
+        }
 
-            UserModeInterrupt = false;
-
+        protected override void PrivilegedExecute()
+        {
             if (OpCodes.HasFlag(Group2PrivilegedOpCodes.OSR))
             {
-                Registers.LINK_AC.ORAccumulator(Registers.SR.Get);
+                Processor.Registers.LINK_AC.ORAccumulator(Processor.Registers.SR.Get);
             }
 
             if (OpCodes.HasFlag(Group2PrivilegedOpCodes.HLT))
             {
-                processor.Halt();
+                Processor.Halt();
             }
         }
     }

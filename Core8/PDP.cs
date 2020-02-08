@@ -15,14 +15,11 @@ namespace Core8
 
         public PDP()
         {
-            Memory = new Memory();
-            Registers = new Registers();
-            Teleprinter = new Teleprinter();
+            Processor = new Processor(new Memory(), new Registers(), new Teleprinter());
 
-            relay = new MQRelay(Teleprinter);
+            relay = new MQRelay(Processor.Teleprinter);
+
             relay.Start();
-
-            Processor = new Processor(Memory, Registers, Teleprinter);
 
             ToggleRIMAndBinLoader();
         }
@@ -30,12 +27,6 @@ namespace Core8
         public bool Running => cpuThread != null && cpuThread.IsAlive;
 
         public IProcessor Processor { get; }
-
-        public ITeleprinter Teleprinter { get; }
-
-        public IRegisters Registers { get; }
-
-        public IMemory Memory { get; }
 
         private void ToggleRIMAndBinLoader()
         {
@@ -175,7 +166,7 @@ namespace Core8
                 }
             };
 
-            for (uint address = 0; address < Memory.Size; address++)
+            for (uint address = 0; address < Processor.Memory.Size; address++)
             {
                 var instruction = Processor.Debug10(address);
 
@@ -221,20 +212,20 @@ namespace Core8
 
         public void Deposit10(uint data)
         {
-            Registers.SR.SetSR(data);
+            Processor.Registers.SR.SetSR(data);
 
             Deposit();
         }
 
         private void Deposit()
         {
-            var data = Registers.SR.Get;
+            var data = Processor.Registers.SR.Get;
 
-            Memory.Write(Registers.IF_PC.Address, data);
+            Processor.Memory.Write(Processor.Registers.IF_PC.Address, data);
 
-            Log.Information($"DEP: {Registers.IF_PC} {data.ToOctalString()}");
+            Log.Information($"DEP: {Processor.Registers.IF_PC} {data.ToOctalString()}");
 
-            Registers.IF_PC.Increment();
+            Processor.Registers.IF_PC.Increment();
         }
 
         public void Load8(uint address)
@@ -244,18 +235,18 @@ namespace Core8
 
         public void Load10(uint address)
         {
-            Registers.SR.SetSR(address);
+            Processor.Registers.SR.SetSR(address);
 
             Load();
         }
 
         private void Load()
         {
-            var address = Registers.SR.Get;
+            var address = Processor.Registers.SR.Get;
 
-            Registers.IF_PC.SetPC(address);
+            Processor.Registers.IF_PC.SetPC(address);
 
-            Log.Information($"LOAD: {Registers.IF_PC}");
+            Log.Information($"LOAD: {Processor.Registers.IF_PC}");
         }
 
         public void Toggle8(uint word)
@@ -265,7 +256,7 @@ namespace Core8
 
         public void Toggle10(uint word)
         {
-            Registers.SR.SetSR(word);
+            Processor.Registers.SR.SetSR(word);
         }
 
         public void SetBreakpoint8(uint address)
@@ -285,9 +276,9 @@ namespace Core8
 
         public void Exam()
         {
-            Registers.LINK_AC.SetAccumulator(Memory.Read(Registers.IF_PC.Address));
+            Processor.Registers.LINK_AC.SetAccumulator(Processor.Memory.Read(Processor.Registers.IF_PC.Address));
 
-            Log.Information($"EXAM: {Registers.LINK_AC}");
+            Log.Information($"EXAM: {Processor.Registers.LINK_AC}");
         }
 
         public void Continue(bool waitForHalt = true)
@@ -328,7 +319,7 @@ namespace Core8
                 throw new ArgumentNullException(nameof(tape));
             }
 
-            Teleprinter.MountPaperTape(tape);
+            Processor.Teleprinter.MountPaperTape(tape);
 
             Log.Information($"TAPE: loaded {tape.Length} bytes");
         }

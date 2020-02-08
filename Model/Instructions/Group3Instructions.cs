@@ -6,7 +6,7 @@ namespace Core8.Model.Instructions
 {
     public class Group3Instructions : InstructionsBase
     {
-        public Group3Instructions(IRegisters registers) : base(registers)
+        public Group3Instructions(IProcessor processor) : base(processor)
         {
         }
 
@@ -18,28 +18,28 @@ namespace Core8.Model.Instructions
         {
             if (OpCodes.HasFlag(Group3OpCodes.CLA))
             {
-                Registers.LINK_AC.ClearAccumulator();
+                Register.LINK_AC.ClearAccumulator();
             }
 
             if (OpCodes.HasFlag(Group3OpCodes.SWP))
             {
-                var mq = Registers.MQ.Get;
+                var mq = Register.MQ.Get;
 
-                Registers.MQ.SetMQ(Registers.LINK_AC.Accumulator);
-                Registers.LINK_AC.SetAccumulator(mq);
+                Register.MQ.SetMQ(Register.LINK_AC.Accumulator);
+                Register.LINK_AC.SetAccumulator(mq);
             }
             else
             {
                 if (OpCodes.HasFlag(Group3OpCodes.MQA))
                 {
-                    Registers.LINK_AC.ORAccumulator(Registers.MQ.Get);
+                    Register.LINK_AC.ORAccumulator(Register.MQ.Get);
                 }
 
                 if (OpCodes.HasFlag(Group3OpCodes.MQL))
                 {
-                    Registers.MQ.SetMQ(Registers.LINK_AC.Accumulator);
+                    Register.MQ.SetMQ(Register.LINK_AC.Accumulator);
 
-                    Registers.LINK_AC.ClearAccumulator();
+                    Register.LINK_AC.ClearAccumulator();
                 }
             }
         }

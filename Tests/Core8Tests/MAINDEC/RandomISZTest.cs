@@ -8,7 +8,7 @@ namespace Core8.Tests.MAINDEC
     {
         protected override string TapeName => @"MAINDEC/tapes/MAINDEC-8E-D0FC-PB.bin";
 
-        protected override string[] ExpectedOutput => new[] { "\r\nFC\u007f\r\nFC\u007f\r\nFC\u007f\r\nFC\u007f\r\nFC\u007f" };
+        protected override string[] ExpectedOutput => new[] { "\r\nFC" };
 
         [TestMethod]
         public void RunTest()

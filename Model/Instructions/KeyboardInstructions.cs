@@ -5,29 +5,19 @@ using System;
 
 namespace Core8.Model.Instructions
 {
-    public class KeyboardInstructions : InstructionsBase
+    public class KeyboardInstructions : TeleprinterInstructionsBase
     {
-        private readonly ITeleprinter teleprinter;
-
-        public KeyboardInstructions(IRegisters registers, ITeleprinter teleprinter) : base(registers)
+        public KeyboardInstructions(IProcessor processor) : base(processor)
         {
-            this.teleprinter = teleprinter;
+
         }
 
         protected override string OpCodeText => OpCode.ToString();
 
         private KeyboardOpCode OpCode => (KeyboardOpCode)(Data & Masks.IO_OPCODE);
 
-        public override void Execute()
+        protected override void PrivilegedExecute()
         {
-            if (UserMode)
-            {
-                UserModeInterrupt = true;
-                return;
-            }
-
-            UserModeInterrupt = false;
-
             switch (OpCode)
             {
                 case KeyboardOpCode.KCC:
@@ -55,38 +45,38 @@ namespace Core8.Model.Instructions
 
         private void KCC()
         {
-            Registers.LINK_AC.ClearAccumulator();
+            Register.LINK_AC.ClearAccumulator();
 
-            teleprinter.ClearInputFlag();
+            Teleprinter.ClearInputFlag();
         }
 
         private void KCF()
         {
-            teleprinter.ClearInputFlag();
+            Teleprinter.ClearInputFlag();
         }
 
         private void KRB()
         {
-            Registers.LINK_AC.SetAccumulator(teleprinter.InputBuffer);
+            Register.LINK_AC.SetAccumulator(Teleprinter.InputBuffer);
 
-            teleprinter.ClearInputFlag();
+            Teleprinter.ClearInputFlag();
         }
 
         private void KRS()
         {
-            Registers.LINK_AC.ORAccumulator(teleprinter.InputBuffer);
+            Register.LINK_AC.ORAccumulator(Teleprinter.InputBuffer);
         }
 
         private void KIE()
         {
-            teleprinter.SetDeviceControls(Registers.LINK_AC.Accumulator);
+            Teleprinter.SetDeviceControls(Register.LINK_AC.Accumulator);
         }
 
         private void KSF()
         {
-            if (teleprinter.InputFlag)
+            if (Teleprinter.InputFlag)
             {
-                Registers.IF_PC.Increment();
+                Register.IF_PC.Increment();
             }
         }
     }

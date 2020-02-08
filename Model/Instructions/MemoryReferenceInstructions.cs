@@ -9,13 +9,9 @@ namespace Core8.Model.Instructions
 {
     public class MemoryReferenceInstructions : InstructionsBase
     {
-        private readonly IProcessor processor;
-        private readonly IMemory memory;
-
-        public MemoryReferenceInstructions(IProcessor processor, IMemory memory, IRegisters registers) : base(registers)
+        public MemoryReferenceInstructions(IProcessor processor) : base(processor)
         {
-            this.processor = processor;
-            this.memory = memory;
+
         }
 
         private MemoryReferenceOpCode OpCode => (MemoryReferenceOpCode)(Data & Masks.OP_CODE);
@@ -36,20 +32,21 @@ namespace Core8.Model.Instructions
 
         public uint Location => Field | (Zero ? Word : (Page | Word));
 
+        private IMemory Memory => Processor.Memory;
+
         public override void Execute()
         {
             if (OpCode == MemoryReferenceOpCode.JMP || OpCode == MemoryReferenceOpCode.JMS)
             {
-
-                if (processor.InterruptsInhibited)
+                if (Interrupts.Inhibited)
                 {
-                    processor.ResumeInterrupts();
+                    Interrupts.Resume();
 
-                    Registers.IF_PC.SetIF(Registers.IB.Data);
-                    Registers.UF.SetUF(Registers.UB.Data);
+                    Register.IF_PC.SetIF(Register.IB.Data);
+                    Register.UF.SetUF(Register.UB.Data);
                 }
 
-                var operand = Indirect ? Field | memory.Read(Location, true) : Location;
+                var operand = Indirect ? Field | Memory.Read(Location, true) : Location;
 
 
                 switch (OpCode)
@@ -66,7 +63,7 @@ namespace Core8.Model.Instructions
             }
             else
             {
-                var operand = Indirect ? (Registers.DF.Data << 12) | memory.Read(Location, true) : Location;
+                var operand = Indirect ? (Register.DF.Data << 12) | Memory.Read(Location, true) : Location;
 
                 switch (OpCode)
                 {
@@ -90,39 +87,39 @@ namespace Core8.Model.Instructions
 
         private void AND(uint operand)
         {
-            Registers.LINK_AC.ANDAccumulator(memory.Read(operand));
+            Register.LINK_AC.ANDAccumulator(Memory.Read(operand));
         }
 
         private void DCA(uint operand)
         {
-            memory.Write(operand, Registers.LINK_AC.Accumulator);
+            Memory.Write(operand, Register.LINK_AC.Accumulator);
 
-            Registers.LINK_AC.ClearAccumulator();
+            Register.LINK_AC.ClearAccumulator();
         }
 
         private void ISZ(uint operand)
         {
-            if (memory.Write(operand, memory.Read(operand) + 1) == 0)
+            if (Memory.Write(operand, Memory.Read(operand) + 1) == 0)
             {
-                Registers.IF_PC.Increment();
+                Register.IF_PC.Increment();
             }
         }
 
         private void JMP(uint operand)
         {
-            Registers.IF_PC.Jump(operand);
+            Register.IF_PC.Jump(operand);
         }
 
         public void JMS(uint operand)
         {
-            memory.Write(operand, Registers.IF_PC.Address);
+            Memory.Write(operand, Register.IF_PC.Address);
 
-            Registers.IF_PC.Jump(operand + 1);
+            Register.IF_PC.Jump(operand + 1);
         }
 
         private void TAD(uint operand)
         {
-            Registers.LINK_AC.AddWithCarry(memory.Read(operand));
+            Register.LINK_AC.AddWithCarry(Memory.Read(operand));
         }
 
         public override string ToString()

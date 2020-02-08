@@ -5,29 +5,18 @@ using System;
 
 namespace Core8.Model.Instructions
 {
-    public class InterruptInstructions : InstructionsBase
+    public class InterruptInstructions : PrivilegedInstructionsBase
     {
-        private readonly IProcessor processor;
-
-        public InterruptInstructions(IProcessor processor, IRegisters registers) : base(registers)
+        public InterruptInstructions(IProcessor processor) : base(processor)
         {
-            this.processor = processor;
         }
 
         protected override string OpCodeText => OpCode.ToString();
 
         private InterruptOpCode OpCode => (InterruptOpCode)(Data & Masks.INTERRUPT_FLAGS);
 
-        public override void Execute()
+        protected override void PrivilegedExecute()
         {
-            if (UserMode)
-            {
-                UserModeInterrupt = true;
-                return;
-            }
-
-            UserModeInterrupt = false;
-
             switch (OpCode)
             {
                 case InterruptOpCode.SKON:
@@ -61,40 +50,40 @@ namespace Core8.Model.Instructions
 
         private void SKON()
         {
-            if (processor.InterruptsEnabled)
+            if (Interrupts.Enabled)
             {
-                Registers.IF_PC.Increment();
+                Register.IF_PC.Increment();
             }
 
-            processor.DisableInterrupts();
+            Interrupts.Disable();
         }
 
         private void ION()
         {
-            processor.EnableInterrupts();
+            Interrupts.Enable();
         }
 
         private void IOF()
         {
-            processor.DisableInterrupts();
+            Interrupts.Disable();
         }
 
         private void SRQ()
         {
-            if (processor.InterruptRequested)
+            if (Interrupts.Requested)
             {
-                Registers.IF_PC.Increment();
+                Register.IF_PC.Increment();
             }
         }
 
         private void GTF()
         {
-            var acc = Registers.LINK_AC.Link << 11;
-            acc |= (uint)(processor.InterruptRequested ? 1 : 0) << 9;
-            acc |= (uint)(processor.InterruptPending ? 1 : 0) << 7;
-            acc |= Registers.SF.Data;
+            var acc = Register.LINK_AC.Link << 11;
+            acc |= (uint)(Interrupts.Requested ? 1 : 0) << 9;
+            acc |= (uint)(Interrupts.Pending ? 1 : 0) << 7;
+            acc |= Register.SF.Data;
 
-            Registers.LINK_AC.SetAccumulator(acc);
+            Register.LINK_AC.SetAccumulator(acc);
         }
 
         private void SGT()
@@ -104,21 +93,21 @@ namespace Core8.Model.Instructions
 
         private void RTF()
         {
-            var acc = Registers.LINK_AC.Accumulator;
+            var acc = Register.LINK_AC.Accumulator;
 
-            Registers.LINK_AC.SetLink((acc >> 11) & Masks.FLAG);
+            Register.LINK_AC.SetLink((acc >> 11) & Masks.FLAG);
 
-            Registers.IB.SetIB(acc >> 3);
-            Registers.DF.SetDF(acc);
-            Registers.UB.SetUB(acc >> 6);
+            Register.IB.SetIB(acc >> 3);
+            Register.DF.SetDF(acc);
+            Register.UB.SetUB(acc >> 6);
 
-            processor.EnableInterrupts(false);
-            processor.InhibitInterrupts();
+            Interrupts.Enable(false);
+            Interrupts.Suspend();
         }
 
         private void CAF()
         {
-            processor.Clear();
+            Processor.Clear();
         }
     }
 }

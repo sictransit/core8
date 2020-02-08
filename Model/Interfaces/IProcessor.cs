@@ -14,30 +14,18 @@
 
         void RemoveAllBreakpoints();
 
-        void EnableInterrupts(bool delay = true);
-
-        void DisableInterrupts();
-
-        void InhibitInterrupts();
-
-        void ResumeInterrupts();
-
-        void ClearUserInterrupt();
-
-        bool InterruptsEnabled { get; }
-
-        bool InterruptPending { get; }
-
-        bool InterruptRequested { get; }
-
-        bool UserInterruptRequested { get; }
-
-        bool InterruptsInhibited { get; }
-
         IInstruction Debug8(uint address);
 
         IInstruction Debug10(uint address);
 
         void SingleStep(bool state);
+
+        IInterrupts Interrupts { get; }
+
+        IRegisters Registers { get; }
+
+        IMemory Memory { get; }
+
+        ITeleprinter Teleprinter { get; }
     }
 }

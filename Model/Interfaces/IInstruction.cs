@@ -9,7 +9,5 @@
         IInstruction Load(uint address, uint data);
 
         void Execute();
-
-        bool UserModeInterrupt { get; }
     }
 }

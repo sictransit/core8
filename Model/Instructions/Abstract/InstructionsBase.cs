@@ -5,9 +5,9 @@ namespace Core8.Model.Instructions.Abstract
 {
     public abstract class InstructionsBase : IInstruction
     {
-        protected InstructionsBase(IRegisters registers)
+        protected InstructionsBase(IProcessor processor)
         {
-            Registers = registers;
+            Processor = processor;
         }
 
         public uint Address { get; private set; }
@@ -16,13 +16,13 @@ namespace Core8.Model.Instructions.Abstract
 
         public abstract void Execute();
 
-        protected bool UserMode => Registers.UF.Data != 0;
-
-        public bool UserModeInterrupt { get; protected set; }
-
         protected abstract string OpCodeText { get; }
 
-        protected IRegisters Registers { get; }
+        protected IProcessor Processor { get; }
+
+        protected IRegisters Register => Processor.Registers;
+
+        protected IInterrupts Interrupts => Processor.Interrupts;
 
         public IInstruction Load(uint address, uint data)
         {
@@ -34,9 +34,7 @@ namespace Core8.Model.Instructions.Abstract
 
         public override string ToString()
         {
-            var irq = UserModeInterrupt ? " (privileged, interrupt)" : string.Empty;
-
-            return $"{Address.ToOctalString(5)}:{Data.ToOctalString()} {OpCodeText}{irq}";
+            return $"{Address.ToOctalString(5)}:{Data.ToOctalString()} {OpCodeText}";
         }
     }
 }
