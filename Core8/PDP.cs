@@ -191,7 +191,7 @@ namespace Core8
         {
             var data = Registers.SR.Get;
 
-            Memory.Write(Registers.IF_PC.Address, data & Masks.MEM_WORD);
+            Memory.Write(Registers.IF_PC.Address, data);
 
             Log.Information($"DEP: {Registers.IF_PC} {data.ToOctalString()}");
 

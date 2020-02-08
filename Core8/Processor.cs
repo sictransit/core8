@@ -74,7 +74,6 @@ namespace Core8
         {
             teleprinter.Clear();
             registers.LINK_AC.Clear();
-            registers.MQ.Clear();
             userInterruptRequested = false;
             DisableInterrupts();
         }
@@ -100,21 +99,30 @@ namespace Core8
 
         public void DisableInterrupts()
         {
-            Log.Debug($"Interrupts disbled (irq: {InterruptRequested})");
+            if (Log.IsEnabled(Serilog.Events.LogEventLevel.Debug))
+            { 
+                Log.Debug($"Interrupts disbled (irq: {InterruptRequested})"); 
+            }
 
             InterruptsEnabled = false;
         }
 
         public void InhibitInterrupts()
         {
-            Log.Debug($"Interrupts inhibited (irq: {InterruptRequested})");
+            if (Log.IsEnabled(Serilog.Events.LogEventLevel.Debug))
+            {
+                Log.Debug($"Interrupts inhibited (irq: {InterruptRequested})");
+            }
 
             InterruptsInhibited = true;
         }
 
         public void ResumeInterrupts()
         {
-            Log.Debug($"Interrupts resumed (irq: {InterruptRequested})");
+            if (Log.IsEnabled(Serilog.Events.LogEventLevel.Debug))
+            { 
+                Log.Debug($"Interrupts resumed (irq: {InterruptRequested})"); 
+            }
 
             InterruptsInhibited = false;
         }
@@ -132,7 +140,16 @@ namespace Core8
                     break;
                 }
 
-                FetchAndExecute();
+                try
+                {
+                    FetchAndExecute();
+                }
+                catch (Exception ex)
+                {
+                    Log.Fatal($"Caught Exception in CPU: {ex.ToString()}");
+
+                    running = false;
+                }                
 
                 if (singleStep)
                 {

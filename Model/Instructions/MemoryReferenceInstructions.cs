@@ -102,7 +102,7 @@ namespace Core8.Model.Instructions
 
         private void ISZ(uint operand)
         {
-            if (memory.Write(operand, (memory.Read(operand) + 1) & Masks.MEM_WORD) == 0)
+            if (memory.Write(operand, memory.Read(operand) + 1) == 0)
             {
                 Registers.IF_PC.Increment();
             }

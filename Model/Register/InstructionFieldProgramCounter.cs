@@ -15,7 +15,7 @@ namespace Core8.Model.Register
 
         public void Increment()
         {
-            SetPC(Address + 1);
+            SetPC(Data + 1);
         }
 
         public void SetIF(uint address)
@@ -30,7 +30,7 @@ namespace Core8.Model.Register
 
         public void Jump(uint address)
         {
-            Set(address & (Masks.IF | Masks.MEM_WORD));
+            SetPC(address);
         }
 
         public override string ToString()

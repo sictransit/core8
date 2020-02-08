@@ -11,7 +11,7 @@ namespace Core8.Tests.MAINDEC
 
         protected override string[] UnexpectedOutput => new[] { "PR LOC   ADDR   GOOD  BAD  TEST" };
 
-        protected override TimeSpan MaxRunningTime => TimeSpan.FromSeconds(600);
+        protected override string[] ExpectedOutput => new[] { "5\r\n5" };
 
         [TestMethod]
         public void RunTest()
