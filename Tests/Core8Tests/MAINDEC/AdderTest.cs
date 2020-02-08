@@ -14,7 +14,7 @@ namespace Core8.Tests.MAINDEC
         protected override TimeSpan MaxRunningTime => TimeSpan.FromSeconds(600);
 
         [TestMethod]
-        public void RunTest()
+        public override void Start()
         {
             PDP.Load8(0200);
 

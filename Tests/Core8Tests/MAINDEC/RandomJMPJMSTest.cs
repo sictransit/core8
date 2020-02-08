@@ -1,6 +1,5 @@
 using Core8.Tests.MAINDEC.Abstract;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
 
 namespace Core8.Tests.MAINDEC
 {
@@ -9,14 +8,12 @@ namespace Core8.Tests.MAINDEC
     {
         protected override string TapeName => @"MAINDEC/tapes/MAINDEC-8E-D0JC-PB.bin";
 
-        protected override string[] ExpectedOutput => new[] { "JC\r\nJC\r\nJC\r\nJC\r\nJC" };
+        protected override string[] ExpectedOutput => new[] { "JC\r\n" };
 
         protected override string[] UnexpectedOutput => new[] { "F " };
 
-        protected override TimeSpan MaxRunningTime => TimeSpan.FromSeconds(20);
-
         [TestMethod]
-        public void RunTest()
+        public override void Start()
         {
             PDP.Load8(0200);
 

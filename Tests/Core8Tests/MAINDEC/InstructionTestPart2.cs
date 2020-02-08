@@ -11,7 +11,7 @@ namespace Core8.Tests.MAINDEC
         protected override string[] ExpectedOutput => new[] { "\u0007" };
 
         [TestMethod]
-        public void RunTest()
+        public override void Start()
         {
             PDP.Load8(0200);
 

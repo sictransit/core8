@@ -1,6 +1,5 @@
 using Core8.Tests.MAINDEC.Abstract;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
 
 namespace Core8.Tests.MAINDEC
 {
@@ -11,10 +10,8 @@ namespace Core8.Tests.MAINDEC
 
         protected override string[] ExpectedOutput => new[] { "\r\nEC" };
 
-        protected override TimeSpan MaxRunningTime => TimeSpan.FromSeconds(20);
-
         [TestMethod]
-        public void RunTest()
+        public override void Start()
         {
             PDP.Load8(0200);
 

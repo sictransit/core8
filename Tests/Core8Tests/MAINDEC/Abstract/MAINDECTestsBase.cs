@@ -17,7 +17,7 @@ namespace Core8.Tests.MAINDEC.Abstract
 
         protected virtual string[] UnexpectedOutput => new string[] { };
 
-        protected virtual TimeSpan MaxRunningTime => TimeSpan.FromSeconds(120);
+        protected virtual TimeSpan MaxRunningTime => TimeSpan.FromSeconds(60);
 
         protected virtual bool ExpectHLT => false;
 
@@ -30,6 +30,8 @@ namespace Core8.Tests.MAINDEC.Abstract
 
             PDP.Clear();
         }
+
+        public abstract void Start();
 
         protected void StartAndWaitForCompletion()
         {

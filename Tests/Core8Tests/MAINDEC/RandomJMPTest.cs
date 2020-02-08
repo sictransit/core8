@@ -8,12 +8,12 @@ namespace Core8.Tests.MAINDEC
     {
         protected override string TapeName => @"MAINDEC/tapes/MAINDEC-8E-D0HC-PB.bin";
 
-        protected override string[] ExpectedOutput => new[] { "HC\r\nHC\r\nHC\r\nHC\r\nHC" };
+        protected override string[] ExpectedOutput => new[] { "HC\r\n" };
 
         protected override string[] UnexpectedOutput => new[] { "Z =" };
 
         [TestMethod]
-        public void RunTest()
+        public override void Start()
         {
             PDP.Load8(0200);
 
