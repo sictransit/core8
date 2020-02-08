@@ -11,8 +11,12 @@ namespace Core8
 
         public Memory(uint fields = 8)
         {
-            ram = new uint[fields*4096];
+            Size = fields * 4096;
+
+            ram = new uint[Size];
         }
+
+        public uint Size { get; private set; }
 
         public uint Examine(uint address)
         {

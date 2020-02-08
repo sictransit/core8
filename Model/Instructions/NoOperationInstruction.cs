@@ -13,7 +13,13 @@ namespace Core8.Model.Instructions
 
         public override void Execute()
         {
+            if (UserMode)
+            {
+                UserModeInterrupt = true;
+                return;
+            }
 
+            UserModeInterrupt = false;
         }
     }
 }

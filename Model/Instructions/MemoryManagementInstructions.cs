@@ -95,7 +95,9 @@ namespace Core8.Model.Instructions
 
         private void RIB()
         {
-            Registers.LINK_AC.ORAccumulator(Registers.SF.Data & (Masks.SF_IF | Masks.SF_DF));
+            Registers.LINK_AC.ORAccumulator(Registers.SF.Data & (Masks.SF_UF | Masks.SF_IF | Masks.SF_DF));
+
+            //Registers.LINK_AC.ORAccumulator(Registers.SF.Data & (Masks.SF_IF | Masks.SF_DF));
         }
 
         private void RIF()

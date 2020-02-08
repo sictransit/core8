@@ -1,8 +1,8 @@
-﻿using Core8.Model;
-using Core8.Model.Extensions;
+﻿using Core8.Model.Extensions;
 using Core8.Model.Interfaces;
 using Serilog;
 using System;
+using System.Text;
 using System.Threading;
 
 namespace Core8
@@ -160,14 +160,53 @@ namespace Core8
             Deposit8(5301); // JMP (7701)
         }
 
-        public void DumpMemory(uint fromAddress = 0, uint toAddress = 4096)
+        public void DumpMemory()
         {
-            for (uint a = fromAddress; a < toAddress; a++)
-            {
-                var instruction = Processor.Debug10(a);
+            var sb = new StringBuilder();
 
-                Log.Information(instruction.ToString());
+            uint zeroAddress = 0;
+            bool zeroSet = false;
+
+            void printZeroSpan()
+            {
+                if (zeroSet && zeroAddress != 0)
+                {
+                    sb.AppendLine($" --> {zeroAddress.ToOctalString(5)}");
+                }
+            };
+
+            for (uint address = 0; address < Memory.Size; address++)
+            {
+                var instruction = Processor.Debug10(address);
+
+                if (instruction.Data != 0)
+                {
+                    printZeroSpan();
+
+                    sb.AppendLine(instruction.ToString());
+
+                    zeroAddress = 0;
+                    zeroSet = false;
+                }
+                else
+                {
+                    if (zeroSet)
+                    {
+                        zeroAddress = address;
+                    }
+
+                    if (!zeroSet)
+                    {
+                        sb.AppendLine(instruction.ToString());
+
+                        zeroSet = true;
+                    }
+                }
             }
+
+            printZeroSpan();
+
+            Log.Information($"Memory dump:{Environment.NewLine}{sb.ToString()}");
         }
 
         public void Clear()

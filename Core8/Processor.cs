@@ -85,7 +85,10 @@ namespace Core8
 
         public void EnableInterrupts(bool delay = true)
         {
-            Log.Debug($"Interrupts enabled (delay: {delay}, irq: {InterruptRequested})");
+            if (Log.IsEnabled(Serilog.Events.LogEventLevel.Debug))
+            {
+                Log.Debug($"Interrupts enabled (delay: {delay}, irq: {InterruptRequested})");
+            }
 
             if (delay)
             {
@@ -100,8 +103,8 @@ namespace Core8
         public void DisableInterrupts()
         {
             if (Log.IsEnabled(Serilog.Events.LogEventLevel.Debug))
-            { 
-                Log.Debug($"Interrupts disbled (irq: {InterruptRequested})"); 
+            {
+                Log.Debug($"Interrupts disbled (irq: {InterruptRequested})");
             }
 
             InterruptsEnabled = false;
@@ -120,8 +123,8 @@ namespace Core8
         public void ResumeInterrupts()
         {
             if (Log.IsEnabled(Serilog.Events.LogEventLevel.Debug))
-            { 
-                Log.Debug($"Interrupts resumed (irq: {InterruptRequested})"); 
+            {
+                Log.Debug($"Interrupts resumed (irq: {InterruptRequested})");
             }
 
             InterruptsInhibited = false;
@@ -137,6 +140,8 @@ namespace Core8
             {
                 if (breakpoints.Contains(registers.IF_PC.Data))
                 {
+                    Log.Information($"Breakpoint hit!");
+
                     break;
                 }
 
@@ -149,7 +154,7 @@ namespace Core8
                     Log.Fatal($"Caught Exception in CPU: {ex.ToString()}");
 
                     running = false;
-                }                
+                }
 
                 if (singleStep)
                 {
@@ -173,6 +178,11 @@ namespace Core8
             {
                 interruptDelay = false;
                 InterruptsEnabled = true;
+
+                if (Log.IsEnabled(Serilog.Events.LogEventLevel.Debug))
+                {
+                    Log.Debug($"Interrupts enabled (irq: {InterruptRequested})");
+                }
             }
 
             var instruction = Fetch(registers.IF_PC.IF_PC);
@@ -189,6 +199,11 @@ namespace Core8
             if (instruction.UserModeInterrupt)
             {
                 userInterruptRequested = true;
+
+                if (Log.IsEnabled(Serilog.Events.LogEventLevel.Debug))
+                {
+                    Log.Debug($"User interrupt set (irq: {InterruptRequested})");
+                }
             }
         }
 
@@ -242,7 +257,7 @@ namespace Core8
             {
                 Masks.MCI when (data & Masks.GROUP) == 0 => group1Instructions,
                 Masks.MCI when ((data & Masks.GROUP_3) == Masks.GROUP_3) && ((data & Masks.GROUP_3_EAE) == 0) => group3Instructions,
-                Masks.MCI when (data & Masks.GROUP_3) == Masks.GROUP_3 => null,
+                Masks.MCI when (data & Masks.GROUP_3) == Masks.GROUP_3 => noOperationInstruction,
                 Masks.MCI when (data & Masks.GROUP_2_AND) == Masks.GROUP_2_AND => group2ANDInstructions,
                 Masks.MCI => group2ORInstructions,
                 Masks.IOT when (data & Masks.MEMORY_MANAGEMENT) == Masks.MEMORY_MANAGEMENT => memoryManagementInstructions,
@@ -256,6 +271,8 @@ namespace Core8
 
         public void SetBreakpoint(uint address)
         {
+            Log.Information($"Breakpoint set @ {address.ToOctalString(5)}");
+
             breakpoints.Add(address);
         }
 
@@ -272,6 +289,11 @@ namespace Core8
         public void ClearUserInterrupt()
         {
             userInterruptRequested = false;
+
+            if (Log.IsEnabled(Serilog.Events.LogEventLevel.Debug))
+            {
+                Log.Debug($"User interrupt cleared (irq: {InterruptRequested})");
+            }
         }
     }
 }

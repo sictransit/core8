@@ -48,6 +48,9 @@ namespace Core8.Model.Instructions
                 case InterruptOpCode.RTF:
                     RTF();
                     break;
+                case InterruptOpCode.SGT:
+                    SGT();
+                    break;
                 case InterruptOpCode.CAF:
                     CAF();
                     break;
@@ -92,6 +95,11 @@ namespace Core8.Model.Instructions
             acc |= Registers.SF.Data;
 
             Registers.LINK_AC.SetAccumulator(acc);
+        }
+
+        private void SGT()
+        {
+            // TODO: EAE support
         }
 
         private void RTF()

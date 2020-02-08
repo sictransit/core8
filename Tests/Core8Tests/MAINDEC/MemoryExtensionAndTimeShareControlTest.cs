@@ -1,6 +1,5 @@
 using Core8.Tests.MAINDEC.Abstract;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
 
 namespace Core8.Tests.MAINDEC
 {
@@ -11,32 +10,16 @@ namespace Core8.Tests.MAINDEC
 
         protected override string[] ExpectedOutput => new[] { "\u0007" };
 
-        protected override TimeSpan MaxRunningTime => TimeSpan.FromSeconds(600);
-
         [TestMethod]
         public void RunTest()
         {
             PDP.Load8(0200);
 
-            PDP.Toggle8(4007);
+            PDP.Toggle8(0007);
 
             PDP.Clear();
 
-            //LoggingLevel.MinimumLevel = Serilog.Events.LogEventLevel.Information;
-
-            //PDP.SetBreakpoint8(3400);
-
-            //PDP.Continue();
-
-            //PDP.RemoveAllBreakpoints();
-
-            //LoggingLevel.MinimumLevel = Serilog.Events.LogEventLevel.Debug;
-
-            //PDP.Continue();            
-
             StartAndWaitForCompletion();
-
-            
         }
     }
 }
