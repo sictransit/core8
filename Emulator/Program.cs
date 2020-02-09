@@ -1,15 +1,16 @@
 ﻿using CommandLine;
 using Serilog;
 using Serilog.Core;
+using System;
+using System.IO;
 using System.Net.Http;
+using System.Threading;
 
 namespace Core8
 {
     public static class Program
     {
         private static LoggingLevelSwitch loggingLevel = new LoggingLevelSwitch(Serilog.Events.LogEventLevel.Information);
-
-        private static HttpClient httpClient = new HttpClient();
 
         public static void Main(string[] args)
         {
@@ -24,24 +25,47 @@ namespace Core8
                     {
                         if (o.TINT)
                         {
-                            PlayTINT();
+                            TINT.Play();
+                        }
+                        else if (!string.IsNullOrWhiteSpace(o.Assemble))
+                        {
+                            Assemble(o.PALBART, o.Assemble, o.Run, o.StartingAddress);
                         }
                     });
         }
 
-        public static void PlayTINT()
+        private static void Assemble(string palbart, string file, bool run, uint startingAddress)
         {
-            var pdp = new PDP();
+            var assembler = new Assembler(palbart);
 
-            pdp.Clear();
+            var assembled = assembler.TryAssemble(file, out var binary);
 
-            pdp.LoadPaperTape(httpClient.GetByteArrayAsync(@"https://github.com/PontusPih/TINT8/releases/download/v0.1.0-alpha/tint.bin").Result);
+            if (!assembled)
+            {
+                Log.Error($"Assembly failed: {file}");
+            }
+            else
+            {
+                Log.Information($"Assembled: {file} -> {binary}");
 
-            pdp.Clear();
+                if (run)
+                {
+                    var pdp = new PDP();
 
-            pdp.Load8(0200);
+                    pdp.LoadPaperTape(File.ReadAllBytes(binary));
 
-            pdp.Continue(waitForHalt: true);
-        }
+                    pdp.Load8(startingAddress);
+
+                    //loggingLevel.MinimumLevel = Serilog.Events.LogEventLevel.Debug;
+
+                    pdp.Continue(waitForHalt:false);
+
+                    while (pdp.Running)
+                    {
+                        Thread.Sleep(200);
+                    }
+                }
+            }            
+        }        
     }
 }

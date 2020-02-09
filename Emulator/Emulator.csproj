@@ -21,4 +21,10 @@
     <ProjectReference Include="..\Core8\Core8.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="pal\gc.asm">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>

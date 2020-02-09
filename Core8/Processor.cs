@@ -99,7 +99,7 @@ namespace Core8
                 {
                     Log.Fatal($"Caught Exception in CPU: {ex.ToString()}");
 
-                    running = false;
+                    throw;
                 }
 
                 if (singleStep)
