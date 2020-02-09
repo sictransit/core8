@@ -1,6 +1,9 @@
-﻿using Serilog;
+﻿using Microsoft.Extensions.Configuration;
+using Serilog;
 using Serilog.Core;
 using System;
+using System.IO;
+using System.Linq;
 using System.Net.Http;
 
 namespace Core8
@@ -11,8 +14,14 @@ namespace Core8
 
         private static HttpClient httpClient = new HttpClient();
 
+        private static IConfigurationRoot configuration;
+
         public static void Main(string[] args)
         {
+            var builder = new ConfigurationBuilder().SetBasePath(Directory.GetCurrentDirectory()).AddJsonFile("appsettings.json");
+
+            configuration = builder.Build();
+
             var pdp = new PDP();
 
             Log.Logger = new LoggerConfiguration()
@@ -21,28 +30,16 @@ namespace Core8
                 .MinimumLevel.ControlledBy(loggingLevel)
                 .CreateLogger();
 
-            Console.WriteLine("Hook up your telnet client now ...");
-
-            Console.WriteLine("Press the any-key when done ...");
-
-            //Console.ReadLine();
-
-            TestBIN(pdp);
-
-            Console.WriteLine("Press the any-key ...");
-
-            Console.ReadLine();
+            if (args.Any(x => x == "--tint"))
+            {
+                PlayTINT(pdp);
+            }
         }
 
-
-
-        public static void TestBIN(PDP pdp)
+        public static void PlayTINT(PDP pdp)
         {
-            var adapter = new MQRelay(pdp.Processor.Teleprinter);
-
             pdp.Clear();
 
-            //pdp.LoadPaperTape(File.ReadAllBytes(@"tapes/hello_world.bin"));
             pdp.LoadPaperTape(httpClient.GetByteArrayAsync(@"https://github.com/PontusPih/TINT8/releases/download/v0.1.0-alpha/tint.bin").Result);
 
             pdp.Clear();
@@ -51,8 +48,5 @@ namespace Core8
 
             pdp.Continue(waitForHalt: true);
         }
-
-
-
     }
 }
