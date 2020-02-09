@@ -76,7 +76,7 @@ namespace Core8.Tests
 
             PDP.Continue();
 
-            Assert.IsTrue(PDP.Processor.Registers.LINK_AC.Accumulator == length);
+            Assert.IsTrue(PDP.Processor.Registers.AC.Accumulator == length);
         }
 
         [TestMethod]
@@ -98,7 +98,7 @@ namespace Core8.Tests
             PDP.Load8(0207);
             PDP.Exam();
 
-            Assert.AreEqual(5u, PDP.Processor.Registers.LINK_AC.Accumulator);
+            Assert.AreEqual(5u, PDP.Processor.Registers.AC.Accumulator);
         }
 
         [TestMethod]
@@ -120,7 +120,7 @@ namespace Core8.Tests
             PDP.Load8(0007);
             PDP.Exam();
 
-            Assert.AreEqual(5u, PDP.Processor.Registers.LINK_AC.Accumulator);
+            Assert.AreEqual(5u, PDP.Processor.Registers.AC.Accumulator);
         }
     }
 }

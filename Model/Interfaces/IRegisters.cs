@@ -4,9 +4,9 @@ namespace Core8.Model.Interfaces
 {
     public interface IRegisters
     {
-        LinkAccumulator LINK_AC { get; }
+        LinkAccumulator AC { get; }
 
-        InstructionFieldProgramCounter IF_PC { get; }
+        InstructionFieldProgramCounter PC { get; }
 
         SwitchRegister SR { get; }
 

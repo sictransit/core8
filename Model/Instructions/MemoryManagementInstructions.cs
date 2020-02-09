@@ -78,17 +78,17 @@ namespace Core8.Model.Instructions
 
         private void RDF()
         {
-            Register.LINK_AC.ORAccumulator(Register.DF.Data << 3);
+            Register.AC.ORAccumulator(Register.DF.Data << 3);
         }
 
         private void RIB()
         {
-            Register.LINK_AC.ORAccumulator(Register.SF.Data & (Masks.SF_UF | Masks.SF_IF | Masks.SF_DF));
+            Register.AC.ORAccumulator(Register.SF.Data & (Masks.SF_UF | Masks.SF_IF | Masks.SF_DF));
         }
 
         private void RIF()
         {
-            Register.LINK_AC.ORAccumulator(Register.IF_PC.IF << 3);
+            Register.AC.ORAccumulator(Register.PC.IF << 3);
         }
 
         private void RMF()
@@ -106,7 +106,7 @@ namespace Core8.Model.Instructions
         {
             if (Interrupts.UserRequested)
             {
-                Register.IF_PC.Increment();
+                Register.PC.Increment();
             }
         }
 

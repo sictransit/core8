@@ -221,11 +221,11 @@ namespace Core8
         {
             var data = Processor.Registers.SR.Get;
 
-            Processor.Memory.Write(Processor.Registers.IF_PC.Address, data);
+            Processor.Memory.Write(Processor.Registers.PC.Address, data);
 
-            Log.Information($"DEP: {Processor.Registers.IF_PC} {data.ToOctalString()}");
+            Log.Information($"DEP: {Processor.Registers.PC} {data.ToOctalString()}");
 
-            Processor.Registers.IF_PC.Increment();
+            Processor.Registers.PC.Increment();
         }
 
         public void Load8(uint address)
@@ -244,9 +244,9 @@ namespace Core8
         {
             var address = Processor.Registers.SR.Get;
 
-            Processor.Registers.IF_PC.SetPC(address);
+            Processor.Registers.PC.SetPC(address);
 
-            Log.Information($"LOAD: {Processor.Registers.IF_PC}");
+            Log.Information($"LOAD: {Processor.Registers.PC}");
         }
 
         public void Toggle8(uint word)
@@ -276,9 +276,9 @@ namespace Core8
 
         public void Exam()
         {
-            Processor.Registers.LINK_AC.SetAccumulator(Processor.Memory.Read(Processor.Registers.IF_PC.Address));
+            Processor.Registers.AC.SetAccumulator(Processor.Memory.Read(Processor.Registers.PC.Address));
 
-            Log.Information($"EXAM: {Processor.Registers.LINK_AC}");
+            Log.Information($"EXAM: {Processor.Registers.AC}");
         }
 
         public void Continue(bool waitForHalt = true)

@@ -18,52 +18,52 @@ namespace Core8.Model.Instructions
         {
             if (OpCodes.HasFlag(Group1OpCodes.CLA))
             {
-                Register.LINK_AC.ClearAccumulator();
+                Register.AC.ClearAccumulator();
             }
 
             if (OpCodes.HasFlag(Group1OpCodes.CLL))
             {
-                Register.LINK_AC.ClearLink();
+                Register.AC.ClearLink();
             }
 
             if (OpCodes.HasFlag(Group1OpCodes.CMA))
             {
-                Register.LINK_AC.ComplementAccumulator();
+                Register.AC.ComplementAccumulator();
             }
 
             if (OpCodes.HasFlag(Group1OpCodes.CML))
             {
-                Register.LINK_AC.ComplementLink();
+                Register.AC.ComplementLink();
             }
 
             if (OpCodes.HasFlag(Group1OpCodes.IAC))
             {
-                Register.LINK_AC.IncrementWithCarry();
+                Register.AC.IncrementWithCarry();
             }
 
             if (OpCodes.HasFlag(Group1OpCodes.RAR))
             {
-                Register.LINK_AC.RAR();
+                Register.AC.RAR();
 
                 if (OpCodes.HasFlag(Group1OpCodes.BSW))
                 {
-                    Register.LINK_AC.RAR();
+                    Register.AC.RAR();
                 }
             }
 
             if (OpCodes.HasFlag(Group1OpCodes.RAL))
             {
-                Register.LINK_AC.RAL();
+                Register.AC.RAL();
 
                 if (OpCodes.HasFlag(Group1OpCodes.BSW))
                 {
-                    Register.LINK_AC.RAL();
+                    Register.AC.RAL();
                 }
             }
 
             if (OpCodes.HasFlag(Group1OpCodes.BSW) && !OpCodes.HasFlag(Group1OpCodes.RAR) && !OpCodes.HasFlag(Group1OpCodes.RAL))
             {
-                Register.LINK_AC.ByteSwap();
+                Register.AC.ByteSwap();
             }
         }
     }

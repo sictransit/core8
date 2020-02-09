@@ -66,7 +66,7 @@ namespace Core8
         public void Clear()
         {
             Teleprinter.Clear();
-            Registers.LINK_AC.Clear();
+            Registers.AC.Clear();
             Interrupts.ClearUser();
             Interrupts.Disable();
         }
@@ -80,11 +80,11 @@ namespace Core8
         {
             running = true;
 
-            Log.Information($"CONT @ {Registers.IF_PC}");
+            Log.Information($"CONT @ {Registers.PC}");
 
             while (running)
             {
-                if (breakpoints.Contains(Registers.IF_PC.Data))
+                if (breakpoints.Contains(Registers.PC.Data))
                 {
                     Log.Information($"Breakpoint hit!");
 
@@ -110,16 +110,16 @@ namespace Core8
 
             running = false;
 
-            Log.Information($"HLT @ {Registers.IF_PC}");
+            Log.Information($"HLT @ {Registers.PC}");
         }
 
         public void FetchAndExecute()
         {
             Interrupts.Interrupt();
 
-            var instruction = Fetch(Registers.IF_PC.IF_PC);
+            var instruction = Fetch(Registers.PC.IF_PC);
 
-            Registers.IF_PC.Increment();
+            Registers.PC.Increment();
 
             if (Log.IsEnabled(Serilog.Events.LogEventLevel.Debug))
             {

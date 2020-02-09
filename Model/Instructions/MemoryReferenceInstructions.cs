@@ -42,7 +42,7 @@ namespace Core8.Model.Instructions
                 {
                     Interrupts.Resume();
 
-                    Register.IF_PC.SetIF(Register.IB.Data);
+                    Register.PC.SetIF(Register.IB.Data);
                     Register.UF.SetUF(Register.UB.Data);
                 }
 
@@ -87,39 +87,39 @@ namespace Core8.Model.Instructions
 
         private void AND(uint operand)
         {
-            Register.LINK_AC.ANDAccumulator(Memory.Read(operand));
+            Register.AC.ANDAccumulator(Memory.Read(operand));
         }
 
         private void DCA(uint operand)
         {
-            Memory.Write(operand, Register.LINK_AC.Accumulator);
+            Memory.Write(operand, Register.AC.Accumulator);
 
-            Register.LINK_AC.ClearAccumulator();
+            Register.AC.ClearAccumulator();
         }
 
         private void ISZ(uint operand)
         {
             if (Memory.Write(operand, Memory.Read(operand) + 1) == 0)
             {
-                Register.IF_PC.Increment();
+                Register.PC.Increment();
             }
         }
 
         private void JMP(uint operand)
         {
-            Register.IF_PC.Jump(operand);
+            Register.PC.Jump(operand);
         }
 
         public void JMS(uint operand)
         {
-            Memory.Write(operand, Register.IF_PC.Address);
+            Memory.Write(operand, Register.PC.Address);
 
-            Register.IF_PC.Jump(operand + 1);
+            Register.PC.Jump(operand + 1);
         }
 
         private void TAD(uint operand)
         {
-            Register.LINK_AC.AddWithCarry(Memory.Read(operand));
+            Register.AC.AddWithCarry(Memory.Read(operand));
         }
 
         public override string ToString()

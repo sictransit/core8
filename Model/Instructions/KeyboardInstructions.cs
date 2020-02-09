@@ -45,7 +45,7 @@ namespace Core8.Model.Instructions
 
         private void KCC()
         {
-            Register.LINK_AC.ClearAccumulator();
+            Register.AC.ClearAccumulator();
 
             Teleprinter.ClearInputFlag();
         }
@@ -57,26 +57,26 @@ namespace Core8.Model.Instructions
 
         private void KRB()
         {
-            Register.LINK_AC.SetAccumulator(Teleprinter.InputBuffer);
+            Register.AC.SetAccumulator(Teleprinter.InputBuffer);
 
             Teleprinter.ClearInputFlag();
         }
 
         private void KRS()
         {
-            Register.LINK_AC.ORAccumulator(Teleprinter.InputBuffer);
+            Register.AC.ORAccumulator(Teleprinter.InputBuffer);
         }
 
         private void KIE()
         {
-            Teleprinter.SetDeviceControls(Register.LINK_AC.Accumulator);
+            Teleprinter.SetDeviceControls(Register.AC.Accumulator);
         }
 
         private void KSF()
         {
             if (Teleprinter.InputFlag)
             {
-                Register.IF_PC.Increment();
+                Register.PC.Increment();
             }
         }
     }

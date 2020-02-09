@@ -46,7 +46,7 @@ namespace Core8.Model.Instructions
 
         private void TLS()
         {
-            var c = Register.LINK_AC.Accumulator & Masks.TELEPRINTER_BUFFER_MASK;
+            var c = Register.AC.Accumulator & Masks.TELEPRINTER_BUFFER_MASK;
 
             Teleprinter.Type((byte)c);
 
@@ -62,7 +62,7 @@ namespace Core8.Model.Instructions
 
         private void TPC()
         {
-            var c = Register.LINK_AC.Accumulator & Masks.TELEPRINTER_BUFFER_MASK;
+            var c = Register.AC.Accumulator & Masks.TELEPRINTER_BUFFER_MASK;
 
             Teleprinter.Type((byte)c);
 
@@ -73,7 +73,7 @@ namespace Core8.Model.Instructions
         {
             if (Teleprinter.OutputFlag)
             {
-                Register.IF_PC.Increment();
+                Register.PC.Increment();
             }
         }
     }

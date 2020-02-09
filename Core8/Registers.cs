@@ -7,8 +7,8 @@ namespace Core8
     {
         public Registers()
         {
-            LINK_AC = new LinkAccumulator();
-            IF_PC = new InstructionFieldProgramCounter();
+            AC = new LinkAccumulator();
+            PC = new InstructionFieldProgramCounter();
             SR = new SwitchRegister();
             MQ = new MultiplierQuotient();
             DF = new DataField();
@@ -18,9 +18,9 @@ namespace Core8
             SF = new SaveField();
         }
 
-        public LinkAccumulator LINK_AC { get; }
+        public LinkAccumulator AC { get; }
 
-        public InstructionFieldProgramCounter IF_PC { get; }
+        public InstructionFieldProgramCounter PC { get; }
 
         public SwitchRegister SR { get; }
 

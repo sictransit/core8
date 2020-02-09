@@ -20,27 +20,27 @@ namespace Core8.Model.Instructions
 
             if (OpCodes.HasFlag(Group2ANDOpCodes.SPA))
             {
-                result &= (Register.LINK_AC.Accumulator & Masks.AC_SIGN) == 0;
+                result &= (Register.AC.Accumulator & Masks.AC_SIGN) == 0;
             }
 
             if (OpCodes.HasFlag(Group2ANDOpCodes.SNA))
             {
-                result &= Register.LINK_AC.Accumulator != 0;
+                result &= Register.AC.Accumulator != 0;
             }
 
             if (OpCodes.HasFlag(Group2ANDOpCodes.SZL))
             {
-                result &= Register.LINK_AC.Link == 0;
+                result &= Register.AC.Link == 0;
             }
 
             if (result)
             {
-                Register.IF_PC.Increment();
+                Register.PC.Increment();
             }
 
             if (OpCodes.HasFlag(Group2ANDOpCodes.CLA))
             {
-                Register.LINK_AC.ClearAccumulator();
+                Register.AC.ClearAccumulator();
             }
 
             base.Execute();

@@ -25,7 +25,7 @@ namespace Core8.Model.Instructions.Abstract
         {
             if (OpCodes.HasFlag(Group2PrivilegedOpCodes.OSR))
             {
-                Processor.Registers.LINK_AC.ORAccumulator(Processor.Registers.SR.Get);
+                Processor.Registers.AC.ORAccumulator(Processor.Registers.SR.Get);
             }
 
             if (OpCodes.HasFlag(Group2PrivilegedOpCodes.HLT))

@@ -88,9 +88,9 @@ namespace Core8
                     Log.Debug("Interrupt!");
                 }
 
-                memory.Write(0, registers.IF_PC.Address); // JMS 0000
+                memory.Write(0, registers.PC.Address); // JMS 0000
 
-                registers.SF.SetIF(registers.IF_PC.IF);
+                registers.SF.SetIF(registers.PC.IF);
                 registers.SF.SetDF(registers.DF.Data);
                 registers.SF.SetUF(registers.UF.Data);
 
@@ -99,9 +99,9 @@ namespace Core8
                 registers.UF.Clear();
                 registers.UB.Clear();
 
-                registers.IF_PC.SetIF(0);
+                registers.PC.SetIF(0);
 
-                registers.IF_PC.SetPC(1);
+                registers.PC.SetPC(1);
 
                 Disable();
             }

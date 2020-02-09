@@ -18,28 +18,28 @@ namespace Core8.Model.Instructions
         {
             if (OpCodes.HasFlag(Group3OpCodes.CLA))
             {
-                Register.LINK_AC.ClearAccumulator();
+                Register.AC.ClearAccumulator();
             }
 
             if (OpCodes.HasFlag(Group3OpCodes.SWP))
             {
                 var mq = Register.MQ.Get;
 
-                Register.MQ.SetMQ(Register.LINK_AC.Accumulator);
-                Register.LINK_AC.SetAccumulator(mq);
+                Register.MQ.SetMQ(Register.AC.Accumulator);
+                Register.AC.SetAccumulator(mq);
             }
             else
             {
                 if (OpCodes.HasFlag(Group3OpCodes.MQA))
                 {
-                    Register.LINK_AC.ORAccumulator(Register.MQ.Get);
+                    Register.AC.ORAccumulator(Register.MQ.Get);
                 }
 
                 if (OpCodes.HasFlag(Group3OpCodes.MQL))
                 {
-                    Register.MQ.SetMQ(Register.LINK_AC.Accumulator);
+                    Register.MQ.SetMQ(Register.AC.Accumulator);
 
-                    Register.LINK_AC.ClearAccumulator();
+                    Register.AC.ClearAccumulator();
                 }
             }
         }
