@@ -29,12 +29,12 @@ namespace Core8
                         }
                         else if (!string.IsNullOrWhiteSpace(o.Assemble))
                         {
-                            Assemble(o.PALBART, o.Assemble, o.Run, o.StartingAddress);
+                            Assemble(o.PALBART, o.Assemble, o.Run, o.StartingAddress, o.DumpMemory);
                         }
                     });
         }
 
-        private static void Assemble(string palbart, string file, bool run, uint startingAddress)
+        private static void Assemble(string palbart, string file, bool run, uint startingAddress, bool dumpMemory)
         {
             var assembler = new Assembler(palbart);
 
@@ -56,7 +56,12 @@ namespace Core8
 
                     pdp.Load8(startingAddress);
 
-                    //loggingLevel.MinimumLevel = Serilog.Events.LogEventLevel.Debug;
+                    if (dumpMemory)
+                    {
+                        pdp.DumpMemory();
+                    }
+
+                    loggingLevel.MinimumLevel = Serilog.Events.LogEventLevel.Verbose;
 
                     pdp.Continue(waitForHalt:false);
 

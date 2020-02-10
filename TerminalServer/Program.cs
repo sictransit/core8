@@ -4,7 +4,7 @@ using System;
 
 namespace Core8
 {
-    public class Program
+    public static class Program
     {
         private static LoggingLevelSwitch loggingLevel = new LoggingLevelSwitch(Serilog.Events.LogEventLevel.Debug);
 

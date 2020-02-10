@@ -13,7 +13,9 @@ namespace Core8
 
             pdp.Clear();
 
-            pdp.LoadPaperTape(new HttpClient().GetByteArrayAsync(@"https://github.com/PontusPih/TINT8/releases/download/v0.1.0-alpha/tint.bin").Result);
+            using var httpClient = new HttpClient();
+
+            pdp.LoadPaperTape(httpClient.GetByteArrayAsync(@"https://github.com/PontusPih/TINT8/releases/download/v0.1.0-alpha/tint.bin").Result);
 
             pdp.Clear();
 
