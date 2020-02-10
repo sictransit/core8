@@ -32,6 +32,8 @@ namespace Core8
                             Assemble(o.PALBART, o.Assemble, o.Run, o.StartingAddress, o.DumpMemory);
                         }
                     });
+
+            
         }
 
         private static void Assemble(string palbart, string file, bool run, uint startingAddress, bool dumpMemory)
@@ -63,12 +65,9 @@ namespace Core8
 
                     loggingLevel.MinimumLevel = Serilog.Events.LogEventLevel.Verbose;
 
-                    pdp.Continue(waitForHalt:false);
+                    pdp.Continue(waitForHalt:true);
 
-                    while (pdp.Running)
-                    {
-                        Thread.Sleep(200);
-                    }
+                  
                 }
             }            
         }        
