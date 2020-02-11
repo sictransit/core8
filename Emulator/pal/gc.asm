@@ -42,8 +42,8 @@ TTYO,	0						/TTY OUTPUT SUB-ROUTINE
 		CLA						/CLEAR ACC
 		JMP I TTYO				/RETURN 
 
-MSG,							/POINTER TO STRING
-		0103	
+MSG,	.						/POINTER TO STRING
+		0103					/C	
 		0117					/O
 		0116					/N
 		0107					/G

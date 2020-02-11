@@ -60,7 +60,7 @@ namespace Core8
                         pdp.DumpMemory();
                     }
 
-                    //loggingLevel.MinimumLevel = Serilog.Events.LogEventLevel.Verbose;
+                    loggingLevel.MinimumLevel = Serilog.Events.LogEventLevel.Verbose;
 
                     pdp.Continue(waitForHalt: true);
                 }
