@@ -1,10 +1,7 @@
 ﻿using CommandLine;
 using Serilog;
 using Serilog.Core;
-using System;
 using System.IO;
-using System.Net.Http;
-using System.Threading;
 
 namespace Core8
 {
@@ -33,7 +30,7 @@ namespace Core8
                         }
                     });
 
-            
+
         }
 
         private static void Assemble(string palbart, string file, bool run, uint startingAddress, bool dumpMemory)
@@ -63,13 +60,11 @@ namespace Core8
                         pdp.DumpMemory();
                     }
 
-                    loggingLevel.MinimumLevel = Serilog.Events.LogEventLevel.Verbose;
+                    //loggingLevel.MinimumLevel = Serilog.Events.LogEventLevel.Verbose;
 
-                    pdp.Continue(waitForHalt:true);
-
-                  
+                    pdp.Continue(waitForHalt: true);
                 }
-            }            
-        }        
+            }
+        }
     }
 }

@@ -1,13 +1,10 @@
 ﻿using Serilog;
-using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using System.Text;
 
 namespace Core8
 {
-    public class Assembler 
+    public class Assembler
     {
         private readonly string palbart;
 
@@ -51,7 +48,7 @@ namespace Core8
             if (!process.WaitForExit(10000))
             {
                 process.Kill(true);
-            }            
+            }
 
             return File.Exists(binary);
         }
