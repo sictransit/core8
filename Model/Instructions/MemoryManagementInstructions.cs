@@ -66,7 +66,7 @@ namespace Core8.Model.Instructions
                 {
                     Register.IB.SetIB(Data >> 3);
 
-                    Interrupts.Suspend();
+                    Interrupts.Inhibit();
                 }
             }
         }
@@ -99,7 +99,7 @@ namespace Core8.Model.Instructions
             Register.DF.SetDF(sf.DF);
             Register.UB.SetUB(sf.UF);
 
-            Interrupts.Suspend();
+            Interrupts.Inhibit();
         }
 
         private void SINT()
@@ -114,14 +114,14 @@ namespace Core8.Model.Instructions
         {
             Register.UB.Clear();
 
-            Interrupts.Suspend();
+            Interrupts.Inhibit();
         }
 
         private void SUF()
         {
             Register.UB.SetUB(1);
 
-            Interrupts.Suspend();
+            Interrupts.Inhibit();
         }
     }
 

@@ -12,9 +12,9 @@
 
         void Disable();
 
-        void Suspend();
+        void Inhibit();
 
-        void Resume();
+        void Allow();
 
         bool Enabled { get; }
 

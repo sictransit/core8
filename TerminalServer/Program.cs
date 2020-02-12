@@ -15,7 +15,7 @@ namespace Core8
                 .MinimumLevel.ControlledBy(loggingLevel)
                 .CreateLogger();
 
-            var host = new Host();
+            using var host = new Host();
 
             host.Start();
 
@@ -24,8 +24,6 @@ namespace Core8
             Console.ReadLine();
 
             host.Stop();
-
         }
-
     }
 }

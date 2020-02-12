@@ -102,7 +102,7 @@ namespace Core8.Model.Instructions
             Register.UB.SetUB(acc >> 6);
 
             Interrupts.Enable(false);
-            Interrupts.Suspend();
+            Interrupts.Inhibit();
         }
 
         private void CAF()

@@ -8,9 +8,6 @@
         public const uint MEM_WORD
             = 0b_111_111_111_111;
 
-        public const uint MEM_AUTO_INC_FLAG
-            = 0b_000_000_001_000;
-
         public const uint DF
             = 0b_000_000_000_111;
 
@@ -124,9 +121,5 @@
 
         public const uint MEM_MGMT_READ
             = 0b_000_000_000_100;
-
-        public const uint JMX
-            = 0b_100_00_0000000;
-
     }
 }

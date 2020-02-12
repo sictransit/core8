@@ -7,10 +7,11 @@ using System.Threading;
 
 namespace Core8
 {
-    public class Host
+    public class Host : IDisposable
     {
         private readonly int port;
         private readonly ManualResetEvent running = new ManualResetEvent(false);
+        private bool disposedValue = false;
 
         private Thread hostThread;
 
@@ -25,6 +26,7 @@ namespace Core8
         {
             hostThread = new Thread(Run)
             {
+                IsBackground = true,
                 Priority = ThreadPriority.AboveNormal
             };
 
@@ -33,38 +35,36 @@ namespace Core8
 
         private void Run()
         {
-            using (var publisher = new PublisherSocket())
+            using var publisher = new PublisherSocket();
+
+            publisher.Bind(@"tcp://127.0.0.1:17232");
+
+            using var subscriber = new SubscriberSocket();
+            subscriber.Bind(@"tcp://127.0.0.1:17233");
+            subscriber.SubscribeToAnyTopic();
+
+            running.Set();
+
+            using var server = new TelnetServer(IPAddress.Any, port, publisher, subscriber)
             {
-                publisher.Bind(@"tcp://127.0.0.1:17232");
+                OptionReuseAddress = true
+            };
 
-                using var subscriber = new SubscriberSocket();
-                subscriber.Bind(@"tcp://127.0.0.1:17233");
-                subscriber.SubscribeToAnyTopic();
+            Log.Information("Server starting ...");
 
-                running.Set();
+            server.Start();
 
-                var server = new TelnetServer(IPAddress.Any, port, publisher, subscriber)
+            while (running.WaitOne(TimeSpan.Zero))
+            {
+                if (subscriber.TryReceiveFrameBytes(TimeSpan.FromMilliseconds(100), out var frame))
                 {
-                    OptionReuseAddress = true
-                };
-
-                Log.Information("Server starting ...");
-
-                server.Start();
-
-                while (running.WaitOne(TimeSpan.Zero))
-                {
-                    if (subscriber.TryReceiveFrameBytes(TimeSpan.FromMilliseconds(100), out var frame))
-                    {
-                        server.Multicast(frame);
-                    }
+                    server.Multicast(frame);
                 }
-
-                server.Stop();
-
-                Log.Information("Server stopped.");
-
             }
+
+            server.Stop();
+
+            Log.Information("Server stopped.");
 
         }
 
@@ -75,6 +75,32 @@ namespace Core8
             hostThread.Join();
         }
 
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!disposedValue)
+            {
+                if (disposing)
+                {
+                    if (running != null)
+                    {
+                        running.Dispose();
+                    }
+                }
 
+                disposedValue = true;
+            }
+        }
+
+        ~Host()
+        {
+            Dispose(false);
+        }
+
+        public void Dispose()
+        {
+            Dispose(true);
+
+            GC.SuppressFinalize(this);
+        }
     }
 }

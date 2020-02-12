@@ -40,7 +40,7 @@ namespace Core8.Model.Instructions
             {
                 if (Interrupts.Inhibited)
                 {
-                    Interrupts.Resume();
+                    Interrupts.Allow();
 
                     Register.PC.SetIF(Register.IB.Data);
                     Register.UF.SetUF(Register.UB.Data);

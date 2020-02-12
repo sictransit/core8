@@ -51,14 +51,14 @@ namespace Core8
             DebugLog();
         }
 
-        public void Suspend()
+        public void Inhibit()
         {
             Inhibited = true;
 
             DebugLog();
         }
 
-        public void Resume()
+        public void Allow()
         {
             Inhibited = false;
 
