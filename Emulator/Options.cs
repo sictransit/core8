@@ -17,7 +17,7 @@ namespace Core8
         public bool Run { get; set; }
 
         [Option(Required = false, Default = 200u, HelpText = "starting address")]
-        public uint StartingAddress { get; set; }
+        public int StartingAddress { get; set; }
 
         [Option(Required = false, Default = false, HelpText = "dump memory before run")]
         public bool DumpMemory { get; set; }

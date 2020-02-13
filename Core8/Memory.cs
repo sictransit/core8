@@ -7,18 +7,18 @@ namespace Core8
 {
     public class Memory : IMemory
     {
-        private readonly uint[] ram;
+        private readonly int[] ram;
 
-        public Memory(uint fields = 8)
+        public Memory(int fields = 8)
         {
             Size = fields * 4096;
 
-            ram = new uint[Size];
+            ram = new int[Size];
         }
 
-        public uint Size { get; private set; }
+        public int Size { get; private set; }
 
-        public uint Examine(uint address)
+        public int Examine(int address)
         {
             var content = ram[address];
 
@@ -30,7 +30,7 @@ namespace Core8
             return content;
         }
 
-        public uint Read(uint address, bool indirect = false)
+        public int Read(int address, bool indirect = false)
         {
             if (indirect && ((address & Masks.MEM_WORD) >= 8) && ((address & Masks.MEM_WORD) <= 15))
             {
@@ -40,7 +40,7 @@ namespace Core8
             return Examine(address);
         }
 
-        public uint Write(uint address, uint data)
+        public int Write(int address, int data)
         {
             var value = data & Masks.MEM_WORD;
 

@@ -2,12 +2,12 @@
 {
     public interface IMemory
     {
-        uint Read(uint address, bool indirect = false);
+        int Read(int address, bool indirect = false);
 
-        uint Examine(uint address);
+        int Examine(int address);
 
-        uint Write(uint address, uint data);
+        int Write(int address, int data);
 
-        uint Size { get; }
+        int Size { get; }
     }
 }

@@ -7,7 +7,7 @@ namespace Core8.Model.Register
     {
         protected override string ShortName => "IB";
 
-        public void SetIB(uint value)
+        public void SetIB(int value)
         {
             Set(value & Masks.IB);
         }

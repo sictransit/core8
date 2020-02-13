@@ -5,9 +5,9 @@ namespace Core8.Model.Register
 {
     public class LinkAccumulator : RegisterBase
     {
-        public uint Link => (Content & Masks.LINK) >> 12;
+        public int Link => (Content & Masks.LINK) >> 12;
 
-        public uint Accumulator => Content & Masks.AC;
+        public int Accumulator => Content & Masks.AC;
 
         protected override string ShortName => "LAC";
 
@@ -46,27 +46,27 @@ namespace Core8.Model.Register
             Set(Content & Masks.AC);
         }
 
-        public void SetAccumulator(uint value)
+        public void SetAccumulator(int value)
         {
             Set((Content & Masks.LINK) | (value & Masks.AC));
         }
 
-        public void ORAccumulator(uint value)
+        public void ORAccumulator(int value)
         {
             SetAccumulator(Content | value);
         }
 
-        public void ANDAccumulator(uint value)
+        public void ANDAccumulator(int value)
         {
             SetAccumulator(Content & value);
         }
 
-        public void SetLink(uint value)
+        public void SetLink(int value)
         {
             Set(((value & Masks.FLAG) << 12) | (Content & Masks.AC));
         }
 
-        public void AddWithCarry(uint value)
+        public void AddWithCarry(int value)
         {
             Set((Content + value) & Masks.AC_LINK);
         }

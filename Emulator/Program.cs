@@ -34,7 +34,7 @@ namespace Core8
 
         }
 
-        private static void Assemble(string palbart, string file, bool run, uint startingAddress, bool dumpMemory)
+        private static void Assemble(string palbart, string file, bool run, int startingAddress, bool dumpMemory)
         {
             var assembler = new Assembler(palbart);
 

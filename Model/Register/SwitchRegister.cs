@@ -5,7 +5,7 @@ namespace Core8.Model.Register
 {
     public class SwitchRegister : RegisterBase
     {
-        public void SetSR(uint data)
+        public void SetSR(int data)
         {
             Set(data & Masks.MEM_WORD);
         }

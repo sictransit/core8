@@ -3,7 +3,7 @@
 namespace Core8.Model.Enums
 {
     [Flags]
-    public enum Group2ANDOpCodes : uint
+    public enum Group2ANDOpCodes : int
     {
         CLA = 1 << 7,
         SPA = 1 << 6,

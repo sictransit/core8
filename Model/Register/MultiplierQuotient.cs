@@ -5,7 +5,7 @@ namespace Core8.Model.Register
 {
     public class MultiplierQuotient : RegisterBase
     {
-        public void SetMQ(uint data)
+        public void SetMQ(int data)
         {
             Set(data & Masks.MEM_WORD);
         }

@@ -1,6 +1,6 @@
 ﻿namespace Core8.Model.Enums
 {
-    public enum InterruptOpCode : uint
+    public enum InterruptOpCode : int
     {
         SKON = 0b_000,
         ION = 0b_001,

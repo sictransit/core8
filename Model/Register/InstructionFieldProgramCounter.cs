@@ -5,9 +5,9 @@ namespace Core8.Model.Register
 {
     public class InstructionFieldProgramCounter : RegisterBase
     {
-        public uint Address => Content & Masks.MEM_WORD;
+        public int Address => Content & Masks.MEM_WORD;
 
-        public uint IF => (Content & Masks.IF) >> 12;
+        public int IF => (Content & Masks.IF) >> 12;
 
         protected override string ShortName => "PC";
 
@@ -16,17 +16,17 @@ namespace Core8.Model.Register
             SetPC(Content + 1);
         }
 
-        public void SetIF(uint address)
+        public void SetIF(int address)
         {
             Set(((address << 12) & Masks.IF) | (Content & Masks.MEM_WORD));
         }
 
-        public void SetPC(uint address)
+        public void SetPC(int address)
         {
             Set((Content & Masks.IF) | (address & Masks.MEM_WORD));
         }
 
-        public void Jump(uint address)
+        public void Jump(int address)
         {
             SetPC(address);
         }

@@ -4,22 +4,19 @@ namespace Core8.Model.Extensions
 {
     public static class IntExtensions
     {
-        public static uint ToDecimal(this int oct)
+
+
+        public static int ToDecimal(this int oct)
         {
-            return ((uint)oct).ToDecimal();
+            return Convert.ToInt32(oct.ToString(), 8);
         }
 
-        public static uint ToDecimal(this uint oct)
-        {
-            return Convert.ToUInt32(oct.ToString(), 8);
-        }
-
-        public static uint ToOctal(this uint dec)
+        public static int ToOctal(this int dec)
         {
             return dec == 0 ? 0 : dec % 8 + 10 * (dec / 8).ToOctal();
         }
 
-        public static string ToOctalString(this uint dec, int digits = 4)
+        public static string ToOctalString(this int dec, int digits = 4)
         {
             return dec.ToOctal().ToString($"d{digits}");
         }

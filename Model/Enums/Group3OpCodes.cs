@@ -3,7 +3,7 @@
 namespace Core8.Model.Enums
 {
     [Flags]
-    public enum Group3OpCodes : uint
+    public enum Group3OpCodes : int
     {
         MQL = 1 << 4,
         MQA = 1 << 6,

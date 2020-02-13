@@ -7,7 +7,7 @@ namespace Core8.Model.Register
     {
         protected override string ShortName => "DF";
 
-        public void SetDF(uint value)
+        public void SetDF(int value)
         {
             Set(value & Masks.DF);
         }

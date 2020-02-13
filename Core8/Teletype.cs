@@ -56,7 +56,7 @@ namespace Core8
             return buffer.ToArray();
         }
 
-        public void SetDeviceControls(uint data)
+        public void SetDeviceControls(int data)
         {
             deviceControls = (IODeviceControls)(data & Masks.IO_DEVICE_CONTROL_MASK);
         }

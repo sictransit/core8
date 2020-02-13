@@ -1,6 +1,6 @@
 ﻿namespace Core8.Model.Enums
 {
-    public enum MemoryManagementReadOpCode : uint
+    public enum MemoryManagementReadOpCode : int
     {
         CINT = 0b_110_010_000_100,
         RDF = 0b_110_010_001_100,

@@ -10,9 +10,9 @@ namespace Core8.Model.Instructions.Abstract
             CPU = cpu;
         }
 
-        public uint Address { get; private set; }
+        public int Address { get; private set; }
 
-        public uint Data { get; private set; }
+        public int Data { get; private set; }
 
         public abstract void Execute();
 
@@ -24,7 +24,7 @@ namespace Core8.Model.Instructions.Abstract
 
         protected IInterrupts Interrupts => CPU.Interrupts;
 
-        public IInstruction Load(uint address, uint data)
+        public IInstruction Load(int address, int data)
         {
             Address = address;
             Data = data;

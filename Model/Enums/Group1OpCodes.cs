@@ -3,7 +3,7 @@
 namespace Core8.Model.Enums
 {
     [Flags]
-    public enum Group1OpCodes : uint
+    public enum Group1OpCodes : int
     {
         NOP = 0,
         IAC = 1 << 0,

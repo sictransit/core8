@@ -4,11 +4,11 @@ namespace Core8.Model.Register.Abstract
 {
     public abstract class RegisterBase
     {
-        public uint Content { get; private set; }
+        public int Content { get; private set; }
 
         protected abstract string ShortName { get; }
 
-        protected void Set(uint value)
+        protected void Set(int value)
         {
             Content = value;
 

@@ -13,7 +13,7 @@ namespace Core8
 
         private bool singleStep = false;
 
-        private readonly HashSet<uint> breakpoints = new HashSet<uint>();
+        private readonly HashSet<int> breakpoints = new HashSet<int>();
 
         private readonly InstructionSet instructionSet;
 
@@ -107,17 +107,17 @@ namespace Core8
             instruction.Execute();
         }
 
-        public IInstruction Debug8(uint address)
+        public IInstruction Debug8(int address)
         {
             return Debug10(address.ToDecimal());
         }
 
-        public IInstruction Debug10(uint address)
+        public IInstruction Debug10(int address)
         {
             return Fetch(address);
         }
 
-        private IInstruction Fetch(uint address)
+        private IInstruction Fetch(int address)
         {
             var data = Memory.Read(address);
 
@@ -126,7 +126,7 @@ namespace Core8
             return instruction.Load(address, data);
         }
 
-        private IInstruction Decode(uint data)
+        private IInstruction Decode(int data)
         {
             return (data & Masks.OP_CODE) switch
             {
@@ -144,14 +144,14 @@ namespace Core8
             };
         }
 
-        public void SetBreakpoint(uint address)
+        public void SetBreakpoint(int address)
         {
             Log.Information($"Breakpoint set @ {address.ToOctalString(5)}");
 
             breakpoints.Add(address);
         }
 
-        public void RemoveBreakpoint(uint address)
+        public void RemoveBreakpoint(int address)
         {
             breakpoints.Remove(address);
         }

@@ -2,11 +2,11 @@
 {
     public interface IInstruction
     {
-        uint Address { get; }
+        int Address { get; }
 
-        uint Data { get; }
+        int Data { get; }
 
-        IInstruction Load(uint address, uint data);
+        IInstruction Load(int address, int data);
 
         void Execute();
     }

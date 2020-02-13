@@ -98,7 +98,7 @@ namespace Core8.Tests
             PDP.Load8(0207);
             PDP.Exam();
 
-            Assert.AreEqual(5u, PDP.CPU.Registers.AC.Accumulator);
+            Assert.AreEqual(5, PDP.CPU.Registers.AC.Accumulator);
         }
 
         [TestMethod]
@@ -120,7 +120,7 @@ namespace Core8.Tests
             PDP.Load8(0007);
             PDP.Exam();
 
-            Assert.AreEqual(5u, PDP.CPU.Registers.AC.Accumulator);
+            Assert.AreEqual(5, PDP.CPU.Registers.AC.Accumulator);
         }
     }
 }

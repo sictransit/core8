@@ -24,13 +24,13 @@ namespace Core8.Model.Instructions
 
         private bool Zero => !AddressingModes.HasFlag(AddressingModes.Z);
 
-        private uint Word => (Data & Masks.ADDRESS_WORD);
+        private int Word => (Data & Masks.ADDRESS_WORD);
 
-        private uint Page => (Address & Masks.ADDRESS_PAGE);
+        private int Page => (Address & Masks.ADDRESS_PAGE);
 
-        private uint Field => (Address & Masks.IF);
+        private int Field => (Address & Masks.IF);
 
-        public uint Location => Field | (Zero ? Word : (Page | Word));
+        public int Location => Field | (Zero ? Word : (Page | Word));
 
         private IMemory Memory => CPU.Memory;
 
@@ -94,19 +94,19 @@ namespace Core8.Model.Instructions
             }
         }
 
-        private void AND(uint operand)
+        private void AND(int operand)
         {
             Registers.AC.ANDAccumulator(Memory.Read(operand));
         }
 
-        private void DCA(uint operand)
+        private void DCA(int operand)
         {
             Memory.Write(operand, Registers.AC.Accumulator);
 
             Registers.AC.ClearAccumulator();
         }
 
-        private void ISZ(uint operand)
+        private void ISZ(int operand)
         {
             if (Memory.Write(operand, Memory.Read(operand) + 1) == 0)
             {
@@ -114,19 +114,19 @@ namespace Core8.Model.Instructions
             }
         }
 
-        private void JMP(uint operand)
+        private void JMP(int operand)
         {
             Registers.PC.Jump(operand);
         }
 
-        public void JMS(uint operand)
+        public void JMS(int operand)
         {
             Memory.Write(operand, Registers.PC.Address);
 
             Registers.PC.Jump(operand + 1);
         }
 
-        private void TAD(uint operand)
+        private void TAD(int operand)
         {
             Registers.AC.AddWithCarry(Memory.Read(operand));
         }

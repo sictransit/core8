@@ -157,7 +157,7 @@ namespace Core8
         {
             var sb = new StringBuilder();
 
-            uint zeroAddress = 0;
+            int zeroAddress = 0;
             bool zeroSet = false;
 
             void printZeroSpan()
@@ -168,7 +168,7 @@ namespace Core8
                 }
             };
 
-            for (uint address = 0; address < CPU.Memory.Size; address++)
+            for (int address = 0; address < CPU.Memory.Size; address++)
             {
                 var instruction = CPU.Debug10(address);
 
@@ -207,12 +207,12 @@ namespace Core8
             CPU.Clear();
         }
 
-        public void Deposit8(uint data)
+        public void Deposit8(int data)
         {
             Deposit10(data.ToDecimal());
         }
 
-        public void Deposit10(uint data)
+        public void Deposit10(int data)
         {
             CPU.Registers.SR.SetSR(data);
 
@@ -230,12 +230,12 @@ namespace Core8
             CPU.Registers.PC.Increment();
         }
 
-        public void Load8(uint address)
+        public void Load8(int address)
         {
             Load10(address.ToDecimal());
         }
 
-        public void Load10(uint address)
+        public void Load10(int address)
         {
             CPU.Registers.SR.SetSR(address);
 
@@ -249,22 +249,22 @@ namespace Core8
             Log.Information($"LOAD: {CPU.Registers.PC}");
         }
 
-        public void Toggle8(uint word)
+        public void Toggle8(int word)
         {
             Toggle10(word.ToDecimal());
         }
 
-        public void Toggle10(uint word)
+        public void Toggle10(int word)
         {
             CPU.Registers.SR.SetSR(word);
         }
 
-        public void SetBreakpoint8(uint address)
+        public void SetBreakpoint8(int address)
         {
             CPU.SetBreakpoint(address.ToDecimal());
         }
 
-        public void RemoveBreakpoint8(uint address)
+        public void RemoveBreakpoint8(int address)
         {
             CPU.RemoveBreakpoint(address.ToDecimal());
         }

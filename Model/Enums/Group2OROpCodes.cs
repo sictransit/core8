@@ -3,7 +3,7 @@
 namespace Core8.Model.Enums
 {
     [Flags]
-    public enum Group2OROpCodes : uint
+    public enum Group2OROpCodes : int
     {
         CLA = 1 << 7,
         SMA = 1 << 6,

@@ -8,15 +8,15 @@
 
         void Clear();
 
-        void SetBreakpoint(uint address);
+        void SetBreakpoint(int address);
 
-        void RemoveBreakpoint(uint address);
+        void RemoveBreakpoint(int address);
 
         void RemoveAllBreakpoints();
 
-        IInstruction Debug8(uint address);
+        IInstruction Debug8(int address);
 
-        IInstruction Debug10(uint address);
+        IInstruction Debug10(int address);
 
         void SingleStep(bool state);
 

@@ -5,25 +5,25 @@ namespace Core8.Model.Register
 {
     public class SaveField : RegisterBase
     {
-        public uint DF => Content & Masks.SF_DF;
+        public int DF => Content & Masks.SF_DF;
 
-        public uint IF => (Content & Masks.SF_IF) >> 3;
+        public int IF => (Content & Masks.SF_IF) >> 3;
 
-        public uint UF => (Content & Masks.SF_UF) >> 6;
+        public int UF => (Content & Masks.SF_UF) >> 6;
 
         protected override string ShortName => "SF";
 
-        public void SetDF(uint value)
+        public void SetDF(int value)
         {
             Set((Content & Masks.SF_IF) | (value & Masks.SF_DF));
         }
 
-        public void SetIF(uint value)
+        public void SetIF(int value)
         {
             Set(((value << 3) & Masks.SF_IF) | (Content & Masks.SF_DF));
         }
 
-        public void SetUF(uint value)
+        public void SetUF(int value)
         {
             Set(((value & Masks.FLAG) << 6) | (Content & (Masks.SF_IF | Masks.SF_DF)));
         }

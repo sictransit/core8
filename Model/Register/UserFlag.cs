@@ -7,7 +7,7 @@ namespace Core8.Model.Register
     {
         protected override string ShortName => "UF";
 
-        public void SetUF(uint value)
+        public void SetUF(int value)
         {
             Set(value & Masks.UF);
         }
