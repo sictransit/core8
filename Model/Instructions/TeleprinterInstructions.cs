@@ -5,9 +5,9 @@ using System;
 
 namespace Core8.Model.Instructions
 {
-    public class TeleprinterInstructions : TeleprinterInstructionsBase
+    public class TeleprinterInstructions : TeleptypeInstructionsBase
     {
-        public TeleprinterInstructions(IProcessor processor) : base(processor)
+        public TeleprinterInstructions(ICPU cpu) : base(cpu)
         {
         }
 
@@ -41,39 +41,39 @@ namespace Core8.Model.Instructions
 
         private void TFL()
         {
-            Teleprinter.SetOutputFlag();
+            Teletype.SetOutputFlag();
         }
 
         private void TLS()
         {
-            var c = Register.AC.Accumulator & Masks.TELEPRINTER_BUFFER_MASK;
+            var c = Registers.AC.Accumulator & Masks.TELEPRINTER_BUFFER_MASK;
 
-            Teleprinter.Type((byte)c);
+            Teletype.Type((byte)c);
 
-            Teleprinter.ClearOutputFlag();
+            Teletype.ClearOutputFlag();
 
-            Teleprinter.InitiateOutput();
+            Teletype.InitiateOutput();
         }
 
         private void TCF()
         {
-            Teleprinter.ClearOutputFlag();
+            Teletype.ClearOutputFlag();
         }
 
         private void TPC()
         {
-            var c = Register.AC.Accumulator & Masks.TELEPRINTER_BUFFER_MASK;
+            var c = Registers.AC.Accumulator & Masks.TELEPRINTER_BUFFER_MASK;
 
-            Teleprinter.Type((byte)c);
+            Teletype.Type((byte)c);
 
-            Teleprinter.InitiateOutput();
+            Teletype.InitiateOutput();
         }
 
         private void TSF()
         {
-            if (Teleprinter.OutputFlag)
+            if (Teletype.OutputFlag)
             {
-                Register.PC.Increment();
+                Registers.PC.Increment();
             }
         }
     }

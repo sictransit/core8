@@ -14,7 +14,7 @@ namespace Core8.Model.Register
 
         public override string ToString()
         {
-            return string.Format($"{base.ToString()} {Data.ToOctalString()}");
+            return string.Format($"{base.ToString()} {Content.ToOctalString()}");
         }
     }
 }

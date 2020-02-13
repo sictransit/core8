@@ -5,9 +5,9 @@ namespace Core8.Model.Instructions.Abstract
 {
     public abstract class InstructionsBase : IInstruction
     {
-        protected InstructionsBase(IProcessor processor)
+        protected InstructionsBase(ICPU cpu)
         {
-            Processor = processor;
+            CPU = cpu;
         }
 
         public uint Address { get; private set; }
@@ -18,11 +18,11 @@ namespace Core8.Model.Instructions.Abstract
 
         protected abstract string OpCodeText { get; }
 
-        protected IProcessor Processor { get; }
+        protected ICPU CPU { get; }
 
-        protected IRegisters Register => Processor.Registers;
+        protected IRegisters Registers => CPU.Registers;
 
-        protected IInterrupts Interrupts => Processor.Interrupts;
+        protected IInterrupts Interrupts => CPU.Interrupts;
 
         public IInstruction Load(uint address, uint data)
         {

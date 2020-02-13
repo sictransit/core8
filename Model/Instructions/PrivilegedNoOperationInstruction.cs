@@ -5,7 +5,7 @@ namespace Core8.Model.Instructions
 {
     public class PrivilegedNoOperationInstruction : PrivilegedInstructionsBase
     {
-        public PrivilegedNoOperationInstruction(IProcessor processor) : base(processor)
+        public PrivilegedNoOperationInstruction(ICPU cpu) : base(cpu)
         {
         }
 

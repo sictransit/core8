@@ -9,7 +9,7 @@ using System.Threading;
 
 namespace Core8
 {
-    public class Teleprinter : ITeleprinter
+    public class Teletype : ITeletype
     {
         private readonly List<byte> paper = new List<byte>();
 
@@ -19,7 +19,7 @@ namespace Core8
 
         private IODeviceControls deviceControls;
 
-        public Teleprinter()
+        public Teletype()
         {
             CachedDataAvailableEvent = new AutoResetEvent(false);
         }

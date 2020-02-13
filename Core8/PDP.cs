@@ -15,9 +15,11 @@ namespace Core8
 
         public PDP()
         {
-            Processor = new Processor(new Memory(), new Registers(), new Teleprinter());
+            var teletype = new Teletype();
 
-            relay = new MQRelay(Processor.Teleprinter);
+            CPU = new CPU(teletype);
+
+            relay = new MQRelay(teletype);
 
             relay.Start();
 
@@ -26,7 +28,7 @@ namespace Core8
 
         public bool Running => cpuThread != null && cpuThread.IsAlive;
 
-        public IProcessor Processor { get; }
+        public ICPU CPU { get; }
 
         private void ToggleRIMAndBinLoader()
         {
@@ -166,9 +168,9 @@ namespace Core8
                 }
             };
 
-            for (uint address = 0; address < Processor.Memory.Size; address++)
+            for (uint address = 0; address < CPU.Memory.Size; address++)
             {
-                var instruction = Processor.Debug10(address);
+                var instruction = CPU.Debug10(address);
 
                 if (instruction.Data != 0)
                 {
@@ -202,7 +204,7 @@ namespace Core8
 
         public void Clear()
         {
-            Processor.Clear();
+            CPU.Clear();
         }
 
         public void Deposit8(uint data)
@@ -212,20 +214,20 @@ namespace Core8
 
         public void Deposit10(uint data)
         {
-            Processor.Registers.SR.SetSR(data);
+            CPU.Registers.SR.SetSR(data);
 
             Deposit();
         }
 
         private void Deposit()
         {
-            var data = Processor.Registers.SR.Get;
+            var data = CPU.Registers.SR.Content;
 
-            Processor.Memory.Write(Processor.Registers.PC.Address, data);
+            CPU.Memory.Write(CPU.Registers.PC.Address, data);
 
-            Log.Information($"DEP: {Processor.Registers.PC} {data.ToOctalString()}");
+            Log.Information($"DEP: {CPU.Registers.PC} {data.ToOctalString()}");
 
-            Processor.Registers.PC.Increment();
+            CPU.Registers.PC.Increment();
         }
 
         public void Load8(uint address)
@@ -235,18 +237,16 @@ namespace Core8
 
         public void Load10(uint address)
         {
-            Processor.Registers.SR.SetSR(address);
+            CPU.Registers.SR.SetSR(address);
 
             Load();
         }
 
         private void Load()
         {
-            var address = Processor.Registers.SR.Get;
+            CPU.Registers.PC.SetPC(CPU.Registers.SR.Content);
 
-            Processor.Registers.PC.SetPC(address);
-
-            Log.Information($"LOAD: {Processor.Registers.PC}");
+            Log.Information($"LOAD: {CPU.Registers.PC}");
         }
 
         public void Toggle8(uint word)
@@ -256,34 +256,34 @@ namespace Core8
 
         public void Toggle10(uint word)
         {
-            Processor.Registers.SR.SetSR(word);
+            CPU.Registers.SR.SetSR(word);
         }
 
         public void SetBreakpoint8(uint address)
         {
-            Processor.SetBreakpoint(address.ToDecimal());
+            CPU.SetBreakpoint(address.ToDecimal());
         }
 
         public void RemoveBreakpoint8(uint address)
         {
-            Processor.RemoveBreakpoint(address.ToDecimal());
+            CPU.RemoveBreakpoint(address.ToDecimal());
         }
 
         public void RemoveAllBreakpoints()
         {
-            Processor.RemoveAllBreakpoints();
+            CPU.RemoveAllBreakpoints();
         }
 
         public void Exam()
         {
-            Processor.Registers.AC.SetAccumulator(Processor.Memory.Read(Processor.Registers.PC.Address));
+            CPU.Registers.AC.SetAccumulator(CPU.Memory.Read(CPU.Registers.PC.Address));
 
-            Log.Information($"EXAM: {Processor.Registers.AC}");
+            Log.Information($"EXAM: {CPU.Registers.AC}");
         }
 
         public void Continue(bool waitForHalt = true)
         {
-            cpuThread = new Thread(Processor.Run)
+            cpuThread = new Thread(CPU.Run)
             {
                 IsBackground = true,
                 Priority = ThreadPriority.AboveNormal
@@ -299,12 +299,12 @@ namespace Core8
 
         public void SingleStep(bool state)
         {
-            Processor.SingleStep(state);
+            CPU.SingleStep(state);
         }
 
         public void Halt(bool waitForHalt = true)
         {
-            Processor.Halt();
+            CPU.Halt();
 
             if (Running && waitForHalt)
             {
@@ -319,7 +319,7 @@ namespace Core8
                 throw new ArgumentNullException(nameof(tape));
             }
 
-            Processor.Teleprinter.MountPaperTape(tape);
+            CPU.Teletype.MountPaperTape(tape);
 
             Log.Information($"TAPE: loaded {tape.Length} bytes");
         }

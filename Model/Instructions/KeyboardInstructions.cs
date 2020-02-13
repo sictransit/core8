@@ -5,9 +5,9 @@ using System;
 
 namespace Core8.Model.Instructions
 {
-    public class KeyboardInstructions : TeleprinterInstructionsBase
+    public class KeyboardInstructions : TeleptypeInstructionsBase
     {
-        public KeyboardInstructions(IProcessor processor) : base(processor)
+        public KeyboardInstructions(ICPU cpu) : base(cpu)
         {
 
         }
@@ -45,38 +45,38 @@ namespace Core8.Model.Instructions
 
         private void KCC()
         {
-            Register.AC.ClearAccumulator();
+            Registers.AC.ClearAccumulator();
 
-            Teleprinter.ClearInputFlag();
+            Teletype.ClearInputFlag();
         }
 
         private void KCF()
         {
-            Teleprinter.ClearInputFlag();
+            Teletype.ClearInputFlag();
         }
 
         private void KRB()
         {
-            Register.AC.SetAccumulator(Teleprinter.InputBuffer);
+            Registers.AC.SetAccumulator(Teletype.InputBuffer);
 
-            Teleprinter.ClearInputFlag();
+            Teletype.ClearInputFlag();
         }
 
         private void KRS()
         {
-            Register.AC.ORAccumulator(Teleprinter.InputBuffer);
+            Registers.AC.ORAccumulator(Teletype.InputBuffer);
         }
 
         private void KIE()
         {
-            Teleprinter.SetDeviceControls(Register.AC.Accumulator);
+            Teletype.SetDeviceControls(Registers.AC.Accumulator);
         }
 
         private void KSF()
         {
-            if (Teleprinter.InputFlag)
+            if (Teletype.InputFlag)
             {
-                Register.PC.Increment();
+                Registers.PC.Increment();
             }
         }
     }

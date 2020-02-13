@@ -7,7 +7,7 @@ namespace Core8.Model.Instructions
 {
     public class MemoryManagementInstructions : PrivilegedInstructionsBase
     {
-        public MemoryManagementInstructions(IProcessor processor) : base(processor)
+        public MemoryManagementInstructions(ICPU cpu) : base(cpu)
         {
 
         }
@@ -59,12 +59,12 @@ namespace Core8.Model.Instructions
             {
                 if (ChangeOpCodes.HasFlag(MemoryManagementChangeOpCodes.CDF))
                 {
-                    Register.DF.SetDF(Data >> 3);
+                    Registers.DF.SetDF(Data >> 3);
                 }
 
                 if (ChangeOpCodes.HasFlag(MemoryManagementChangeOpCodes.CIF))
                 {
-                    Register.IB.SetIB(Data >> 3);
+                    Registers.IB.SetIB(Data >> 3);
 
                     Interrupts.Inhibit();
                 }
@@ -78,26 +78,26 @@ namespace Core8.Model.Instructions
 
         private void RDF()
         {
-            Register.AC.ORAccumulator(Register.DF.Data << 3);
+            Registers.AC.ORAccumulator(Registers.DF.Content << 3);
         }
 
         private void RIB()
         {
-            Register.AC.ORAccumulator(Register.SF.Data & (Masks.SF_UF | Masks.SF_IF | Masks.SF_DF));
+            Registers.AC.ORAccumulator(Registers.SF.Content & (Masks.SF_UF | Masks.SF_IF | Masks.SF_DF));
         }
 
         private void RIF()
         {
-            Register.AC.ORAccumulator(Register.PC.IF << 3);
+            Registers.AC.ORAccumulator(Registers.PC.IF << 3);
         }
 
         private void RMF()
         {
-            var sf = Register.SF;
+            var sf = Registers.SF;
 
-            Register.IB.SetIB(sf.IF);
-            Register.DF.SetDF(sf.DF);
-            Register.UB.SetUB(sf.UF);
+            Registers.IB.SetIB(sf.IF);
+            Registers.DF.SetDF(sf.DF);
+            Registers.UB.SetUB(sf.UF);
 
             Interrupts.Inhibit();
         }
@@ -106,20 +106,20 @@ namespace Core8.Model.Instructions
         {
             if (Interrupts.UserRequested)
             {
-                Register.PC.Increment();
+                Registers.PC.Increment();
             }
         }
 
         private void CUF()
         {
-            Register.UB.Clear();
+            Registers.UB.Clear();
 
             Interrupts.Inhibit();
         }
 
         private void SUF()
         {
-            Register.UB.SetUB(1);
+            Registers.UB.SetUB(1);
 
             Interrupts.Inhibit();
         }

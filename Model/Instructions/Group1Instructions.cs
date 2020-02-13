@@ -6,7 +6,7 @@ namespace Core8.Model.Instructions
 {
     public class Group1Instructions : InstructionsBase
     {
-        public Group1Instructions(IProcessor processor) : base(processor)
+        public Group1Instructions(ICPU cpu) : base(cpu)
         {
         }
 
@@ -18,52 +18,52 @@ namespace Core8.Model.Instructions
         {
             if (OpCodes.HasFlag(Group1OpCodes.CLA))
             {
-                Register.AC.ClearAccumulator();
+                Registers.AC.ClearAccumulator();
             }
 
             if (OpCodes.HasFlag(Group1OpCodes.CLL))
             {
-                Register.AC.ClearLink();
+                Registers.AC.ClearLink();
             }
 
             if (OpCodes.HasFlag(Group1OpCodes.CMA))
             {
-                Register.AC.ComplementAccumulator();
+                Registers.AC.ComplementAccumulator();
             }
 
             if (OpCodes.HasFlag(Group1OpCodes.CML))
             {
-                Register.AC.ComplementLink();
+                Registers.AC.ComplementLink();
             }
 
             if (OpCodes.HasFlag(Group1OpCodes.IAC))
             {
-                Register.AC.IncrementWithCarry();
+                Registers.AC.IncrementWithCarry();
             }
 
             if (OpCodes.HasFlag(Group1OpCodes.RAR))
             {
-                Register.AC.RAR();
+                Registers.AC.RAR();
 
                 if (OpCodes.HasFlag(Group1OpCodes.BSW))
                 {
-                    Register.AC.RAR();
+                    Registers.AC.RAR();
                 }
             }
 
             if (OpCodes.HasFlag(Group1OpCodes.RAL))
             {
-                Register.AC.RAL();
+                Registers.AC.RAL();
 
                 if (OpCodes.HasFlag(Group1OpCodes.BSW))
                 {
-                    Register.AC.RAL();
+                    Registers.AC.RAL();
                 }
             }
 
             if (OpCodes.HasFlag(Group1OpCodes.BSW) && !OpCodes.HasFlag(Group1OpCodes.RAR) && !OpCodes.HasFlag(Group1OpCodes.RAL))
             {
-                Register.AC.ByteSwap();
+                Registers.AC.ByteSwap();
             }
         }
     }

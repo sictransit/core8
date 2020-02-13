@@ -5,17 +5,13 @@ namespace Core8
 {
     public class Interrupts : IInterrupts
     {
-        private readonly IRegisters registers;
-        private readonly IMemory memory;
-        private readonly ITeleprinter teleprinter;
+        private readonly ICPU cpu;
 
         private bool delay = false;
 
-        public Interrupts(IRegisters registers, IMemory memory, ITeleprinter teleprinter)
+        public Interrupts(ICPU cpu)
         {
-            this.registers = registers;
-            this.memory = memory;
-            this.teleprinter = teleprinter;
+            this.cpu = cpu;
         }
 
         public bool Enabled { get; private set; }
@@ -26,7 +22,7 @@ namespace Core8
 
         public bool Inhibited { get; private set; }
 
-        public bool IORequested => teleprinter.InterruptRequested;
+        public bool IORequested => cpu.Teletype.InterruptRequested;
 
         public bool UserRequested { get; private set; }
 
@@ -88,20 +84,20 @@ namespace Core8
                     Log.Debug("Interrupt!");
                 }
 
-                memory.Write(0, registers.PC.Address); // JMS 0000
+                cpu.Memory.Write(0, cpu.Registers.PC.Address); // JMS 0000
 
-                registers.SF.SetIF(registers.PC.IF);
-                registers.SF.SetDF(registers.DF.Data);
-                registers.SF.SetUF(registers.UF.Data);
+                cpu.Registers.SF.SetIF(cpu.Registers.PC.IF);
+                cpu.Registers.SF.SetDF(cpu.Registers.DF.Content);
+                cpu.Registers.SF.SetUF(cpu.Registers.UF.Content);
 
-                registers.DF.Clear();
-                registers.IB.Clear();
-                registers.UF.Clear();
-                registers.UB.Clear();
+                cpu.Registers.DF.Clear();
+                cpu.Registers.IB.Clear();
+                cpu.Registers.UF.Clear();
+                cpu.Registers.UB.Clear();
 
-                registers.PC.SetIF(0);
+                cpu.Registers.PC.SetIF(0);
 
-                registers.PC.SetPC(1);
+                cpu.Registers.PC.SetPC(1);
 
                 Disable();
             }

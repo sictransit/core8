@@ -5,27 +5,25 @@ namespace Core8.Model.Register
 {
     public class InstructionFieldProgramCounter : RegisterBase
     {
-        public uint IF_PC => Data & (Masks.IF | Masks.MEM_WORD);
+        public uint Address => Content & Masks.MEM_WORD;
 
-        public uint Address => Data & Masks.MEM_WORD;
-
-        public uint IF => (Data & Masks.IF) >> 12;
+        public uint IF => (Content & Masks.IF) >> 12;
 
         protected override string ShortName => "PC";
 
         public void Increment()
         {
-            SetPC(Data + 1);
+            SetPC(Content + 1);
         }
 
         public void SetIF(uint address)
         {
-            Set(((address << 12) & Masks.IF) | (Data & Masks.MEM_WORD));
+            Set(((address << 12) & Masks.IF) | (Content & Masks.MEM_WORD));
         }
 
         public void SetPC(uint address)
         {
-            Set((Data & Masks.IF) | (address & Masks.MEM_WORD));
+            Set((Content & Masks.IF) | (address & Masks.MEM_WORD));
         }
 
         public void Jump(uint address)
@@ -35,7 +33,7 @@ namespace Core8.Model.Register
 
         public override string ToString()
         {
-            return string.Format($"{base.ToString()} {IF_PC.ToOctalString(5)}");
+            return string.Format($"{base.ToString()} {Content.ToOctalString(5)}");
         }
     }
 }

@@ -4,13 +4,13 @@ namespace Core8.Model.Register.Abstract
 {
     public abstract class RegisterBase
     {
-        public uint Data { get; private set; }
+        public uint Content { get; private set; }
 
         protected abstract string ShortName { get; }
 
         protected void Set(uint value)
         {
-            Data = value;
+            Content = value;
 
             if (Log.IsEnabled(Serilog.Events.LogEventLevel.Verbose))
             {
@@ -20,7 +20,7 @@ namespace Core8.Model.Register.Abstract
 
         public void Clear()
         {
-            Data = 0;
+            Content = 0;
         }
 
         public override string ToString()

@@ -2,7 +2,7 @@
 
 namespace Core8.Model.Interfaces
 {
-    public interface ITeleprinter
+    public interface ITeletype
     {
         void Read(byte c);
 

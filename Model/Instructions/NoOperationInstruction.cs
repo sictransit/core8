@@ -5,7 +5,7 @@ namespace Core8.Model.Instructions
 {
     public class NoOperationInstruction : InstructionsBase
     {
-        public NoOperationInstruction(IProcessor processor) : base(processor)
+        public NoOperationInstruction(ICPU cpu) : base(cpu)
         {
         }
 

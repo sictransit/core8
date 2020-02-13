@@ -10,13 +10,11 @@ namespace Core8.Model.Register
             Set(data & Masks.MEM_WORD);
         }
 
-        public uint Get => Data & Masks.MEM_WORD;
-
         protected override string ShortName => "SR";
 
         public override string ToString()
         {
-            return string.Format($"{base.ToString()} {Data.ToOctalString()}");
+            return string.Format($"{base.ToString()} {Content.ToOctalString()}");
         }
     }
 }

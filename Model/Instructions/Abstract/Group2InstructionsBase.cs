@@ -5,7 +5,7 @@ namespace Core8.Model.Instructions.Abstract
 {
     public abstract class Group2InstructionsBase : PrivilegedInstructionsBase
     {
-        internal Group2InstructionsBase(IProcessor processor) : base(processor)
+        internal Group2InstructionsBase(ICPU cpu) : base(cpu)
         {
         }
 
@@ -25,12 +25,12 @@ namespace Core8.Model.Instructions.Abstract
         {
             if (OpCodes.HasFlag(Group2PrivilegedOpCodes.OSR))
             {
-                Processor.Registers.AC.ORAccumulator(Processor.Registers.SR.Get);
+                CPU.Registers.AC.ORAccumulator(CPU.Registers.SR.Content);
             }
 
             if (OpCodes.HasFlag(Group2PrivilegedOpCodes.HLT))
             {
-                Processor.Halt();
+                CPU.Halt();
             }
         }
     }

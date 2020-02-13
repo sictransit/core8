@@ -7,7 +7,7 @@ namespace Core8.Model.Instructions
 {
     public class InterruptInstructions : PrivilegedInstructionsBase
     {
-        public InterruptInstructions(IProcessor processor) : base(processor)
+        public InterruptInstructions(ICPU cpu) : base(cpu)
         {
         }
 
@@ -52,7 +52,7 @@ namespace Core8.Model.Instructions
         {
             if (Interrupts.Enabled)
             {
-                Register.PC.Increment();
+                Registers.PC.Increment();
             }
 
             Interrupts.Disable();
@@ -72,18 +72,18 @@ namespace Core8.Model.Instructions
         {
             if (Interrupts.Requested)
             {
-                Register.PC.Increment();
+                Registers.PC.Increment();
             }
         }
 
         private void GTF()
         {
-            var acc = Register.AC.Link << 11;
+            var acc = Registers.AC.Link << 11;
             acc |= (uint)(Interrupts.Requested ? 1 : 0) << 9;
             acc |= (uint)(Interrupts.Pending ? 1 : 0) << 7;
-            acc |= Register.SF.Data;
+            acc |= Registers.SF.Content;
 
-            Register.AC.SetAccumulator(acc);
+            Registers.AC.SetAccumulator(acc);
         }
 
         private void SGT()
@@ -93,13 +93,13 @@ namespace Core8.Model.Instructions
 
         private void RTF()
         {
-            var acc = Register.AC.Accumulator;
+            var acc = Registers.AC.Accumulator;
 
-            Register.AC.SetLink((acc >> 11) & Masks.FLAG);
+            Registers.AC.SetLink((acc >> 11) & Masks.FLAG);
 
-            Register.IB.SetIB(acc >> 3);
-            Register.DF.SetDF(acc);
-            Register.UB.SetUB(acc >> 6);
+            Registers.IB.SetIB(acc >> 3);
+            Registers.DF.SetDF(acc);
+            Registers.UB.SetUB(acc >> 6);
 
             Interrupts.Enable(false);
             Interrupts.Inhibit();
@@ -107,7 +107,7 @@ namespace Core8.Model.Instructions
 
         private void CAF()
         {
-            Processor.Clear();
+            CPU.Clear();
         }
     }
 }

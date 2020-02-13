@@ -2,6 +2,9 @@
 {
     public static class Masks
     {
+        public const uint BRANCHING
+            = 0b_100_00_0000000;
+
         public const uint ADDRESSING_MODE
             = 0b_000_110_000_000;
 

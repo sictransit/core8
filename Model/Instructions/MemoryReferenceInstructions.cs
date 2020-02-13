@@ -9,7 +9,7 @@ namespace Core8.Model.Instructions
 {
     public class MemoryReferenceInstructions : InstructionsBase
     {
-        public MemoryReferenceInstructions(IProcessor processor) : base(processor)
+        public MemoryReferenceInstructions(ICPU cpu) : base(cpu)
         {
 
         }
@@ -32,94 +32,103 @@ namespace Core8.Model.Instructions
 
         public uint Location => Field | (Zero ? Word : (Page | Word));
 
-        private IMemory Memory => Processor.Memory;
+        private IMemory Memory => CPU.Memory;
 
         public override void Execute()
         {
-            if (OpCode == MemoryReferenceOpCode.JMP || OpCode == MemoryReferenceOpCode.JMS)
+            if ((Data & Masks.BRANCHING) != 0)
             {
-                if (Interrupts.Inhibited)
-                {
-                    Interrupts.Allow();
-
-                    Register.PC.SetIF(Register.IB.Data);
-                    Register.UF.SetUF(Register.UB.Data);
-                }
-
-                var operand = Indirect ? Field | Memory.Read(Location, true) : Location;
-
-
-                switch (OpCode)
-                {
-                    case MemoryReferenceOpCode.JMS:
-                        JMS(operand);
-                        break;
-                    case MemoryReferenceOpCode.JMP:
-                        JMP(operand);
-                        break;
-                    default:
-                        throw new NotImplementedException();
-                }
+                ExecuteBranching();
             }
             else
             {
-                var operand = Indirect ? (Register.DF.Data << 12) | Memory.Read(Location, true) : Location;
+                ExecuteNonBranching();
+            }
+        }
 
-                switch (OpCode)
-                {
-                    case MemoryReferenceOpCode.AND:
-                        AND(operand);
-                        break;
-                    case MemoryReferenceOpCode.TAD:
-                        TAD(operand);
-                        break;
-                    case MemoryReferenceOpCode.ISZ:
-                        ISZ(operand);
-                        break;
-                    case MemoryReferenceOpCode.DCA:
-                        DCA(operand);
-                        break;
-                    default:
-                        throw new NotImplementedException();
-                }
+        private void ExecuteBranching()
+        {
+            if (Interrupts.Inhibited)
+            {
+                Interrupts.Allow();
+
+                Registers.PC.SetIF(Registers.IB.Content);
+                Registers.UF.SetUF(Registers.UB.Content);
+            }
+
+            var operand = Indirect ? Field | Memory.Read(Location, true) : Location;
+
+            switch (OpCode)
+            {
+                case MemoryReferenceOpCode.JMS:
+                    JMS(operand);
+                    break;
+                case MemoryReferenceOpCode.JMP:
+                    JMP(operand);
+                    break;
+                default:
+                    throw new NotImplementedException();
+            }
+        }
+
+        private void ExecuteNonBranching()
+        {
+            var operand = Indirect ? (Registers.DF.Content << 12) | Memory.Read(Location, true) : Location;
+
+            switch (OpCode)
+            {
+                case MemoryReferenceOpCode.AND:
+                    AND(operand);
+                    break;
+                case MemoryReferenceOpCode.TAD:
+                    TAD(operand);
+                    break;
+                case MemoryReferenceOpCode.ISZ:
+                    ISZ(operand);
+                    break;
+                case MemoryReferenceOpCode.DCA:
+                    DCA(operand);
+                    break;
+                default:
+                    throw new NotImplementedException();
             }
         }
 
         private void AND(uint operand)
         {
-            Register.AC.ANDAccumulator(Memory.Read(operand));
+            Registers.AC.ANDAccumulator(Memory.Read(operand));
         }
 
         private void DCA(uint operand)
         {
-            Memory.Write(operand, Register.AC.Accumulator);
+            Memory.Write(operand, Registers.AC.Accumulator);
 
-            Register.AC.ClearAccumulator();
+            Registers.AC.ClearAccumulator();
         }
 
         private void ISZ(uint operand)
         {
             if (Memory.Write(operand, Memory.Read(operand) + 1) == 0)
             {
-                Register.PC.Increment();
+                Registers.PC.Increment();
             }
         }
 
         private void JMP(uint operand)
         {
-            Register.PC.Jump(operand);
+            Registers.PC.Jump(operand);
         }
 
         public void JMS(uint operand)
         {
-            Memory.Write(operand, Register.PC.Address);
+            Memory.Write(operand, Registers.PC.Address);
 
-            Register.PC.Jump(operand + 1);
+            Registers.PC.Jump(operand + 1);
         }
 
         private void TAD(uint operand)
         {
-            Register.AC.AddWithCarry(Memory.Read(operand));
+            Registers.AC.AddWithCarry(Memory.Read(operand));
         }
 
         public override string ToString()

@@ -20,14 +20,14 @@ namespace Core8
 
         public uint Examine(uint address)
         {
-            var data = ram[address] & Masks.MEM_WORD;
+            var content = ram[address];
 
             if (Log.IsEnabled(Serilog.Events.LogEventLevel.Verbose))
             {
-                Log.Verbose($"[Read]: {address.ToOctalString(5)}:{data.ToOctalString()}");
+                Log.Verbose($"[Read]: {address.ToOctalString(5)}:{content.ToOctalString()}");
             }
 
-            return data;
+            return content;
         }
 
         public uint Read(uint address, bool indirect = false)

@@ -1,6 +1,6 @@
 ﻿namespace Core8.Model.Interfaces
 {
-    public interface IProcessor
+    public interface ICPU
     {
         void Run();
 
@@ -26,6 +26,6 @@
 
         IMemory Memory { get; }
 
-        ITeleprinter Teleprinter { get; }
+        ITeletype Teletype { get; }
     }
 }

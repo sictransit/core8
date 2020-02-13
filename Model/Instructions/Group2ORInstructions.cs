@@ -6,7 +6,7 @@ namespace Core8.Model.Instructions
 {
     public class Group2ORInstructions : Group2InstructionsBase
     {
-        public Group2ORInstructions(IProcessor processor) : base(processor)
+        public Group2ORInstructions(ICPU cpu) : base(cpu)
         {
         }
 
@@ -20,27 +20,27 @@ namespace Core8.Model.Instructions
 
             if (OpCodes.HasFlag(Group2OROpCodes.SMA))
             {
-                result |= (Register.AC.Accumulator & Masks.AC_SIGN) != 0;
+                result |= (Registers.AC.Accumulator & Masks.AC_SIGN) != 0;
             }
 
             if (OpCodes.HasFlag(Group2OROpCodes.SZA))
             {
-                result |= Register.AC.Accumulator == 0;
+                result |= Registers.AC.Accumulator == 0;
             }
 
             if (OpCodes.HasFlag(Group2OROpCodes.SNL))
             {
-                result |= Register.AC.Link != 0;
+                result |= Registers.AC.Link != 0;
             }
 
             if (result)
             {
-                Register.PC.Increment();
+                Registers.PC.Increment();
             }
 
             if (OpCodes.HasFlag(Group2OROpCodes.CLA))
             {
-                Register.AC.ClearAccumulator();
+                Registers.AC.ClearAccumulator();
             }
 
             base.Execute();

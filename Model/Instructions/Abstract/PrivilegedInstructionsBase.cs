@@ -4,7 +4,7 @@ namespace Core8.Model.Instructions.Abstract
 {
     public abstract class PrivilegedInstructionsBase : InstructionsBase
     {
-        protected PrivilegedInstructionsBase(IProcessor processor) : base(processor)
+        protected PrivilegedInstructionsBase(ICPU cpu) : base(cpu)
         {
         }
 
@@ -12,7 +12,7 @@ namespace Core8.Model.Instructions.Abstract
 
         public override void Execute()
         {
-            if (Register.UF.Data == 0)  // Executive mode
+            if (Registers.UF.Content == 0)  // Executive mode
             {
                 if (Interrupts.UserRequested)
                 {

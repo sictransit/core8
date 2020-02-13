@@ -9,7 +9,7 @@ namespace Core8
 {
     public class MQRelay
     {
-        private readonly ITeleprinter teleprinter;
+        private readonly ITeletype teletype;
 
         private readonly PublisherSocket publisherSocket;
         private readonly SubscriberSocket subscriberSocket;
@@ -20,9 +20,9 @@ namespace Core8
         private bool publishing;
         private bool subscribing;
 
-        public MQRelay(ITeleprinter teleprinter)
+        public MQRelay(ITeletype teletype)
         {
-            this.teleprinter = teleprinter;
+            this.teletype = teletype;
 
             publisherSocket = new PublisherSocket();
             subscriberSocket = new SubscriberSocket();
@@ -61,9 +61,9 @@ namespace Core8
 
             while (publishing)
             {
-                if (teleprinter.CachedDataAvailableEvent.WaitOne(TimeSpan.FromMilliseconds(200)))
+                if (teletype.CachedDataAvailableEvent.WaitOne(TimeSpan.FromMilliseconds(200)))
                 {
-                    if (!publisherSocket.TrySendFrame(teleprinter.GetCachedOutput()))
+                    if (!publisherSocket.TrySendFrame(teletype.GetCachedOutput()))
                     {
                         Log.Debug("Failed to send frame.");
                     }
@@ -82,7 +82,7 @@ namespace Core8
             {
                 if (subscriberSocket.TryReceiveFrameBytes(TimeSpan.FromMilliseconds(100), out var frame))
                 {
-                    teleprinter.Read(frame[^1]);
+                    teletype.Read(frame[^1]);
                 }
 
             }

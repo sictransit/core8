@@ -53,9 +53,9 @@ namespace Core8.Tests
             PDP.Load8(0200);
             PDP.Continue();
 
-            Assert.AreEqual("HELLO WORLD!", PDP.Processor.Teleprinter.Printout);
+            Assert.AreEqual("HELLO WORLD!", PDP.CPU.Teletype.Printout);
 
-            Log.Information(PDP.Processor.Teleprinter.Printout);
+            Log.Information(PDP.CPU.Teletype.Printout);
         }
 
         [TestMethod]
@@ -76,7 +76,7 @@ namespace Core8.Tests
 
             PDP.Continue();
 
-            Assert.IsTrue(PDP.Processor.Registers.AC.Accumulator == length);
+            Assert.IsTrue(PDP.CPU.Registers.AC.Accumulator == length);
         }
 
         [TestMethod]
@@ -98,7 +98,7 @@ namespace Core8.Tests
             PDP.Load8(0207);
             PDP.Exam();
 
-            Assert.AreEqual(5u, PDP.Processor.Registers.AC.Accumulator);
+            Assert.AreEqual(5u, PDP.CPU.Registers.AC.Accumulator);
         }
 
         [TestMethod]
@@ -120,7 +120,7 @@ namespace Core8.Tests
             PDP.Load8(0007);
             PDP.Exam();
 
-            Assert.AreEqual(5u, PDP.Processor.Registers.AC.Accumulator);
+            Assert.AreEqual(5u, PDP.CPU.Registers.AC.Accumulator);
         }
     }
 }
