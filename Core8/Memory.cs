@@ -1,7 +1,5 @@
 ﻿using Core8.Model;
-using Core8.Model.Extensions;
 using Core8.Model.Interfaces;
-using Serilog;
 
 namespace Core8
 {
@@ -22,11 +20,6 @@ namespace Core8
         {
             var content = ram[address];
 
-            if (Log.IsEnabled(Serilog.Events.LogEventLevel.Verbose))
-            {
-                Log.Verbose($"[Read]: {address.ToOctalString(5)}:{content.ToOctalString()}");
-            }
-
             return content;
         }
 
@@ -45,11 +38,6 @@ namespace Core8
             var value = data & Masks.MEM_WORD;
 
             ram[address] = value;
-
-            if (Log.IsEnabled(Serilog.Events.LogEventLevel.Verbose))
-            {
-                Log.Verbose($"[Write]: {address.ToOctalString(5)}:{value.ToOctalString()}");
-            }
 
             return value;
         }

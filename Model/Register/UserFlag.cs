@@ -9,7 +9,7 @@ namespace Core8.Model.Register
 
         public void SetUF(int value)
         {
-            Set(value & Masks.UF);
+            Content = value & Masks.UF;
         }
 
         public override string ToString()

@@ -18,12 +18,17 @@ namespace Core8.Model.Register
 
         public void SetIF(int address)
         {
-            Set(((address << 12) & Masks.IF) | (Content & Masks.MEM_WORD));
+            Content = ((address << 12) & Masks.IF) | (Content & Masks.MEM_WORD);
         }
 
         public void SetPC(int address)
         {
-            Set((Content & Masks.IF) | (address & Masks.MEM_WORD));
+            Content = (Content & Masks.IF) | (address & Masks.MEM_WORD);
+        }
+
+        public void SetInterruptAddress()
+        {
+            Content = 1;
         }
 
         public void Jump(int address)

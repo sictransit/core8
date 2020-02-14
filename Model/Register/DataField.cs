@@ -9,7 +9,7 @@ namespace Core8.Model.Register
 
         public void SetDF(int value)
         {
-            Set(value & Masks.DF);
+            Content = value & Masks.DF;
         }
 
         public override string ToString()

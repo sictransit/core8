@@ -15,17 +15,17 @@ namespace Core8.Model.Register
 
         public void SetDF(int value)
         {
-            Set((Content & Masks.SF_IF) | (value & Masks.SF_DF));
+            Content = (Content & Masks.SF_IF) | (value & Masks.SF_DF);
         }
 
         public void SetIF(int value)
         {
-            Set(((value << 3) & Masks.SF_IF) | (Content & Masks.SF_DF));
+            Content = ((value << 3) & Masks.SF_IF) | (Content & Masks.SF_DF);
         }
 
         public void SetUF(int value)
         {
-            Set(((value & Masks.FLAG) << 6) | (Content & (Masks.SF_IF | Masks.SF_DF)));
+            Content = ((value & Masks.FLAG) << 6) | (Content & (Masks.SF_IF | Masks.SF_DF));
         }
 
         public override string ToString()

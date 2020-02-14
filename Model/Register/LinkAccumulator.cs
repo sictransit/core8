@@ -13,67 +13,62 @@ namespace Core8.Model.Register
 
         public void ByteSwap()
         {
-            SetAccumulator(((Content & Masks.AC_HIGH) >> 6) | ((Content & Masks.AC_LOW) << 6));
+            Content = (Content & Masks.LINK) | ((Content & Masks.AC_HIGH) >> 6) | ((Content & Masks.AC_LOW) << 6);
         }
 
         public void RAR()
         {
-            Set(((Content >> 1) & Masks.AC) | ((Content << 12) & Masks.LINK));
+            Content = ((Content >> 1) & Masks.AC) | ((Content << 12) & Masks.LINK);
         }
 
         public void RAL()
         {
-            Set(((Content << 1) & Masks.AC_LINK) | ((Content >> 12) & Masks.FLAG));
+            Content = ((Content << 1) & Masks.AC_LINK) | ((Content >> 12) & Masks.FLAG);
         }
 
         public void ComplementLink()
         {
-            SetLink((Content >> 12) ^ Masks.FLAG);
+            Content ^= Masks.LINK;
         }
 
         public void ComplementAccumulator()
         {
-            SetAccumulator(Content ^ Masks.AC);
+            Content ^= Masks.AC;
         }
 
         public void ClearAccumulator()
         {
-            Set(Content & Masks.LINK);
+            Content &= Masks.LINK;
         }
 
         public void ClearLink()
         {
-            Set(Content & Masks.AC);
+            Content &= Masks.AC;
         }
 
         public void SetAccumulator(int value)
         {
-            Set((Content & Masks.LINK) | (value & Masks.AC));
+            Content = (Content & Masks.LINK) | (value & Masks.AC);
         }
 
         public void ORAccumulator(int value)
         {
-            SetAccumulator(Content | value);
+            Content |= value & Masks.AC;
         }
 
         public void ANDAccumulator(int value)
         {
-            SetAccumulator(Content & value);
+            Content &= Masks.LINK | (Content & value);
         }
 
         public void SetLink(int value)
         {
-            Set(((value & Masks.FLAG) << 12) | (Content & Masks.AC));
+            Content = ((value & Masks.FLAG) << 12) | (Content & Masks.AC);
         }
 
         public void AddWithCarry(int value)
         {
-            Set((Content + value) & Masks.AC_LINK);
-        }
-
-        public void IncrementWithCarry()
-        {
-            AddWithCarry(1);
+            Content = (Content + value) & Masks.AC_LINK;
         }
 
         public override string ToString()

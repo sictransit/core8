@@ -95,9 +95,7 @@ namespace Core8
                 cpu.Registers.UF.Clear();
                 cpu.Registers.UB.Clear();
 
-                cpu.Registers.PC.SetIF(0);
-
-                cpu.Registers.PC.SetPC(1);
+                cpu.Registers.PC.SetInterruptAddress();
 
                 Disable();
             }

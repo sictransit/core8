@@ -9,7 +9,7 @@ namespace Core8.Model.Register
 
         public void SetIB(int value)
         {
-            Set(value & Masks.IB);
+            Content = value & Masks.IB;
         }
 
         public override string ToString()

@@ -45,7 +45,7 @@ namespace Core8.Model.Instructions
 
             if ((Data & IAC_MASK) != 0)
             {
-                Registers.AC.IncrementWithCarry();
+                Registers.AC.AddWithCarry(1);
             }
 
             if ((Data & RAR_MASK) != 0)

@@ -7,7 +7,7 @@ namespace Core8.Model.Register
     {
         public void SetSR(int data)
         {
-            Set(data & Masks.MEM_WORD);
+            Content = data & Masks.MEM_WORD;
         }
 
         protected override string ShortName => "SR";
