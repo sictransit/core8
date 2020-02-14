@@ -1,34 +1,40 @@
-﻿using Core8.Model.Enums;
-using Core8.Model.Instructions.Abstract;
+﻿using Core8.Model.Instructions.Abstract;
 using Core8.Model.Interfaces;
+using System;
 
 namespace Core8.Model.Instructions
 {
     public class Group2ORInstructions : Group2InstructionsBase
     {
+        private const int CLA_MASK = 1 << 7;
+        private const int SMA_MASK = 1 << 6;
+        private const int SZA_MASK = 1 << 5;
+        private const int SNL_MASK = 1 << 4;
+
         public Group2ORInstructions(ICPU cpu) : base(cpu)
         {
         }
 
-        protected override string OpCodeText => OpCodes == 0 ? base.OpCodeText : string.Join(' ', OpCodes.ToString(), base.OpCodeText);
-
-        private Group2OROpCodes OpCodes => (Group2OROpCodes)(Data & Masks.GROUP_2_AND_OR_FLAGS);
+        protected override string OpCodeText =>
+            (Data & Masks.GROUP_2_AND_OR_FLAGS) == 0
+            ? base.OpCodeText
+            : string.Join(' ', ((Group2OROpCodes)(Data & Masks.GROUP_2_AND_OR_FLAGS)).ToString(), base.OpCodeText);
 
         public override void Execute()
         {
             bool result = false;
 
-            if (OpCodes.HasFlag(Group2OROpCodes.SMA))
+            if ((Data & SMA_MASK) != 0)
             {
                 result |= (Registers.AC.Accumulator & Masks.AC_SIGN) != 0;
             }
 
-            if (OpCodes.HasFlag(Group2OROpCodes.SZA))
+            if ((Data & SZA_MASK) != 0)
             {
                 result |= Registers.AC.Accumulator == 0;
             }
 
-            if (OpCodes.HasFlag(Group2OROpCodes.SNL))
+            if ((Data & SNL_MASK) != 0)
             {
                 result |= Registers.AC.Link != 0;
             }
@@ -38,12 +44,22 @@ namespace Core8.Model.Instructions
                 Registers.PC.Increment();
             }
 
-            if (OpCodes.HasFlag(Group2OROpCodes.CLA))
+            if ((Data & CLA_MASK) != 0)
             {
                 Registers.AC.ClearAccumulator();
             }
 
             base.Execute();
         }
+
+        [Flags]
+        private enum Group2OROpCodes : int
+        {
+            CLA = CLA_MASK,
+            SMA = SMA_MASK,
+            SZA = SZA_MASK,
+            SNL = SNL_MASK,
+        }
+
     }
 }

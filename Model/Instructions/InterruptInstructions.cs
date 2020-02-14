@@ -1,5 +1,4 @@
-﻿using Core8.Model.Enums;
-using Core8.Model.Instructions.Abstract;
+﻿using Core8.Model.Instructions.Abstract;
 using Core8.Model.Interfaces;
 using System;
 
@@ -7,40 +6,47 @@ namespace Core8.Model.Instructions
 {
     public class InterruptInstructions : PrivilegedInstructionsBase
     {
+        private const int SKON_MASK = 0b_000;
+        private const int ION_MASK = 0b_001;
+        private const int IOF_MASK = 0b_010;
+        private const int SRQ_MASK = 0b_011;
+        private const int GTF_MASK = 0b_100;
+        private const int RTF_MASK = 0b_101;
+        private const int SGT_MASK = 0b_110;
+        private const int CAF_MASK = 0b_111;
+
         public InterruptInstructions(ICPU cpu) : base(cpu)
         {
         }
 
-        protected override string OpCodeText => OpCode.ToString();
-
-        private InterruptOpCode OpCode => (InterruptOpCode)(Data & Masks.INTERRUPT_FLAGS);
+        protected override string OpCodeText => ((InterruptOpCode)(Data & Masks.INTERRUPT_FLAGS)).ToString();
 
         protected override void PrivilegedExecute()
         {
-            switch (OpCode)
+            switch (Data & Masks.INTERRUPT_FLAGS)
             {
-                case InterruptOpCode.SKON:
+                case SKON_MASK:
                     SKON();
                     break;
-                case InterruptOpCode.ION:
+                case ION_MASK:
                     ION();
                     break;
-                case InterruptOpCode.IOF:
+                case IOF_MASK:
                     IOF();
                     break;
-                case InterruptOpCode.SRQ:
+                case SRQ_MASK:
                     SRQ();
                     break;
-                case InterruptOpCode.GTF:
+                case GTF_MASK:
                     GTF();
                     break;
-                case InterruptOpCode.RTF:
+                case RTF_MASK:
                     RTF();
                     break;
-                case InterruptOpCode.SGT:
+                case SGT_MASK:
                     SGT();
                     break;
-                case InterruptOpCode.CAF:
+                case CAF_MASK:
                     CAF();
                     break;
                 default:
@@ -108,6 +114,18 @@ namespace Core8.Model.Instructions
         private void CAF()
         {
             CPU.Clear();
+        }
+
+        private enum InterruptOpCode : int
+        {
+            SKON = SKON_MASK,
+            ION = ION_MASK,
+            IOF = IOF_MASK,
+            SRQ = SRQ_MASK,
+            GTF = GTF_MASK,
+            RTF = RTF_MASK,
+            SGT = SGT_MASK,
+            CAF = CAF_MASK,
         }
     }
 }

@@ -1,5 +1,4 @@
-﻿using Core8.Model.Enums;
-using Core8.Model.Instructions.Abstract;
+﻿using Core8.Model.Instructions.Abstract;
 using Core8.Model.Interfaces;
 using System;
 
@@ -7,35 +6,40 @@ namespace Core8.Model.Instructions
 {
     public class KeyboardInstructions : TeleptypeInstructionsBase
     {
+        private const int KCF_MASK = 0b_000;
+        private const int KSF_MASK = 0b_001;
+        private const int KCC_MASK = 0b_010;
+        private const int KRS_MASK = 0b_100;
+        private const int KIE_MASK = 0b_101;
+        private const int KRB_MASK = 0b_110;
+
         public KeyboardInstructions(ICPU cpu) : base(cpu)
         {
 
         }
 
-        protected override string OpCodeText => OpCode.ToString();
-
-        private KeyboardOpCode OpCode => (KeyboardOpCode)(Data & Masks.IO_OPCODE);
+        protected override string OpCodeText => ((KeyboardOpCode)(Data & Masks.IO_OPCODE)).ToString();
 
         protected override void PrivilegedExecute()
         {
-            switch (OpCode)
+            switch (Data & Masks.IO_OPCODE)
             {
-                case KeyboardOpCode.KCC:
+                case KCC_MASK:
                     KCC();
                     break;
-                case KeyboardOpCode.KCF:
+                case KCF_MASK:
                     KCF();
                     break;
-                case KeyboardOpCode.KRB:
+                case KRB_MASK:
                     KRB();
                     break;
-                case KeyboardOpCode.KRS:
+                case KRS_MASK:
                     KRS();
                     break;
-                case KeyboardOpCode.KIE:
+                case KIE_MASK:
                     KIE();
                     break;
-                case KeyboardOpCode.KSF:
+                case KSF_MASK:
                     KSF();
                     break;
                 default:
@@ -69,7 +73,7 @@ namespace Core8.Model.Instructions
 
         private void KIE()
         {
-            Teletype.SetDeviceControls(Registers.AC.Accumulator);
+            Teletype.SetDeviceControl(Registers.AC.Accumulator);
         }
 
         private void KSF()
@@ -78,6 +82,16 @@ namespace Core8.Model.Instructions
             {
                 Registers.PC.Increment();
             }
+        }
+
+        private enum KeyboardOpCode : int
+        {
+            KCF = KCF_MASK,
+            KSF = KSF_MASK,
+            KCC = KCC_MASK,
+            KRS = KRS_MASK,
+            KIE = KIE_MASK,
+            KRB = KRB_MASK,
         }
     }
 }

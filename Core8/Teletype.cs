@@ -1,5 +1,4 @@
 ﻿using Core8.Model;
-using Core8.Model.Enums;
 using Core8.Model.Interfaces;
 using System;
 using System.Collections.Concurrent;
@@ -17,7 +16,10 @@ namespace Core8
 
         private readonly ConcurrentQueue<byte> outputCache = new ConcurrentQueue<byte>();
 
-        private IODeviceControls deviceControls;
+        private int deviceControl;
+
+        private const int INTERRUPT_ENABLE = 1 << 0;
+        private const int STATUS_ENABLE = 1 << 1;
 
         public Teletype()
         {
@@ -38,7 +40,7 @@ namespace Core8
 
         private void RequestInterrupt()
         {
-            if (deviceControls.HasFlag(IODeviceControls.InterruptEnable))
+            if ((deviceControl & INTERRUPT_ENABLE) != 0)
             {
                 InterruptRequested = true;
             }
@@ -56,9 +58,9 @@ namespace Core8
             return buffer.ToArray();
         }
 
-        public void SetDeviceControls(int data)
+        public void SetDeviceControl(int data)
         {
-            deviceControls = (IODeviceControls)(data & Masks.IO_DEVICE_CONTROL_MASK);
+            deviceControl = data & (INTERRUPT_ENABLE | STATUS_ENABLE);
         }
 
         public void ClearInputFlag()
@@ -78,7 +80,7 @@ namespace Core8
 
         public void Clear()
         {
-            SetDeviceControls(Masks.IO_DEVICE_CONTROL_MASK);
+            SetDeviceControl(Masks.IO_DEVICE_CONTROL_MASK);
 
             ClearInputFlag();
             ClearOutputFlag();

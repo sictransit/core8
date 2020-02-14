@@ -1,5 +1,4 @@
-﻿using Core8.Model.Enums;
-using Core8.Model.Instructions.Abstract;
+﻿using Core8.Model.Instructions.Abstract;
 using Core8.Model.Interfaces;
 using System;
 
@@ -7,31 +6,35 @@ namespace Core8.Model.Instructions
 {
     public class TeleprinterInstructions : TeleptypeInstructionsBase
     {
+        private const int TFL_MASK = 0b_000;
+        private const int TSF_MASK = 0b_001;
+        private const int TCF_MASK = 0b_010;
+        private const int TPC_MASK = 0b_100;
+        private const int TLS_MASK = 0b_110;
+
         public TeleprinterInstructions(ICPU cpu) : base(cpu)
         {
         }
 
-        protected override string OpCodeText => OpCode.ToString();
-
-        private TeleprinterOpCode OpCode => (TeleprinterOpCode)(Data & Masks.IO_OPCODE);
+        protected override string OpCodeText => ((TeleprinterOpCode)(Data & Masks.IO_OPCODE)).ToString();
 
         protected override void PrivilegedExecute()
         {
-            switch (OpCode)
+            switch (Data & Masks.IO_OPCODE)
             {
-                case TeleprinterOpCode.TFL:
+                case TFL_MASK:
                     TFL();
                     break;
-                case TeleprinterOpCode.TLS:
+                case TLS_MASK:
                     TLS();
                     break;
-                case TeleprinterOpCode.TCF:
+                case TCF_MASK:
                     TCF();
                     break;
-                case TeleprinterOpCode.TPC:
+                case TPC_MASK:
                     TPC();
                     break;
-                case TeleprinterOpCode.TSF:
+                case TSF_MASK:
                     TSF();
                     break;
                 default:
@@ -75,6 +78,15 @@ namespace Core8.Model.Instructions
             {
                 Registers.PC.Increment();
             }
+        }
+
+        private enum TeleprinterOpCode : int
+        {
+            TFL = TFL_MASK,
+            TSF = TSF_MASK,
+            TCF = TCF_MASK,
+            TPC = TPC_MASK,
+            TLS = TLS_MASK
         }
     }
 }

@@ -1,5 +1,4 @@
-﻿using Core8.Model.Enums;
-using Core8.Model.Instructions.Abstract;
+﻿using Core8.Model.Instructions.Abstract;
 using Core8.Model.Interfaces;
 using System;
 
@@ -7,16 +6,28 @@ namespace Core8.Model.Instructions
 {
     public class MemoryManagementInstructions : PrivilegedInstructionsBase
     {
+        private const int CINT_MASK = 0b_110_010_000_100;
+        private const int RDF_MASK = 0b_110_010_001_100;
+        private const int RIF_MASK = 0b_110_010_010_100;
+        private const int RIB_MASK = 0b_110_010_011_100;
+        private const int RMF_MASK = 0b_110_010_100_100;
+        private const int SINT_MASK = 0b_110_010_101_100;
+        private const int CUF_MASK = 0b_110_010_110_100;
+        private const int SUF_MASK = 0b_110_010_111_100;
+
+        private const int CDF_MASK = 1 << 0;
+        private const int CIF_MASK = 1 << 1;
+
+
         public MemoryManagementInstructions(ICPU cpu) : base(cpu)
         {
 
         }
 
-        protected override string OpCodeText => IsReadInstruction ? ReadOpCode.ToString() : ChangeOpCodes.ToString();
-
-        private MemoryManagementChangeOpCodes ChangeOpCodes => (MemoryManagementChangeOpCodes)(Data & Masks.MEM_MGMT_CHANGE_FIELD);
-
-        private MemoryManagementReadOpCode ReadOpCode => (MemoryManagementReadOpCode)(Data & Masks.MEM_WORD);
+        protected override string OpCodeText =>
+            IsReadInstruction
+            ? ((MemoryManagementReadOpCode)(Data & Masks.MEM_WORD)).ToString()
+            : ((MemoryManagementChangeOpCodes)(Data & Masks.MEM_MGMT_CHANGE_FIELD)).ToString();
 
         private bool IsReadInstruction => (Data & Masks.MEM_MGMT_READ) == Masks.MEM_MGMT_READ;
 
@@ -24,52 +35,62 @@ namespace Core8.Model.Instructions
         {
             if (IsReadInstruction)
             {
-                switch (ReadOpCode)
-                {
-                    case MemoryManagementReadOpCode.CINT:
-                        CINT();
-                        break;
-                    case MemoryManagementReadOpCode.RDF:
-                        RDF();
-                        break;
-                    case MemoryManagementReadOpCode.RIB:
-                        RIB();
-                        break;
-                    case MemoryManagementReadOpCode.RIF:
-                        RIF();
-                        break;
-                    case MemoryManagementReadOpCode.RMF:
-                        RMF();
-                        break;
-                    case MemoryManagementReadOpCode.SINT:
-                        SINT();
-                        break;
-                    case MemoryManagementReadOpCode.CUF:
-                        CUF();
-                        break;
-                    case MemoryManagementReadOpCode.SUF:
-                        SUF();
-                        break;
-
-                    default:
-                        throw new NotImplementedException();
-                }
+                PrivilegedExecuteRead();
             }
             else
             {
-                if (ChangeOpCodes.HasFlag(MemoryManagementChangeOpCodes.CDF))
-                {
-                    Registers.DF.SetDF(Data >> 3);
-                }
-
-                if (ChangeOpCodes.HasFlag(MemoryManagementChangeOpCodes.CIF))
-                {
-                    Registers.IB.SetIB(Data >> 3);
-
-                    Interrupts.Inhibit();
-                }
+                PrivilegedExecuteChange();
             }
         }
+
+        private void PrivilegedExecuteRead()
+        {
+            switch (Data & Masks.MEM_WORD)
+            {
+                case CINT_MASK:
+                    CINT();
+                    break;
+                case RDF_MASK:
+                    RDF();
+                    break;
+                case RIB_MASK:
+                    RIB();
+                    break;
+                case RIF_MASK:
+                    RIF();
+                    break;
+                case RMF_MASK:
+                    RMF();
+                    break;
+                case SINT_MASK:
+                    SINT();
+                    break;
+                case CUF_MASK:
+                    CUF();
+                    break;
+                case SUF_MASK:
+                    SUF();
+                    break;
+                default:
+                    throw new NotImplementedException();
+            }
+        }
+
+        private void PrivilegedExecuteChange()
+        {
+            if ((Data & CDF_MASK) != 0)
+            {
+                Registers.DF.SetDF(Data >> 3);
+            }
+
+            if ((Data & CIF_MASK) != 0)
+            {
+                Registers.IB.SetIB(Data >> 3);
+
+                Interrupts.Inhibit();
+            }
+        }
+
 
         private void CINT()
         {
@@ -123,6 +144,24 @@ namespace Core8.Model.Instructions
 
             Interrupts.Inhibit();
         }
-    }
 
+        [Flags]
+        private enum MemoryManagementChangeOpCodes : int
+        {
+            CDF = CDF_MASK,
+            CIF = CIF_MASK
+        }
+
+        private enum MemoryManagementReadOpCode : int
+        {
+            CINT = CINT_MASK,
+            RDF = RDF_MASK,
+            RIF = RIF_MASK,
+            RIB = RIB_MASK,
+            RMF = RMF_MASK,
+            SINT = SINT_MASK,
+            CUF = CUF_MASK,
+            SUF = SUF_MASK,
+        }
+    }
 }

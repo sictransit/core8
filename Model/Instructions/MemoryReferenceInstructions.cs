@@ -1,5 +1,4 @@
-﻿using Core8.Model.Enums;
-using Core8.Model.Extensions;
+﻿using Core8.Model.Extensions;
 using Core8.Model.Instructions.Abstract;
 using Core8.Model.Interfaces;
 using System;
@@ -9,26 +8,32 @@ namespace Core8.Model.Instructions
 {
     public class MemoryReferenceInstructions : InstructionsBase
     {
+        private const int AND_MASK = 0b_000_00_0000000;
+        private const int TAD_MASK = 0b_001_00_0000000;
+        private const int ISZ_MASK = 0b_010_00_0000000;
+        private const int DCA_MASK = 0b_011_00_0000000;
+        private const int JMS_MASK = 0b_100_00_0000000;
+        private const int JMP_MASK = 0b_101_00_0000000;
+
+        private const int ZERO = 1 << 7;
+        private const int INDIRECT = 1 << 8;
+
         public MemoryReferenceInstructions(ICPU cpu) : base(cpu)
         {
 
         }
 
-        private MemoryReferenceOpCode OpCode => (MemoryReferenceOpCode)(Data & Masks.OP_CODE);
+        protected override string OpCodeText => string.Join(" ", (new[] { ((MemoryReferenceOpCode)(Data & Masks.OP_CODE)).ToString(), Indirect ? "I" : null, Zero ? "Z" : null }).Where(x => !string.IsNullOrEmpty(x)));
 
-        private AddressingModes AddressingModes => (AddressingModes)(Data & Masks.ADDRESSING_MODE);
+        private bool Indirect => (Data & INDIRECT) != 0;
 
-        protected override string OpCodeText => string.Join(" ", (new[] { OpCode.ToString(), Indirect ? "I" : null, Zero ? "Z" : null }).Where(x => !string.IsNullOrEmpty(x)));
+        private bool Zero => (Data & ZERO) == 0;
 
-        private bool Indirect => AddressingModes.HasFlag(AddressingModes.I);
+        private int Word => Data & Masks.ADDRESS_WORD;
 
-        private bool Zero => !AddressingModes.HasFlag(AddressingModes.Z);
+        private int Page => Address & Masks.ADDRESS_PAGE;
 
-        private int Word => (Data & Masks.ADDRESS_WORD);
-
-        private int Page => (Address & Masks.ADDRESS_PAGE);
-
-        private int Field => (Address & Masks.IF);
+        private int Field => Address & Masks.IF;
 
         public int Location => Field | (Zero ? Word : (Page | Word));
 
@@ -36,7 +41,7 @@ namespace Core8.Model.Instructions
 
         public override void Execute()
         {
-            if ((Data & Masks.BRANCHING) != 0)
+            if ((Data & JMS_MASK) != 0)
             {
                 ExecuteBranching();
             }
@@ -58,12 +63,12 @@ namespace Core8.Model.Instructions
 
             var operand = Indirect ? Field | Memory.Read(Location, true) : Location;
 
-            switch (OpCode)
+            switch (Data & Masks.OP_CODE)
             {
-                case MemoryReferenceOpCode.JMS:
+                case JMS_MASK:
                     JMS(operand);
                     break;
-                case MemoryReferenceOpCode.JMP:
+                case JMP_MASK:
                     JMP(operand);
                     break;
                 default:
@@ -75,18 +80,18 @@ namespace Core8.Model.Instructions
         {
             var operand = Indirect ? (Registers.DF.Content << 12) | Memory.Read(Location, true) : Location;
 
-            switch (OpCode)
+            switch (Data & Masks.OP_CODE)
             {
-                case MemoryReferenceOpCode.AND:
+                case AND_MASK:
                     AND(operand);
                     break;
-                case MemoryReferenceOpCode.TAD:
+                case TAD_MASK:
                     TAD(operand);
                     break;
-                case MemoryReferenceOpCode.ISZ:
+                case ISZ_MASK:
                     ISZ(operand);
                     break;
-                case MemoryReferenceOpCode.DCA:
+                case DCA_MASK:
                     DCA(operand);
                     break;
                 default:
@@ -135,6 +140,15 @@ namespace Core8.Model.Instructions
         {
             return $"{base.ToString()} ({Location.ToOctalString()})";
         }
-    }
 
+        private enum MemoryReferenceOpCode : int
+        {
+            AND = AND_MASK,
+            TAD = TAD_MASK,
+            ISZ = ISZ_MASK,
+            DCA = DCA_MASK,
+            JMS = JMS_MASK,
+            JMP = JMP_MASK,
+        }
+    }
 }

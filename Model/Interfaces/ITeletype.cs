@@ -36,7 +36,7 @@ namespace Core8.Model.Interfaces
 
         string Printout { get; }
 
-        void SetDeviceControls(int data);
+        void SetDeviceControl(int data);
 
         void MountPaperTape(byte[] chars);
     }

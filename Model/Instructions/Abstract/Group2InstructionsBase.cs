@@ -1,21 +1,25 @@
-﻿using Core8.Model.Enums;
-using Core8.Model.Interfaces;
+﻿using Core8.Model.Interfaces;
+using System;
 
 namespace Core8.Model.Instructions.Abstract
 {
     public abstract class Group2InstructionsBase : PrivilegedInstructionsBase
     {
+        private const int HLT_MASK = 1 << 1;
+        private const int OSR_MASK = 1 << 2;
+
         internal Group2InstructionsBase(ICPU cpu) : base(cpu)
         {
         }
 
-        protected override string OpCodeText => OpCodes != 0 ? OpCodes.ToString() : string.Empty;
-
-        private Group2PrivilegedOpCodes OpCodes => (Group2PrivilegedOpCodes)(Data & Masks.PRIVILEGED_GROUP_2_FLAGS);
+        protected override string OpCodeText =>
+            (Data & Masks.PRIVILEGED_GROUP_2_FLAGS) != 0
+            ? ((Group2PrivilegedOpCodes)(Data & Masks.PRIVILEGED_GROUP_2_FLAGS)).ToString()
+            : string.Empty;
 
         public override void Execute()
         {
-            if (OpCodes != 0)
+            if ((Data & Masks.PRIVILEGED_GROUP_2_FLAGS) != 0)
             {
                 base.Execute();
             }
@@ -23,15 +27,22 @@ namespace Core8.Model.Instructions.Abstract
 
         protected override void PrivilegedExecute()
         {
-            if (OpCodes.HasFlag(Group2PrivilegedOpCodes.OSR))
+            if ((Data & OSR_MASK) != 0)
             {
                 CPU.Registers.AC.ORAccumulator(CPU.Registers.SR.Content);
             }
 
-            if (OpCodes.HasFlag(Group2PrivilegedOpCodes.HLT))
+            if ((Data & HLT_MASK) != 0)
             {
                 CPU.Halt();
             }
+        }
+
+        [Flags]
+        private enum Group2PrivilegedOpCodes : int
+        {
+            HLT = HLT_MASK,
+            OSR = OSR_MASK,
         }
     }
 }
