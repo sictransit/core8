@@ -29,8 +29,6 @@ namespace Core8
         public void Disable()
         {
             Enabled = false;
-
-            DebugLog();
         }
 
         public void Enable(bool withDelay = true)
@@ -43,36 +41,26 @@ namespace Core8
             {
                 Enabled = true;
             }
-
-            DebugLog();
         }
 
         public void Inhibit()
         {
             Inhibited = true;
-
-            DebugLog();
         }
 
         public void Allow()
         {
             Inhibited = false;
-
-            DebugLog();
         }
 
         public void SetUser()
         {
             UserRequested = true;
-
-            DebugLog();
         }
 
         public void ClearUser()
         {
             UserRequested = false;
-
-            DebugLog();
         }
 
         public void Interrupt()
@@ -105,14 +93,6 @@ namespace Core8
                 delay = false;
 
                 Enable(false);
-            }
-        }
-
-        private void DebugLog()
-        {
-            if (Log.IsEnabled(Serilog.Events.LogEventLevel.Debug))
-            {
-                Log.Debug(this.ToString());
             }
         }
 
