@@ -23,24 +23,24 @@ namespace Core8.Model.Instructions
 
         public override void Execute()
         {
-            bool result = true;
+            bool skip = true;
 
             if ((Data & SPA_MASK) != 0)
             {
-                result &= (Registers.AC.Accumulator & Masks.AC_SIGN) == 0;
+                skip = (Registers.AC.Accumulator & Masks.AC_SIGN) == 0;
             }
 
-            if ((Data & SNA_MASK) != 0)
+            if (skip && ((Data & SNA_MASK) != 0))
             {
-                result &= Registers.AC.Accumulator != 0;
+                skip = Registers.AC.Accumulator != 0;
             }
 
-            if ((Data & SZL_MASK) != 0)
+            if (skip && ((Data & SZL_MASK) != 0))
             {
-                result &= Registers.AC.Link == 0;
+                skip = Registers.AC.Link == 0;
             }
 
-            if (result)
+            if (skip)
             {
                 Registers.PC.Increment();
             }

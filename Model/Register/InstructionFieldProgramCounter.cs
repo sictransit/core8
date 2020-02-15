@@ -13,7 +13,7 @@ namespace Core8.Model.Register
 
         public void Increment()
         {
-            SetPC(Content + 1);
+            Content = (Content & Masks.IF) | ((Content + 1) & Masks.MEM_WORD);
         }
 
         public void SetIF(int address)
@@ -33,7 +33,7 @@ namespace Core8.Model.Register
 
         public void Jump(int address)
         {
-            SetPC(address);
+            Content = (Content & Masks.IF) | (address & Masks.MEM_WORD);
         }
 
         public override string ToString()

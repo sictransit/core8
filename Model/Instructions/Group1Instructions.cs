@@ -50,22 +50,12 @@ namespace Core8.Model.Instructions
 
             if ((Data & RAR_MASK) != 0)
             {
-                Registers.AC.RAR();
-
-                if ((Data & BSW_MASK) != 0)
-                {
-                    Registers.AC.RAR();
-                }
+                Registers.AC.RAR(rtr: (Data & BSW_MASK) != 0);
             }
 
             if ((Data & RAL_MASK) != 0)
             {
-                Registers.AC.RAL();
-
-                if ((Data & BSW_MASK) != 0)
-                {
-                    Registers.AC.RAL();
-                }
+                Registers.AC.RAL(rtl: (Data & BSW_MASK) != 0);
             }
 
             if ((Data & (BSW_MASK | RAR_MASK | RAL_MASK)) == BSW_MASK)

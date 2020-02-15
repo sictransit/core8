@@ -60,35 +60,37 @@ namespace Core8
 
             Log.Information($"CONT @ {Registers.PC}");
 
-            while (running)
+            try
             {
-                if (breakpoints.Count != 0 && breakpoints.Contains(Registers.PC.Content))
+                while (running)
                 {
-                    Log.Information($"Breakpoint hit!");
+                    if (breakpoints.Count != 0 && breakpoints.Contains(Registers.PC.Content))
+                    {
+                        Log.Information($"Breakpoint hit!");
 
-                    break;
-                }
+                        break;
+                    }
 
-                try
-                {
                     FetchAndExecute();
-                }
-                catch (Exception ex)
-                {
-                    Log.Fatal($"Caught Exception in CPU: {ex.ToString()}");
 
-                    throw;
-                }
-
-                if (singleStep)
-                {
-                    break;
+                    if (singleStep)
+                    {
+                        break;
+                    }
                 }
             }
+            catch (Exception ex)
+            {
+                Log.Fatal($"Caught Exception in CPU: {ex.ToString()}");
 
-            running = false;
+                throw;
+            }
+            finally
+            {
+                running = false;
 
-            Log.Information($"HLT @ {Registers.PC}");
+                Log.Information($"HLT @ {Registers.PC}");
+            }
         }
 
         public void FetchAndExecute()
@@ -99,10 +101,10 @@ namespace Core8
 
             Registers.PC.Increment();
 
-            if (Log.IsEnabled(Serilog.Events.LogEventLevel.Debug))
-            {
-                Log.Debug(instruction.ToString());
-            }
+            //if (Log.IsEnabled(Serilog.Events.LogEventLevel.Debug))
+            //{
+            //    Log.Debug(instruction.ToString());
+            //}
 
             instruction.Execute();
         }

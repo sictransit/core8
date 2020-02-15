@@ -14,11 +14,6 @@ namespace Core8.Model.Instructions.Abstract
         {
             if (Registers.UF.Content == 0)  // Executive mode
             {
-                if (Interrupts.UserRequested)
-                {
-                    //Interrupts.ClearUser();
-                }
-
                 PrivilegedExecute();
             }
             else // User mode

@@ -16,9 +16,9 @@ namespace Core8
 
         public bool Enabled { get; private set; }
 
-        public bool Pending => Enabled | delay;
+        public bool Pending => Enabled || delay;
 
-        public bool Requested => IORequested | UserRequested;
+        public bool Requested => IORequested || UserRequested;
 
         public bool Inhibited { get; private set; }
 
@@ -79,10 +79,10 @@ namespace Core8
         {
             if (Enabled && Requested && !Inhibited)
             {
-                if (Log.IsEnabled(Serilog.Events.LogEventLevel.Debug))
-                {
-                    Log.Debug("Interrupt!");
-                }
+                //if (Log.IsEnabled(Serilog.Events.LogEventLevel.Debug))
+                //{
+                //    Log.Debug("Interrupt!");
+                //}
 
                 cpu.Memory.Write(0, cpu.Registers.PC.Address); // JMS 0000
 
