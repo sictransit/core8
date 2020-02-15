@@ -16,21 +16,21 @@ namespace Core8.Model.Register
             Content = (Content & Masks.LINK) | ((Content & Masks.AC_HIGH) >> 6) | ((Content & Masks.AC_LOW) << 6);
         }
 
-        public void RAR(bool rtr = false)
+        public void RAR(bool twice = false)
         {
             Content = ((Content >> 1) & Masks.AC) | ((Content << 12) & Masks.LINK);
 
-            if (rtr)
+            if (twice)
             {
                 RAR();
             }
         }
 
-        public void RAL(bool rtl = false)
+        public void RAL(bool twice = false)
         {
             Content = ((Content << 1) & Masks.AC_LINK) | ((Content >> 12) & Masks.FLAG);
 
-            if (rtl)
+            if (twice)
             {
                 RAL();
             }

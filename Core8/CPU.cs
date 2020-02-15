@@ -123,9 +123,7 @@ namespace Core8
         {
             var data = Memory.Read(address);
 
-            var instruction = Decode(data);
-
-            return instruction.Load(address, data);
+            return Decode(data).Load(address, data);
         }
 
         private IInstruction Decode(int data)

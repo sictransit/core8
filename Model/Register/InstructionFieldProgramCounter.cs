@@ -16,9 +16,9 @@ namespace Core8.Model.Register
             Content = (Content & Masks.IF) | ((Content + 1) & Masks.MEM_WORD);
         }
 
-        public void SetIF(int address)
+        public void SetIF(int field)
         {
-            Content = ((address << 12) & Masks.IF) | (Content & Masks.MEM_WORD);
+            Content = ((field << 12) & Masks.IF) | (Content & Masks.MEM_WORD);
         }
 
         public void SetPC(int address)

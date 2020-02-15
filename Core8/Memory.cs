@@ -16,21 +16,14 @@ namespace Core8
 
         public int Size { get; private set; }
 
-        public int Examine(int address)
-        {
-            var content = ram[address];
-
-            return content;
-        }
-
         public int Read(int address, bool indirect = false)
         {
-            if (indirect && ((address & Masks.MEM_WORD) >= 8) && ((address & Masks.MEM_WORD) <= 15))
+            if (indirect && ((address & Masks.MEM_WORD) <= 15) && ((address & Masks.MEM_WORD) >= 8))
             {
-                return Write(address, Examine(address) + 1);
+                return Write(address, ram[address] + 1);
             }
 
-            return Examine(address);
+            return ram[address];
         }
 
         public int Write(int address, int data)

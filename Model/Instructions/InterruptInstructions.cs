@@ -84,10 +84,7 @@ namespace Core8.Model.Instructions
 
         private void GTF()
         {
-            var acc = Registers.AC.Link << 11;
-            acc |= (Interrupts.Requested ? 1 : 0) << 9;
-            acc |= (Interrupts.Pending ? 1 : 0) << 7;
-            acc |= Registers.SF.Content;
+            var acc = (Registers.AC.Link << 11) | ((Interrupts.Requested ? 1 : 0) << 9) | ((Interrupts.Pending ? 1 : 0) << 7) | (Registers.SF.Content);
 
             Registers.AC.SetAccumulator(acc);
         }
