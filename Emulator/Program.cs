@@ -61,8 +61,6 @@ namespace Core8
                         pdp.DumpMemory();
                     }
 
-                    loggingLevel.MinimumLevel = Serilog.Events.LogEventLevel.Verbose;
-
                     pdp.Continue(waitForHalt: true);
 
                     Thread.Sleep(1000);
