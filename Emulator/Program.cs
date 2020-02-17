@@ -61,6 +61,8 @@ namespace Core8
                         pdp.DumpMemory();
                     }
 
+                    pdp.CPU.Debug(true);
+
                     pdp.Continue(waitForHalt: true);
 
                     Thread.Sleep(1000);

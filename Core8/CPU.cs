@@ -63,6 +63,8 @@ namespace Core8
                 {
                     if (debug)
                     {
+                        Log.Information(Registers.ToString());
+
                         if (breakpoints.Contains(Registers.PC.Content))
                         {
                             Log.Information($"Breakpoint hit!");
@@ -74,7 +76,7 @@ namespace Core8
                         {
                             break;
                         }
-                    }
+                    }            
 
                     Interrupts.Interrupt();
 
@@ -83,6 +85,11 @@ namespace Core8
                     Registers.PC.Increment();
 
                     instruction.Execute();
+
+                    if (debug)
+                    {
+                        Log.Information(instruction.ToString());
+                    }
                 }
             }
             catch (Exception ex)

@@ -1,5 +1,7 @@
 ﻿using Core8.Model.Interfaces;
 using Core8.Model.Register;
+using Core8.Model.Register.Abstract;
+using System.Linq;
 
 namespace Core8
 {
@@ -35,5 +37,10 @@ namespace Core8
         public UserFlag UF { get; }
 
         public SaveField SF { get; }
+
+        public override string ToString()
+        {
+            return string.Join(' ', new RegisterBase[] { PC, AC, DF, IB, UB, UF, SF, MQ }.Select(x => x.ToString()));
+        }
     }
 }
