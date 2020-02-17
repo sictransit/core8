@@ -20,6 +20,8 @@
 
         void SingleStep(bool state);
 
+        void Debug(bool state);
+
         IInterrupts Interrupts { get; }
 
         IRegisters Registers { get; }

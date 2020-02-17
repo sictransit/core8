@@ -13,6 +13,8 @@ namespace Core8
 
         private bool singleStep = false;
 
+        private bool debug = false;
+
         private readonly HashSet<int> breakpoints = new HashSet<int>();
 
         private readonly InstructionSet instructionSet;
@@ -35,11 +37,6 @@ namespace Core8
         public ITeletype Teletype { get; private set; }
 
         public IMemory Memory { get; private set; }
-
-        public void SingleStep(bool state)
-        {
-            singleStep = state;
-        }
 
         public void Clear()
         {
@@ -64,19 +61,28 @@ namespace Core8
             {
                 while (running)
                 {
-                    if (breakpoints.Count != 0 && breakpoints.Contains(Registers.PC.Content))
+                    if (debug)                        
                     {
-                        Log.Information($"Breakpoint hit!");
+                        if (breakpoints.Contains(Registers.PC.Content))
+                        {
+                            Log.Information($"Breakpoint hit!");
 
-                        break;
+                            break;
+                        }
+
+                        if (singleStep)
+                        {
+                            break;
+                        }
                     }
 
-                    FetchAndExecute();
+                    Interrupts.Interrupt();
 
-                    if (singleStep)
-                    {
-                        break;
-                    }
+                    var instruction = Fetch(Registers.PC.Content);
+
+                    Registers.PC.Increment();
+
+                    instruction.Execute();
                 }
             }
             catch (Exception ex)
@@ -91,22 +97,6 @@ namespace Core8
 
                 Log.Information($"HLT @ {Registers.PC}");
             }
-        }
-
-        public void FetchAndExecute()
-        {
-            Interrupts.Interrupt();
-
-            var instruction = Fetch(Registers.PC.Content);
-
-            Registers.PC.Increment();
-
-            //if (Log.IsEnabled(Serilog.Events.LogEventLevel.Debug))
-            //{
-            //    Log.Debug(instruction.ToString());
-            //}
-
-            instruction.Execute();
         }
 
         public IInstruction Debug8(int address)
@@ -149,6 +139,8 @@ namespace Core8
             Log.Information($"Breakpoint set @ {address.ToOctalString(5)}");
 
             breakpoints.Add(address);
+
+            debug = true;
         }
 
         public void RemoveBreakpoint(int address)
@@ -160,5 +152,17 @@ namespace Core8
         {
             breakpoints.Clear();
         }
+
+        public void Debug(bool state)
+        {
+            debug = state;
+        }
+
+        public void SingleStep(bool state)
+        {
+            singleStep = state;
+            debug |= state;
+        }
+
     }
 }
