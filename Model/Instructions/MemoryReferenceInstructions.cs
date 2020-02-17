@@ -8,12 +8,12 @@ namespace Core8.Model.Instructions
 {
     public class MemoryReferenceInstructions : InstructionsBase
     {
-        private const int AND_MASK = 0b_000_00_0000000;
-        private const int TAD_MASK = 0b_001_00_0000000;
-        private const int ISZ_MASK = 0b_010_00_0000000;
-        private const int DCA_MASK = 0b_011_00_0000000;
-        private const int JMS_MASK = 0b_100_00_0000000;
-        private const int JMP_MASK = 0b_101_00_0000000;
+        private const int AND_MASK = 0b_000 << 9;
+        private const int TAD_MASK = 0b_001 << 9;
+        private const int ISZ_MASK = 0b_010 << 9;
+        private const int DCA_MASK = 0b_011 << 9;
+        private const int JMS_MASK = 0b_100 << 9;
+        private const int JMP_MASK = 0b_101 << 9;
 
         private const int ZERO = 1 << 7;
         private const int INDIRECT = 1 << 8;

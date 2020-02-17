@@ -8,7 +8,7 @@ namespace Core8.Model.Instructions
     {
         private const int MQL_MASK = 1 << 4;
         private const int MQA_MASK = 1 << 6;
-        private const int SWP_MASK = 1 << 4 | 1 << 6;
+        private const int SWP_MASK = MQL_MASK | MQA_MASK;
         private const int CLA_MASK = 1 << 7;
 
         public Group3Instructions(ICPU cpu) : base(cpu)

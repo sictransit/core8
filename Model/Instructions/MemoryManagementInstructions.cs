@@ -6,14 +6,16 @@ namespace Core8.Model.Instructions
 {
     public class MemoryManagementInstructions : PrivilegedInstructionsBase
     {
-        private const int CINT_MASK = 0b_110_010_000_100;
-        private const int RDF_MASK = 0b_110_010_001_100;
-        private const int RIF_MASK = 0b_110_010_010_100;
-        private const int RIB_MASK = 0b_110_010_011_100;
-        private const int RMF_MASK = 0b_110_010_100_100;
-        private const int SINT_MASK = 0b_110_010_101_100;
-        private const int CUF_MASK = 0b_110_010_110_100;
-        private const int SUF_MASK = 0b_110_010_111_100;
+        private const int MEM_MGMT_MASK = 0b_110_010_000_100;
+
+        private const int CINT_MASK = MEM_MGMT_MASK;
+        private const int RDF_MASK = (0b_001 << 3) | MEM_MGMT_MASK;
+        private const int RIF_MASK = (0b_010 << 3) | MEM_MGMT_MASK;
+        private const int RIB_MASK = (0b_011 << 3) | MEM_MGMT_MASK;
+        private const int RMF_MASK = (0b_100 << 3) | MEM_MGMT_MASK;
+        private const int SINT_MASK = (0b_101 << 3) | MEM_MGMT_MASK;
+        private const int CUF_MASK = (0b_110 << 3) | MEM_MGMT_MASK;
+        private const int SUF_MASK = (0b_111 << 3) | MEM_MGMT_MASK;
 
         private const int CDF_MASK = 1 << 0;
         private const int CIF_MASK = 1 << 1;

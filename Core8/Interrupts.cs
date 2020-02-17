@@ -1,5 +1,4 @@
 ﻿using Core8.Model.Interfaces;
-using Serilog;
 
 namespace Core8
 {

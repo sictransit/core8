@@ -52,7 +52,7 @@ namespace Core8.Tests.MAINDEC.Abstract
 
                 timeout = sw.Elapsed > MaxRunningTime;
 
-                Thread.Sleep(100);
+                Thread.Sleep(50);
             }
 
             if (!ExpectHLT)

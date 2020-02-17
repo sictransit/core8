@@ -61,7 +61,7 @@ namespace Core8
             {
                 while (running)
                 {
-                    if (debug)                        
+                    if (debug)
                     {
                         if (breakpoints.Contains(Registers.PC.Content))
                         {

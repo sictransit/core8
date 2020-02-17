@@ -11,7 +11,7 @@ namespace Core8.Model.Instructions
         private const int KCC_MASK = 0b_010;
         private const int KRS_MASK = 0b_100;
         private const int KIE_MASK = 0b_101;
-        private const int KRB_MASK = 0b_110;
+        private const int KRB_MASK = KCC_MASK | KRS_MASK;
 
         public KeyboardInstructions(ICPU cpu) : base(cpu)
         {

@@ -8,7 +8,7 @@ namespace Core8.Tests.MAINDEC
     {
         protected override string TapeName => @"MAINDEC/tapes/MAINDEC-8E-D0JC-PB.bin";
 
-        protected override string[] ExpectedOutput => new[] { "JC\r\n" };
+        protected override string[] ExpectedOutput => new[] { "\r\nJC" };
 
         protected override string[] UnexpectedOutput => new[] { "F " };
 

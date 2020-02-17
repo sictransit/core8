@@ -6,11 +6,11 @@ namespace Core8.Model.Instructions
 {
     public class TeleprinterInstructions : TeleptypeInstructionsBase
     {
-        private const int TFL_MASK = 0b_000;
-        private const int TSF_MASK = 0b_001;
-        private const int TCF_MASK = 0b_010;
-        private const int TPC_MASK = 0b_100;
-        private const int TLS_MASK = 0b_110;
+        private const int TFL_MASK = 0;
+        private const int TSF_MASK = 1 << 0;
+        private const int TCF_MASK = 1 << 1;
+        private const int TPC_MASK = 1 << 2;
+        private const int TLS_MASK = TCF_MASK | TPC_MASK;
 
         public TeleprinterInstructions(ICPU cpu) : base(cpu)
         {
