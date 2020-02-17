@@ -4,7 +4,7 @@
 
 		*20						/GLOBALS
 
-MTDATA,	3271					/MYST DATA
+MTDATA,	6204					/MYST DATA
 MTCHAR,	0000					/MYST CHARACTER
 
 		*200					/LOCATE @ 0200
@@ -19,8 +19,6 @@ LOOP,							/READ AND PRINT LOOP
 		HLT						/HALT 
 		SPA						/POSITIVE AC? SKIP
 		JMS MYST				/PERFORM MYST MAGIC!
-		SPA						/POSITIVE AC? SKIP
-		JMS MYST				/EVEN MORE MYST MAGIC?
 		JMS TTYO				/TTY OUTPUT
 		JMP LOOP				/LOOP
 
@@ -28,13 +26,18 @@ MYST,	0						/MYST SUB-ROUTINE
 		DCA MTCHAR				/TEMP STORE CHAR 
 		TAD MTDATA				/LOAD MYST DATA
 
+		SMA						/BIT 0 SET? SKIP!
+		JMP .+3
+		ISZ MTCHAR				/TWEAK IT!
+		ISZ MTCHAR				/TWEAK IT!
+
+		RAL						/ROTATE LEFT
 		SPA						/BIT 0 CLEAR? SKIP!
 		ISZ MTCHAR				/TWEAK IT!
 
-		CLA CLL					/CLEAR ACC, CLEAR LINK
-		TAD MTDATA				/LOAD MYST DATA
 		RAL						/ROTATE LEFT
-		DCA MTDATA				/STORE IT
+		DCA MTDATA				/AND STORE
+
 		TAD MTCHAR				/LOAD SAVED CHAR
 		JMP I MYST				/RETURN	
 
@@ -106,8 +109,8 @@ MSG,	.						/POINTER TO MYST STRING
 		0071					/9
 		0056					/.
 		7060					/0
-		7066					/6
-		7061					/1
+		7060					/0
+		7060					/0
 		0040					/ 
 		0105					/E
 		0040					/ 
@@ -118,8 +121,8 @@ MSG,	.						/POINTER TO MYST STRING
 		0064					/4
 		0062					/2
 		0056					/.
-		7065					/5
-		7063					/3
-		7070					/8
+		7060					/0
+		7060					/0
+		7060					/0
 		0000					/<EOT>
 $
