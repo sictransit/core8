@@ -76,7 +76,7 @@ namespace Core8
                         {
                             break;
                         }
-                    }            
+                    }
 
                     Interrupts.Interrupt();
 

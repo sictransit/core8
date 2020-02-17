@@ -11,6 +11,8 @@ namespace Core8.Tests.MAINDEC
 
         protected override string[] ExpectedOutput => new[] { "SIMAD", "SIMROT", "FCT", "RANDOM" };
 
+        protected override TimeSpan MaxRunningTime => TimeSpan.FromSeconds(600);
+
         [TestMethod]
         public override void Start()
         {

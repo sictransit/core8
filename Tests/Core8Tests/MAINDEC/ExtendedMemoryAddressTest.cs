@@ -1,5 +1,6 @@
 using Core8.Tests.MAINDEC.Abstract;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System;
 
 namespace Core8.Tests.MAINDEC
 {
@@ -11,6 +12,8 @@ namespace Core8.Tests.MAINDEC
         protected override string[] UnexpectedOutput => new[] { "PR LOC   ADDR   GOOD  BAD  TEST" };
 
         protected override string[] ExpectedOutput => new[] { "\r\n5" };
+
+        protected override TimeSpan MaxRunningTime => TimeSpan.FromSeconds(60);
 
         [TestMethod]
         public override void Start()
