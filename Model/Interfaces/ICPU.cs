@@ -29,5 +29,7 @@
         IMemory Memory { get; }
 
         ITeletype Teletype { get; }
+
+        IFloppyDrive FloppyDrive { get; }
     }
 }

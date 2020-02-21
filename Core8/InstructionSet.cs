@@ -18,6 +18,7 @@ namespace Core8
             Interrupt = new InterruptInstructions(cpu);
             NOP = new NoOperationInstruction(cpu);
             PrivilegedNOP = new PrivilegedNoOperationInstruction(cpu);
+            FloppyDrive = new FloppyDriveInstructions(cpu);
         }
 
         public Group1Instructions Group1 { get; }
@@ -41,5 +42,7 @@ namespace Core8
         public NoOperationInstruction NOP { get; }
 
         public PrivilegedNoOperationInstruction PrivilegedNOP { get; }
+
+        public FloppyDriveInstructions FloppyDrive { get; }
     }
 }

@@ -38,7 +38,13 @@
         public const int IO
             = 0b_000_111_111_000;
 
+        public const int FLOPPY
+            = 0b_000_111_000_000;
+
         public const int IO_OPCODE
+            = 0b_000_000_000_111;
+
+        public const int FLOPPY_OPCODE
             = 0b_000_000_000_111;
 
         public const int FLAG

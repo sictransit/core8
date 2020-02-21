@@ -26,6 +26,7 @@ namespace Core8
             Memory = new Memory();
             Registers = new Registers();
             Interrupts = new Interrupts(this);
+            FloppyDrive = new FloppyDrive();
 
             instructionSet = new InstructionSet(this);
         }
@@ -37,6 +38,8 @@ namespace Core8
         public ITeletype Teletype { get; private set; }
 
         public IMemory Memory { get; private set; }
+
+        public IFloppyDrive FloppyDrive { get; private set; }
 
         public void Clear()
         {
@@ -136,6 +139,7 @@ namespace Core8
                 Masks.IOT when (data & Masks.INTERRUPT_MASK) == 0 => instructionSet.Interrupt,
                 Masks.IOT when (data & Masks.IO) >> 3 == 3 => instructionSet.Keyboard,
                 Masks.IOT when (data & Masks.IO) >> 3 == 4 => instructionSet.Teleprinter,
+                Masks.IOT when (data & Masks.FLOPPY) == Masks.FLOPPY => instructionSet.FloppyDrive,
                 Masks.IOT => instructionSet.PrivilegedNOP,
                 _ => instructionSet.MemoryReference,
             };
