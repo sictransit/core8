@@ -27,6 +27,8 @@ namespace Core8
                     {
                         pdp = new PDP();
 
+                        pdp.CPU.Debug(o.Debug);
+
                         if (o.TINT)
                         {
                             TINT();
@@ -49,11 +51,44 @@ namespace Core8
                             }
                         }
 
+                        if (o.Floppy)
+                        {
+                            FloppyDevelopment();
+                        }
+
                         if (o.TTY)
                         {
                             Console.WriteLine(pdp.CPU.Teletype.Printout);
                         }
                     });
+        }
+
+        private static void FloppyDevelopment()
+        {
+            pdp.Load8(00032);
+            pdp.Deposit8(7305);
+            pdp.Deposit8(6755);
+            pdp.Deposit8(5054);
+            pdp.Deposit8(1061);
+            pdp.Deposit8(6751);
+            pdp.Deposit8(5047);
+            pdp.Load8(00047);
+            pdp.Deposit8(4053);
+            pdp.Deposit8(3002);
+            pdp.Deposit8(2050);
+            pdp.Deposit8(5047);
+            pdp.Deposit8(0000);
+            pdp.Deposit8(6753);
+            pdp.Deposit8(5033);
+            pdp.Deposit8(6752);
+            pdp.Deposit8(5453);
+            pdp.Deposit8(7004);
+            pdp.Deposit8(0000);
+
+            pdp.DumpMemory();
+
+            pdp.Load8(00032);
+            pdp.Continue();
         }
 
         private static void TINT()

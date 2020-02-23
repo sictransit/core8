@@ -22,79 +22,89 @@ namespace Core8.Model.Instructions
 
         }
 
-        private IFloppyDrive FloppyDrive => CPU.FloppyDrive;
-
         protected override string OpCodeText => ((FloppyDriveOpCode)(Data & Masks.FLOPPY_OPCODE)).ToString();
 
         protected override void PrivilegedExecute()
         {
+            var floppy = CPU.GetFloppyDrive((Data & Masks.IO) >> 3);
+
             switch (Data & Masks.IO_OPCODE)
             {
                 case SEL_MASK:
-                    SEL();
+                    SEL(floppy);
                     break;
                 case LCD_MASK:
-                    TLS();
+                    TLS(floppy);
                     break;
                 case XDR_MASK:
-                    XDR();
+                    XDR(floppy);
                     break;
                 case STR_MASK:
-                    STR();
+                    STR(floppy);
                     break;
                 case SER_MASK:
-                    SER();
+                    SER(floppy);
                     break;
                 case SDN_MASK:
-                    SDN();
+                    SDN(floppy);
                     break;
                 case INTR_MASK:
-                    INTR();
+                    INTR(floppy);
                     break;
                 case INIT_MASK:
-                    INIT();
+                    INIT(floppy);
                     break;
                 default:
                     throw new NotImplementedException();
             }
         }
 
-        private void INIT()
+        private void INIT(IFloppyDrive floppy)
         {
             throw new NotImplementedException();
         }
 
-        private void INTR()
+        private void INTR(IFloppyDrive floppy)
         {
             throw new NotImplementedException();
         }
 
-        private void SDN()
+        private void SDN(IFloppyDrive floppy)
+        {
+            if (floppy.Done)
+            {
+                floppy.ClearDone();
+
+                CPU.Registers.PC.Increment();
+            }
+        }
+
+        private void SER(IFloppyDrive floppy)
         {
             throw new NotImplementedException();
         }
 
-        private void SER()
+        private void STR(IFloppyDrive floppy)
+        {
+            if (floppy.TransferRequest)
+            {
+                floppy.ClearTransferRequest();
+
+                CPU.Registers.PC.Increment();
+            }
+        }
+
+        private void XDR(IFloppyDrive floppy)
         {
             throw new NotImplementedException();
         }
 
-        private void STR()
+        private void TLS(IFloppyDrive floppy)
         {
             throw new NotImplementedException();
         }
 
-        private void XDR()
-        {
-            throw new NotImplementedException();
-        }
-
-        private void TLS()
-        {
-            throw new NotImplementedException();
-        }
-
-        private void SEL()
+        private void SEL(IFloppyDrive floppy)
         {
             throw new NotImplementedException();
         }

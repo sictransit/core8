@@ -1,4 +1,6 @@
-﻿namespace Core8.Model.Interfaces
+﻿using System.Collections.Generic;
+
+namespace Core8.Model.Interfaces
 {
     public interface ICPU
     {
@@ -30,6 +32,8 @@
 
         ITeletype Teletype { get; }
 
-        IFloppyDrive FloppyDrive { get; }
+        IFloppyDrive GetFloppyDrive(int id);
+
+        IReadOnlyCollection<IFloppyDrive> Floppies { get; }
     }
 }
