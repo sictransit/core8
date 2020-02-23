@@ -20,21 +20,15 @@ namespace Core8
 
         private readonly InstructionSet instructionSet;
 
-        private readonly Dictionary<int, IFloppyDrive> floppies;
-
         public CPU(ITeletype teletype)
         {
             Teletype = teletype ?? throw new ArgumentNullException(nameof(teletype));
 
-            floppies = new Dictionary<int, IFloppyDrive>
-            {
-                { 75.ToDecimal(), new FloppyDrive(75.ToDecimal()) },
-                { 76.ToDecimal(), new FloppyDrive(76.ToDecimal()) }
-            };
-
             Memory = new Memory();
             Registers = new Registers();
-            Interrupts = new Interrupts(this);
+            FloppyDrive = new FloppyDrive(Registers.AC); 
+
+            Interrupts = new Interrupts(this);            
 
             instructionSet = new InstructionSet(this);
         }
@@ -45,9 +39,9 @@ namespace Core8
 
         public ITeletype Teletype { get; private set; }
 
-        public IMemory Memory { get; private set; }
+        public IFloppyDrive FloppyDrive { get; private set; }
 
-        public IReadOnlyCollection<IFloppyDrive> Floppies => floppies.Values;
+        public IMemory Memory { get; private set; }
 
         public void Clear()
         {
@@ -143,7 +137,7 @@ namespace Core8
                 Masks.MCI when (data & Masks.GROUP_3) == Masks.GROUP_3 => instructionSet.NOP,
                 Masks.MCI when (data & Masks.GROUP_2_AND) == Masks.GROUP_2_AND => instructionSet.Group2AND,
                 Masks.MCI => instructionSet.Group2OR,
-                Masks.IOT when floppies.Keys.Contains((data & Masks.IO) >> 3) => instructionSet.FloppyDrive,
+                Masks.IOT when (data & Masks.FLOPPY) == Masks.FLOPPY => instructionSet.FloppyDrive,
                 Masks.IOT when (data & Masks.MEMORY_MANAGEMENT) == Masks.MEMORY_MANAGEMENT => instructionSet.MemoryManagement,
                 Masks.IOT when (data & Masks.INTERRUPT_MASK) == 0 => instructionSet.Interrupt,
                 Masks.IOT when (data & Masks.IO) >> 3 == 3 => instructionSet.Keyboard,
@@ -181,11 +175,6 @@ namespace Core8
         {
             singleStep = state;
             debug |= state;
-        }
-
-        public IFloppyDrive GetFloppyDrive(int id)
-        {
-            return floppies[id];
         }
     }
 }

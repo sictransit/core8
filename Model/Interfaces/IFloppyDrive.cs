@@ -6,9 +6,9 @@ namespace Core8.Model.Interfaces
 {
     public interface IFloppyDrive
     {
-        int ID { get; }
-
         bool Done { get; }
+
+        bool Error { get; }
 
         bool TransferRequest { get; }
 
@@ -16,6 +16,17 @@ namespace Core8.Model.Interfaces
 
         void ClearDone();
 
-        void ClearTransferRequest();        
+        void ClearError();
+
+        void ClearTransferRequest();
+
+        void Load(byte[] disk);
+
+        void LoadCommandRegister(int data);
+
+        void TransferDataRegister();
+
+        bool SkipNotDone();
+
     }
 }

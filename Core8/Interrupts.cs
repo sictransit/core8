@@ -22,7 +22,7 @@ namespace Core8
 
         public bool Inhibited { get; private set; }
 
-        public bool IORequested => cpu.Teletype.InterruptRequested || cpu.Floppies.Any(x => x.InterruptRequested);
+        public bool IORequested => cpu.Teletype.InterruptRequested || cpu.FloppyDrive.InterruptRequested;
 
         public bool UserRequested { get; private set; }
 

@@ -32,8 +32,6 @@ namespace Core8.Model.Interfaces
 
         ITeletype Teletype { get; }
 
-        IFloppyDrive GetFloppyDrive(int id);
-
-        IReadOnlyCollection<IFloppyDrive> Floppies { get; }
+        IFloppyDrive FloppyDrive { get; }
     }
 }

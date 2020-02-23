@@ -332,5 +332,10 @@ namespace Core8
 
             Continue();
         }
+
+        public void LoadFloppy(byte[] disk)
+        {
+            CPU.FloppyDrive.Load(disk);
+        }
     }
 }
