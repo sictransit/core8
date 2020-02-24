@@ -1,8 +1,8 @@
 ﻿using Core8.Model.Interfaces;
 using Core8.Model.Register;
+using Serilog;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace Core8
@@ -59,7 +59,7 @@ namespace Core8
 
         public bool TransferRequest => transferRequest;
 
-        public bool InterruptRequested { get; private set; }        
+        public bool InterruptRequested { get; private set; }
 
         public int SectorAddress { get; private set; }
 
@@ -74,9 +74,7 @@ namespace Core8
 
         public void ClearDone()
         {
-            done = false;
-
-            InterruptRequested = true;
+            InterruptRequested = done = false;
         }
 
         private void SetDone()
@@ -98,7 +96,7 @@ namespace Core8
 
             ReadBlock();
 
-            SetDone();            
+            SetDone();
         }
 
         public void LoadCommandRegister(int data)
@@ -108,11 +106,15 @@ namespace Core8
                 return;
             }
 
+            ClearDone();
+
+            ClearTransferRequest();
+
             commandRegister = data & 0b_000_011_111_110;
 
-            ExecuteCommand();
+            //ExecuteCommand();
 
-            //Task.Run(ExecuteCommand);
+            Task.Run(ExecuteCommand);
         }
 
         private void ExecuteCommand()
@@ -195,6 +197,8 @@ namespace Core8
 
         public void TransferDataRegister()
         {
+            Log.Information(State.ToString());
+
             switch (State)
             {
                 case ControllerState.Idle:
@@ -209,10 +213,10 @@ namespace Core8
                     throw new NotImplementedException();
                     break;
                 case ControllerState.ReadSector:
-                    ReadSector();                    
+                    ReadSector();
                     break;
                 case ControllerState.ReadTrack:
-                    ReadTrack();                    
+                    ReadTrack();
                     break;
                 case ControllerState.WriteDeletedDataSector:
                     throw new NotImplementedException();
@@ -251,12 +255,12 @@ namespace Core8
             {
                 SetDone();
 
-                State = ControllerState.Idle;                
+                State = ControllerState.Idle;
             }
             else
             {
                 transferRequest = true;
-            }            
+            }
         }
 
         public bool SkipNotDone()
