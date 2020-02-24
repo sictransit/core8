@@ -1,9 +1,8 @@
 ﻿using Core8.Model.Interfaces;
 using Core8.Model.Register;
-using Serilog;
 using System;
 using System.Collections.Generic;
-using System.Threading.Tasks;
+using System.Threading;
 
 namespace Core8
 {
@@ -21,6 +20,7 @@ namespace Core8
         public enum ControllerState
         {
             Idle,
+            Initialize,
             FillBuffer,
             EmptyBuffer,
             WriteSector,
@@ -43,9 +43,65 @@ namespace Core8
 
         private byte[] disk;
 
+        private Thread controllerThread;
+
+        private AutoResetEvent commandIssued = new AutoResetEvent(false);
+
+        private bool controllerRunning;
+
         public FloppyDrive(LinkAccumulator accumulator)
         {
             this.accumulator = accumulator;
+
+            State = ControllerState.Idle;
+
+            controllerThread = new Thread(Control)
+            {
+                IsBackground = true,
+                Priority = ThreadPriority.AboveNormal
+            };
+
+            controllerThread.Start();
+        }
+
+        private void Control()
+        {
+            controllerRunning = true;
+
+            while (controllerRunning)
+            {
+                if (commandIssued.WaitOne(TimeSpan.FromMilliseconds(200)))
+                {
+                    switch (State)
+                    {
+                        case ControllerState.Initialize:
+                            Initialize();
+                            State = ControllerState.Idle;
+                            break;
+                        case ControllerState.FillBuffer:
+                            throw new NotImplementedException();
+                            break;
+                        case ControllerState.EmptyBuffer:
+                            EmptyBuffer();
+                            break;
+                        case ControllerState.WriteSector:
+                            throw new NotImplementedException();
+                            break;
+                        case ControllerState.ReadSector:
+                            ReadSector();
+                            break;
+                        case ControllerState.ReadTrack:
+                            ReadTrack();
+                            break;
+                        case ControllerState.WriteDeletedDataSector:
+                            throw new NotImplementedException();
+                            break;
+                        default:
+                            throw new NotImplementedException();
+                    }
+
+                }
+            }
         }
 
         public ControllerState State { get; private set; }
@@ -91,12 +147,9 @@ namespace Core8
         {
             this.disk = disk;
 
-            TrackAddress = 1;
-            SectorAddress = 1;
+            State = ControllerState.Initialize;
 
-            ReadBlock();
-
-            SetDone();
+            commandIssued.Set();
         }
 
         public void LoadCommandRegister(int data)
@@ -112,13 +165,6 @@ namespace Core8
 
             commandRegister = data & 0b_000_011_111_110;
 
-            //ExecuteCommand();
-
-            Task.Run(ExecuteCommand);
-        }
-
-        private void ExecuteCommand()
-        {
             switch (Function)
             {
                 case FILL_BUFFER:
@@ -197,33 +243,17 @@ namespace Core8
 
         public void TransferDataRegister()
         {
-            Log.Information(State.ToString());
+            commandIssued.Set();
+        }
 
-            switch (State)
-            {
-                case ControllerState.Idle:
-                    break;
-                case ControllerState.FillBuffer:
-                    throw new NotImplementedException();
-                    break;
-                case ControllerState.EmptyBuffer:
-                    EmptyBuffer();
-                    break;
-                case ControllerState.WriteSector:
-                    throw new NotImplementedException();
-                    break;
-                case ControllerState.ReadSector:
-                    ReadSector();
-                    break;
-                case ControllerState.ReadTrack:
-                    ReadTrack();
-                    break;
-                case ControllerState.WriteDeletedDataSector:
-                    throw new NotImplementedException();
-                    break;
-                default:
-                    throw new NotImplementedException();
-            }
+        private void Initialize()
+        {
+            TrackAddress = 1;
+            SectorAddress = 1;
+
+            ReadBlock();
+
+            SetDone();
         }
 
         private void ReadSector()
