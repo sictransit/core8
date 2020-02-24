@@ -121,12 +121,12 @@ namespace Core8
 
             pdp.DumpMemory();
 
-            
-            pdp.Continue(waitForHalt:false);
+
+            pdp.Continue(waitForHalt: false);
 
             using var httpClient = new HttpClient();
 
-            pdp.LoadFloppy(httpClient.GetByteArrayAsync(@"https://www.dropbox.com/s/l4t8h28exvj7zsj/os8_rx.rx01?dl=0").Result);
+            pdp.LoadFloppy(File.ReadAllBytes(@"C:\Users\micke\Dropbox\PDP-8\OS-8\os8_rx.rx01"));
 
             while (pdp.Running)
             {

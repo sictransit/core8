@@ -21,7 +21,7 @@ namespace Core8
         private const int INTERRUPT_ENABLE = 1 << 0;
         private const int STATUS_ENABLE = 1 << 1;
 
-        public Teletype() 
+        public Teletype()
         {
             CachedDataAvailableEvent = new AutoResetEvent(false);
         }

@@ -1,8 +1,6 @@
-﻿using Core8.Model;
-using Core8.Model.Interfaces;
+﻿using Core8.Model.Interfaces;
 using Core8.Model.Register;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -13,14 +11,14 @@ namespace Core8
         private const int FILL_BUFFER = 0;
         private const int EMPTY_BUFFER = 1;
         private const int WRITE_SECTOR = 2;
-        private const int READ_SECTOR= 3;
-        private const int NO_OPERATION= 4;
-        private const int READ_STATUS= 5;
-        private const int WRITE_DELETED_DATA_SECTOR= 6;
+        private const int READ_SECTOR = 3;
+        private const int NO_OPERATION = 4;
+        private const int READ_STATUS = 5;
+        private const int WRITE_DELETED_DATA_SECTOR = 6;
         private const int READ_ERROR_REGISTER = 7;
 
         public enum ControllerState
-        { 
+        {
             Idle,
             FillBuffer,
             EmptyBuffer,
@@ -34,9 +32,9 @@ namespace Core8
         private volatile bool done;
 
         private int[] buffer = new int[128];
-        
+
         private readonly LinkAccumulator accumulator;
-        
+
         private int bufferPointer;
 
         private byte[] disk;
@@ -48,7 +46,7 @@ namespace Core8
 
         public ControllerState State { get; private set; }
 
-      
+
         private int Function => (commandRegister & 0b_001_110) >> 1;
 
         public bool EightBitMode => (commandRegister & 0b_001_000_000) != 0;
@@ -74,7 +72,7 @@ namespace Core8
         {
             done = false;
 
-            InterruptRequested = true;            
+            InterruptRequested = true;
         }
 
         private void SetDone()
@@ -91,7 +89,7 @@ namespace Core8
         {
             this.disk = disk;
 
-            TrackAddress = 1;
+            TrackAddress = 0;
             SectorAddress = 1;
 
             ReadBlock();
@@ -141,7 +139,7 @@ namespace Core8
                     break;
                 default:
                     throw new NotImplementedException();
-            }            
+            }
         }
 
         private void ReadStatus()
@@ -164,7 +162,8 @@ namespace Core8
 
                 buffer = buffer.Select((x, i) =>
                 {
-                    if (i < buffer.Length / 3 * 2) {
+                    if (i < buffer.Length / 3 * 2)
+                    {
                         if (i % 2 == 0)
                         {
                             packed = (x << 4) | (buffer[i + 1] >> 4);

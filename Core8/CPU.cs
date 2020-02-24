@@ -4,7 +4,6 @@ using Core8.Model.Interfaces;
 using Serilog;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace Core8
 {
@@ -26,9 +25,9 @@ namespace Core8
 
             Memory = new Memory();
             Registers = new Registers();
-            FloppyDrive = new FloppyDrive(Registers.AC); 
+            FloppyDrive = new FloppyDrive(Registers.AC);
 
-            Interrupts = new Interrupts(this);            
+            Interrupts = new Interrupts(this);
 
             instructionSet = new InstructionSet(this);
         }

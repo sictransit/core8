@@ -1,8 +1,6 @@
 ﻿using Core8.Model.Instructions.Abstract;
 using Core8.Model.Interfaces;
 using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Core8.Model.Instructions
 {
@@ -84,7 +82,7 @@ namespace Core8.Model.Instructions
                 FloppyDrive.ClearError();
 
                 Registers.PC.Increment();
-            }            
+            }
         }
 
         private void STR()
