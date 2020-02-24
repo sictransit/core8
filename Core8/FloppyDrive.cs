@@ -1,6 +1,7 @@
 ﻿using Core8.Model.Interfaces;
 using Core8.Model.Register;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -24,12 +25,15 @@ namespace Core8
             EmptyBuffer,
             WriteSector,
             ReadSector,
+            ReadTrack,
             WriteDeletedDataSector,
         }
 
         private int commandRegister;
 
         private volatile bool done;
+
+        private volatile bool transferRequest;
 
         private int[] buffer = new int[128];
 
@@ -53,9 +57,9 @@ namespace Core8
 
         public bool Done => done;
 
-        public bool InterruptRequested { get; private set; }
+        public bool TransferRequest => transferRequest;
 
-        public bool TransferRequest { get; private set; }
+        public bool InterruptRequested { get; private set; }        
 
         public int SectorAddress { get; private set; }
 
@@ -82,19 +86,19 @@ namespace Core8
 
         public void ClearTransferRequest()
         {
-            TransferRequest = false;
+            transferRequest = false;
         }
 
         public void Load(byte[] disk)
         {
             this.disk = disk;
 
-            TrackAddress = 0;
+            TrackAddress = 1;
             SectorAddress = 1;
 
             ReadBlock();
 
-            SetDone();
+            SetDone();            
         }
 
         public void LoadCommandRegister(int data)
@@ -106,7 +110,9 @@ namespace Core8
 
             commandRegister = data & 0b_000_011_111_110;
 
-            Task.Run(ExecuteCommand);
+            ExecuteCommand();
+
+            //Task.Run(ExecuteCommand);
         }
 
         private void ExecuteCommand()
@@ -154,33 +160,37 @@ namespace Core8
 
         private void ReadBlock()
         {
-            Array.Copy(disk, TrackAddress * 26 + (SectorAddress - 1), buffer, 0, buffer.Length);
+            Array.Copy(disk, TrackAddress * 26 * 128 + (SectorAddress - 1) * 128, buffer, 0, buffer.Length);
 
             if (!EightBitMode)
             {
-                int packed = 0;
+                var packedBuffer = new List<int>();
 
-                buffer = buffer.Select((x, i) =>
+                for (int i = 0; i < 96; i++)
                 {
-                    if (i < buffer.Length / 3 * 2)
+                    if ((i + 1) % 3 != 0)
                     {
-                        if (i % 2 == 0)
+                        int packed;
+
+                        if (packedBuffer.Count % 2 == 0)
                         {
-                            packed = (x << 4) | (buffer[i + 1] >> 4);
+                            packed = (buffer[i] << 4) | ((buffer[i + 1] >> 4) & 0b_001_111);
                         }
                         else
                         {
-                            packed = ((x & 0b_001_111) << 8) | (buffer[i + 1]);
+                            packed = ((buffer[i] & 0b_001_111) << 8) | (buffer[i + 1]);
                         }
-                    }
 
-                    return packed;
-                }).ToArray();
+                        packedBuffer.Add(packed);
+                    }
+                }
+
+                buffer = packedBuffer.ToArray();
             }
 
             bufferPointer = 0;
 
-            TransferRequest = true;
+            transferRequest = true;
         }
 
         public void TransferDataRegister()
@@ -199,7 +209,10 @@ namespace Core8
                     throw new NotImplementedException();
                     break;
                 case ControllerState.ReadSector:
-                    throw new NotImplementedException();
+                    ReadSector();                    
+                    break;
+                case ControllerState.ReadTrack:
+                    ReadTrack();                    
                     break;
                 case ControllerState.WriteDeletedDataSector:
                     throw new NotImplementedException();
@@ -209,6 +222,22 @@ namespace Core8
             }
         }
 
+        private void ReadSector()
+        {
+            SectorAddress = accumulator.Accumulator & 0b_000_001_111_111;
+
+            State = ControllerState.ReadTrack;
+        }
+
+        private void ReadTrack()
+        {
+            TrackAddress = accumulator.Accumulator & 0b_000_011_111_111;
+
+            State = ControllerState.Idle;
+
+            SetDone();
+        }
+
         private void EmptyBuffer()
         {
             if (EightBitMode)
@@ -216,20 +245,22 @@ namespace Core8
                 throw new NotImplementedException();
             }
 
-            accumulator.SetAccumulator(buffer[++bufferPointer]);
+            accumulator.SetAccumulator(buffer[bufferPointer++]);
 
             if (bufferPointer == buffer.Length)
             {
                 SetDone();
-            }
 
-            TransferRequest = true;
+                State = ControllerState.Idle;                
+            }
+            else
+            {
+                transferRequest = true;
+            }            
         }
 
         public bool SkipNotDone()
         {
-            State = ControllerState.EmptyBuffer;
-
             if (Done)
             {
                 ClearDone();

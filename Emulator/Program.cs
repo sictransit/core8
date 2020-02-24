@@ -126,7 +126,7 @@ namespace Core8
 
             using var httpClient = new HttpClient();
 
-            pdp.LoadFloppy(File.ReadAllBytes(@"C:\Users\micke\Dropbox\PDP-8\OS-8\os8_rx.rx01"));
+            pdp.LoadFloppy(File.ReadAllBytes(@"C:\tmp\OS-8\os8_rx.rx01"));
 
             while (pdp.Running)
             {
