@@ -24,5 +24,6 @@
 
         bool SkipNotDone();
 
+        void Initialize();
     }
 }

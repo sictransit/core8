@@ -1,5 +1,6 @@
 ﻿using Core8.Model.Instructions.Abstract;
 using Core8.Model.Interfaces;
+using Serilog;
 using System;
 
 namespace Core8.Model.Instructions
@@ -59,7 +60,7 @@ namespace Core8.Model.Instructions
 
         private void INIT()
         {
-            throw new NotImplementedException();
+            FloppyDrive.Initialize();
         }
 
         private void INTR()
@@ -89,6 +90,8 @@ namespace Core8.Model.Instructions
         {
             if (FloppyDrive.TransferRequest)
             {
+                Log.Information("STR");
+
                 FloppyDrive.ClearTransferRequest();
 
                 CPU.Registers.PC.Increment();
