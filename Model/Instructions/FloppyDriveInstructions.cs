@@ -90,7 +90,7 @@ namespace Core8.Model.Instructions
         {
             if (FloppyDrive.TransferRequest)
             {
-                Log.Information("STR");
+                //Log.Information("STR");
 
                 FloppyDrive.ClearTransferRequest();
 

@@ -67,7 +67,7 @@ namespace Core8
                 {
                     if (debug)
                     {
-                        Log.Information(Registers.ToString());
+                        //Log.Information(Registers.ToString());
 
                         if (breakpoints.Contains(Registers.PC.Content))
                         {

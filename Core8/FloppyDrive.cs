@@ -38,7 +38,6 @@ namespace Core8
             WriteTrack,
             ReadSector,
             ReadTrack,
-            NoOperation,
             WriteDeletedDataSector,
         }
 
@@ -59,7 +58,7 @@ namespace Core8
 
         private void ExecuteCommand()
         {
-            Log.Information($"Executing: {State}");
+            //Log.Information($"Executing: {State}");
 
             switch (State)
             {
@@ -83,9 +82,6 @@ namespace Core8
                     break;
                 case ControllerState.ReadTrack:
                     ReadTrack();
-                    break;
-                case ControllerState.NoOperation:
-                    NoOperation();
                     break;
                 case ControllerState.WriteDeletedDataSector:
                     throw new NotImplementedException();
@@ -141,7 +137,7 @@ namespace Core8
         {
             TransferRequest = true;
 
-            Log.Information("TRQ set");
+            //Log.Information("TRQ set");
         }
 
         public void Load(byte[] disk)
@@ -164,7 +160,7 @@ namespace Core8
 
             commandRegister = data & 0b_000_011_111_110;
 
-            Log.Information($"Function select: {FunctionSelect}");
+            //Log.Information($"Function select: {FunctionSelect}");
 
             switch (Function)
             {
@@ -187,7 +183,7 @@ namespace Core8
                     SetTransferRequest();
                     break;
                 case NO_OPERATION:
-                    State = ControllerState.NoOperation;
+                    SetDone();
                     break;
                 case READ_STATUS:
                     ReadStatus();
@@ -269,7 +265,7 @@ namespace Core8
 
         public void TransferDataRegister()
         {
-            Log.Information("XDR");
+            //Log.Information("XDR");
             
             ExecuteCommand();
         }
@@ -305,11 +301,6 @@ namespace Core8
 
             State = ControllerState.Idle;            
 
-            SetDone();
-        }
-
-        private void NoOperation()
-        {
             SetDone();
         }
 
@@ -350,7 +341,7 @@ namespace Core8
             }
             else
             {
-                TransferRequest = true;
+                SetTransferRequest();
             }
         }
 
@@ -371,7 +362,7 @@ namespace Core8
             }
             else
             {
-                TransferRequest = true;
+                SetTransferRequest();
             }
         }
 
