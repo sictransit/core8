@@ -52,7 +52,7 @@ namespace Core8
 
         private volatile bool transferRequest;
 
-        private int[] buffer;
+        private readonly int[] buffer = new int[64];
 
         private readonly LinkAccumulator accumulator;
 
@@ -264,34 +264,26 @@ namespace Core8
             if (EightBitMode)
             {
                 throw new NotImplementedException();
-            }
-               
-            buffer = new int[128];
-
-            Array.Copy(disk, TrackAddress * 26 * 128 + (SectorAddress - 1) * 128, buffer, 0, buffer.Length);            
+            }               
             
-            var packed = new List<int>();
+            var start = TrackAddress * 26 * 128 + (SectorAddress - 1) * 128;                        
+
+            var bufferPointer = 0;
 
             for (int i = 0; i < 96; i++)
             {
                 if ((i + 1) % 3 != 0)
                 {
-                    int word;
-
-                    if (packed.Count % 2 == 0)
+                    if (bufferPointer % 2 == 0)
                     {
-                        word = (buffer[i] << 4) | ((buffer[i + 1] >> 4) & 0b_001_111);
+                        buffer[bufferPointer++] = (disk[start+i] << 4) | ((disk[start+i + 1] >> 4) & 0b_001_111);
                     }
                     else
                     {
-                        word = ((buffer[i] & 0b_001_111) << 8) | (buffer[i + 1]);
-                    }
-
-                    packed.Add(word);
+                        buffer[bufferPointer++] = ((disk[start+i] & 0b_001_111) << 8) | (disk[start+i + 1]);
+                    }                    
                 }
-            }
-
-            buffer = packed.ToArray();            
+            }            
         }
 
         private void WriteBlock()
@@ -301,7 +293,7 @@ namespace Core8
                 throw new NotImplementedException();
             }
 
-            var buffer = new byte[128];
+            var block = new byte[128];
 
             var position = 0;
 
@@ -309,16 +301,16 @@ namespace Core8
             {
                 if (i % 2 == 0)
                 {
-                    buffer[position++] = (byte)(buffer[i] >> 4);
-                    buffer[position++] = (byte)((buffer[i] << 4) | ((buffer[i + 1] >> 8) & 0b_001_111));                        
+                    block[position++] = (byte)(buffer[i] >> 4);
+                    block[position++] = (byte)((buffer[i] << 4) | ((buffer[i + 1] >> 8) & 0b_001_111));                        
                 }
                 else
                 {
-                    buffer[position++] = (byte)(buffer[i] & 0b_011_111_111);
+                    block[position++] = (byte)(buffer[i] & 0b_011_111_111);
                 }                
             }
 
-            Array.Copy(buffer,0, disk, TrackAddress * 26 * 128 + (SectorAddress - 1) * 128, buffer.Length);            
+            Array.Copy(block, 0, disk, TrackAddress * 26 * 128 + (SectorAddress - 1) * 128, block.Length);            
         }
 
         public void TransferDataRegister()
