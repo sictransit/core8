@@ -2,8 +2,6 @@
 using Core8.Model.Register;
 using Serilog;
 using System;
-using System.Collections.Generic;
-using System.Threading;
 
 namespace Core8
 {
@@ -44,63 +42,19 @@ namespace Core8
             WriteDeletedDataSector,
         }
 
-        private volatile ControllerState state;
-
-        private volatile int commandRegister;
-
-        private volatile bool done;
-
-        private volatile bool transferRequest;
-
+        private int commandRegister;
+        
         private readonly int[] buffer = new int[64];
 
         private readonly LinkAccumulator accumulator;
 
-        private volatile int bufferPointer;
+        private int bufferPointer;
 
         private byte[] disk;
-
-        private Thread controllerThread;
-
-        private AutoResetEvent commandIssued = new AutoResetEvent(false);
-
-        private bool controllerRunning;
 
         public FloppyDrive(LinkAccumulator accumulator)
         {
             this.accumulator = accumulator;
-
-            state  = ControllerState.Idle;
-
-            controllerThread = new Thread(Control)
-            {
-                IsBackground = true,
-                Priority = ThreadPriority.AboveNormal
-            };
-
-            controllerThread.Start();
-        }
-
-        private void Control()
-        {
-            controllerRunning = true;
-
-            while (controllerRunning)
-            {
-                if (commandIssued.WaitOne(TimeSpan.FromMilliseconds(200)))
-                {
-                    try
-                    {
-                        ExecuteCommand();
-                    }
-                    catch (Exception e)
-                    {
-                        Log.Error(e, "Caught Exception while executing command.");
-
-                        throw;
-                    }                    
-                }
-            }
         }
 
         private void ExecuteCommand()
@@ -142,7 +96,7 @@ namespace Core8
 
         }
 
-        public ControllerState State => state;
+        public ControllerState State { get; private set; }
 
 
         private int Function => (commandRegister & 0b_001_110) >> 1;
@@ -151,9 +105,9 @@ namespace Core8
 
         public bool EightBitMode => (commandRegister & 0b_001_000_000) != 0;
 
-        public bool Done => done;
+        public bool Done { get; private set; }
 
-        public bool TransferRequest => transferRequest;
+        public bool TransferRequest { get; private set; }
 
         public bool InterruptRequested { get; private set; }
 
@@ -170,22 +124,22 @@ namespace Core8
 
         public void ClearDone()
         {
-            InterruptRequested = done = false;
+            InterruptRequested = Done = false;
         }
 
         private void SetDone()
         {
-            InterruptRequested = done = true;
+            InterruptRequested = Done = true;
         }
 
         public void ClearTransferRequest()
         {
-            transferRequest = false;
+            TransferRequest = false;
         }
 
         private void SetTransferRequest()
         {
-            transferRequest = true;
+            TransferRequest = true;
 
             Log.Information("TRQ set");
         }
@@ -194,9 +148,9 @@ namespace Core8
         {
             this.disk = disk;
 
-            state = ControllerState.Initialize;
+            State = ControllerState.Initialize;
 
-            commandIssued.Set();
+            ExecuteCommand();
         }
 
         public void LoadCommandRegister(int data)
@@ -215,31 +169,31 @@ namespace Core8
             switch (Function)
             {
                 case FILL_BUFFER:
-                    state = ControllerState.FillBuffer;
+                    State = ControllerState.FillBuffer;
                     bufferPointer = 0;
                     SetTransferRequest();
                     break;
                 case EMPTY_BUFFER:
-                    state = ControllerState.EmptyBuffer;
+                    State = ControllerState.EmptyBuffer;
                     bufferPointer = 0;
                     SetTransferRequest();
                     break;
                 case WRITE_SECTOR:
-                    state = ControllerState.WriteSector;
+                    State = ControllerState.WriteSector;
                     SetTransferRequest();
                     break;
                 case READ_SECTOR:
-                    state = ControllerState.ReadSector;
+                    State = ControllerState.ReadSector;
                     SetTransferRequest();
                     break;
                 case NO_OPERATION:
-                    state = ControllerState.NoOperation;
+                    State = ControllerState.NoOperation;
                     break;
                 case READ_STATUS:
                     ReadStatus();
                     break;
                 case WRITE_DELETED_DATA_SECTOR:
-                    state = ControllerState.WriteDeletedDataSector;
+                    State = ControllerState.WriteDeletedDataSector;
                     break;
                 case READ_ERROR_REGISTER:
                     ReadErrorRegister();
@@ -316,8 +270,8 @@ namespace Core8
         public void TransferDataRegister()
         {
             Log.Information("XDR");
-
-            commandIssued.Set();
+            
+            ExecuteCommand();
         }
 
         public void Initialize()
@@ -331,14 +285,14 @@ namespace Core8
 
             SetDone();
 
-            state = ControllerState.Idle;
+            State = ControllerState.Idle;
         }
 
         private void ReadSector()
         {
             SectorAddress = accumulator.Accumulator & 0b_000_001_111_111;
 
-            state = ControllerState.ReadTrack;
+            State = ControllerState.ReadTrack;
 
             SetTransferRequest();
         }
@@ -349,7 +303,7 @@ namespace Core8
 
             ReadBlock();
 
-            state = ControllerState.Idle;            
+            State = ControllerState.Idle;            
 
             SetDone();
         }
@@ -363,7 +317,7 @@ namespace Core8
         {
             SectorAddress = accumulator.Accumulator & 0b_000_001_111_111;
 
-            state = ControllerState.WriteTrack;
+            State = ControllerState.WriteTrack;
 
             SetTransferRequest();
         }
@@ -374,7 +328,7 @@ namespace Core8
 
             WriteBlock();
 
-            state = ControllerState.Idle;
+            State = ControllerState.Idle;
 
             SetDone();
         }
@@ -390,13 +344,13 @@ namespace Core8
 
             if (bufferPointer == 64)
             {
-                state = ControllerState.Idle; 
+                State = ControllerState.Idle; 
                 
                 SetDone();                
             }
             else
             {
-                transferRequest = true;
+                TransferRequest = true;
             }
         }
 
@@ -413,11 +367,11 @@ namespace Core8
             {
                 SetDone();
 
-                state = ControllerState.Idle;
+                State = ControllerState.Idle;
             }
             else
             {
-                transferRequest = true;
+                TransferRequest = true;
             }
         }
 
