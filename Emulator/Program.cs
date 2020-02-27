@@ -158,9 +158,9 @@ namespace Core8
 
             pdp.DumpMemory();
 
-            pdp.LoadFloppy(File.ReadAllBytes(@"C:\tmp\OS-8\os8_rx.rx01")); 
-            
-            pdp.Continue(waitForHalt: false);                        
+            pdp.LoadFloppy(File.ReadAllBytes(@"C:\tmp\OS-8\os8_rx.rx01"));
+
+            pdp.Continue(waitForHalt: false);
 
             while (pdp.Running)
             {

@@ -1,6 +1,5 @@
 ﻿using Core8.Model.Interfaces;
 using Core8.Model.Register;
-using Serilog;
 using System;
 
 namespace Core8
@@ -17,7 +16,7 @@ namespace Core8
         private const int READ_ERROR_REGISTER = 7;
 
         private enum ControllerFunction
-        { 
+        {
             FillBuffer = FILL_BUFFER,
             EmptyBuffer = EMPTY_BUFFER,
             WriteSector = WRITE_SECTOR,
@@ -42,7 +41,7 @@ namespace Core8
         }
 
         private int commandRegister;
-        
+
         private readonly int[] buffer = new int[64];
 
         private readonly LinkAccumulator accumulator;
@@ -214,9 +213,9 @@ namespace Core8
             if (EightBitMode)
             {
                 throw new NotImplementedException();
-            }               
-            
-            var start = TrackAddress * 26 * 128 + (SectorAddress - 1) * 128;                        
+            }
+
+            var start = TrackAddress * 26 * 128 + (SectorAddress - 1) * 128;
 
             var bufferPointer = 0;
 
@@ -226,14 +225,14 @@ namespace Core8
                 {
                     if (bufferPointer % 2 == 0)
                     {
-                        buffer[bufferPointer++] = (disk[start+i] << 4) | ((disk[start+i + 1] >> 4) & 0b_001_111);
+                        buffer[bufferPointer++] = (disk[start + i] << 4) | ((disk[start + i + 1] >> 4) & 0b_001_111);
                     }
                     else
                     {
-                        buffer[bufferPointer++] = ((disk[start+i] & 0b_001_111) << 8) | (disk[start+i + 1]);
-                    }                    
+                        buffer[bufferPointer++] = ((disk[start + i] & 0b_001_111) << 8) | (disk[start + i + 1]);
+                    }
                 }
-            }            
+            }
         }
 
         private void WriteBlock()
@@ -252,21 +251,21 @@ namespace Core8
                 if (i % 2 == 0)
                 {
                     block[position++] = (byte)(buffer[i] >> 4);
-                    block[position++] = (byte)((buffer[i] << 4) | ((buffer[i + 1] >> 8) & 0b_001_111));                        
+                    block[position++] = (byte)((buffer[i] << 4) | ((buffer[i + 1] >> 8) & 0b_001_111));
                 }
                 else
                 {
                     block[position++] = (byte)(buffer[i] & 0b_011_111_111);
-                }                
+                }
             }
 
-            Array.Copy(block, 0, disk, TrackAddress * 26 * 128 + (SectorAddress - 1) * 128, block.Length);            
+            Array.Copy(block, 0, disk, TrackAddress * 26 * 128 + (SectorAddress - 1) * 128, block.Length);
         }
 
         public void TransferDataRegister()
         {
             //Log.Information("XDR");
-            
+
             ExecuteCommand();
         }
 
@@ -275,7 +274,7 @@ namespace Core8
             TrackAddress = 1;
             SectorAddress = 1;
 
-            ReadBlock();            
+            ReadBlock();
 
             SetTransferRequest();
 
@@ -299,7 +298,7 @@ namespace Core8
 
             ReadBlock();
 
-            State = ControllerState.Idle;            
+            State = ControllerState.Idle;
 
             SetDone();
         }
@@ -335,9 +334,9 @@ namespace Core8
 
             if (bufferPointer == 64)
             {
-                State = ControllerState.Idle; 
-                
-                SetDone();                
+                State = ControllerState.Idle;
+
+                SetDone();
             }
             else
             {
