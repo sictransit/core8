@@ -1,4 +1,6 @@
-﻿namespace Core8.Model.Interfaces
+﻿using Core8.Model.Register;
+
+namespace Core8.Model.Interfaces
 {
     public interface IFloppyDrive
     {
@@ -16,11 +18,11 @@
 
         void ClearTransferRequest();
 
-        void Load(byte[] disk);
+        void Load(byte unit, byte[] disk);
 
         void LoadCommandRegister(int data);
 
-        void TransferDataRegister();
+        void TransferDataRegister(LinkAccumulator linkAc);
 
         bool SkipNotDone();
 

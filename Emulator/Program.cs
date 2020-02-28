@@ -119,54 +119,49 @@ namespace Core8
             //pdp.Deposit8(6030);
             //pdp.Load8(0033);
 
-            // pdp.Load8(0022);
-            // pdp.Deposit8(06755);
-            //pdp.Deposit8(05022);
-            //pdp.Deposit8(07126);
-            //pdp.Deposit8(01060);
-            //pdp.Deposit8(06751);
-            //pdp.Deposit8(07201);
-            //pdp.Deposit8(04053);
-            //pdp.Deposit8(04053);
-            //pdp.Deposit8(07104);
-            //pdp.Deposit8(06755);
-            //pdp.Deposit8(05054);
-            //pdp.Deposit8(06754);
-            //pdp.Deposit8(07450);
-            //pdp.Deposit8(07610);
-            //pdp.Deposit8(05046);
-            //pdp.Deposit8(07402);
-            //pdp.Deposit8(07402);
-            //pdp.Deposit8(07402);
-            //pdp.Deposit8(07402);
-            //pdp.Deposit8(07402);
-            //pdp.Deposit8(06751);
-            //pdp.Deposit8(04053);
-            //pdp.Deposit8(03002);
-            //pdp.Deposit8(02050);
-            //pdp.Deposit8(05047);
-            //pdp.Deposit8(00000);
-            //pdp.Deposit8(06753);
-            //pdp.Deposit8(05033);
-            //pdp.Deposit8(06752);
-            //pdp.Deposit8(05453);
-            //pdp.Deposit8(07004);
-            //pdp.Deposit8(06030);
+            pdp.Load8(0022);
+            pdp.Deposit8(06755);
+            pdp.Deposit8(05022);
+            pdp.Deposit8(07126);
+            pdp.Deposit8(01060);
+            pdp.Deposit8(06751);
+            pdp.Deposit8(07201);
+            pdp.Deposit8(04053);
+            pdp.Deposit8(04053);
+            pdp.Deposit8(07104);
+            pdp.Deposit8(06755);
+            pdp.Deposit8(05054);
+            pdp.Deposit8(06754);
+            pdp.Deposit8(07450);
+            pdp.Deposit8(07610);
+            pdp.Deposit8(05046);
+            pdp.Deposit8(07402);
+            pdp.Deposit8(07402);
+            pdp.Deposit8(07402);
+            pdp.Deposit8(07402);
+            pdp.Deposit8(07402);
+            pdp.Deposit8(06751);
+            pdp.Deposit8(04053);
+            pdp.Deposit8(03002);
+            pdp.Deposit8(02050);
+            pdp.Deposit8(05047);
+            pdp.Deposit8(00000);
+            pdp.Deposit8(06753);
+            pdp.Deposit8(05033);
+            pdp.Deposit8(06752);
+            pdp.Deposit8(05453);
+            pdp.Deposit8(07004);
+            pdp.Deposit8(06030);
 
 
-            // pdp.Load8(0022);
+            pdp.Load8(0022);
 
             //pdp.DumpMemory();
 
-            using var httpClient = new HttpClient();
-            pdp.LoadPaperTape(httpClient.GetByteArrayAsync(@"http://svn.so-much-stuff.com/svn/trunk/pdp8/src/maindec/08/dirxa-c.bin").Result);
+            pdp.Clear();            
 
-            pdp.Clear();
-
-            pdp.Load8(0200);
-
-            //pdp.LoadFloppy(File.ReadAllBytes(@"C:\tmp\OS-8\os8_rx.rx01"));
-
+            pdp.LoadFloppy(0, File.ReadAllBytes(@"C:\tmp\OS-8\os8_rx.rx01"));
+            
             pdp.Continue(waitForHalt: false);
 
             while (pdp.Running)

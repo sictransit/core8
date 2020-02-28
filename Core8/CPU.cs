@@ -62,6 +62,7 @@ namespace Core8
             Log.Information($"CONT @ {Registers.PC}");
 
             string interrupts = null;
+            string floppy = null;
 
             try
             {
@@ -75,6 +76,13 @@ namespace Core8
                         {
                             interrupts = i;
                             Log.Information(interrupts);
+                        }
+
+                        var f = FloppyDrive.ToString();
+                        if (f != floppy)
+                        {
+                            floppy = f;
+                            Log.Information(floppy);
                         }
                         
                         if (breakpoints.Contains(Registers.PC.Content))

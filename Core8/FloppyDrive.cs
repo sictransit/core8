@@ -15,6 +15,12 @@ namespace Core8
         private const int WRITE_DELETED_DATA_SECTOR = 6;
         private const int READ_ERROR_REGISTER = 7;
 
+        private const int MIN_TRACK = 0;
+        private const int MAX_TRACK = 76;
+        private const int MIN_SECTOR = 1; 
+        private const int MAX_SECTOR = 26;
+        private const int BLOCK_SIZE = 128;
+
         private enum ControllerFunction
         {
             FillBuffer = FILL_BUFFER,
@@ -30,7 +36,6 @@ namespace Core8
         public enum ControllerState
         {
             Idle,
-            Initialize,
             FillBuffer,
             EmptyBuffer,
             WriteSector,
@@ -40,65 +45,34 @@ namespace Core8
             WriteDeletedDataSector,
         }
 
+        private bool sdnWait;
+
         private int commandRegister;
+
+        private int interfaceRegister;
 
         private readonly int[] buffer = new int[64];
 
-        private readonly LinkAccumulator accumulator;
+        //private readonly LinkAccumulator accumulator;
 
         private int bufferPointer;
 
-        private byte[] disk;
+        private readonly byte[][] disk = new byte[2][];
 
         public FloppyDrive(LinkAccumulator accumulator)
         {
-            this.accumulator = accumulator;
+            //this.accumulator = accumulator;            
         }
 
-        private void ExecuteCommand()
-        {
-            //Log.Information($"Executing: {State}");
-
-            switch (State)
-            {
-                case ControllerState.Initialize:
-                    Initialize();
-                    break;
-                case ControllerState.FillBuffer:
-                    FillBuffer();
-                    break;
-                case ControllerState.EmptyBuffer:
-                    EmptyBuffer();
-                    break;
-                case ControllerState.WriteSector:
-                    WriteSector();
-                    break;
-                case ControllerState.WriteTrack:
-                    WriteTrack();
-                    break;
-                case ControllerState.ReadSector:
-                    ReadSector();
-                    break;
-                case ControllerState.ReadTrack:
-                    ReadTrack();
-                    break;
-                case ControllerState.WriteDeletedDataSector:
-                    throw new NotImplementedException();
-                    break;
-                default:
-                    throw new NotImplementedException();
-            }
-
-        }
-
-        public ControllerState State { get; private set; }
-
+        private ControllerState state;
 
         private int Function => (commandRegister & 0b_001_110) >> 1;
 
         private ControllerFunction FunctionSelect => (ControllerFunction)Function;
 
-        public bool EightBitMode => (commandRegister & 0b_001_000_000) != 0;
+        private bool EightBitMode => (commandRegister & 0b_001_000_000) != 0;
+
+        private int UnitSelect => (commandRegister >> 4) & 0b_001;
 
         public bool Done { get; private set; }
 
@@ -106,11 +80,33 @@ namespace Core8
 
         public bool InterruptRequested { get; private set; }
 
-        public int SectorAddress { get; private set; }
+        private int sectorAddress;
 
-        public int TrackAddress { get; private set; }
+        private int trackAddress;
+
+        private int BlockAddress => trackAddress * MAX_SECTOR * BLOCK_SIZE + (sectorAddress - 1) * BLOCK_SIZE;
 
         public bool Error { get; private set; }
+
+        private void SetTrackAddress(int address)
+        {
+            if (address < MIN_TRACK || address > MAX_TRACK)
+            {
+                throw new ArgumentOutOfRangeException(nameof(address), address.ToString());
+            }
+
+            trackAddress = address;
+        }
+
+        private void SetSectorAddress(int address)
+        {
+            if (address < MIN_SECTOR || address > MAX_SECTOR)
+            {
+                throw new ArgumentOutOfRangeException(nameof(address), address.ToString());
+            }
+
+            sectorAddress = address;
+        }
 
         public void ClearError()
         {
@@ -118,15 +114,18 @@ namespace Core8
         }
 
         public void ClearDone()
-        {
-            //InterruptRequested = Done = false;
+        {            
             Done = false;
         }
 
         private void SetDone()
-        {
-            //InterruptRequested = Done = true;
+        {            
             Done = true;
+        }
+
+        private void SetState(ControllerState state)
+        {
+            this.state = state;
         }
 
         public void ClearTransferRequest()
@@ -141,18 +140,16 @@ namespace Core8
             //Log.Information("TRQ set");
         }
 
-        public void Load(byte[] disk)
+        public void Load(byte unit, byte[] disk)
         {
-            this.disk = disk;
+            this.disk[unit] = disk;
 
-            State = ControllerState.Initialize;
-
-            ExecuteCommand();
+            Initialize();            
         }
 
         public void LoadCommandRegister(int data)
         {
-            if (State != ControllerState.Idle)
+            if (state != ControllerState.Idle)
             {
                 return;
             }
@@ -161,53 +158,39 @@ namespace Core8
 
             commandRegister = data & 0b_000_011_111_110;
 
-            //Log.Information($"Function select: {FunctionSelect}");
-
             switch (Function)
             {
                 case FILL_BUFFER:
-                    State = ControllerState.FillBuffer;
+                    SetState(ControllerState.FillBuffer);
                     bufferPointer = 0;
                     SetTransferRequest();
                     break;
                 case EMPTY_BUFFER:
-                    State = ControllerState.EmptyBuffer;
+                    SetState(ControllerState.EmptyBuffer);
                     bufferPointer = 0;
                     SetTransferRequest();
                     break;
                 case WRITE_SECTOR:
-                    State = ControllerState.WriteSector;
+                    SetState(ControllerState.WriteSector);
                     SetTransferRequest();
                     break;
                 case READ_SECTOR:
-                    State = ControllerState.ReadSector;
+                    SetState(ControllerState.ReadSector);
                     SetTransferRequest();
                     break;
                 case NO_OPERATION:
                     SetDone();
                     break;
                 case READ_STATUS:
-                    ReadStatus();
-                    break;
+                    throw new NotImplementedException();
                 case WRITE_DELETED_DATA_SECTOR:
-                    State = ControllerState.WriteDeletedDataSector;
+                    SetState(ControllerState.WriteDeletedDataSector);
                     break;
                 case READ_ERROR_REGISTER:
-                    ReadErrorRegister();
-                    break;
+                    throw new NotImplementedException();
                 default:
                     throw new NotImplementedException();
             }
-        }
-
-        private void ReadStatus()
-        {
-            throw new NotImplementedException();
-        }
-
-        private void ReadErrorRegister()
-        {
-            throw new NotImplementedException();
         }
 
         private void ReadBlock()
@@ -215,9 +198,7 @@ namespace Core8
             if (EightBitMode)
             {
                 throw new NotImplementedException();
-            }
-
-            var start = TrackAddress * 26 * 128 + (SectorAddress - 1) * 128;
+            }            
 
             var bufferPointer = 0;
 
@@ -227,11 +208,11 @@ namespace Core8
                 {
                     if (bufferPointer % 2 == 0)
                     {
-                        buffer[bufferPointer++] = (disk[start + i] << 4) | ((disk[start + i + 1] >> 4) & 0b_001_111);
+                        buffer[bufferPointer++] = (disk[UnitSelect][BlockAddress + i] << 4) | ((disk[UnitSelect][BlockAddress + i + 1] >> 4) & 0b_001_111);
                     }
                     else
                     {
-                        buffer[bufferPointer++] = ((disk[start + i] & 0b_001_111) << 8) | (disk[start + i + 1]);
+                        buffer[bufferPointer++] = ((disk[UnitSelect][BlockAddress + i] & 0b_001_111) << 8) | (disk[UnitSelect][BlockAddress + i + 1]);
                     }
                 }
             }
@@ -244,7 +225,7 @@ namespace Core8
                 throw new NotImplementedException();
             }
 
-            var block = new byte[128];
+            var block = new byte[BLOCK_SIZE];
 
             var position = 0;
 
@@ -261,20 +242,56 @@ namespace Core8
                 }
             }
 
-            Array.Copy(block, 0, disk, TrackAddress * 26 * 128 + (SectorAddress - 1) * 128, block.Length);
+            Array.Copy(block, 0, disk[UnitSelect], BlockAddress, block.Length);
         }
 
-        public void TransferDataRegister()
+        public void TransferDataRegister(LinkAccumulator linkAc)
         {
-            //Log.Information("XDR");
+            if (sdnWait)
+            {
+                linkAc.SetAccumulator(interfaceRegister);
 
-            ExecuteCommand();
+                sdnWait = false;
+            }
+
+            switch (state)
+            {
+                case ControllerState.FillBuffer:
+                    interfaceRegister = linkAc.Accumulator;
+                    FillBuffer();
+                    break;
+                case ControllerState.EmptyBuffer:
+                    EmptyBuffer();
+                    linkAc.SetAccumulator(interfaceRegister);
+                    break;
+                case ControllerState.WriteSector:
+                    interfaceRegister = linkAc.Accumulator;
+                    WriteSector();
+                    break;
+                case ControllerState.WriteTrack:
+                    interfaceRegister = linkAc.Accumulator;
+                    WriteTrack();
+                    break;
+                case ControllerState.ReadSector:
+                    interfaceRegister = linkAc.Accumulator;
+                    ReadSector();
+                    break;
+                case ControllerState.ReadTrack:
+                    interfaceRegister = linkAc.Accumulator;
+                    ReadTrack();
+                    break;
+                case ControllerState.WriteDeletedDataSector:
+                    throw new NotImplementedException();
+                    break;
+                default:
+                    throw new NotImplementedException();
+            }
         }
 
         public void Initialize()
         {
-            TrackAddress = 1;
-            SectorAddress = 1;
+            SetTrackAddress(1);
+            SetSectorAddress(1);
 
             ReadBlock();
 
@@ -282,45 +299,45 @@ namespace Core8
 
             SetDone();
 
-            State = ControllerState.Idle;
+            SetState(ControllerState.Idle);
         }
 
         private void ReadSector()
         {
-            SectorAddress = accumulator.Accumulator & 0b_000_001_111_111;
+            SetSectorAddress(interfaceRegister & 0b_000_001_111_111);
 
-            State = ControllerState.ReadTrack;
+            SetState(ControllerState.ReadTrack);
 
             SetTransferRequest();
         }
 
         private void ReadTrack()
         {
-            TrackAddress = accumulator.Accumulator & 0b_000_011_111_111;
+            SetTrackAddress(interfaceRegister & 0b_000_011_111_111);
 
             ReadBlock();
 
-            State = ControllerState.Idle;
+            SetState(ControllerState.Idle);
 
             SetDone();
         }
 
         private void WriteSector()
         {
-            SectorAddress = accumulator.Accumulator & 0b_000_001_111_111;
+            SetSectorAddress(interfaceRegister & 0b_000_001_111_111);
 
-            State = ControllerState.WriteTrack;
+            SetState(ControllerState.WriteTrack);
 
             SetTransferRequest();
         }
 
         private void WriteTrack()
         {
-            TrackAddress = accumulator.Accumulator & 0b_000_011_111_111;
+            SetTrackAddress(interfaceRegister & 0b_000_011_111_111);
 
             WriteBlock();
 
-            State = ControllerState.Idle;
+            SetState(ControllerState.Idle);
 
             SetDone();
         }
@@ -332,11 +349,11 @@ namespace Core8
                 throw new NotImplementedException();
             }
 
-            buffer[bufferPointer++] = accumulator.Accumulator;
+            buffer[bufferPointer++] = interfaceRegister;
 
             if (bufferPointer == 64)
             {
-                State = ControllerState.Idle;
+                SetState(ControllerState.Idle);
 
                 SetDone();
             }
@@ -353,13 +370,13 @@ namespace Core8
                 throw new NotImplementedException();
             }
 
-            accumulator.SetAccumulator(buffer[bufferPointer++]);
+            interfaceRegister = buffer[bufferPointer++];
 
             if (bufferPointer == 64)
             {
                 SetDone();
 
-                State = ControllerState.Idle;
+                SetState(ControllerState.Idle);
             }
             else
             {
@@ -376,7 +393,15 @@ namespace Core8
                 return true;
             }
 
+            sdnWait = true;
+
             return false;
         }
+
+        public override string ToString()
+        {
+            return $"[RX01] func={FunctionSelect} mode={(EightBitMode?8:12)} unit={UnitSelect} trk={trackAddress} sec={sectorAddress}";
+        }
+
     }
 }

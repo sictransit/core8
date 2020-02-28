@@ -99,7 +99,7 @@ namespace Core8.Model.Instructions
 
         private void XDR()
         {
-            FloppyDrive.TransferDataRegister();
+            FloppyDrive.TransferDataRegister(Registers.AC);
         }
 
         private void LCD()
