@@ -17,11 +17,13 @@ namespace Core8
 
         public bool Pending => Enabled || delay;
 
-        public bool Requested => IORequested || UserRequested;
+        public bool Requested => TeletypeRequested || FloppyRequested || UserRequested;
+
+        private bool TeletypeRequested => cpu.Teletype.InterruptRequested;
+
+        private bool FloppyRequested => cpu.FloppyDrive.InterruptRequested;
 
         public bool Inhibited { get; private set; }
-
-        public bool IORequested => cpu.Teletype.InterruptRequested || cpu.FloppyDrive.InterruptRequested;
 
         public bool UserRequested { get; private set; }
 
@@ -97,7 +99,7 @@ namespace Core8
 
         public override string ToString()
         {
-            return $"[INT] enabled={Enabled}  delay={delay} inhib={Inhibited} irq={Requested} io={IORequested} user={UserRequested}";
+            return $"[INT] enabled={(Enabled?1:0)} delay={(delay?1:0)} inhib={(Inhibited?1:0)} irq={(Requested?1:0)} (tt:{(TeletypeRequested?1:0)} u={(UserRequested?1:0)} fd={(FloppyRequested?1:0)})";
         }
     }
 }

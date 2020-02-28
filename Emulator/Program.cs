@@ -18,7 +18,7 @@ namespace Core8
         {
             Log.Logger = new LoggerConfiguration()
                 .WriteTo.Console()
-                .WriteTo.File("emulator.log")
+                //.WriteTo.File("emulator.log")
                 .MinimumLevel.ControlledBy(loggingLevel)
                 .CreateLogger();
 
@@ -65,26 +65,26 @@ namespace Core8
 
         private static void FloppyDevelopment()
         {
-            pdp.Load8(00032);
-            pdp.Deposit8(7305);
-            pdp.Deposit8(6755);
-            pdp.Deposit8(5054);
-            pdp.Deposit8(1061);
-            pdp.Deposit8(6751);
-            pdp.Deposit8(5047);
-            pdp.Load8(00047);
-            pdp.Deposit8(4053);
-            pdp.Deposit8(3002);
-            pdp.Deposit8(2050);
-            pdp.Deposit8(5047);
-            pdp.Deposit8(0000);
-            pdp.Deposit8(6753);
-            pdp.Deposit8(5033);
-            pdp.Deposit8(6752);
-            pdp.Deposit8(5453);
-            pdp.Deposit8(7004);
-            pdp.Deposit8(0000);
-            pdp.Load8(00032);
+            //pdp.Load8(00032);
+            //pdp.Deposit8(7305);
+            //pdp.Deposit8(6755);
+            //pdp.Deposit8(5054);
+            //pdp.Deposit8(1061);
+            //pdp.Deposit8(6751);
+            //pdp.Deposit8(5047);
+            //pdp.Load8(00047);
+            //pdp.Deposit8(4053);
+            //pdp.Deposit8(3002);
+            //pdp.Deposit8(2050);
+            //pdp.Deposit8(5047);
+            //pdp.Deposit8(0000);
+            //pdp.Deposit8(6753);
+            //pdp.Deposit8(5033);
+            //pdp.Deposit8(6752);
+            //pdp.Deposit8(5453);
+            //pdp.Deposit8(7004);
+            //pdp.Deposit8(0000);
+            //pdp.Load8(00032);
 
             //pdp.Load8(0024);
             //pdp.Deposit8(7126);
@@ -156,9 +156,16 @@ namespace Core8
 
             // pdp.Load8(0022);
 
-            pdp.DumpMemory();
+            //pdp.DumpMemory();
 
-            pdp.LoadFloppy(File.ReadAllBytes(@"C:\tmp\OS-8\os8_rx.rx01"));
+            using var httpClient = new HttpClient();
+            pdp.LoadPaperTape(httpClient.GetByteArrayAsync(@"http://svn.so-much-stuff.com/svn/trunk/pdp8/src/maindec/08/dirxa-c.bin").Result);
+
+            pdp.Clear();
+
+            pdp.Load8(0200);
+
+            //pdp.LoadFloppy(File.ReadAllBytes(@"C:\tmp\OS-8\os8_rx.rx01"));
 
             pdp.Continue(waitForHalt: false);
 

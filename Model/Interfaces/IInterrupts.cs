@@ -24,8 +24,6 @@
 
         bool Requested { get; }
 
-        bool IORequested { get; }
-
         bool UserRequested { get; }
     }
 }

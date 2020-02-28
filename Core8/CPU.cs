@@ -61,6 +61,8 @@ namespace Core8
 
             Log.Information($"CONT @ {Registers.PC}");
 
+            string interrupts = null;
+
             try
             {
                 while (running)
@@ -68,7 +70,13 @@ namespace Core8
                     if (debug)
                     {
                         //Log.Information(Registers.ToString());
-
+                        var i = Interrupts.ToString();
+                        if (i != interrupts)
+                        {
+                            interrupts = i;
+                            Log.Information(interrupts);
+                        }
+                        
                         if (breakpoints.Contains(Registers.PC.Content))
                         {
                             Log.Information($"Breakpoint hit!");

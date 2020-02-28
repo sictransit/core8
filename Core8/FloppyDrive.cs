@@ -119,12 +119,14 @@ namespace Core8
 
         public void ClearDone()
         {
-            InterruptRequested = Done = false;
+            //InterruptRequested = Done = false;
+            Done = false;
         }
 
         private void SetDone()
         {
-            InterruptRequested = Done = true;
+            //InterruptRequested = Done = true;
+            Done = true;
         }
 
         public void ClearTransferRequest()
