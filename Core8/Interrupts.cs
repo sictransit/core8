@@ -99,7 +99,7 @@ namespace Core8
 
         public override string ToString()
         {
-            return $"[INT] enabled={(Enabled?1:0)} delay={(delay?1:0)} inhib={(Inhibited?1:0)} irq={(Requested?1:0)} (tt:{(TeletypeRequested?1:0)} u={(UserRequested?1:0)} fd={(FloppyRequested?1:0)})";
+            return $"[INT] enabled={(Enabled ? 1 : 0)} delay={(delay ? 1 : 0)} inhib={(Inhibited ? 1 : 0)} irq={(Requested ? 1 : 0)} (tt:{(TeletypeRequested ? 1 : 0)} u={(UserRequested ? 1 : 0)} fd={(FloppyRequested ? 1 : 0)})";
         }
     }
 }

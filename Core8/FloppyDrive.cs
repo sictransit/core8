@@ -1,5 +1,4 @@
 ﻿using Core8.Model.Interfaces;
-using Core8.Model.Register;
 using Serilog;
 using System;
 
@@ -18,7 +17,7 @@ namespace Core8
 
         private const int MIN_TRACK = 0;
         private const int MAX_TRACK = 76;
-        private const int MIN_SECTOR = 1; 
+        private const int MIN_SECTOR = 1;
         private const int MAX_SECTOR = 26;
         private const int BLOCK_SIZE = 128;
 
@@ -27,6 +26,7 @@ namespace Core8
 
         private const int ERROR_CODE_BAD_TRACK = 0b_100_000;
         private const int ERROR_CODE_BAD_SECTOR = 0b_111_000;
+        private const int ERROR_CODE_NO_DISK_IN_DRIVE = 0b_001_001_000;
 
         private enum ControllerFunction
         {
@@ -52,7 +52,8 @@ namespace Core8
         }
 
         [Flags]
-        private enum ErrorStatusFlags { 
+        private enum ErrorStatusFlags
+        {
             InitializationDone = ERROR_STATUS_INIT_DONE,
             DeviceReady = ERROR_STATUS_DEVICE_READY
         }
@@ -101,41 +102,13 @@ namespace Core8
 
         public bool Error { get; private set; }
 
-        private bool SetTrackAddress(int address)
-        {
-            if (address < MIN_TRACK || address > MAX_TRACK)
-            {
-                Log.Warning($"Bad track address: {address}");
-
-                return false;
-            }
-
-            trackAddress = address;
-
-            return true;
-        }
-
-        private bool SetSectorAddress(int address)
-        {
-            if (address < MIN_SECTOR || address > MAX_SECTOR)
-            {
-                Log.Warning($"Bad sector address: {address}");
-
-                return false;
-            }
-
-            sectorAddress = address;
-
-            return true;
-        }
-
         public void ClearError()
         {
             Error = false;
         }
 
         public void ClearDone()
-        {            
+        {
             Done = false;
             InterruptRequested = false;
         }
@@ -146,7 +119,7 @@ namespace Core8
             {
                 Error = true;
             }
-            
+
             errorCodeRegister = errorCode;
 
             errorStatusRegister |= errorStatus;
@@ -176,7 +149,7 @@ namespace Core8
 
         public void Load(byte unit, byte[] disk)
         {
-            this.disk[unit] = disk;  
+            this.disk[unit] = disk;
         }
 
         public void LoadCommandRegister(int accumulator)
@@ -232,7 +205,7 @@ namespace Core8
             if (EightBitMode)
             {
                 throw new NotImplementedException();
-            }            
+            }
 
             var bufferPointer = 0;
 
@@ -288,7 +261,7 @@ namespace Core8
                     FillBuffer();
                     break;
                 case ControllerState.EmptyBuffer:
-                    EmptyBuffer();                    
+                    EmptyBuffer();
                     break;
                 case ControllerState.WriteSector:
                     interfaceRegister = accumulator;
@@ -317,8 +290,8 @@ namespace Core8
         {
             if (disk[UnitSelect] != null)
             {
-                SetTrackAddress(1);
-                SetSectorAddress(1);
+                trackAddress = 1;
+                sectorAddress = 1;
 
                 ReadBlock();
 
@@ -332,24 +305,37 @@ namespace Core8
 
         private void SetSector()
         {
-            if (SetSectorAddress(interfaceRegister & 0b_000_000_011_111))
-            {
-                SetState(ControllerState.WriteTrack);
+            sectorAddress = interfaceRegister & 0b_000_000_011_111;
 
-                SetTransferRequest();
+            SetState(ControllerState.WriteTrack);
 
-            }
-            else
-            {
-                SetDone(0, ERROR_CODE_BAD_SECTOR);
-            }
+            SetTransferRequest();
         }
 
         private void SetTrack(bool read)
         {
-            if (SetTrackAddress(interfaceRegister & 0b_000_001_111_111))
-            {
+            trackAddress = interfaceRegister & 0b_000_001_111_111;
 
+            if (trackAddress < MIN_TRACK || trackAddress > MAX_TRACK)
+            {
+                Log.Warning($"Bad track address: {trackAddress}");
+
+                SetDone(0, ERROR_CODE_BAD_TRACK);
+            }
+            else if (sectorAddress < MIN_SECTOR || sectorAddress > MAX_SECTOR)
+            {
+                Log.Warning($"Bad sector address: {sectorAddress}");
+
+                SetDone(0, ERROR_CODE_BAD_SECTOR);
+            }
+            else if (disk[UnitSelect] == null)
+            {
+                Log.Warning($"No disk in drive: {UnitSelect}");
+
+                SetDone(0, ERROR_CODE_NO_DISK_IN_DRIVE);
+            }
+            else
+            {
                 if (read)
                 {
                     ReadBlock();
@@ -357,15 +343,11 @@ namespace Core8
                 else
                 {
                     WriteBlock();
-                }                
+                }
 
                 SetState(ControllerState.Idle);
 
                 SetDone(0, 0);
-            }
-            else
-            {
-                SetDone(0, ERROR_CODE_BAD_TRACK);
             }
         }
 
@@ -429,7 +411,7 @@ namespace Core8
 
         public override string ToString()
         {
-            return $"[RX01] {FunctionSelect} mode={(EightBitMode?8:12)} unit={UnitSelect} trk={trackAddress} sec={sectorAddress}";
+            return $"[RX01] {FunctionSelect} mode={(EightBitMode ? 8 : 12)} unit={UnitSelect} trk={trackAddress} sec={sectorAddress}";
         }
 
     }

@@ -1,6 +1,4 @@
-﻿using Core8.Model.Register;
-
-namespace Core8.Model.Interfaces
+﻿namespace Core8.Model.Interfaces
 {
     public interface IFloppyDrive
     {

@@ -99,7 +99,7 @@ namespace Core8.Model.Instructions
 
         private void XDR()
         {
-            Registers.AC.SetAccumulator(FloppyDrive.TransferDataRegister(Registers.AC.Accumulator));            
+            Registers.AC.SetAccumulator(FloppyDrive.TransferDataRegister(Registers.AC.Accumulator));
         }
 
         private void LCD()
@@ -122,8 +122,8 @@ namespace Core8.Model.Instructions
             STR = STR_MASK,
             SER = SER_MASK,
             SDN = SDN_MASK,
-            INT = INTR_MASK,
-            INI = INIT_MASK,
+            INTR = INTR_MASK,
+            INIT = INIT_MASK,
         }
     }
 }

@@ -85,7 +85,7 @@ namespace Core8
                             floppy = f;
                             Log.Information(floppy);
                         }
-                        
+
                         if (breakpoints.Contains(Registers.PC.Content))
                         {
                             Log.Information($"Breakpoint hit!");
