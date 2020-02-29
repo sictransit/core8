@@ -1,6 +1,8 @@
 ﻿using Core8.Model.Interfaces;
 using Serilog;
 using System;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Core8
 {
@@ -43,6 +45,7 @@ namespace Core8
         public enum ControllerState
         {
             Idle,
+            Initialize,
             FillBuffer,
             EmptyBuffer,
             WriteSector,
@@ -279,8 +282,10 @@ namespace Core8
                     interfaceRegister = accumulator;
                     SetTrack(read: true);
                     break;
-                default:
+                case ControllerState.Idle:
                     break;
+                default:
+                    throw new InvalidOperationException(state.ToString());                    
             }
 
             return interfaceRegister;
@@ -288,19 +293,28 @@ namespace Core8
 
         public void Initialize()
         {
-            if (disk[UnitSelect] != null)
-            {
-                trackAddress = 1;
-                sectorAddress = 1;
+            SetState(ControllerState.Initialize);
 
-                ReadBlock();
+            Task.Run(() => {
+                Thread.Sleep(1800);
 
-                SetTransferRequest();
+                if (disk[UnitSelect] != null)
+                {
+                    trackAddress = 1;
+                    sectorAddress = 1;
+
+                    ReadBlock();
+
+                    //SetTransferRequest();                    
+                }
+
+                errorStatusRegister = 0;
+                interfaceRegister = 0;
+
+                SetState(ControllerState.Idle);
 
                 SetDone(ERROR_STATUS_INIT_DONE, 0);
-            }
-
-            SetState(ControllerState.Idle);
+            });
         }
 
         private void SetSector()
