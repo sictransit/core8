@@ -25,7 +25,7 @@ namespace Core8
 
             Memory = new Memory();
             Registers = new Registers();
-            FloppyDrive = new FloppyDrive(Registers.AC);
+            FloppyDrive = new FloppyDrive();
 
             Interrupts = new Interrupts(this);
 
@@ -48,6 +48,7 @@ namespace Core8
             Registers.AC.Clear();
             Interrupts.ClearUser();
             Interrupts.Disable();
+            FloppyDrive.Initialize();
         }
 
         public void Halt()
@@ -104,12 +105,12 @@ namespace Core8
 
                     Registers.PC.Increment();
 
-                    instruction.Execute();
-
                     if (debug)
                     {
                         Log.Information(instruction.ToString());
                     }
+
+                    instruction.Execute();
                 }
             }
             catch (Exception ex)

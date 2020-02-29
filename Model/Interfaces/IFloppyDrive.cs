@@ -20,9 +20,9 @@ namespace Core8.Model.Interfaces
 
         void Load(byte unit, byte[] disk);
 
-        void LoadCommandRegister(int data);
+        void LoadCommandRegister(int accumulator);
 
-        void TransferDataRegister(LinkAccumulator linkAc);
+        int TransferDataRegister(int accumulator);
 
         bool SkipNotDone();
 
