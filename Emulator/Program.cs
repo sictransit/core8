@@ -65,47 +65,14 @@ namespace Core8
 
         private static void FloppyDevelopment()
         {
-            //pdp.Load8(00032);
-            //pdp.Deposit8(7305);
-            //pdp.Deposit8(6755);
-            //pdp.Deposit8(5054);
-            //pdp.Deposit8(1061);
-            //pdp.Deposit8(6751);
-            //pdp.Deposit8(5047);
-            //pdp.Load8(00047);
-            //pdp.Deposit8(4053);
-            //pdp.Deposit8(3002);
-            //pdp.Deposit8(2050);
-            //pdp.Deposit8(5047);
-            //pdp.Deposit8(0000);
-            //pdp.Deposit8(6753);
-            //pdp.Deposit8(5033);
-            //pdp.Deposit8(6752);
-            //pdp.Deposit8(5453);
-            //pdp.Deposit8(7004);
-            //pdp.Deposit8(0000);
-            //pdp.Load8(00032);
-
-            pdp.Load8(0024);
-            pdp.Deposit8(7126);
-            pdp.Deposit8(1060);
-            pdp.Deposit8(6751);
-            pdp.Deposit8(7201);
-            pdp.Deposit8(4053);
-            pdp.Deposit8(4053);
-            pdp.Deposit8(7104);
+            pdp.Load8(00032);
+            pdp.Deposit8(7305);
             pdp.Deposit8(6755);
             pdp.Deposit8(5054);
-            pdp.Deposit8(6754);
-            pdp.Deposit8(7450);
-            pdp.Deposit8(7610);
-            pdp.Deposit8(5046);
-            pdp.Deposit8(1060);
-            pdp.Deposit8(7041);
             pdp.Deposit8(1061);
-            pdp.Deposit8(3060);
-            pdp.Deposit8(5024);
             pdp.Deposit8(6751);
+            pdp.Deposit8(5047);
+            pdp.Load8(00047);
             pdp.Deposit8(4053);
             pdp.Deposit8(3002);
             pdp.Deposit8(2050);
@@ -115,9 +82,42 @@ namespace Core8
             pdp.Deposit8(5033);
             pdp.Deposit8(6752);
             pdp.Deposit8(5453);
-            pdp.Deposit8(7024);
-            pdp.Deposit8(6030);
-            pdp.Load8(0033);
+            pdp.Deposit8(7004);
+            pdp.Deposit8(0000);
+            pdp.Load8(00032);
+
+            //pdp.Load8(0024);
+            //pdp.Deposit8(7126);
+            //pdp.Deposit8(1060);
+            //pdp.Deposit8(6751);
+            //pdp.Deposit8(7201);
+            //pdp.Deposit8(4053);
+            //pdp.Deposit8(4053);
+            //pdp.Deposit8(7104);
+            //pdp.Deposit8(6755);
+            //pdp.Deposit8(5054);
+            //pdp.Deposit8(6754);
+            //pdp.Deposit8(7450);
+            //pdp.Deposit8(7610);
+            //pdp.Deposit8(5046);
+            //pdp.Deposit8(1060);
+            //pdp.Deposit8(7041);
+            //pdp.Deposit8(1061);
+            //pdp.Deposit8(3060);
+            //pdp.Deposit8(5024);
+            //pdp.Deposit8(6751);
+            //pdp.Deposit8(4053);
+            //pdp.Deposit8(3002);
+            //pdp.Deposit8(2050);
+            //pdp.Deposit8(5047);
+            //pdp.Deposit8(0000);
+            //pdp.Deposit8(6753);
+            //pdp.Deposit8(5033);
+            //pdp.Deposit8(6752);
+            //pdp.Deposit8(5453);
+            //pdp.Deposit8(7024);
+            //pdp.Deposit8(6030);
+            //pdp.Load8(0033);
 
             //pdp.Load8(0022);
             //pdp.Deposit8(06755);
@@ -153,12 +153,11 @@ namespace Core8
             //pdp.Deposit8(07004);
             //pdp.Deposit8(06030);
 
-
             //pdp.Load8(0022);
 
             //pdp.DumpMemory();
 
-            pdp.LoadFloppy(0, File.ReadAllBytes(@"C:\tmp\OS-8\os8_rx.rx01"));
+            pdp.LoadFloppy(0, File.ReadAllBytes(@"C:\tmp\OS-8\os8.rx01"));
 
             pdp.Clear();
 

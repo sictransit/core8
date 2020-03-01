@@ -129,6 +129,8 @@ namespace Core8
 
             errorStatusRegister |= (disk[UnitSelect] != null ? ERROR_STATUS_DEVICE_READY : 0);
 
+            interfaceRegister = errorStatusRegister;
+
             Done = true;
             InterruptRequested = true;
         }
@@ -169,7 +171,7 @@ namespace Core8
             bufferPointer = 0;
 
             commandRegister = accumulator & 0b_000_011_111_110;
-            errorStatusRegister &= (int)ErrorStatusFlags.InitializationDone;
+            //errorStatusRegister &= (int)ErrorStatusFlags.InitializationDone;
 
             switch (Function)
             {
@@ -269,6 +271,7 @@ namespace Core8
                 case ControllerState.WriteSector:
                     interfaceRegister = accumulator;
                     SetSector();
+                    state = ControllerState.WriteTrack;
                     break;
                 case ControllerState.WriteTrack:
                     interfaceRegister = accumulator;
@@ -277,6 +280,7 @@ namespace Core8
                 case ControllerState.ReadSector:
                     interfaceRegister = accumulator;
                     SetSector();
+                    state = ControllerState.ReadTrack;
                     break;
                 case ControllerState.ReadTrack:
                     interfaceRegister = accumulator;
@@ -285,7 +289,7 @@ namespace Core8
                 case ControllerState.Idle:
                     break;
                 default:
-                    throw new InvalidOperationException(state.ToString());                    
+                    throw new InvalidOperationException(state.ToString());
             }
 
             return interfaceRegister;
@@ -295,7 +299,8 @@ namespace Core8
         {
             SetState(ControllerState.Initialize);
 
-            Task.Run(() => {
+            Task.Run(() =>
+            {
                 Thread.Sleep(1800);
 
                 if (disk[UnitSelect] != null)
@@ -310,18 +315,18 @@ namespace Core8
 
                 errorStatusRegister = 0;
                 interfaceRegister = 0;
+                commandRegister = 0;
+                bufferPointer = 0;
 
                 SetState(ControllerState.Idle);
 
-                SetDone(ERROR_STATUS_INIT_DONE, 0);
+                SetDone(ERROR_STATUS_INIT_DONE | ERROR_STATUS_DEVICE_READY, (int)ErrorStatusFlags.InitializationDone);
             });
         }
 
         private void SetSector()
         {
             sectorAddress = interfaceRegister & 0b_000_000_011_111;
-
-            SetState(ControllerState.WriteTrack);
 
             SetTransferRequest();
         }
@@ -374,11 +379,11 @@ namespace Core8
 
             buffer[bufferPointer++] = interfaceRegister;
 
-            if (bufferPointer == 64)
+            if (bufferPointer >= 64)
             {
-                SetState(ControllerState.Idle);
-
                 SetDone(0, 0);
+
+                SetState(ControllerState.Idle);
             }
             else
             {
@@ -395,7 +400,7 @@ namespace Core8
 
             interfaceRegister = buffer[bufferPointer++];
 
-            if (bufferPointer == 64)
+            if (bufferPointer >= 64)
             {
                 SetDone(0, 0);
 
@@ -425,7 +430,7 @@ namespace Core8
 
         public override string ToString()
         {
-            return $"[RX01] {FunctionSelect} mode={(EightBitMode ? 8 : 12)} unit={UnitSelect} trk={trackAddress} sec={sectorAddress}";
+            return $"[RX01] {FunctionSelect} mode={(EightBitMode ? 8 : 12)} unit={UnitSelect} trk={trackAddress} sec={sectorAddress} bp={bufferPointer}";
         }
 
     }
