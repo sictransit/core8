@@ -130,7 +130,7 @@ namespace Core8
 
             errorStatusRegister |= (disk[UnitSelect] != null ? ERROR_STATUS_DEVICE_READY : 0);
 
-            interfaceRegister = errorStatusRegister;            
+            interfaceRegister = errorStatusRegister;
 
             SetState(ControllerState.Idle);
 
@@ -195,8 +195,7 @@ namespace Core8
                     SetTransferRequest();
                     break;
                 case NO_OPERATION:
-                    SetDone();
-                    break;
+                    throw new NotImplementedException();
                 case READ_STATUS:
                     throw new NotImplementedException();
                 case WRITE_DELETED_DATA_SECTOR:
@@ -244,7 +243,7 @@ namespace Core8
 
             var position = 0;
 
-            for (int i = 0; i < 64; i++)
+            for (int i = 0; i < buffer.Length; i++)
             {
                 if (i % 2 == 0)
                 {
@@ -389,7 +388,7 @@ namespace Core8
 
             buffer[bufferPointer++] = interfaceRegister;
 
-            if (bufferPointer >= 64)
+            if (bufferPointer >= buffer.Length)
             {
                 SetDone();
             }
@@ -404,11 +403,11 @@ namespace Core8
             if (EightBitMode)
             {
                 throw new NotImplementedException();
-            }            
+            }
 
-            if (bufferPointer >= 64)
-            {                
-                SetDone();                
+            if (bufferPointer >= buffer.Length)
+            {
+                SetDone();
             }
             else
             {
@@ -436,7 +435,7 @@ namespace Core8
             {
                 SetDone();
 
-                ClearError();                
+                ClearError();
 
                 return true;
             }
@@ -458,7 +457,7 @@ namespace Core8
 
         public override string ToString()
         {
-            return $"[RX01] {FunctionSelect} done={(doneFlag?1:0)} tr={(TransferRequest?1:0)} mode={(EightBitMode ? 8 : 12)} unit={UnitSelect} trk={trackAddress} sec={sectorAddress} bp={bufferPointer}";
+            return $"[RX01] {FunctionSelect} done={(doneFlag ? 1 : 0)} tr={(TransferRequest ? 1 : 0)} mode={(EightBitMode ? 8 : 12)} unit={UnitSelect} trk={trackAddress} sec={sectorAddress} bp={bufferPointer}";
         }
 
     }

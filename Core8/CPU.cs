@@ -79,7 +79,7 @@ namespace Core8
                             floppy = f;
                             Log.Information(floppy);
                         }
-                        
+
                         var i = Interrupts.ToString();
                         if (i != interrupts)
                         {
@@ -87,7 +87,7 @@ namespace Core8
                             Log.Information(interrupts);
                         }
 
-                        
+
 
                         if (breakpoints.Contains(Registers.PC.Content))
                         {
@@ -115,7 +115,7 @@ namespace Core8
                     {
                         Log.Information(instruction.ToString());
 
-                        
+
 
                         var r = Registers.ToString();
                         if (r != registers)
