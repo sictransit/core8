@@ -18,7 +18,7 @@ namespace Core8
         {
             Log.Logger = new LoggerConfiguration()
                 .WriteTo.Console()
-                //.WriteTo.File("emulator.log")
+                .WriteTo.File("emulator.log")
                 .MinimumLevel.ControlledBy(loggingLevel)
                 .CreateLogger();
 
@@ -65,26 +65,26 @@ namespace Core8
 
         private static void FloppyDevelopment()
         {
-            pdp.Load8(00032);
-            pdp.Deposit8(7305);
-            pdp.Deposit8(6755);
-            pdp.Deposit8(5054);
-            pdp.Deposit8(1061);
-            pdp.Deposit8(6751);
-            pdp.Deposit8(5047);
-            pdp.Load8(00047);
-            pdp.Deposit8(4053);
-            pdp.Deposit8(3002);
-            pdp.Deposit8(2050);
-            pdp.Deposit8(5047);
-            pdp.Deposit8(0000);
-            pdp.Deposit8(6753);
-            pdp.Deposit8(5033);
-            pdp.Deposit8(6752);
-            pdp.Deposit8(5453);
-            pdp.Deposit8(7004);
-            pdp.Deposit8(0000);
-            pdp.Load8(00032);
+            //pdp.Load8(00032);
+            //pdp.Deposit8(7305);
+            //pdp.Deposit8(6755);
+            //pdp.Deposit8(5054);
+            //pdp.Deposit8(1061);
+            //pdp.Deposit8(6751);
+            //pdp.Deposit8(5047);
+            //pdp.Load8(00047);
+            //pdp.Deposit8(4053);
+            //pdp.Deposit8(3002);
+            //pdp.Deposit8(2050);
+            //pdp.Deposit8(5047);
+            //pdp.Deposit8(0000);
+            //pdp.Deposit8(6753);
+            //pdp.Deposit8(5033);
+            //pdp.Deposit8(6752);
+            //pdp.Deposit8(5453);
+            //pdp.Deposit8(7004);
+            //pdp.Deposit8(0000);
+            //pdp.Load8(00032);
 
             //pdp.Load8(0024);
             //pdp.Deposit8(7126);
@@ -119,41 +119,41 @@ namespace Core8
             //pdp.Deposit8(6030);
             //pdp.Load8(0033);
 
-            //pdp.Load8(0022);
-            //pdp.Deposit8(06755);
-            //pdp.Deposit8(05022);
-            //pdp.Deposit8(07126);
-            //pdp.Deposit8(01060);
-            //pdp.Deposit8(06751);
-            //pdp.Deposit8(07201);
-            //pdp.Deposit8(04053);
-            //pdp.Deposit8(04053);
-            //pdp.Deposit8(07104);
-            //pdp.Deposit8(06755);
-            //pdp.Deposit8(05054);
-            //pdp.Deposit8(06754);
-            //pdp.Deposit8(07450);
-            //pdp.Deposit8(07610);
-            //pdp.Deposit8(05046);
-            //pdp.Deposit8(07402);
-            //pdp.Deposit8(07402);
-            //pdp.Deposit8(07402);
-            //pdp.Deposit8(07402);
-            //pdp.Deposit8(07402);
-            //pdp.Deposit8(06751);
-            //pdp.Deposit8(04053);
-            //pdp.Deposit8(03002);
-            //pdp.Deposit8(02050);
-            //pdp.Deposit8(05047);
-            //pdp.Deposit8(00000);
-            //pdp.Deposit8(06753);
-            //pdp.Deposit8(05033);
-            //pdp.Deposit8(06752);
-            //pdp.Deposit8(05453);
-            //pdp.Deposit8(07004);
-            //pdp.Deposit8(06030);
+            pdp.Load8(0022);
+            pdp.Deposit8(06755);
+            pdp.Deposit8(05022);
+            pdp.Deposit8(07126);
+            pdp.Deposit8(01060);
+            pdp.Deposit8(06751);
+            pdp.Deposit8(07201);
+            pdp.Deposit8(04053);
+            pdp.Deposit8(04053);
+            pdp.Deposit8(07104);
+            pdp.Deposit8(06755);
+            pdp.Deposit8(05054);
+            pdp.Deposit8(06754);
+            pdp.Deposit8(07450);
+            pdp.Deposit8(07610);
+            pdp.Deposit8(05046);
+            pdp.Deposit8(07402);
+            pdp.Deposit8(07402);
+            pdp.Deposit8(07402);
+            pdp.Deposit8(07402);
+            pdp.Deposit8(07402);
+            pdp.Deposit8(06751);
+            pdp.Deposit8(04053);
+            pdp.Deposit8(03002);
+            pdp.Deposit8(02050);
+            pdp.Deposit8(05047);
+            pdp.Deposit8(00000);
+            pdp.Deposit8(06753);
+            pdp.Deposit8(05033);
+            pdp.Deposit8(06752);
+            pdp.Deposit8(05453);
+            pdp.Deposit8(07004);
+            pdp.Deposit8(06030);
 
-            //pdp.Load8(0022);
+            pdp.Load8(0022);
 
             //pdp.DumpMemory();
 

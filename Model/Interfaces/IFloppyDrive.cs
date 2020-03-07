@@ -2,19 +2,7 @@
 {
     public interface IFloppyDrive
     {
-        bool Done { get; }
-
-        bool Error { get; }
-
-        bool TransferRequest { get; }
-
         bool InterruptRequested { get; }
-
-        void ClearDone();
-
-        void ClearError();
-
-        void ClearTransferRequest();
 
         void Load(byte unit, byte[] disk);
 
@@ -22,7 +10,11 @@
 
         int TransferDataRegister(int accumulator);
 
+        bool SkipTransferRequest();
+
         bool SkipNotDone();
+
+        bool SkipError();
 
         void Initialize();
     }

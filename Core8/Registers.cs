@@ -40,7 +40,7 @@ namespace Core8
 
         public override string ToString()
         {
-            return string.Join(' ', new RegisterBase[] { PC, AC, DF, IB, UB, UF, SF, MQ }.Select(x => x.ToString()));
+            return string.Join(' ', new RegisterBase[] { AC, DF, IB, UB, UF, SF, MQ }.Select(x => x.ToString()));
         }
     }
 }

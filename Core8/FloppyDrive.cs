@@ -8,6 +8,10 @@ namespace Core8
 {
     public class FloppyDrive : IFloppyDrive
     {
+        private readonly TimeSpan initializeTime = TimeSpan.FromMilliseconds(1800);
+        private readonly TimeSpan readStatusTime = TimeSpan.FromMilliseconds(250);
+        private readonly TimeSpan averageAccessTime = TimeSpan.FromMilliseconds(488);
+
         private const int FILL_BUFFER = 0;
         private const int EMPTY_BUFFER = 1;
         private const int WRITE_SECTOR = 2;
@@ -61,8 +65,6 @@ namespace Core8
             DeviceReady = ERROR_STATUS_DEVICE_READY
         }
 
-        private bool sdnWait;
-
         private int commandRegister;
 
         private int interfaceRegister;
@@ -91,11 +93,11 @@ namespace Core8
 
         private int UnitSelect => (commandRegister >> 4) & 0b_001;
 
-        public bool Done { get; private set; }
+        private volatile bool doneFlag;
 
         public bool TransferRequest { get; private set; }
 
-        public bool InterruptRequested { get; private set; }
+        public bool InterruptRequested => doneFlag;
 
         private int sectorAddress;
 
@@ -112,11 +114,10 @@ namespace Core8
 
         public void ClearDone()
         {
-            Done = false;
-            InterruptRequested = false;
+            doneFlag = false;
         }
 
-        private void SetDone(int errorStatus, int errorCode)
+        private void SetDone(int errorStatus = 0, int errorCode = 0)
         {
             if (errorCode != 0)
             {
@@ -129,10 +130,11 @@ namespace Core8
 
             errorStatusRegister |= (disk[UnitSelect] != null ? ERROR_STATUS_DEVICE_READY : 0);
 
-            interfaceRegister = errorStatusRegister;
+            interfaceRegister = errorStatusRegister;            
 
-            Done = true;
-            InterruptRequested = true;
+            SetState(ControllerState.Idle);
+
+            doneFlag = true;
         }
 
         private void SetState(ControllerState state)
@@ -171,6 +173,7 @@ namespace Core8
             bufferPointer = 0;
 
             commandRegister = accumulator & 0b_000_011_111_110;
+            interfaceRegister = accumulator;
             //errorStatusRegister &= (int)ErrorStatusFlags.InitializationDone;
 
             switch (Function)
@@ -192,7 +195,7 @@ namespace Core8
                     SetTransferRequest();
                     break;
                 case NO_OPERATION:
-                    SetDone(0, 0);
+                    SetDone();
                     break;
                 case READ_STATUS:
                     throw new NotImplementedException();
@@ -257,8 +260,40 @@ namespace Core8
             Array.Copy(block, 0, disk[UnitSelect], BlockAddress, block.Length);
         }
 
+        private void ControllerAction()
+        {
+            switch (state)
+            {
+                case ControllerState.Initialize:
+                    Thread.Sleep(initializeTime);
+                    ReadBlock();
+                    SetDone(ERROR_STATUS_INIT_DONE | ERROR_STATUS_DEVICE_READY, (int)ErrorStatusFlags.InitializationDone);
+                    break;
+                case ControllerState.ReadTrack:
+                    Thread.Sleep(averageAccessTime);
+                    ReadBlock();
+                    SetDone();
+                    break;
+                case ControllerState.WriteTrack:
+                    Thread.Sleep(averageAccessTime);
+                    WriteBlock();
+                    SetDone();
+                    break;
+                default:
+                    throw new InvalidOperationException(state.ToString());
+
+            }
+        }
+
         public int TransferDataRegister(int accumulator)
         {
+            if (doneFlag)
+            {
+                return interfaceRegister;
+            }
+
+            errorStatusRegister &= ERROR_STATUS_INIT_DONE;
+
             switch (state)
             {
                 case ControllerState.FillBuffer:
@@ -286,8 +321,6 @@ namespace Core8
                     interfaceRegister = accumulator;
                     SetTrack(read: true);
                     break;
-                case ControllerState.Idle:
-                    break;
                 default:
                     throw new InvalidOperationException(state.ToString());
             }
@@ -299,29 +332,17 @@ namespace Core8
         {
             SetState(ControllerState.Initialize);
 
-            Task.Run(() =>
-            {
-                Thread.Sleep(1800);
+            ClearDone();
 
-                if (disk[UnitSelect] != null)
-                {
-                    trackAddress = 1;
-                    sectorAddress = 1;
+            errorStatusRegister = 0;
+            interfaceRegister = 0;
+            commandRegister = 0;
+            bufferPointer = 0;
 
-                    ReadBlock();
+            trackAddress = 1;
+            sectorAddress = 1;
 
-                    //SetTransferRequest();                    
-                }
-
-                errorStatusRegister = 0;
-                interfaceRegister = 0;
-                commandRegister = 0;
-                bufferPointer = 0;
-
-                SetState(ControllerState.Idle);
-
-                SetDone(ERROR_STATUS_INIT_DONE | ERROR_STATUS_DEVICE_READY, (int)ErrorStatusFlags.InitializationDone);
-            });
+            Task.Run(ControllerAction);
         }
 
         private void SetSector()
@@ -355,18 +376,7 @@ namespace Core8
             }
             else
             {
-                if (read)
-                {
-                    ReadBlock();
-                }
-                else
-                {
-                    WriteBlock();
-                }
-
-                SetState(ControllerState.Idle);
-
-                SetDone(0, 0);
+                Task.Run(ControllerAction);
             }
         }
 
@@ -381,9 +391,7 @@ namespace Core8
 
             if (bufferPointer >= 64)
             {
-                SetDone(0, 0);
-
-                SetState(ControllerState.Idle);
+                SetDone();
             }
             else
             {
@@ -396,29 +404,49 @@ namespace Core8
             if (EightBitMode)
             {
                 throw new NotImplementedException();
-            }
-
-            interfaceRegister = buffer[bufferPointer++];
+            }            
 
             if (bufferPointer >= 64)
-            {
-                SetDone(0, 0);
-
-                SetState(ControllerState.Idle);
+            {                
+                SetDone();                
             }
             else
             {
+                interfaceRegister = buffer[bufferPointer++];
+
                 SetTransferRequest();
             }
         }
 
+        public bool SkipTransferRequest()
+        {
+            if (TransferRequest)
+            {
+                ClearTransferRequest();
+
+                return true;
+            }
+
+            return false;
+        }
+
+        public bool SkipError()
+        {
+            if (Error)
+            {
+                SetDone();
+
+                ClearError();                
+
+                return true;
+            }
+
+            return false;
+        }
+
         public bool SkipNotDone()
         {
-
-            sdnWait = true;
-
-
-            if (Done)
+            if (doneFlag)
             {
                 ClearDone();
 
@@ -430,7 +458,7 @@ namespace Core8
 
         public override string ToString()
         {
-            return $"[RX01] {FunctionSelect} mode={(EightBitMode ? 8 : 12)} unit={UnitSelect} trk={trackAddress} sec={sectorAddress} bp={bufferPointer}";
+            return $"[RX01] {FunctionSelect} done={(doneFlag?1:0)} tr={(TransferRequest?1:0)} mode={(EightBitMode ? 8 : 12)} unit={UnitSelect} trk={trackAddress} sec={sectorAddress} bp={bufferPointer}";
         }
 
     }

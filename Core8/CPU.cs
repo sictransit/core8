@@ -64,6 +64,7 @@ namespace Core8
 
             string interrupts = null;
             string floppy = null;
+            string registers = null;
 
             try
             {
@@ -72,6 +73,13 @@ namespace Core8
                     if (debug)
                     {
                         //Log.Information(Registers.ToString());
+                        var f = FloppyDrive.ToString();
+                        if (f != floppy)
+                        {
+                            floppy = f;
+                            Log.Information(floppy);
+                        }
+                        
                         var i = Interrupts.ToString();
                         if (i != interrupts)
                         {
@@ -79,12 +87,7 @@ namespace Core8
                             Log.Information(interrupts);
                         }
 
-                        var f = FloppyDrive.ToString();
-                        if (f != floppy)
-                        {
-                            floppy = f;
-                            Log.Information(floppy);
-                        }
+                        
 
                         if (breakpoints.Contains(Registers.PC.Content))
                         {
@@ -105,14 +108,25 @@ namespace Core8
 
                     Registers.PC.Increment();
 
+
+                    instruction.Execute();
+
                     if (debug)
                     {
-                        //Log.Information(instruction.ToString());
+                        Log.Information(instruction.ToString());
+
+                        
+
+                        var r = Registers.ToString();
+                        if (r != registers)
+                        {
+                            registers = r;
+                            Log.Information(registers);
+                        }
 
                         //Log.Information(Registers.ToString());
                     }
 
-                    instruction.Execute();
                 }
             }
             catch (Exception ex)

@@ -77,22 +77,16 @@ namespace Core8.Model.Instructions
 
         private void SER()
         {
-            if (FloppyDrive.Error)
+            if (FloppyDrive.SkipError())
             {
-                FloppyDrive.ClearError();
-
                 Registers.PC.Increment();
             }
         }
 
         private void STR()
         {
-            if (FloppyDrive.TransferRequest)
+            if (FloppyDrive.SkipTransferRequest())
             {
-                //Log.Information("STR");
-
-                FloppyDrive.ClearTransferRequest();
-
                 CPU.Registers.PC.Increment();
             }
         }
