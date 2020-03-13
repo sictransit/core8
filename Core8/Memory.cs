@@ -1,5 +1,7 @@
 ﻿using Core8.Model;
+using Core8.Model.Extensions;
 using Core8.Model.Interfaces;
+using Serilog;
 
 namespace Core8
 {
@@ -23,6 +25,8 @@ namespace Core8
                 return Write(address, ram[address] + 1);
             }
 
+            Log.Debug($"[MR] {address.ToOctalString()}:{ram[address].ToOctalString()}");
+
             return ram[address];
         }
 
@@ -31,6 +35,8 @@ namespace Core8
             var value = data & Masks.MEM_WORD;
 
             ram[address] = value;
+
+            Log.Debug($"[MW] {address.ToOctalString()}:{value.ToOctalString()}");
 
             return value;
         }

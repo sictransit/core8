@@ -10,6 +10,7 @@ namespace Core8
     {
         private readonly TimeSpan initializeTime = TimeSpan.FromMilliseconds(1800);
         private readonly TimeSpan readStatusTime = TimeSpan.FromMilliseconds(250);
+        private readonly TimeSpan commandTime = TimeSpan.FromMilliseconds(100);
         private readonly TimeSpan averageAccessTime = TimeSpan.FromMilliseconds(488);
 
         private const int FILL_BUFFER = 0;
@@ -56,6 +57,7 @@ namespace Core8
             WriteTrack,
             ReadSector,
             ReadTrack,
+            Done,
         }
 
         [Flags]
@@ -65,13 +67,13 @@ namespace Core8
             DeviceReady = ERROR_STATUS_DEVICE_READY
         }
 
-        private int commandRegister;
+        private volatile int commandRegister;
 
-        private int interfaceRegister;
+        private volatile int interfaceRegister;
 
-        private int errorStatusRegister;
+        private volatile int errorStatusRegister;
 
-        private int errorCodeRegister;
+        private volatile int errorCodeRegister;
 
         private readonly int[] buffer = new int[64];
 
@@ -117,6 +119,12 @@ namespace Core8
             doneFlag = false;
         }
 
+        private void ScheduleDone()
+        {
+            SetState(ControllerState.Done);
+            Task.Run(ControllerAction);
+        }
+
         private void SetDone(int errorStatus = 0, int errorCode = 0)
         {
             if (errorCode != 0)
@@ -159,11 +167,11 @@ namespace Core8
             this.disk[unit] = disk;
         }
 
-        public void LoadCommandRegister(int accumulator)
+        public int LoadCommandRegister(int accumulator)
         {
             if (state != ControllerState.Idle)
             {
-                return;
+                return accumulator;
             }
 
             ClearError();
@@ -174,28 +182,33 @@ namespace Core8
 
             commandRegister = accumulator & 0b_000_011_111_110;
             interfaceRegister = accumulator;
-            //errorStatusRegister &= (int)ErrorStatusFlags.InitializationDone;
 
             switch (Function)
             {
                 case FILL_BUFFER:
                     SetState(ControllerState.FillBuffer);
+                    errorStatusRegister &= ERROR_STATUS_INIT_DONE;
                     SetTransferRequest();
                     break;
                 case EMPTY_BUFFER:
                     SetState(ControllerState.EmptyBuffer);
+                    errorStatusRegister &= ERROR_STATUS_INIT_DONE;
                     SetTransferRequest();
                     break;
                 case WRITE_SECTOR:
                     SetState(ControllerState.WriteSector);
+                    errorStatusRegister &= ERROR_STATUS_INIT_DONE;
                     SetTransferRequest();
                     break;
                 case READ_SECTOR:
                     SetState(ControllerState.ReadSector);
+                    errorStatusRegister &= ERROR_STATUS_INIT_DONE;
                     SetTransferRequest();
                     break;
                 case NO_OPERATION:
-                    throw new NotImplementedException();
+                    //SetState(ControllerState.Done);
+                    //Task.Run(ControllerAction);
+                    break;
                 case READ_STATUS:
                     throw new NotImplementedException();
                 case WRITE_DELETED_DATA_SECTOR:
@@ -205,6 +218,8 @@ namespace Core8
                 default:
                     throw new NotImplementedException();
             }
+
+            return 0;
         }
 
         private void ReadBlock()
@@ -266,7 +281,11 @@ namespace Core8
                 case ControllerState.Initialize:
                     Thread.Sleep(initializeTime);
                     ReadBlock();
-                    SetDone(ERROR_STATUS_INIT_DONE | ERROR_STATUS_DEVICE_READY, (int)ErrorStatusFlags.InitializationDone);
+                    SetDone(ERROR_STATUS_INIT_DONE | ERROR_STATUS_DEVICE_READY, 0);
+                    break;
+                case ControllerState.Done:
+                    Thread.Sleep(commandTime);
+                    SetDone();
                     break;
                 case ControllerState.ReadTrack:
                     Thread.Sleep(averageAccessTime);
@@ -280,7 +299,6 @@ namespace Core8
                     break;
                 default:
                     throw new InvalidOperationException(state.ToString());
-
             }
         }
 
@@ -309,7 +327,7 @@ namespace Core8
                     break;
                 case ControllerState.WriteTrack:
                     interfaceRegister = accumulator;
-                    SetTrack(read: false);
+                    SetTrack();
                     break;
                 case ControllerState.ReadSector:
                     interfaceRegister = accumulator;
@@ -318,7 +336,7 @@ namespace Core8
                     break;
                 case ControllerState.ReadTrack:
                     interfaceRegister = accumulator;
-                    SetTrack(read: true);
+                    SetTrack();
                     break;
                 default:
                     throw new InvalidOperationException(state.ToString());
@@ -351,7 +369,7 @@ namespace Core8
             SetTransferRequest();
         }
 
-        private void SetTrack(bool read)
+        private void SetTrack()
         {
             trackAddress = interfaceRegister & 0b_000_001_111_111;
 
@@ -375,6 +393,10 @@ namespace Core8
             }
             else
             {
+                if (trackAddress == MIN_TRACK)
+                {
+                    Log.Warning("@ track #0");
+                }
                 Task.Run(ControllerAction);
             }
         }
@@ -390,7 +412,7 @@ namespace Core8
 
             if (bufferPointer >= buffer.Length)
             {
-                SetDone();
+                ScheduleDone();
             }
             else
             {
@@ -405,14 +427,14 @@ namespace Core8
                 throw new NotImplementedException();
             }
 
+            interfaceRegister = buffer[bufferPointer++];
+
             if (bufferPointer >= buffer.Length)
             {
-                SetDone();
+                ScheduleDone();
             }
             else
             {
-                interfaceRegister = buffer[bufferPointer++];
-
                 SetTransferRequest();
             }
         }
@@ -433,8 +455,6 @@ namespace Core8
         {
             if (Error)
             {
-                SetDone();
-
                 ClearError();
 
                 return true;

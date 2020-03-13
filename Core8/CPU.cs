@@ -108,25 +108,22 @@ namespace Core8
 
                     Registers.PC.Increment();
 
+                    if (debug)
+                    {
+                        Log.Information(instruction.ToString());
+                    }
 
                     instruction.Execute();
 
                     if (debug)
                     {
-                        Log.Information(instruction.ToString());
-
-
-
                         var r = Registers.ToString();
                         if (r != registers)
                         {
                             registers = r;
                             Log.Information(registers);
                         }
-
-                        //Log.Information(Registers.ToString());
                     }
-
                 }
             }
             catch (Exception ex)
