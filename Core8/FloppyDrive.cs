@@ -10,7 +10,7 @@ namespace Core8
     {
         private readonly TimeSpan initializeTime = TimeSpan.FromMilliseconds(1800);
         private readonly TimeSpan readStatusTime = TimeSpan.FromMilliseconds(250);
-        private readonly TimeSpan commandTime = TimeSpan.FromMilliseconds(100);
+        public TimeSpan CommandTime => TimeSpan.FromMilliseconds(100);
         private readonly TimeSpan averageAccessTime = TimeSpan.FromMilliseconds(488);
 
         private const int FILL_BUFFER = 0;
@@ -284,7 +284,7 @@ namespace Core8
                     SetDone(ERROR_STATUS_INIT_DONE | ERROR_STATUS_DEVICE_READY, 0);
                     break;
                 case ControllerState.Done:
-                    Thread.Sleep(commandTime);
+                    Thread.Sleep(CommandTime);
                     SetDone();
                     break;
                 case ControllerState.ReadTrack:
