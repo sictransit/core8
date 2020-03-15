@@ -8,19 +8,19 @@ namespace Core8
 {
     public class FloppyDrive : IFloppyDrive
     {
-        private readonly TimeSpan initializeTime = TimeSpan.FromMilliseconds(1800);
-        private readonly TimeSpan readStatusTime = TimeSpan.FromMilliseconds(250);
-        public TimeSpan CommandTime => TimeSpan.FromMilliseconds(100);
-        private readonly TimeSpan averageAccessTime = TimeSpan.FromMilliseconds(488);
+        public static TimeSpan InitializeTime => TimeSpan.FromMilliseconds(1800);
+        public static TimeSpan ReadStatusTime => TimeSpan.FromMilliseconds(250);
+        public static TimeSpan CommandTime => TimeSpan.FromMilliseconds(100);
+        public static TimeSpan AverageAccessTime => TimeSpan.FromMilliseconds(488);
 
-        private const int FILL_BUFFER = 0;
-        private const int EMPTY_BUFFER = 1;
-        private const int WRITE_SECTOR = 2;
-        private const int READ_SECTOR = 3;
-        private const int NO_OPERATION = 4;
-        private const int READ_STATUS = 5;
-        private const int WRITE_DELETED_DATA_SECTOR = 6;
-        private const int READ_ERROR_REGISTER = 7;
+        public const int FILL_BUFFER = 0 << 1;
+        public const int EMPTY_BUFFER = 1 << 1;
+        public const int WRITE_SECTOR = 2 << 1;
+        public const int READ_SECTOR = 3 << 1;
+        public const int NO_OPERATION = 4 << 1;
+        public const int READ_STATUS = 5 << 1;
+        public const int WRITE_DELETED_DATA_SECTOR = 6 << 1;
+        public const int READ_ERROR_REGISTER = 7 << 1;
 
         private const int MIN_TRACK = 0;
         private const int MAX_TRACK = 76;
@@ -87,7 +87,7 @@ namespace Core8
 
         private ControllerState state;
 
-        private int Function => (commandRegister & 0b_001_110) >> 1;
+        private int Function => (commandRegister & 0b_001_110);
 
         private ControllerFunction FunctionSelect => (ControllerFunction)Function;
 
@@ -206,8 +206,8 @@ namespace Core8
                     SetTransferRequest();
                     break;
                 case NO_OPERATION:
-                    //SetState(ControllerState.Done);
-                    //Task.Run(ControllerAction);
+                    SetState(ControllerState.Done);
+                    Task.Run(ControllerAction);
                     break;
                 case READ_STATUS:
                     throw new NotImplementedException();
@@ -279,7 +279,7 @@ namespace Core8
             switch (state)
             {
                 case ControllerState.Initialize:
-                    Thread.Sleep(initializeTime);
+                    Thread.Sleep(InitializeTime);
                     ReadBlock();
                     SetDone(ERROR_STATUS_INIT_DONE | ERROR_STATUS_DEVICE_READY, 0);
                     break;
@@ -288,12 +288,12 @@ namespace Core8
                     SetDone();
                     break;
                 case ControllerState.ReadTrack:
-                    Thread.Sleep(averageAccessTime);
+                    Thread.Sleep(AverageAccessTime);
                     ReadBlock();
                     SetDone();
                     break;
                 case ControllerState.WriteTrack:
-                    Thread.Sleep(averageAccessTime);
+                    Thread.Sleep(AverageAccessTime);
                     WriteBlock();
                     SetDone();
                     break;
@@ -306,7 +306,7 @@ namespace Core8
         {
             if (doneFlag)
             {
-                return interfaceRegister;
+                return errorStatusRegister;
             }
 
             errorStatusRegister &= ERROR_STATUS_INIT_DONE;
@@ -319,7 +319,7 @@ namespace Core8
                     break;
                 case ControllerState.EmptyBuffer:
                     EmptyBuffer();
-                    break;
+                    return interfaceRegister;
                 case ControllerState.WriteSector:
                     interfaceRegister = accumulator;
                     SetSector();
@@ -342,7 +342,7 @@ namespace Core8
                     throw new InvalidOperationException(state.ToString());
             }
 
-            return interfaceRegister;
+            return accumulator;
         }
 
         public void Initialize()
@@ -412,7 +412,8 @@ namespace Core8
 
             if (bufferPointer >= buffer.Length)
             {
-                ScheduleDone();
+                //ScheduleDone();
+                SetDone(0, 0);
             }
             else
             {
@@ -431,7 +432,8 @@ namespace Core8
 
             if (bufferPointer >= buffer.Length)
             {
-                ScheduleDone();
+                //ScheduleDone();
+                SetDone(0, 0);
             }
             else
             {
