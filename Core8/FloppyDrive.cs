@@ -57,6 +57,7 @@ namespace Core8
             WriteTrack,
             ReadSector,
             ReadTrack,
+            ReadStatus,
             Done,
         }
 
@@ -66,6 +67,8 @@ namespace Core8
             InitializationDone = ERROR_STATUS_INIT_DONE,
             DeviceReady = ERROR_STATUS_DEVICE_READY
         }
+
+        private volatile bool interruptsEnabled;
 
         private volatile int commandRegister;
 
@@ -99,7 +102,7 @@ namespace Core8
 
         public bool TransferRequest { get; private set; }
 
-        public bool InterruptRequested => doneFlag;
+        public bool InterruptRequested => interruptsEnabled && doneFlag;
 
         private int sectorAddress;
 
@@ -125,20 +128,20 @@ namespace Core8
             Task.Run(ControllerAction);
         }
 
-        private void SetDone(int errorStatus = 0, int errorCode = 0)
+        private void SetDone(int errorStatus = 0, int errorCode = 0, bool readErrorRegister = false)
         {
             if (errorCode != 0)
             {
                 Error = true;
             }
-
+            
             errorCodeRegister = errorCode;
 
             errorStatusRegister |= errorStatus;
 
             errorStatusRegister |= (disk[UnitSelect] != null ? ERROR_STATUS_DEVICE_READY : 0);
 
-            interfaceRegister = errorStatusRegister;
+            interfaceRegister = readErrorRegister ? errorCodeRegister : errorStatusRegister;
 
             SetState(ControllerState.Idle);
 
@@ -210,11 +213,14 @@ namespace Core8
                     Task.Run(ControllerAction);
                     break;
                 case READ_STATUS:
-                    throw new NotImplementedException();
+                    SetState(ControllerState.ReadStatus);
+                    Task.Run(ControllerAction);
+                    break;
                 case WRITE_DELETED_DATA_SECTOR:
                     throw new NotImplementedException();
                 case READ_ERROR_REGISTER:
-                    throw new NotImplementedException();
+                    SetDone(0, 0, true);
+                    break;
                 default:
                     throw new NotImplementedException();
             }
@@ -297,6 +303,10 @@ namespace Core8
                     WriteBlock();
                     SetDone();
                     break;
+                case ControllerState.ReadStatus:
+                    Thread.Sleep(ReadStatusTime);
+                    SetDone();
+                    break;
                 default:
                     throw new InvalidOperationException(state.ToString());
             }
@@ -304,40 +314,44 @@ namespace Core8
 
         public int TransferDataRegister(int accumulator)
         {
-            if (doneFlag)
-            {
-                return errorStatusRegister;
-            }
-
             errorStatusRegister &= ERROR_STATUS_INIT_DONE;
 
             switch (state)
             {
+                case ControllerState.Idle:
+                    return interfaceRegister;
+
                 case ControllerState.FillBuffer:
                     interfaceRegister = accumulator;
                     FillBuffer();
                     break;
+
                 case ControllerState.EmptyBuffer:
                     EmptyBuffer();
                     return interfaceRegister;
+
                 case ControllerState.WriteSector:
                     interfaceRegister = accumulator;
                     SetSector();
                     state = ControllerState.WriteTrack;
                     break;
+
                 case ControllerState.WriteTrack:
                     interfaceRegister = accumulator;
                     SetTrack();
                     break;
+
                 case ControllerState.ReadSector:
                     interfaceRegister = accumulator;
                     SetSector();
                     state = ControllerState.ReadTrack;
                     break;
+
                 case ControllerState.ReadTrack:
                     interfaceRegister = accumulator;
                     SetTrack();
                     break;
+
                 default:
                     throw new InvalidOperationException(state.ToString());
             }
@@ -351,6 +365,7 @@ namespace Core8
 
             ClearDone();
 
+            interruptsEnabled = false;
             errorStatusRegister = 0;
             interfaceRegister = 0;
             commandRegister = 0;
@@ -480,10 +495,14 @@ namespace Core8
             return false;
         }
 
+        public void SetInterrupts(int acaccumulator)
+        {
+            interruptsEnabled = (acaccumulator & 1) == 1;
+        }
+
         public override string ToString()
         {
             return $"[RX01] {FunctionSelect} done={(doneFlag ? 1 : 0)} tr={(TransferRequest ? 1 : 0)} mode={(EightBitMode ? 8 : 12)} unit={UnitSelect} trk={trackAddress} sec={sectorAddress} bp={bufferPointer}";
         }
-
     }
 }

@@ -31,7 +31,7 @@ namespace Core8
                     {
                         pdp = new PDP();
 
-                        pdp.CPU.Debug(o.Debug);
+                        pdp.CPU.Debug(true); 
 
                         if (o.TINT)
                         {
@@ -57,7 +57,8 @@ namespace Core8
 
                         if (o.Floppy)
                         {
-                            FloppyDevelopment();
+                            FloppyTesting();
+                            //FloppyDevelopment();
                         }
 
                         if (o.TTY)
@@ -65,6 +66,45 @@ namespace Core8
                             Console.WriteLine(pdp.CPU.Teletype.Printout);
                         }
                     });
+        }
+
+        private static void FloppyTesting()
+        {
+            pdp.LoadPaperTape(File.ReadAllBytes(@"C:\Users\mikaelfr\Downloads\dirxa-c.bin"));
+
+            pdp.Load8(0021);
+            pdp.Deposit8(4000);
+            pdp.Deposit8(0000);
+            pdp.Toggle8(0000);
+
+            //var disk = new byte[77 * 26 * 128];
+
+            //pdp.LoadFloppy(0, disk);
+
+            pdp.Clear();
+
+            pdp.Load8(0200);
+
+            loggingLevel.MinimumLevel = Serilog.Events.LogEventLevel.Debug;
+
+            pdp.Continue(waitForHalt: true);
+
+            pdp.Toggle8(2500);
+
+            
+
+            pdp.LoadFloppy(0, new byte[77 * 26 * 128]);
+            pdp.LoadFloppy(1, new byte[77 * 26 * 128]);
+
+            pdp.CPU.FloppyDrive.Initialize();
+
+            pdp.Continue();
+
+            pdp.Toggle8(6000);
+
+            pdp.Continue();
+
+            pdp.Continue();
         }
 
         private static void FloppyDevelopment()

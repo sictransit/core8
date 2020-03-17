@@ -10,6 +10,8 @@
 
         int TransferDataRegister(int accumulator);
 
+        void SetInterrupts(int acaccumulator);
+
         bool SkipTransferRequest();
 
         bool SkipNotDone();

@@ -110,7 +110,7 @@ namespace Core8
 
                     if (debug)
                     {
-                        Log.Information(instruction.ToString());
+                        Log.Debug(instruction.ToString());
                     }
 
                     instruction.Execute();
