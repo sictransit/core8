@@ -70,37 +70,37 @@ namespace Core8
             {
                 while (running)
                 {
-                    if (debug)
-                    {
-                        //Log.Information(Registers.ToString());
-                        var f = FloppyDrive.ToString();
-                        if (f != floppy)
-                        {
-                            floppy = f;
-                            Log.Information(floppy);
-                        }
+                    //if (debug)
+                    //{
+                    //    //Log.Information(Registers.ToString());
+                    //    var f = FloppyDrive.ToString();
+                    //    if (f != floppy)
+                    //    {
+                    //        floppy = f;
+                    //        Log.Information(floppy);
+                    //    }
 
-                        var i = Interrupts.ToString();
-                        if (i != interrupts)
-                        {
-                            interrupts = i;
-                            Log.Information(interrupts);
-                        }
+                    //    var i = Interrupts.ToString();
+                    //    if (i != interrupts)
+                    //    {
+                    //        interrupts = i;
+                    //        Log.Information(interrupts);
+                    //    }
 
 
 
-                        if (breakpoints.Contains(Registers.PC.Content))
-                        {
-                            Log.Information($"Breakpoint hit!");
+                    //    if (breakpoints.Contains(Registers.PC.Content))
+                    //    {
+                    //        Log.Information($"Breakpoint hit!");
 
-                            break;
-                        }
+                    //        break;
+                    //    }
 
-                        if (singleStep)
-                        {
-                            break;
-                        }
-                    }
+                    //    if (singleStep)
+                    //    {
+                    //        break;
+                    //    }
+                    //}
 
                     Interrupts.Interrupt();
 
@@ -110,20 +110,20 @@ namespace Core8
 
                     if (debug)
                     {
-                        //Log.Information(instruction.ToString());
+                        Log.Information(instruction.ToString());
                     }
 
                     instruction.Execute();
 
-                    if (debug)
-                    {
-                        var r = Registers.ToString();
-                        if (r != registers)
-                        {
-                            registers = r;
-                            Log.Information(registers);
-                        }
-                    }
+                    //if (debug)
+                    //{
+                    //    var r = Registers.ToString();
+                    //    if (r != registers)
+                    //    {
+                    //        registers = r;
+                    //        Log.Information(registers);
+                    //    }
+                    //}
                 }
             }
             catch (Exception ex)

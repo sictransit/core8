@@ -359,7 +359,10 @@ namespace Core8
             trackAddress = 1;
             sectorAddress = 1;
 
-            Task.Run(ControllerAction);
+            if (disk[UnitSelect] != null)
+            { 
+                Task.Run(ControllerAction); 
+            }
         }
 
         private void SetSector()

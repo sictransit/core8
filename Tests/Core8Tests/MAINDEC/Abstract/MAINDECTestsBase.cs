@@ -50,7 +50,7 @@ namespace Core8.Tests.MAINDEC.Abstract
 
                 failed = UnexpectedOutput.Any(x => PDP.CPU.Teletype.Printout.Contains(x));
 
-                timeout = sw.Elapsed > MaxRunningTime;
+                timeout = !Debugger.IsAttached && (sw.Elapsed > MaxRunningTime);
 
                 Thread.Sleep(50);
             }
