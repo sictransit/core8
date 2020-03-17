@@ -4,6 +4,8 @@ My first attempt to write an emulator. Ever!
 
 This is work in progress and might even be finished eventually.
 
+## What's Working
+
 The following MAINDEC diagnostics have been tested and run successfully:
  * `MAINDEC-8E-D0AB-PB`: Instruction Test Part 1 
  * `MAINDEC-8E-D0BB-PB`: Instruction Test Part 2 
@@ -23,6 +25,10 @@ The following MAINDEC diagnostics have been tested and run successfully:
  * `MAINDEC-8E-D1HA-PB`: Memory Extension and Time Share Control Test
  
 As a bonus, the emulator is stable enough to run [TINT8](https://github.com/PontusPih/TINT8), the PDP-8 version of a popular tile-matching puzzle video game.
+
+## Work in Progress
+
+The implementation of an RX01 floppy drive is very much work-in-progress. A bit harder than I first expected, but we'll get there eventually.
 
 ## TODO
 
