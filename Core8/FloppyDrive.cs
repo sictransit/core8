@@ -88,15 +88,17 @@ namespace Core8
         {
         }
 
-        private ControllerState state;
-
-        private int Function => (commandRegister & 0b_001_110);
+        private ControllerState state;        
 
         private ControllerFunction FunctionSelect => (ControllerFunction)Function;
 
-        private bool EightBitMode => (commandRegister & 0b_001_000_000) != 0;
+        private int Function => (commandRegister & 0b_000_000_001_110); 
+        
+        private bool EightBitMode => (commandRegister & 0b_000_001_000_000) != 0;
 
-        private int UnitSelect => (commandRegister >> 4) & 0b_001;
+        private bool MaintenanceMode => (commandRegister & 0b_000_010_000_000) != 0;
+
+        private int UnitSelect => (commandRegister & 0b_000_000_010_000) >> 4;
 
         private volatile bool doneFlag;
 
@@ -141,7 +143,10 @@ namespace Core8
 
             errorStatusRegister |= (disk[UnitSelect] != null ? ERROR_STATUS_DEVICE_READY : 0);
 
-            interfaceRegister = readErrorRegister ? errorCodeRegister : errorStatusRegister;
+            if (!MaintenanceMode)
+            {
+                interfaceRegister = readErrorRegister ? errorCodeRegister : errorStatusRegister;
+            }
 
             SetState(ControllerState.Idle);
 
@@ -184,6 +189,14 @@ namespace Core8
             bufferPointer = 0;
 
             commandRegister = accumulator & 0b_000_011_111_110;
+
+            if (MaintenanceMode)
+            {
+                SetDone(0, 0);
+
+                return interfaceRegister;
+            }
+
             interfaceRegister = accumulator;
 
             switch (Function)
@@ -502,7 +515,7 @@ namespace Core8
 
         public override string ToString()
         {
-            return $"[RX01] {FunctionSelect} done={(doneFlag ? 1 : 0)} tr={(TransferRequest ? 1 : 0)} mode={(EightBitMode ? 8 : 12)} unit={UnitSelect} trk={trackAddress} sec={sectorAddress} bp={bufferPointer}";
+            return $"[RX01] {FunctionSelect} dn={(doneFlag ? 1 : 0)} tr={(TransferRequest ? 1 : 0)} er={(Error ? 1 : 0)} md={(EightBitMode ? 8 : 12)} mnt={(MaintenanceMode ? 1 : 0)} unt={UnitSelect} trk={trackAddress} sc={sectorAddress} bp={bufferPointer}";
         }
     }
 }

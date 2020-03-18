@@ -91,7 +91,7 @@ namespace Core8
 
             pdp.Toggle8(2500);
 
-            
+
 
             pdp.LoadFloppy(0, new byte[77 * 26 * 128]);
             pdp.LoadFloppy(1, new byte[77 * 26 * 128]);
@@ -101,10 +101,8 @@ namespace Core8
             pdp.Continue();
 
             pdp.Toggle8(6000);
-
-            pdp.Continue();
-
-            pdp.Continue();
+            
+            pdp.Continue();            
         }
 
         private static void FloppyDevelopment()

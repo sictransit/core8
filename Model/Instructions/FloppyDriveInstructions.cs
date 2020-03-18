@@ -64,7 +64,7 @@ namespace Core8.Model.Instructions
 
         private void INTR()
         {
-            throw new NotImplementedException();
+            FloppyDrive.SetInterrupts(Registers.AC.Accumulator);
         }
 
         private void SDN()
