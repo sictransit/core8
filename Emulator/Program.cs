@@ -31,7 +31,12 @@ namespace Core8
                     {
                         pdp = new PDP();
 
-                        pdp.CPU.Debug(true); 
+                        if (o.Debug)
+                        {
+                            pdp.CPU.Debug(true);
+
+                            loggingLevel.MinimumLevel = Serilog.Events.LogEventLevel.Debug;
+                        }
 
                         if (o.TINT)
                         {
