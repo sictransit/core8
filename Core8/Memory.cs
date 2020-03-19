@@ -20,7 +20,7 @@ namespace Core8
 
         public int Read(int address, bool indirect = false)
         {
-            if (indirect && ((address & Masks.MEM_WORD) <= 15) && ((address & Masks.MEM_WORD) >= 8))
+            if (indirect && ((address & 0b_111_111_111_000) == 0b_001_000))
             {
                 return Write(address, ram[address] + 1);
             }

@@ -62,8 +62,8 @@ namespace Core8
 
                         if (o.Floppy)
                         {
-                            FloppyTesting();
-                            //FloppyDevelopment();
+                            //FloppyTesting();
+                            FloppyDevelopment();
                         }
 
                         if (o.TTY)

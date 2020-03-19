@@ -120,6 +120,8 @@ namespace Core8.Tests
                 data[i] = floppy.TransferDataRegister(0);
             }
 
+            floppy.TransferDataRegister(0);
+
             Thread.Sleep(FloppyDrive.CommandTime * 2);
 
             Assert.IsTrue(floppy.SkipNotDone());

@@ -457,9 +457,7 @@ namespace Core8
             if (EightBitMode)
             {
                 throw new NotImplementedException();
-            }
-
-            interfaceRegister = buffer[bufferPointer++];
+            }            
 
             if (bufferPointer >= buffer.Length)
             {
@@ -468,6 +466,8 @@ namespace Core8
             }
             else
             {
+                interfaceRegister = buffer[bufferPointer++];
+
                 SetTransferRequest();
             }
         }

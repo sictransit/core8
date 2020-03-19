@@ -18,7 +18,7 @@ namespace Core8.Tests.Abstract
         {
             LoggingLevel = new LoggingLevelSwitch(Serilog.Events.LogEventLevel.Information);
 
-            File.Delete("test.log");
+            //File.Delete("test.log");
 
             Log.Logger = new LoggerConfiguration()
                 .WriteTo.Console(restrictedToMinimumLevel: Serilog.Events.LogEventLevel.Information, outputTemplate: "[{Level:u3}] {Message:lj}{NewLine}{Exception}")
