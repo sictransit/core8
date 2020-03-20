@@ -49,15 +49,12 @@ namespace Core8.Tests
 
                 Assert.AreEqual(0, acc);
 
-                if (i != 63)
-                {
-                    Assert.IsTrue(floppy.SkipTransferRequest());
-                }
-                else
-                {
-                    Assert.IsFalse(floppy.SkipTransferRequest());
-                }
+                Assert.IsTrue(floppy.SkipTransferRequest());
             }
+
+            var _ = floppy.TransferDataRegister(0);
+
+            Assert.IsFalse(floppy.SkipTransferRequest());
 
             Thread.Sleep(FloppyDrive.CommandTime * 2);
 
@@ -115,7 +112,7 @@ namespace Core8.Tests
 
             var data = new int[64];
 
-            for (int i = 0; i < 64; i++)
+            for (int i = 0; i < data.Length; i++)
             {
                 data[i] = floppy.TransferDataRegister(0);
             }

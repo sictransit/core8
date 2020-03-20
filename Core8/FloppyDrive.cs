@@ -332,7 +332,7 @@ namespace Core8
             switch (state)
             {
                 case ControllerState.Idle:
-                    return interfaceRegister;
+                    break;
 
                 case ControllerState.FillBuffer:
                     interfaceRegister = accumulator;
@@ -341,7 +341,7 @@ namespace Core8
 
                 case ControllerState.EmptyBuffer:
                     EmptyBuffer();
-                    return interfaceRegister;
+                    break;
 
                 case ControllerState.WriteSector:
                     interfaceRegister = accumulator;
@@ -369,7 +369,7 @@ namespace Core8
                     throw new InvalidOperationException(state.ToString());
             }
 
-            return accumulator;
+            return interfaceRegister;
         }
 
         public void Initialize()
