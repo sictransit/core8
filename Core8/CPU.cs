@@ -80,12 +80,12 @@ namespace Core8
                             Log.Information(floppy);
                         }
 
-                        //    var i = Interrupts.ToString();
-                        //    if (i != interrupts)
-                        //    {
-                        //        interrupts = i;
-                        //        Log.Information(interrupts);
-                        //    }
+                        var i = Interrupts.ToString();
+                        if (i != interrupts)
+                        {
+                            interrupts = i;
+                            Log.Information(interrupts);
+                        }
 
 
 

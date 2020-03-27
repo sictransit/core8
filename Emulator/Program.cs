@@ -33,9 +33,7 @@ namespace Core8
 
                         if (o.Debug)
                         {
-                            pdp.CPU.Debug(true);
-
-                            loggingLevel.MinimumLevel = Serilog.Events.LogEventLevel.Debug;
+                            pdp.CPU.Debug(true);                            
                         }
 
                         if (o.TINT)
@@ -62,8 +60,8 @@ namespace Core8
 
                         if (o.Floppy)
                         {
-                            //FloppyTesting();
-                            FloppyDevelopment();
+                            FloppyTesting();
+                            //FloppyDevelopment();
                         }
 
                         if (o.TTY)
@@ -82,31 +80,30 @@ namespace Core8
             pdp.Deposit8(0000);
             pdp.Toggle8(0000);
 
-            //var disk = new byte[77 * 26 * 128];
-
-            //pdp.LoadFloppy(0, disk);
-
+            //pdp.Load8(0021);
+            //pdp.Deposit8(0000);
+            //pdp.Deposit8(0400);
+            //pdp.Toggle8(0000);
+         
             pdp.Clear();
 
-            pdp.Load8(0200);
-
-            loggingLevel.MinimumLevel = Serilog.Events.LogEventLevel.Debug;
+            pdp.Load8(0200);            
 
             pdp.Continue(waitForHalt: true);
 
-            pdp.Toggle8(2500);
+            pdp.Toggle8(0500);
 
+            loggingLevel.MinimumLevel = Serilog.Events.LogEventLevel.Debug; 
+            
+            pdp.Continue();            
 
+            pdp.Toggle8(6000);
 
             pdp.LoadFloppy(0, new byte[77 * 26 * 128]);
             pdp.LoadFloppy(1, new byte[77 * 26 * 128]);
 
             pdp.CPU.FloppyDrive.Initialize();
 
-            pdp.Continue();
-
-            pdp.Toggle8(6000);
-            
             pdp.Continue();            
         }
 
