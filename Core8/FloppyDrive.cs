@@ -508,9 +508,9 @@ namespace Core8
             return false;
         }
 
-        public void SetInterrupts(int acaccumulator)
+        public void SetInterrupts(int accumulator)
         {
-            interruptsEnabled = (acaccumulator & 1) == 1;
+            interruptsEnabled = (accumulator & 1) == 1;
         }
 
         public override string ToString()

@@ -73,38 +73,30 @@ namespace Core8
 
         private static void FloppyTesting()
         {
-            pdp.LoadPaperTape(File.ReadAllBytes(@"C:\Users\mikaelfr\Downloads\dirxa-c.bin"));
-
-            pdp.Load8(0021);
-            pdp.Deposit8(4000);
-            pdp.Deposit8(0000);
-            pdp.Toggle8(0000);
+            pdp.LoadPaperTape(File.ReadAllBytes(@"C:\Users\mikaelfr\Downloads\dirxa-d-pb"));
 
             //pdp.Load8(0021);
+            //pdp.Deposit8(4000);
             //pdp.Deposit8(0000);
-            //pdp.Deposit8(0400);
             //pdp.Toggle8(0000);
-         
+
+            pdp.Load8(0021);
+            pdp.Deposit8(0000);
+            pdp.Deposit8(0400);
+            pdp.Toggle8(0000);
+
             pdp.Clear();
 
-            pdp.Load8(0200);            
+            pdp.Load8(0200);
+
+            loggingLevel.MinimumLevel = Serilog.Events.LogEventLevel.Debug;
 
             pdp.Continue(waitForHalt: true);
 
-            pdp.Toggle8(0500);
+            //pdp.LoadFloppy(0, new byte[77 * 26 * 128]);
+            //pdp.LoadFloppy(1, new byte[77 * 26 * 128]);
 
-            loggingLevel.MinimumLevel = Serilog.Events.LogEventLevel.Debug; 
-            
-            pdp.Continue();            
-
-            pdp.Toggle8(6000);
-
-            pdp.LoadFloppy(0, new byte[77 * 26 * 128]);
-            pdp.LoadFloppy(1, new byte[77 * 26 * 128]);
-
-            pdp.CPU.FloppyDrive.Initialize();
-
-            pdp.Continue();            
+            //pdp.CPU.FloppyDrive.Initialize();            
         }
 
         private static void FloppyDevelopment()
