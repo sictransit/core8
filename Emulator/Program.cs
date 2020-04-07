@@ -73,7 +73,7 @@ namespace Core8
 
         private static void FloppyTesting()
         {
-            pdp.LoadPaperTape(File.ReadAllBytes(@"C:\Users\mikaelfr\Downloads\dirxa-d-pb"));
+            pdp.LoadPaperTape(File.ReadAllBytes(@"C:\Users\micke\Dropbox\PDP-8\MAINDEC\dirxa-d-pb"));
 
             //pdp.Load8(0021);
             //pdp.Deposit8(4000);

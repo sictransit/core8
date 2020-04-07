@@ -1,5 +1,6 @@
 ﻿using Core8.Model;
 using Core8.Model.Interfaces;
+using Serilog;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -15,6 +16,8 @@ namespace Core8
         private readonly ConcurrentQueue<byte> tapeQueue = new ConcurrentQueue<byte>();
 
         private readonly ConcurrentQueue<byte> outputCache = new ConcurrentQueue<byte>();
+
+        private bool outputPending = false;
 
         private int deviceControl;
 
@@ -97,13 +100,7 @@ namespace Core8
 
         public void InitiateOutput()
         {
-            paper.Add(OutputBuffer);
-
-            outputCache.Enqueue(OutputBuffer);
-
-            CachedDataAvailableEvent.Set();
-
-            SetOutputFlag();
+            outputPending = true;
         }
 
         public void MountPaperTape(byte[] chars)
@@ -125,7 +122,9 @@ namespace Core8
         {
             if (!InputFlag)
             {
-                InputBuffer = (byte)(c & Masks.KEYBOARD_BUFFER_MASK);
+                //Log.Information($"Read: {c}");
+
+                InputBuffer = (byte)(c & Masks.KEYBOARD_BUFFER_MASK);                
 
                 SetInputFlag();
             }
@@ -145,6 +144,27 @@ namespace Core8
             OutputFlag = true;
 
             RequestInterrupt();
+        }
+
+        public override string ToString()
+        {
+            return $"[TT] if={(InputFlag ? 1 : 0)} of={(OutputFlag ? 1 : 0)} ib={InputBuffer} ob={OutputBuffer} irq={(InterruptRequested ? 1 : 0)}";
+        }
+
+        public void Tick()
+        {
+            if (outputPending)
+            {
+                outputPending = false;
+
+                paper.Add(OutputBuffer);
+
+                outputCache.Enqueue(OutputBuffer);
+
+                CachedDataAvailableEvent.Set();
+
+                SetOutputFlag();
+            }
         }
     }
 }

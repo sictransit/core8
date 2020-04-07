@@ -63,31 +63,37 @@ namespace Core8
             Log.Information($"CONT @ {Registers.PC}");
 
             string interrupts = null;
-            string floppy = null;
-            string registers = null;
+            string floppy = null;            
+            string teletype = null;
+
+            var tick = 0;
 
             try
             {
                 while (running)
                 {
                     if (debug)
-                    {
-                        //Log.Information(Registers.ToString());
+                    {                        
                         var f = FloppyDrive.ToString();
                         if (f != floppy)
                         {
                             floppy = f;
-                            Log.Information(floppy);
+                            Log.Debug(floppy);
                         }
 
                         var i = Interrupts.ToString();
                         if (i != interrupts)
                         {
                             interrupts = i;
-                            Log.Information(interrupts);
+                            Log.Debug(interrupts);
                         }
 
-
+                        var t = Teletype.ToString();
+                        if (t != teletype)
+                        {
+                            teletype = t;
+                            Log.Debug(teletype);
+                        }
 
                         if (breakpoints.Contains(Registers.PC.Content))
                         {
@@ -104,6 +110,13 @@ namespace Core8
 
                     Interrupts.Interrupt();
 
+                    if (tick++ > 100 || singleStep)
+                    {
+                        Teletype.Tick();
+
+                        tick = 0;
+                    }
+
                     var instruction = Fetch(Registers.PC.Content);
 
                     Registers.PC.Increment();
@@ -114,16 +127,6 @@ namespace Core8
                     }
 
                     instruction.Execute();
-
-                    //if (debug)
-                    //{
-                    //    var r = Registers.ToString();
-                    //    if (r != registers)
-                    //    {
-                    //        registers = r;
-                    //        Log.Information(registers);
-                    //    }
-                    //}
                 }
             }
             catch (Exception ex)

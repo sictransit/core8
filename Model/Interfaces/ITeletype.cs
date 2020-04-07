@@ -4,6 +4,8 @@ namespace Core8.Model.Interfaces
 {
     public interface ITeletype
     {
+        void Tick();
+
         void Read(byte c);
 
         void Type(byte c);
