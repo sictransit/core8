@@ -69,11 +69,6 @@ namespace Core8
         public void ClearInputFlag()
         {
             InputFlag = InterruptRequested = false;
-
-            if (tapeQueue.TryDequeue(out var b))
-            {
-                Read(b);
-            }
         }
 
         public void ClearOutputFlag()
@@ -153,6 +148,14 @@ namespace Core8
 
         public void Tick()
         {
+            if (!InputFlag)
+            {
+                if (tapeQueue.TryDequeue(out var b))
+                {
+                    Read(b);
+                }
+            }
+
             if (outputPending)
             {
                 outputPending = false;

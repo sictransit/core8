@@ -80,10 +80,11 @@ namespace Core8
             //pdp.Deposit8(0000);
             //pdp.Toggle8(0000);
 
-            pdp.Load8(0021);
-            pdp.Deposit8(0000);
-            pdp.Deposit8(0400);
-            pdp.Toggle8(0000);
+            pdp.Load8(0022);
+            //pdp.Deposit8(0000);
+            //pdp.Deposit8(0400);
+            //pdp.Deposit8(0400);
+            //pdp.Toggle8(0000);
 
             pdp.Clear();
 
@@ -91,10 +92,10 @@ namespace Core8
 
             loggingLevel.MinimumLevel = Serilog.Events.LogEventLevel.Debug;
 
-            pdp.Continue(waitForHalt: true);
+            pdp.LoadFloppy(0, new byte[77 * 26 * 128]);
+            pdp.LoadFloppy(1, new byte[77 * 26 * 128]);
 
-            //pdp.LoadFloppy(0, new byte[77 * 26 * 128]);
-            //pdp.LoadFloppy(1, new byte[77 * 26 * 128]);
+            pdp.Continue(waitForHalt: true);
 
             //pdp.CPU.FloppyDrive.Initialize();            
         }
