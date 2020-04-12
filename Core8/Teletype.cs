@@ -22,7 +22,7 @@ namespace Core8
 
         private int deviceControl;
 
-        private int outputPending;
+        private bool outputPending;
 
         private const int INTERRUPT_ENABLE = 1 << 0;
         private const int STATUS_ENABLE = 1 << 1;
@@ -58,7 +58,7 @@ namespace Core8
 
             InputFlag = OutputFlag = false;
 
-            outputPending = 0;
+            outputPending = false;
 
             tapeQueue.Clear();
         }
@@ -67,7 +67,9 @@ namespace Core8
         {
             OutputBuffer = c;
 
-            outputPending = 100;
+            outputPending = true;
+
+            Log.Information($"Paper: {c.ToPrintableAscii()}");
         }
 
         public void MountPaperTape(byte[] chars)
@@ -114,14 +116,16 @@ namespace Core8
                 }
             }
 
-            if (outputPending>0 && (--outputPending == 0))
+            if (outputPending)
             {
                 paper.Add(OutputBuffer);
 
                 if (!publisherSocket.TrySendFrame(new[] { OutputBuffer }))
                 {
                     Log.Warning("Failed to send 0MQ frame.");
-                }               
+                }
+
+                outputPending = false;
 
                 OutputFlag = true;
             }

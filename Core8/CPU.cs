@@ -66,6 +66,8 @@ namespace Core8
             string floppy = null;
             string teletype = null;
 
+            int tick = 0;
+
             try
             {
                 while (running)
@@ -108,7 +110,11 @@ namespace Core8
 
                     Interrupts.Interrupt();
 
-                    Teletype.Tick();
+                    if (tick++ > 100)
+                    {
+                        Teletype.Tick();
+                        tick = 0;
+                    }
 
                     var instruction = Fetch(Registers.PC.Content);
 

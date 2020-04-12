@@ -40,7 +40,7 @@ namespace Core8.Model.Extensions
                 29 => "GS",
                 30 => "RS",
                 31 => "US",
-                _ => Encoding.ASCII.GetString(new[] { b})
+                _ => Encoding.ASCII.GetString(new[] { b })
             };
         }
     }
