@@ -31,7 +31,8 @@ namespace Core8.Model.Instructions
                     KCF();
                     break;
                 case KRB_MASK:
-                    KRB();
+                    KCC();
+                    KRS();
                     break;
                 case KRS_MASK:
                     KRS();
@@ -51,19 +52,12 @@ namespace Core8.Model.Instructions
         {
             Registers.AC.ClearAccumulator();
 
-            Teletype.ClearInputFlag();
+            Teletype.InputFlag = false;
         }
 
         private void KCF()
         {
-            Teletype.ClearInputFlag();
-        }
-
-        private void KRB()
-        {
-            Registers.AC.SetAccumulator(Teletype.InputBuffer);
-
-            Teletype.ClearInputFlag();
+            Teletype.InputFlag = false;
         }
 
         private void KRS()

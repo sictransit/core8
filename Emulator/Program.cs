@@ -33,7 +33,7 @@ namespace Core8
 
                         if (o.Debug)
                         {
-                            pdp.CPU.Debug(true);                            
+                            pdp.CPU.Debug(true);
                         }
 
                         if (o.TINT)
@@ -73,6 +73,8 @@ namespace Core8
 
         private static void FloppyTesting()
         {
+            //loggingLevel.MinimumLevel = Serilog.Events.LogEventLevel.Debug;
+
             pdp.LoadPaperTape(File.ReadAllBytes(@"C:\Users\micke\Dropbox\PDP-8\MAINDEC\dirxa-d-pb"));
 
             //pdp.Load8(0021);
@@ -80,17 +82,16 @@ namespace Core8
             //pdp.Deposit8(0000);
             //pdp.Toggle8(0000);
 
-            pdp.Load8(0022);
-            //pdp.Deposit8(0000);
-            //pdp.Deposit8(0400);
-            //pdp.Deposit8(0400);
-            //pdp.Toggle8(0000);
+            pdp.Load8(0020);
+            pdp.Deposit8(0000);
+            pdp.Deposit8(0400);
+            pdp.Toggle8(0000);
 
             pdp.Clear();
 
             pdp.Load8(0200);
 
-            loggingLevel.MinimumLevel = Serilog.Events.LogEventLevel.Debug;
+            //loggingLevel.MinimumLevel = Serilog.Events.LogEventLevel.Debug;
 
             pdp.LoadFloppy(0, new byte[77 * 26 * 128]);
             pdp.LoadFloppy(1, new byte[77 * 26 * 128]);

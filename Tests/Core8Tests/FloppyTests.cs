@@ -1,5 +1,4 @@
-﻿using Core8.Model.Extensions;
-using Core8.Model.Interfaces;
+﻿using Core8.Model.Interfaces;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Linq;

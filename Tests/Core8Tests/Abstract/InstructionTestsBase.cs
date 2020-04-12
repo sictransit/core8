@@ -2,7 +2,6 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Serilog;
 using Serilog.Core;
 using System.Diagnostics;
-using System.IO;
 
 namespace Core8.Tests.Abstract
 {

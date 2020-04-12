@@ -1,5 +1,6 @@
 ﻿using Core8.Model.Instructions.Abstract;
 using Core8.Model.Interfaces;
+using Serilog;
 using System;
 
 namespace Core8.Model.Instructions
@@ -103,7 +104,8 @@ namespace Core8.Model.Instructions
 
         private void SEL()
         {
-            throw new NotImplementedException();
+            Log.Warning($"SEL is currently no-op:");
+            Log.Warning(Registers.AC.ToString());
         }
 
         private enum FloppyDriveOpCode : int

@@ -11,17 +11,11 @@ namespace Core8
     {
         private Thread cpuThread;
 
-        private readonly MQRelay relay;
-
         public PDP()
         {
-            var teletype = new Teletype();
+            var teletype = new Teletype(@"tcp://127.0.0.1:17232", @"tcp://127.0.0.1:17233");
 
             CPU = new CPU(teletype);
-
-            relay = new MQRelay(teletype);
-
-            relay.Start();
 
             ToggleRIMAndBinLoader();
         }

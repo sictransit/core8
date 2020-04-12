@@ -63,17 +63,15 @@ namespace Core8
             Log.Information($"CONT @ {Registers.PC}");
 
             string interrupts = null;
-            string floppy = null;            
+            string floppy = null;
             string teletype = null;
-
-            var tick = 0;
 
             try
             {
                 while (running)
                 {
                     if (debug)
-                    {                        
+                    {
                         var f = FloppyDrive.ToString();
                         if (f != floppy)
                         {
@@ -110,12 +108,7 @@ namespace Core8
 
                     Interrupts.Interrupt();
 
-                    if (tick++ > 100 || singleStep)
-                    {
-                        Teletype.Tick();
-
-                        tick = 0;
-                    }
+                    Teletype.Tick();
 
                     var instruction = Fetch(Registers.PC.Content);
 

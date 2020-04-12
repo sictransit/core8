@@ -88,12 +88,12 @@ namespace Core8
         {
         }
 
-        private ControllerState state;        
+        private ControllerState state;
 
         private ControllerFunction FunctionSelect => (ControllerFunction)Function;
 
-        private int Function => (commandRegister & 0b_000_000_001_110); 
-        
+        private int Function => (commandRegister & 0b_000_000_001_110);
+
         private bool EightBitMode => (commandRegister & 0b_000_001_000_000) != 0;
 
         private bool MaintenanceMode => (commandRegister & 0b_000_010_000_000) != 0;
@@ -136,7 +136,7 @@ namespace Core8
             {
                 Error = true;
             }
-            
+
             errorCodeRegister = errorCode;
 
             errorStatusRegister |= errorStatus;
@@ -388,8 +388,8 @@ namespace Core8
             sectorAddress = 1;
 
             if (disk[UnitSelect] != null)
-            { 
-                Task.Run(ControllerAction); 
+            {
+                Task.Run(ControllerAction);
             }
         }
 
@@ -457,7 +457,7 @@ namespace Core8
             if (EightBitMode)
             {
                 throw new NotImplementedException();
-            }            
+            }
 
             if (bufferPointer >= buffer.Length)
             {

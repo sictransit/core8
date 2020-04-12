@@ -26,7 +26,8 @@ namespace Core8.Model.Instructions
                     TFL();
                     break;
                 case TLS_MASK:
-                    TLS();
+                    TCF();
+                    TPC();
                     break;
                 case TCF_MASK:
                     TCF();
@@ -44,23 +45,12 @@ namespace Core8.Model.Instructions
 
         private void TFL()
         {
-            Teletype.SetOutputFlag();
-        }
-
-        private void TLS()
-        {
-            var c = Registers.AC.Accumulator & Masks.TELEPRINTER_BUFFER_MASK;
-
-            Teletype.Type((byte)c);
-
-            Teletype.ClearOutputFlag();
-
-            Teletype.InitiateOutput();
+            Teletype.OutputFlag = true;
         }
 
         private void TCF()
         {
-            Teletype.ClearOutputFlag();
+            Teletype.OutputFlag = false;
         }
 
         private void TPC()
@@ -68,8 +58,6 @@ namespace Core8.Model.Instructions
             var c = Registers.AC.Accumulator & Masks.TELEPRINTER_BUFFER_MASK;
 
             Teletype.Type((byte)c);
-
-            Teletype.InitiateOutput();
         }
 
         private void TSF()

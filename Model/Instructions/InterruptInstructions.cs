@@ -92,6 +92,8 @@ namespace Core8.Model.Instructions
         private void SGT()
         {
             // TODO: EAE support
+
+            throw new NotImplementedException();
         }
 
         private void RTF()

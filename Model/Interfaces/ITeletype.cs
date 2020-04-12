@@ -1,40 +1,20 @@
-﻿using System.Threading;
-
-namespace Core8.Model.Interfaces
+﻿namespace Core8.Model.Interfaces
 {
     public interface ITeletype
     {
         void Tick();
 
-        void Read(byte c);
-
         void Type(byte c);
-
-        void InitiateOutput();
 
         void Clear();
 
-        void ClearInputFlag();
+        bool InputFlag { get; set; }
 
-        void ClearOutputFlag();
-
-        void SetInputFlag();
-
-        void SetOutputFlag();
-
-        bool InputFlag { get; }
-
-        bool OutputFlag { get; }
+        bool OutputFlag { get; set; }
 
         bool InterruptRequested { get; }
 
         byte InputBuffer { get; }
-
-        byte OutputBuffer { get; }
-
-        AutoResetEvent CachedDataAvailableEvent { get; }
-
-        byte[] GetCachedOutput();
 
         string Printout { get; }
 

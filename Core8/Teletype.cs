@@ -1,11 +1,13 @@
 ﻿using Core8.Model;
+using Core8.Model.Extensions;
 using Core8.Model.Interfaces;
+using NetMQ;
+using NetMQ.Sockets;
 using Serilog;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Text;
-using System.Threading;
 
 namespace Core8
 {
@@ -15,87 +17,57 @@ namespace Core8
 
         private readonly ConcurrentQueue<byte> tapeQueue = new ConcurrentQueue<byte>();
 
-        private readonly ConcurrentQueue<byte> outputCache = new ConcurrentQueue<byte>();
-
-        private bool outputPending = false;
+        private readonly PublisherSocket publisherSocket;
+        private readonly SubscriberSocket subscriberSocket;
 
         private int deviceControl;
+
+        private int outputPending;
 
         private const int INTERRUPT_ENABLE = 1 << 0;
         private const int STATUS_ENABLE = 1 << 1;
 
-        public Teletype()
+        public Teletype(string inputAddress, string outputAddress)
         {
-            CachedDataAvailableEvent = new AutoResetEvent(false);
+            publisherSocket = new PublisherSocket();
+            publisherSocket.Connect(outputAddress);
+
+            subscriberSocket = new SubscriberSocket();
+            subscriberSocket.Connect(inputAddress);
+            subscriberSocket.SubscribeToAnyTopic();
         }
 
-        public bool InputFlag { get; private set; }
+        public bool InputFlag { get; set; }
 
-        public bool OutputFlag { get; private set; }
+        public bool OutputFlag { get; set; }
 
-        public bool InterruptRequested { get; private set; }
+        public bool InterruptRequested => (InputFlag || OutputFlag) && ((deviceControl & INTERRUPT_ENABLE) != 0);
 
         public byte InputBuffer { get; private set; }
 
         public byte OutputBuffer { get; private set; }
-
-        public AutoResetEvent CachedDataAvailableEvent { get; private set; }
-
-        private void RequestInterrupt()
-        {
-            if ((deviceControl & INTERRUPT_ENABLE) != 0)
-            {
-                InterruptRequested = true;
-            }
-        }
-
-        public byte[] GetCachedOutput()
-        {
-            var buffer = new List<byte>();
-
-            while (outputCache.TryDequeue(out var b))
-            {
-                buffer.Add(b);
-            }
-
-            return buffer.ToArray();
-        }
 
         public void SetDeviceControl(int data)
         {
             deviceControl = data & (INTERRUPT_ENABLE | STATUS_ENABLE);
         }
 
-        public void ClearInputFlag()
-        {
-            InputFlag = InterruptRequested = false;
-        }
-
-        public void ClearOutputFlag()
-        {
-            OutputFlag = InterruptRequested = false;
-        }
-
         public void Clear()
         {
             SetDeviceControl(Masks.IO_DEVICE_CONTROL_MASK);
 
-            ClearInputFlag();
-            ClearOutputFlag();
+            InputFlag = OutputFlag = false;
+
+            outputPending = 0;
 
             tapeQueue.Clear();
-
-            CachedDataAvailableEvent.Reset();
         }
 
         public void Type(byte c)
         {
             OutputBuffer = c;
-        }
 
-        public void InitiateOutput()
-        {
-            outputPending = true;
+            outputPending = 100;
         }
 
         public void MountPaperTape(byte[] chars)
@@ -113,60 +85,45 @@ namespace Core8
             }
         }
 
-        public void Read(byte c)
-        {
-            if (!InputFlag)
-            {
-                //Log.Information($"Read: {c}");
-
-                InputBuffer = (byte)(c & Masks.KEYBOARD_BUFFER_MASK);                
-
-                SetInputFlag();
-            }
-        }
-
         public string Printout => Encoding.ASCII.GetString(paper.ToArray());
-
-        public void SetInputFlag()
-        {
-            InputFlag = true;
-
-            RequestInterrupt();
-        }
-
-        public void SetOutputFlag()
-        {
-            OutputFlag = true;
-
-            RequestInterrupt();
-        }
 
         public override string ToString()
         {
-            return $"[TT] if={(InputFlag ? 1 : 0)} of={(OutputFlag ? 1 : 0)} ib={InputBuffer} ob={OutputBuffer} irq={(InterruptRequested ? 1 : 0)}";
+            return $"[TT] if={(InputFlag ? 1 : 0)} ib={InputBuffer} of={(OutputFlag ? 1 : 0)} ob={OutputBuffer} irq={(InterruptRequested ? 1 : 0)} (tq: {tapeQueue.Count})";
         }
 
         public void Tick()
         {
             if (!InputFlag)
             {
+                while (subscriberSocket.TryReceiveFrameBytes(TimeSpan.Zero, out var frame))
+                {
+                    foreach (var key in frame)
+                    {
+                        tapeQueue.Enqueue(key);
+                    }
+                }
+
                 if (tapeQueue.TryDequeue(out var b))
                 {
-                    Read(b);
+                    Log.Debug($"Keyboard: {b.ToPrintableAscii()}");
+
+                    InputBuffer = b;
+
+                    InputFlag = true;
                 }
             }
 
-            if (outputPending)
+            if (outputPending>0 && (--outputPending == 0))
             {
-                outputPending = false;
-
                 paper.Add(OutputBuffer);
 
-                outputCache.Enqueue(OutputBuffer);
+                if (!publisherSocket.TrySendFrame(new[] { OutputBuffer }))
+                {
+                    Log.Warning("Failed to send 0MQ frame.");
+                }               
 
-                CachedDataAvailableEvent.Set();
-
-                SetOutputFlag();
+                OutputFlag = true;
             }
         }
     }
