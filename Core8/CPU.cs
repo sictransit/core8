@@ -60,7 +60,7 @@ namespace Core8
         {
             running = true;
 
-            Log.Information($"CONT @ {Registers.PC}");
+            Log.Information($"CONT @ {Registers.PC} (dbg: {debug})");
 
             string interrupts = null;
             string floppy = null;

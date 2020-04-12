@@ -10,7 +10,8 @@ namespace Core8.Model.Instructions
         private const int TSF_MASK = 1 << 0;
         private const int TCF_MASK = 1 << 1;
         private const int TPC_MASK = 1 << 2;
-        private const int TLS_MASK = TCF_MASK | TPC_MASK;
+        private const int TSK_MASK = 1 << 2 | 1 << 0; 
+        private const int TLS_MASK = TCF_MASK | TPC_MASK;        
 
         public TeleprinterInstructions(ICPU cpu) : base(cpu)
         {
@@ -34,6 +35,9 @@ namespace Core8.Model.Instructions
                     break;
                 case TPC_MASK:
                     TPC();
+                    break;
+                case TSK_MASK:
+                    TSK();
                     break;
                 case TSF_MASK:
                     TSF();
@@ -60,6 +64,14 @@ namespace Core8.Model.Instructions
             Teletype.Type((byte)c);
         }
 
+        private void TSK()
+        {
+            if (Teletype.OutputFlag || Teletype.InputFlag)
+            {
+                Registers.PC.Increment();
+            }
+        }
+
         private void TSF()
         {
             if (Teletype.OutputFlag)
@@ -74,6 +86,7 @@ namespace Core8.Model.Instructions
             TSF = TSF_MASK,
             TCF = TCF_MASK,
             TPC = TPC_MASK,
+            TSK = TSK_MASK,
             TLS = TLS_MASK
         }
     }
