@@ -75,7 +75,9 @@ namespace Core8
         {
             //loggingLevel.MinimumLevel = Serilog.Events.LogEventLevel.Debug;
 
-            pdp.LoadPaperTape(File.ReadAllBytes(@"C:\Users\micke\Dropbox\PDP-8\MAINDEC\dirxa-d-pb"));
+            //pdp.LoadPaperTape(File.ReadAllBytes(@"C:\Users\micke\Dropbox\PDP-8\MAINDEC\dirxa-d-pb"));
+            pdp.LoadPaperTape(File.ReadAllBytes(@"C:\Users\mikaelfr\Downloads\dirxa-d-pb"));
+            
 
             //pdp.Load8(0021);
             //pdp.Deposit8(4000);
@@ -96,9 +98,9 @@ namespace Core8
             pdp.LoadFloppy(0, new byte[77 * 26 * 128]);
             pdp.LoadFloppy(1, new byte[77 * 26 * 128]);
 
-            pdp.Continue(waitForHalt: true);
+            pdp.CPU.FloppyDrive.Initialize();
 
-            //pdp.CPU.FloppyDrive.Initialize();            
+            pdp.Continue(waitForHalt: true);            
         }
 
         private static void FloppyDevelopment()

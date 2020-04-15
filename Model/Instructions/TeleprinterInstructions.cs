@@ -49,12 +49,12 @@ namespace Core8.Model.Instructions
 
         private void TFL()
         {
-            Teletype.OutputFlag = true;
+            Teletype.SetOutputFlag();
         }
 
         private void TCF()
         {
-            Teletype.OutputFlag = false;
+            Teletype.ClearOutputFlag();
         }
 
         private void TPC()

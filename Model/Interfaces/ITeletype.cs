@@ -8,11 +8,19 @@
 
         void Clear();
 
-        bool InputFlag { get; set; }
+        bool InputFlag { get; }
 
-        bool OutputFlag { get; set; }
+        void ClearInputFlag();
 
-        bool InterruptRequested { get; }
+        bool OutputFlag { get; }
+
+        void ClearOutputFlag();
+
+        void SetOutputFlag();
+
+        bool InputIRQ { get; }
+
+        bool OutputIRQ { get; }
 
         byte InputBuffer { get; }
 

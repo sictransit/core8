@@ -52,12 +52,12 @@ namespace Core8.Model.Instructions
         {
             Registers.AC.ClearAccumulator();
 
-            Teletype.InputFlag = false;
+            Teletype.ClearInputFlag();
         }
 
         private void KCF()
         {
-            Teletype.InputFlag = false;
+            Teletype.ClearInputFlag();
         }
 
         private void KRS()

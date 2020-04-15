@@ -15,7 +15,7 @@ namespace Core8
     {
         private readonly List<byte> paper = new List<byte>();
 
-        private readonly ConcurrentQueue<byte> tapeQueue = new ConcurrentQueue<byte>();
+        private readonly ConcurrentQueue<byte> reader = new ConcurrentQueue<byte>();
 
         private readonly PublisherSocket publisherSocket;
         private readonly SubscriberSocket subscriberSocket;
@@ -23,6 +23,8 @@ namespace Core8
         private int deviceControl;
 
         private bool outputPending;
+        private DateTime outputPendingAt;
+        private DateTime inputPendingAt;
 
         private const int INTERRUPT_ENABLE = 1 << 0;
         private const int STATUS_ENABLE = 1 << 1;
@@ -41,7 +43,9 @@ namespace Core8
 
         public bool OutputFlag { get; set; }
 
-        public bool InterruptRequested => (InputFlag || OutputFlag) && ((deviceControl & INTERRUPT_ENABLE) != 0);
+        public bool InputIRQ { get; private set; }
+
+        public bool OutputIRQ { get; private set; }
 
         public byte InputBuffer { get; private set; }
 
@@ -56,11 +60,34 @@ namespace Core8
         {
             SetDeviceControl(Masks.IO_DEVICE_CONTROL_MASK);
 
-            InputFlag = OutputFlag = false;
+            ClearInputFlag();
+            ClearOutputFlag();
 
-            outputPending = false;
+            outputPending = false;            
 
-            tapeQueue.Clear();
+            reader.Clear();
+        }
+
+        public void ClearInputFlag()
+        {
+            InputFlag = InputIRQ = false;
+        }
+
+        private void SetInputFlag()
+        {
+            InputFlag = true;
+            InputIRQ = (deviceControl & INTERRUPT_ENABLE) != 0;
+        }
+
+        public void ClearOutputFlag()
+        {
+            OutputFlag = OutputIRQ = false;
+        }
+
+        public void SetOutputFlag()
+        {
+            OutputFlag = true;
+            OutputIRQ = (deviceControl & INTERRUPT_ENABLE) != 0;
         }
 
         public void Type(byte c)
@@ -68,6 +95,7 @@ namespace Core8
             OutputBuffer = c;
 
             outputPending = true;
+            outputPendingAt = DateTime.UtcNow.AddMilliseconds(100);
 
             Log.Information($"Paper: {c.ToPrintableAscii()}");
         }
@@ -79,11 +107,11 @@ namespace Core8
                 throw new ArgumentNullException(nameof(chars));
             }
 
-            tapeQueue.Clear();
+            reader.Clear();
 
             foreach (var c in chars)
             {
-                tapeQueue.Enqueue(c);
+                reader.Enqueue(c);
             }
         }
 
@@ -91,32 +119,34 @@ namespace Core8
 
         public override string ToString()
         {
-            return $"[TT] if={(InputFlag ? 1 : 0)} ib={InputBuffer} of={(OutputFlag ? 1 : 0)} ob={OutputBuffer} irq={(InterruptRequested ? 1 : 0)} (tq: {tapeQueue.Count})";
+            return $"[TT] if={(InputFlag ? 1 : 0)} ib={InputBuffer} of={(OutputFlag ? 1 : 0)} ob={OutputBuffer} irq/in={(InputIRQ ? 1 : 0)} irq/out={(OutputIRQ ? 1 : 0)} (tq= {reader.Count})";
         }
 
         public void Tick()
         {
-            if (!InputFlag)
+            if (!InputFlag && DateTime.UtcNow > inputPendingAt)
             {
                 while (subscriberSocket.TryReceiveFrameBytes(TimeSpan.Zero, out var frame))
                 {
                     foreach (var key in frame)
                     {
-                        tapeQueue.Enqueue(key);
+                        reader.Enqueue(key);
                     }
+
+                    inputPendingAt = DateTime.UtcNow.AddMilliseconds(100);
                 }
 
-                if (tapeQueue.TryDequeue(out var b))
+                if (reader.TryDequeue(out var b))
                 {
                     Log.Debug($"Keyboard: {b.ToPrintableAscii()}");
 
                     InputBuffer = b;
 
-                    InputFlag = true;
-                }
+                    SetInputFlag();                    
+                }                
             }
 
-            if (outputPending)
+            if (outputPending && DateTime.UtcNow > outputPendingAt)
             {
                 paper.Add(OutputBuffer);
 
@@ -127,7 +157,7 @@ namespace Core8
 
                 outputPending = false;
 
-                OutputFlag = true;
+                SetOutputFlag();
             }
         }
     }

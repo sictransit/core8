@@ -19,7 +19,7 @@ namespace Core8
 
         public bool Requested => TeletypeRequested || FloppyRequested || UserRequested;
 
-        private bool TeletypeRequested => cpu.Teletype.InterruptRequested;
+        private bool TeletypeRequested => cpu.Teletype.InputIRQ || cpu.Teletype.OutputIRQ;
 
         private bool FloppyRequested => cpu.FloppyDrive.InterruptRequested;
 
