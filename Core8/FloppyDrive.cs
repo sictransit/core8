@@ -374,6 +374,11 @@ namespace Core8
 
         public void Initialize()
         {
+            if (disk[UnitSelect] == null)
+            {
+                return;
+            }
+
             SetState(ControllerState.Initialize);
 
             ClearDone();
@@ -387,10 +392,7 @@ namespace Core8
             trackAddress = 1;
             sectorAddress = 1;
 
-            if (disk[UnitSelect] != null)
-            {
-                Task.Run(ControllerAction);
-            }
+            Task.Run(ControllerAction);
         }
 
         private void SetSector()

@@ -75,9 +75,9 @@ namespace Core8
         {
             //loggingLevel.MinimumLevel = Serilog.Events.LogEventLevel.Debug;
 
-            //pdp.LoadPaperTape(File.ReadAllBytes(@"C:\Users\micke\Dropbox\PDP-8\MAINDEC\dirxa-d-pb"));
-            pdp.LoadPaperTape(File.ReadAllBytes(@"C:\Users\mikaelfr\Downloads\dirxa-d-pb"));
-            
+            pdp.LoadPaperTape(File.ReadAllBytes(@"C:\Users\micke\Dropbox\PDP-8\MAINDEC\dirxa-d-pb"));
+            //pdp.LoadPaperTape(File.ReadAllBytes(@"C:\Users\mikaelfr\Downloads\dirxa-d-pb"));
+
 
             //pdp.Load8(0021);
             //pdp.Deposit8(4000);
@@ -86,7 +86,7 @@ namespace Core8
 
             pdp.Load8(0020);
             pdp.Deposit8(0000);
-            pdp.Deposit8(0400);
+            pdp.Deposit8(4000);            
             pdp.Toggle8(0000);
 
             pdp.Clear();
@@ -95,12 +95,26 @@ namespace Core8
 
             //loggingLevel.MinimumLevel = Serilog.Events.LogEventLevel.Debug;
 
-            pdp.LoadFloppy(0, new byte[77 * 26 * 128]);
-            pdp.LoadFloppy(1, new byte[77 * 26 * 128]);
+            //pdp.LoadFloppy(0, new byte[77 * 26 * 128]);
+            //pdp.LoadFloppy(1, new byte[77 * 26 * 128]);
 
-            pdp.CPU.FloppyDrive.Initialize();
+            
 
-            pdp.Continue(waitForHalt: true);            
+            pdp.Continue(waitForHalt: true);
+
+            //var init = false;
+
+            //while (pdp.Running)
+            //{
+            //    if (!init && pdp.CPU.Teletype.Printout.Contains("0000"))
+            //    {
+            //        pdp.CPU.FloppyDrive.Initialize();
+
+            //        init = true;
+            //    }
+
+            //    Thread.Sleep(200);
+            //}
         }
 
         private static void FloppyDevelopment()
