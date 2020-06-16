@@ -2,6 +2,8 @@
 {
     public interface IFloppyDrive
     {
+        void Tick();
+
         bool InterruptRequested { get; }
 
         void Load(byte unit, byte[] disk);

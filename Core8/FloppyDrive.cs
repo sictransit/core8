@@ -68,15 +68,17 @@ namespace Core8
             DeviceReady = ERROR_STATUS_DEVICE_READY
         }
 
-        private volatile bool interruptsEnabled;
+        private DateTime controllerDoneAt;
 
-        private volatile int commandRegister;
+        private bool interruptsEnabled;
 
-        private volatile int interfaceRegister;
+        private int commandRegister;
 
-        private volatile int errorStatusRegister;
+        private int interfaceRegister;
 
-        private volatile int errorCodeRegister;
+        private int errorStatusRegister;
+
+        private int errorCodeRegister;
 
         private readonly int[] buffer = new int[64];
 
@@ -114,6 +116,16 @@ namespace Core8
 
         public bool Error { get; private set; }
 
+        public void Tick()
+        {            
+            if (DateTime.UtcNow > controllerDoneAt)
+            {
+                ControllerAction();
+
+                controllerDoneAt = DateTime.MaxValue; // Ugly! Check state instead?
+            }
+        }
+
         public void ClearError()
         {
             Error = false;
@@ -122,12 +134,6 @@ namespace Core8
         public void ClearDone()
         {
             doneFlag = false;
-        }
-
-        private void ScheduleDone()
-        {
-            SetState(ControllerState.Done);
-            Task.Run(ControllerAction);
         }
 
         private void SetDone(int errorStatus = 0, int errorCode = 0, bool readErrorRegister = false)
@@ -223,11 +229,11 @@ namespace Core8
                     break;
                 case NO_OPERATION:
                     SetState(ControllerState.Done);
-                    Task.Run(ControllerAction);
+                    controllerDoneAt = DateTime.UtcNow;
                     break;
                 case READ_STATUS:
                     SetState(ControllerState.ReadStatus);
-                    Task.Run(ControllerAction);
+                    controllerDoneAt = DateTime.UtcNow + ReadStatusTime;
                     break;
                 case WRITE_DELETED_DATA_SECTOR:
                     throw new NotImplementedException();
@@ -297,27 +303,26 @@ namespace Core8
         {
             switch (state)
             {
-                case ControllerState.Initialize:
-                    Thread.Sleep(InitializeTime);
+                case ControllerState.FillBuffer:
+                case ControllerState.EmptyBuffer:
+                    SetDone();
+                    break;
+                case ControllerState.Initialize:                    
                     ReadBlock();
                     SetDone(ERROR_STATUS_INIT_DONE | ERROR_STATUS_DEVICE_READY, 0);
                     break;
-                case ControllerState.Done:
-                    Thread.Sleep(CommandTime);
+                case ControllerState.Done:                    
                     SetDone();
                     break;
                 case ControllerState.ReadTrack:
-                    Thread.Sleep(AverageAccessTime);
                     ReadBlock();
                     SetDone();
                     break;
                 case ControllerState.WriteTrack:
-                    Thread.Sleep(AverageAccessTime);
                     WriteBlock();
                     SetDone();
                     break;
-                case ControllerState.ReadStatus:
-                    Thread.Sleep(ReadStatusTime);
+                case ControllerState.ReadStatus:                    
                     SetDone();
                     break;
                 default:
@@ -392,7 +397,7 @@ namespace Core8
             trackAddress = 1;
             sectorAddress = 1;
 
-            Task.Run(ControllerAction);
+            controllerDoneAt = DateTime.UtcNow + InitializeTime;
         }
 
         private void SetSector()
@@ -430,7 +435,8 @@ namespace Core8
                 {
                     Log.Warning("@ track #0");
                 }
-                Task.Run(ControllerAction);
+
+                controllerDoneAt = DateTime.UtcNow + AverageAccessTime; 
             }
         }
 
@@ -444,9 +450,8 @@ namespace Core8
             buffer[bufferPointer++] = interfaceRegister;
 
             if (bufferPointer >= buffer.Length)
-            {
-                //ScheduleDone();
-                SetDone(0, 0);
+            {                
+                controllerDoneAt = DateTime.UtcNow;
             }
             else
             {
@@ -463,8 +468,7 @@ namespace Core8
 
             if (bufferPointer >= buffer.Length)
             {
-                //ScheduleDone();
-                SetDone(0, 0);
+                controllerDoneAt = DateTime.UtcNow;                
             }
             else
             {

@@ -113,6 +113,7 @@ namespace Core8
                     if (tick++ > 100)
                     {
                         Teletype.Tick();
+                        FloppyDrive.Tick();
                         tick = 0;
                     }
 
