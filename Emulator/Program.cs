@@ -75,7 +75,8 @@ namespace Core8
         {
             //loggingLevel.MinimumLevel = Serilog.Events.LogEventLevel.Debug;
 
-            pdp.LoadPaperTape(File.ReadAllBytes(@"C:\Users\micke\Dropbox\PDP-8\MAINDEC\dirxa-d-pb"));
+            pdp.LoadPaperTape(new HttpClient().GetByteArrayAsync(@"https://www.dropbox.com/s/mvm1mh47jybfl5t/dirxa-d-pb?dl=1").Result);
+            //pdp.LoadPaperTape(File.ReadAllBytes(@"C:\Users\micke\Dropbox\PDP-8\MAINDEC\dirxa-d-pb"));
             //pdp.LoadPaperTape(File.ReadAllBytes(@"C:\Users\mikaelfr\Downloads\dirxa-d-pb"));
 
 

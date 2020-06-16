@@ -118,11 +118,11 @@ namespace Core8
 
         public void Tick()
         {            
-            if (DateTime.UtcNow > controllerDoneAt)
+            if (state != ControllerState.Idle && DateTime.UtcNow > controllerDoneAt)
             {
                 ControllerAction();
 
-                controllerDoneAt = DateTime.MaxValue; // Ugly! Check state instead?
+                //controllerDoneAt = DateTime.MaxValue; // Ugly! Check state instead?
             }
         }
 
