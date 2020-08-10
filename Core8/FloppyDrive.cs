@@ -1,8 +1,6 @@
 ﻿using Core8.Model.Interfaces;
 using Serilog;
 using System;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace Core8
 {
@@ -34,6 +32,9 @@ namespace Core8
         private const int ERROR_CODE_BAD_TRACK = 0b_100_000;
         private const int ERROR_CODE_BAD_SECTOR = 0b_111_000;
         private const int ERROR_CODE_NO_DISK_IN_DRIVE = 0b_001_001_000;
+
+        private const int TRACK_MASK = 0b_000_001_111_111;
+        private const int SECTOR_MASK = 0b_000_000_011_111;
 
         private enum ControllerFunction
         {
@@ -86,10 +87,6 @@ namespace Core8
 
         private readonly byte[][] disk = new byte[2][];
 
-        public FloppyDrive()
-        {
-        }
-
         private ControllerState state;
 
         private ControllerFunction FunctionSelect => (ControllerFunction)Function;
@@ -102,11 +99,11 @@ namespace Core8
 
         private int UnitSelect => (commandRegister & 0b_000_000_010_000) >> 4;
 
-        private volatile bool doneFlag;
+        private bool done;
 
         public bool TransferRequest { get; private set; }
 
-        public bool InterruptRequested => interruptsEnabled && doneFlag;
+        public bool InterruptRequested => interruptsEnabled && done;
 
         private int sectorAddress;
 
@@ -117,7 +114,7 @@ namespace Core8
         public bool Error { get; private set; }
 
         public void Tick()
-        {            
+        {
             if (state != ControllerState.Idle && DateTime.UtcNow > controllerDoneAt)
             {
                 ControllerAction();
@@ -133,7 +130,7 @@ namespace Core8
 
         public void ClearDone()
         {
-            doneFlag = false;
+            done = false;
         }
 
         private void SetDone(int errorStatus = 0, int errorCode = 0, bool readErrorRegister = false)
@@ -156,7 +153,7 @@ namespace Core8
 
             SetState(ControllerState.Idle);
 
-            doneFlag = true;
+            done = true;
         }
 
         private void SetState(ControllerState state)
@@ -307,11 +304,11 @@ namespace Core8
                 case ControllerState.EmptyBuffer:
                     SetDone();
                     break;
-                case ControllerState.Initialize:                    
+                case ControllerState.Initialize:
                     ReadBlock();
                     SetDone(ERROR_STATUS_INIT_DONE | ERROR_STATUS_DEVICE_READY, 0);
                     break;
-                case ControllerState.Done:                    
+                case ControllerState.Done:
                     SetDone();
                     break;
                 case ControllerState.ReadTrack:
@@ -322,7 +319,7 @@ namespace Core8
                     WriteBlock();
                     SetDone();
                     break;
-                case ControllerState.ReadStatus:                    
+                case ControllerState.ReadStatus:
                     SetDone();
                     break;
                 default:
@@ -402,14 +399,14 @@ namespace Core8
 
         private void SetSector()
         {
-            sectorAddress = interfaceRegister & 0b_000_000_011_111;
+            sectorAddress = interfaceRegister & SECTOR_MASK;
 
             SetTransferRequest();
         }
 
         private void SetTrack()
         {
-            trackAddress = interfaceRegister & 0b_000_001_111_111;
+            trackAddress = interfaceRegister & TRACK_MASK;
 
             if (trackAddress < MIN_TRACK || trackAddress > MAX_TRACK)
             {
@@ -436,7 +433,7 @@ namespace Core8
                     Log.Warning("@ track #0");
                 }
 
-                controllerDoneAt = DateTime.UtcNow + AverageAccessTime; 
+                controllerDoneAt = DateTime.UtcNow + AverageAccessTime;
             }
         }
 
@@ -450,7 +447,7 @@ namespace Core8
             buffer[bufferPointer++] = interfaceRegister;
 
             if (bufferPointer >= buffer.Length)
-            {                
+            {
                 controllerDoneAt = DateTime.UtcNow;
             }
             else
@@ -468,7 +465,7 @@ namespace Core8
 
             if (bufferPointer >= buffer.Length)
             {
-                controllerDoneAt = DateTime.UtcNow;                
+                controllerDoneAt = DateTime.UtcNow;
             }
             else
             {
@@ -504,7 +501,7 @@ namespace Core8
 
         public bool SkipNotDone()
         {
-            if (doneFlag)
+            if (done)
             {
                 ClearDone();
 
@@ -521,7 +518,7 @@ namespace Core8
 
         public override string ToString()
         {
-            return $"[RX01] {FunctionSelect} dn={(doneFlag ? 1 : 0)} tr={(TransferRequest ? 1 : 0)} er={(Error ? 1 : 0)} md={(EightBitMode ? 8 : 12)} mnt={(MaintenanceMode ? 1 : 0)} unt={UnitSelect} trk={trackAddress} sc={sectorAddress} bp={bufferPointer}";
+            return $"[RX01] {FunctionSelect} dn={(done ? 1 : 0)} tr={(TransferRequest ? 1 : 0)} er={(Error ? 1 : 0)} md={(EightBitMode ? 8 : 12)} mnt={(MaintenanceMode ? 1 : 0)} unt={UnitSelect} trk={trackAddress} sc={sectorAddress} bp={bufferPointer}";
         }
     }
 }

@@ -63,7 +63,7 @@ namespace Core8
             ClearInputFlag();
             ClearOutputFlag();
 
-            outputPending = false;            
+            outputPending = false;
 
             reader.Clear();
         }
@@ -142,8 +142,8 @@ namespace Core8
 
                     InputBuffer = b;
 
-                    SetInputFlag();                    
-                }                
+                    SetInputFlag();
+                }
             }
 
             if (outputPending && DateTime.UtcNow > outputPendingAt)
