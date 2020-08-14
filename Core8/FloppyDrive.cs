@@ -99,11 +99,13 @@ namespace Core8
 
         private int UnitSelect => (commandRegister & 0b_000_000_010_000) >> 4;
 
-        public bool Done { get; private set; }
+        private bool doneFlag;
 
-        public bool TransferRequest { get; private set; }
+        private bool errorFlag;
 
-        public bool InterruptRequested => interruptsEnabled && Done;
+        private bool transferRequest;        
+
+        public bool InterruptRequested => interruptsEnabled && doneFlag;
 
         private int sectorAddress;
 
@@ -111,7 +113,7 @@ namespace Core8
 
         private int BlockAddress => trackAddress * MAX_SECTOR * BLOCK_SIZE + (sectorAddress - 1) * BLOCK_SIZE;
 
-        public bool Error { get; private set; }
+        
 
         public void Tick()
         {
@@ -123,21 +125,11 @@ namespace Core8
             }
         }
 
-        public void ClearError()
-        {
-            Error = false;
-        }
-
-        public void ClearDone()
-        {
-            Done = false;
-        }
-
         private void SetDone(int errorStatus = 0, int errorCode = 0, bool readErrorRegister = false)
         {
             if (errorCode != 0)
             {
-                Error = true;
+                errorFlag = true;
             }
 
             errorCodeRegister = errorCode;
@@ -153,24 +145,12 @@ namespace Core8
 
             SetState(ControllerState.Idle);
 
-            Done = true;
+            doneFlag = true;
         }
 
         private void SetState(ControllerState state)
         {
             this.state = state;
-        }
-
-        public void ClearTransferRequest()
-        {
-            TransferRequest = false;
-        }
-
-        private void SetTransferRequest()
-        {
-            TransferRequest = true;
-
-            //Log.Information("TRQ set");
         }
 
         public void Load(byte unit, byte[] disk)
@@ -184,10 +164,6 @@ namespace Core8
             {
                 return accumulator;
             }
-
-            ClearError();
-            ClearDone();
-            ClearTransferRequest();
 
             bufferPointer = 0;
 
@@ -207,22 +183,22 @@ namespace Core8
                 case FILL_BUFFER:
                     SetState(ControllerState.FillBuffer);
                     errorStatusRegister &= ERROR_STATUS_INIT_DONE;
-                    SetTransferRequest();
+                    transferRequest = true;
                     break;
                 case EMPTY_BUFFER:
                     SetState(ControllerState.EmptyBuffer);
                     errorStatusRegister &= ERROR_STATUS_INIT_DONE;
-                    SetTransferRequest();
+                    transferRequest = true;
                     break;
                 case WRITE_SECTOR:
                     SetState(ControllerState.WriteSector);
                     errorStatusRegister &= ERROR_STATUS_INIT_DONE;
-                    SetTransferRequest();
+                    transferRequest = true;
                     break;
                 case READ_SECTOR:
                     SetState(ControllerState.ReadSector);
                     errorStatusRegister &= ERROR_STATUS_INIT_DONE;
-                    SetTransferRequest();
+                    transferRequest = true;
                     break;
                 case NO_OPERATION:
                     SetState(ControllerState.Done);
@@ -383,7 +359,8 @@ namespace Core8
 
             SetState(ControllerState.Initialize);
 
-            ClearDone();
+            doneFlag = false;
+            errorFlag = false;
 
             interruptsEnabled = false;
             errorStatusRegister = 0;
@@ -401,7 +378,7 @@ namespace Core8
         {
             sectorAddress = interfaceRegister & SECTOR_MASK;
 
-            SetTransferRequest();
+            transferRequest = true;
         }
 
         private void SetTrack()
@@ -452,7 +429,7 @@ namespace Core8
             }
             else
             {
-                SetTransferRequest();
+                transferRequest = true;
             }
         }
 
@@ -471,15 +448,15 @@ namespace Core8
             {
                 interfaceRegister = buffer[bufferPointer++];
 
-                SetTransferRequest();
+                transferRequest = true;
             }
         }
 
         public bool SkipTransferRequest()
         {
-            if (TransferRequest)
+            if (transferRequest)
             {
-                ClearTransferRequest();
+                transferRequest = MaintenanceMode;
 
                 return true;
             }
@@ -489,9 +466,9 @@ namespace Core8
 
         public bool SkipError()
         {
-            if (Error)
+            if (errorFlag)
             {
-                ClearError();
+                errorFlag = MaintenanceMode;
 
                 return true;
             }
@@ -501,9 +478,9 @@ namespace Core8
 
         public bool SkipNotDone()
         {
-            if (Done)
+            if (doneFlag)
             {
-                ClearDone();
+                doneFlag = false;
 
                 return true;
             }
@@ -518,7 +495,7 @@ namespace Core8
 
         public override string ToString()
         {
-            return $"[RX01] {FunctionSelect} dn={(Done ? 1 : 0)} tr={(TransferRequest ? 1 : 0)} er={(Error ? 1 : 0)} md={(EightBitMode ? 8 : 12)} mnt={(MaintenanceMode ? 1 : 0)} unt={UnitSelect} trk={trackAddress} sc={sectorAddress} bp={bufferPointer}";
+            return $"[RX01] {FunctionSelect} dn={(doneFlag ? 1 : 0)} tr={(transferRequest ? 1 : 0)} er={(errorFlag ? 1 : 0)} md={(EightBitMode ? 8 : 12)} mnt={(MaintenanceMode ? 1 : 0)} unt={UnitSelect} trk={trackAddress} sc={sectorAddress} bp={bufferPointer}";
         }
     }
 }
