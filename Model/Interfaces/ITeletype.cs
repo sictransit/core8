@@ -1,6 +1,6 @@
 ﻿namespace Core8.Model.Interfaces
 {
-    public interface ITeletype
+    public interface ITeletype : IRequestsInterrupts
     {
         void Tick();
 
@@ -17,10 +17,6 @@
         void ClearOutputFlag();
 
         void SetOutputFlag();
-
-        bool InputIRQ { get; }
-
-        bool OutputIRQ { get; }
 
         byte InputBuffer { get; }
 

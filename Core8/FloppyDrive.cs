@@ -1,8 +1,6 @@
 ﻿using Core8.Model.Interfaces;
 using Serilog;
 using System;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace Core8
 {
@@ -102,11 +100,11 @@ namespace Core8
 
         private int UnitSelect => (commandRegister & 0b_000_000_010_000) >> 4;
 
-        private volatile bool doneFlag;
+        public bool Done { get; private set; }
 
         public bool TransferRequest { get; private set; }
 
-        public bool InterruptRequested => interruptsEnabled && doneFlag;
+        public bool InterruptRequested => interruptsEnabled && Done;
 
         private int sectorAddress;
 
@@ -133,7 +131,7 @@ namespace Core8
 
         public void ClearDone()
         {
-            doneFlag = false;
+            Done = false;
         }
 
         private void SetDone(int errorStatus = 0, int errorCode = 0, bool readErrorRegister = false)
@@ -156,7 +154,7 @@ namespace Core8
 
             SetState(ControllerState.Idle);
 
-            doneFlag = true;
+            Done = true;
         }
 
         private void SetState(ControllerState state)
@@ -504,7 +502,7 @@ namespace Core8
 
         public bool SkipNotDone()
         {
-            if (doneFlag)
+            if (Done)
             {
                 ClearDone();
 
@@ -521,7 +519,7 @@ namespace Core8
 
         public override string ToString()
         {
-            return $"[RX01] {FunctionSelect} dn={(doneFlag ? 1 : 0)} tr={(TransferRequest ? 1 : 0)} er={(Error ? 1 : 0)} md={(EightBitMode ? 8 : 12)} mnt={(MaintenanceMode ? 1 : 0)} unt={UnitSelect} trk={trackAddress} sc={sectorAddress} bp={bufferPointer}";
+            return $"[RX01] {FunctionSelect} dn={(Done ? 1 : 0)} tr={(TransferRequest ? 1 : 0)} er={(Error ? 1 : 0)} md={(EightBitMode ? 8 : 12)} mnt={(MaintenanceMode ? 1 : 0)} unt={UnitSelect} trk={trackAddress} sc={sectorAddress} bp={bufferPointer}";
         }
     }
 }

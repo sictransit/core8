@@ -29,6 +29,12 @@ namespace Core8
         private const int INTERRUPT_ENABLE = 1 << 0;
         private const int STATUS_ENABLE = 1 << 1;
 
+        private bool inputIRQ;
+
+        private bool outputIRQ;
+
+
+
         public Teletype(string inputAddress, string outputAddress)
         {
             publisherSocket = new PublisherSocket();
@@ -42,10 +48,6 @@ namespace Core8
         public bool InputFlag { get; set; }
 
         public bool OutputFlag { get; set; }
-
-        public bool InputIRQ { get; private set; }
-
-        public bool OutputIRQ { get; private set; }
 
         public byte InputBuffer { get; private set; }
 
@@ -70,24 +72,24 @@ namespace Core8
 
         public void ClearInputFlag()
         {
-            InputFlag = InputIRQ = false;
+            InputFlag = inputIRQ = false;
         }
 
         private void SetInputFlag()
         {
             InputFlag = true;
-            InputIRQ = (deviceControl & INTERRUPT_ENABLE) != 0;
+            inputIRQ = (deviceControl & INTERRUPT_ENABLE) != 0;
         }
 
         public void ClearOutputFlag()
         {
-            OutputFlag = OutputIRQ = false;
+            OutputFlag = outputIRQ = false;
         }
 
         public void SetOutputFlag()
         {
             OutputFlag = true;
-            OutputIRQ = (deviceControl & INTERRUPT_ENABLE) != 0;
+            outputIRQ = (deviceControl & INTERRUPT_ENABLE) != 0;
         }
 
         public void Type(byte c)
@@ -117,9 +119,11 @@ namespace Core8
 
         public string Printout => Encoding.ASCII.GetString(paper.ToArray());
 
+        public bool InterruptRequested => inputIRQ || outputIRQ;
+
         public override string ToString()
         {
-            return $"[TT] if={(InputFlag ? 1 : 0)} ib={InputBuffer} of={(OutputFlag ? 1 : 0)} ob={OutputBuffer} irq/in={(InputIRQ ? 1 : 0)} irq/out={(OutputIRQ ? 1 : 0)} (tq= {reader.Count})";
+            return $"[TT] if={(InputFlag ? 1 : 0)} ib={InputBuffer} of={(OutputFlag ? 1 : 0)} ob={OutputBuffer} irq/in={(inputIRQ ? 1 : 0)} irq/out={(outputIRQ ? 1 : 0)} (tq= {reader.Count})";
         }
 
         public void Tick()

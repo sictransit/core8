@@ -1,10 +1,8 @@
 ﻿namespace Core8.Model.Interfaces
 {
-    public interface IFloppyDrive
+    public interface IFloppyDrive : IRequestsInterrupts
     {
-        void Tick();
-
-        bool InterruptRequested { get; }
+        void Tick();        
 
         void Load(byte unit, byte[] disk);
 
