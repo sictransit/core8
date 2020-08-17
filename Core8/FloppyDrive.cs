@@ -103,7 +103,7 @@ namespace Core8
 
         private bool errorFlag;
 
-        private bool transferRequest;        
+        private bool transferRequestFlag;        
 
         public bool InterruptRequested => interruptsEnabled && doneFlag;
 
@@ -183,22 +183,22 @@ namespace Core8
                 case FILL_BUFFER:
                     SetState(ControllerState.FillBuffer);
                     errorStatusRegister &= ERROR_STATUS_INIT_DONE;
-                    transferRequest = true;
+                    transferRequestFlag = true;
                     break;
                 case EMPTY_BUFFER:
                     SetState(ControllerState.EmptyBuffer);
                     errorStatusRegister &= ERROR_STATUS_INIT_DONE;
-                    transferRequest = true;
+                    transferRequestFlag = true;
                     break;
                 case WRITE_SECTOR:
                     SetState(ControllerState.WriteSector);
                     errorStatusRegister &= ERROR_STATUS_INIT_DONE;
-                    transferRequest = true;
+                    transferRequestFlag = true;
                     break;
                 case READ_SECTOR:
                     SetState(ControllerState.ReadSector);
                     errorStatusRegister &= ERROR_STATUS_INIT_DONE;
-                    transferRequest = true;
+                    transferRequestFlag = true;
                     break;
                 case NO_OPERATION:
                     SetState(ControllerState.Done);
@@ -378,7 +378,7 @@ namespace Core8
         {
             sectorAddress = interfaceRegister & SECTOR_MASK;
 
-            transferRequest = true;
+            transferRequestFlag = true;
         }
 
         private void SetTrack()
@@ -429,7 +429,7 @@ namespace Core8
             }
             else
             {
-                transferRequest = true;
+                transferRequestFlag = true;
             }
         }
 
@@ -448,15 +448,15 @@ namespace Core8
             {
                 interfaceRegister = buffer[bufferPointer++];
 
-                transferRequest = true;
+                transferRequestFlag = true;
             }
         }
 
         public bool SkipTransferRequest()
         {
-            if (transferRequest)
+            if (transferRequestFlag)
             {
-                transferRequest = MaintenanceMode;
+                transferRequestFlag = MaintenanceMode;
 
                 return true;
             }
@@ -495,7 +495,7 @@ namespace Core8
 
         public override string ToString()
         {
-            return $"[RX01] {FunctionSelect} dn={(doneFlag ? 1 : 0)} tr={(transferRequest ? 1 : 0)} er={(errorFlag ? 1 : 0)} md={(EightBitMode ? 8 : 12)} mnt={(MaintenanceMode ? 1 : 0)} unt={UnitSelect} trk={trackAddress} sc={sectorAddress} bp={bufferPointer}";
+            return $"[RX01] {FunctionSelect} dn={(doneFlag ? 1 : 0)} tr={(transferRequestFlag ? 1 : 0)} er={(errorFlag ? 1 : 0)} md={(EightBitMode ? 8 : 12)} mnt={(MaintenanceMode ? 1 : 0)} unt={UnitSelect} trk={trackAddress} sc={sectorAddress} bp={bufferPointer}";
         }
     }
 }

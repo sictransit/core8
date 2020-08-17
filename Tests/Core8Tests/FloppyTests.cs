@@ -32,6 +32,8 @@ namespace Core8.Tests
 
             Thread.Sleep(FloppyDrive.CommandTime * 2);
 
+            floppy.Tick();
+
             Assert.IsTrue(floppy.SkipNotDone());
         }
 
@@ -56,6 +58,8 @@ namespace Core8.Tests
             Assert.IsFalse(floppy.SkipTransferRequest());
 
             Thread.Sleep(FloppyDrive.CommandTime * 2);
+
+            floppy.Tick();
 
             Assert.IsTrue(floppy.SkipNotDone());
         }
@@ -102,6 +106,8 @@ namespace Core8.Tests
 
             Thread.Sleep(FloppyDrive.CommandTime * 2);
 
+            floppy.Tick();
+
             Assert.IsTrue(floppy.SkipNotDone());
         }
 
@@ -119,6 +125,8 @@ namespace Core8.Tests
             floppy.TransferDataRegister(0);
 
             Thread.Sleep(FloppyDrive.CommandTime * 2);
+
+            floppy.Tick();
 
             Assert.IsTrue(floppy.SkipNotDone());
 
@@ -138,6 +146,8 @@ namespace Core8.Tests
             floppy.Initialize();
 
             Thread.Sleep(FloppyDrive.InitializeTime * 2);
+
+            floppy.Tick();
 
             Assert.IsTrue(floppy.SkipNotDone());
 
@@ -161,6 +171,8 @@ namespace Core8.Tests
 
             Thread.Sleep(FloppyDrive.AverageAccessTime * 2);
 
+            floppy.Tick();
+
             Assert.IsTrue(floppy.SkipNotDone());
 
             LoadCommand(floppy, FloppyDrive.READ_SECTOR);
@@ -175,6 +187,8 @@ namespace Core8.Tests
             Assert.IsFalse(floppy.SkipNotDone());
 
             Thread.Sleep(FloppyDrive.AverageAccessTime * 2);
+
+            floppy.Tick();
 
             Assert.IsTrue(floppy.SkipNotDone());
 
