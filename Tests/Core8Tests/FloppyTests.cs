@@ -1,6 +1,7 @@
 ﻿using Core8.Model.Interfaces;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 
@@ -30,11 +31,7 @@ namespace Core8.Tests
                 }
             }
 
-            Thread.Sleep(FloppyDrive.CommandTime * 2);
-
-            floppy.Tick();
-
-            Assert.IsTrue(floppy.SkipNotDone());
+            AssertDoneFlagSet(floppy);
         }
 
         [TestMethod]
@@ -57,11 +54,7 @@ namespace Core8.Tests
 
             Assert.IsFalse(floppy.SkipTransferRequest());
 
-            Thread.Sleep(FloppyDrive.CommandTime * 2);
-
-            floppy.Tick();
-
-            Assert.IsTrue(floppy.SkipNotDone());
+            AssertDoneFlagSet(floppy);
         }
 
         [TestMethod]
@@ -79,6 +72,26 @@ namespace Core8.Tests
             {
                 Assert.AreEqual(inData[i], outData[i]);
             }
+        }
+
+        private void AssertDoneFlagSet(IFloppyDrive floppy, int timeout = 10000)
+        {
+            var sw = new Stopwatch();
+            sw.Start();
+
+            bool done;
+
+            do
+            {
+                Thread.Sleep(100);
+
+                floppy.Tick();
+
+                done = floppy.SkipNotDone();
+
+            } while (!done && sw.ElapsedMilliseconds < timeout);
+
+            Assert.IsTrue(done);
         }
 
         private int[] GenerateRandomBlock()
@@ -104,11 +117,7 @@ namespace Core8.Tests
                 floppy.TransferDataRegister(data[i]);
             }
 
-            Thread.Sleep(FloppyDrive.CommandTime * 2);
-
-            floppy.Tick();
-
-            Assert.IsTrue(floppy.SkipNotDone());
+            AssertDoneFlagSet(floppy);
         }
 
         private int[] EmptyBuffer(FloppyDrive floppy)
@@ -124,11 +133,7 @@ namespace Core8.Tests
 
             floppy.TransferDataRegister(0);
 
-            Thread.Sleep(FloppyDrive.CommandTime * 2);
-
-            floppy.Tick();
-
-            Assert.IsTrue(floppy.SkipNotDone());
+            AssertDoneFlagSet(floppy);
 
             return data;
         }
@@ -143,13 +148,9 @@ namespace Core8.Tests
             Assert.IsFalse(floppy.SkipNotDone());
 
             floppy.Load(0, disk);
-            floppy.Initialize();
+            floppy.Initialize();            
 
-            Thread.Sleep(FloppyDrive.InitializeTime * 2);
-
-            floppy.Tick();
-
-            Assert.IsTrue(floppy.SkipNotDone());
+            AssertDoneFlagSet(floppy);
 
             var written = GenerateRandomBlock();
 
@@ -169,11 +170,7 @@ namespace Core8.Tests
             Assert.IsFalse(floppy.SkipTransferRequest());
             Assert.IsFalse(floppy.SkipNotDone());
 
-            Thread.Sleep(FloppyDrive.AverageAccessTime * 2);
-
-            floppy.Tick();
-
-            Assert.IsTrue(floppy.SkipNotDone());
+            AssertDoneFlagSet(floppy);
 
             LoadCommand(floppy, FloppyDrive.READ_SECTOR);
 
@@ -186,11 +183,7 @@ namespace Core8.Tests
             Assert.IsFalse(floppy.SkipTransferRequest());
             Assert.IsFalse(floppy.SkipNotDone());
 
-            Thread.Sleep(FloppyDrive.AverageAccessTime * 2);
-
-            floppy.Tick();
-
-            Assert.IsTrue(floppy.SkipNotDone());
+            AssertDoneFlagSet(floppy);
 
             var read = EmptyBuffer(floppy);
 
