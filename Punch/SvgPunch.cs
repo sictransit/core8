@@ -1,85 +1,103 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Reflection.Metadata.Ecma335;
 using System.Xml.Linq;
 
 namespace Core8
 {
     public static class SvgPunch
     {
-        private static readonly XNamespace svgNamespace = "http://www.w3.org/2000/svg";        
+        private static readonly XNamespace svg = "http://www.w3.org/2000/svg";
+        private static readonly XNamespace xlink = "http://www.w3.org/1999/xlink";
 
         private const int spacing = 100;
         private const int dataWidth = 72;
-        private const int feederWidth = 46;
+        private const int feederWidth = 46;        
+        
+        private static readonly Func<bool, XElement> HoleFunc = isData => 
+        {
+            var type = isData ? "data" : "feeder";
+
+            return new XElement(
+                svg + "circle", 
+                new XAttribute("fill", "red"), 
+                new XAttribute("stroke-width", "0"), 
+                new XAttribute("stroke", "#fff"), 
+                new XAttribute("r", isData ? dataWidth / 2 : feederWidth / 2), 
+                new XAttribute("id",$"{type}"));
+        };
 
         public static string Punch(byte[] data)
         {
             var width = (data.Length + 1) * spacing;
-            var height = spacing * 10;
+            var height = spacing * 10;            
 
-            var rows = data.Select((x, i) => CreateRow(i, x));
+            var defs = new XElement(svg + "defs", HoleFunc(true), HoleFunc(false), data.Distinct().OrderBy(x=>x).Select(x => CreateRowShape(x)));
 
-            var holes = new XElement(svgNamespace + "g", rows);
-            holes.SetAttributeValue("fill", "#000");
-            holes.SetAttributeValue("stroke-width", "0");
-            holes.SetAttributeValue("stroke", "#fff");
+            var rows = data.Select((x, i) => UseRowShape(i, x));
+
+            var holes = new XElement(svg + "g", rows);            
 
             var paper = CreatePaper(width, height);
 
-            var svg = new XElement(svgNamespace + "svg", new[] { paper, holes });
+            var tape = new XElement(svg + "svg", new XAttribute("width", width), new XAttribute("height", height), new XAttribute(XNamespace.Xmlns + "xlink", xlink), defs, paper, holes);
 
-            svg.SetAttributeValue("width", width);
-            svg.SetAttributeValue("height", height);
+            return tape.ToString();
+        }
 
-            return svg.ToString();
+        private static XElement UseRowShape(int offset, int b)
+        {
+            var use = new XElement(svg + "use", new XAttribute(xlink + "href", $"#b{b}"), new XAttribute("x", (offset + 1) * spacing));
+
+            return use;
+        }
+
+        private static XElement CreateRowShape(int b)
+        {
+            var shape = new XElement(svg + "g", CreateRow(b));
+            
+            shape.SetAttributeValue("id", $"b{b}");
+            
+            return shape;
         }
 
         private static XElement CreatePaper(int width, int height)
         {
-            var paper = new XElement(svgNamespace + "rect");
+            var paper = new XElement(svg + "rect");
             paper.SetAttributeValue("x", 0);
             paper.SetAttributeValue("y", 0);
             paper.SetAttributeValue("width", width);
             paper.SetAttributeValue("height", height);
             paper.SetAttributeValue("fill", "#ffffaa");
 
-            return new XElement(svgNamespace + "g", paper);
+            return new XElement(svg + "g", paper);
         }
 
-        private static XElement CreateRow(int offset, int data)
+        private static IEnumerable<XElement> CreateRow(int data)
         {
-            var holes = new List<XElement>();
-
             var bitOffset = 0;
 
             for (int bit = 0; bit < 8; bit++)
             {
                 if (((data >> bit) & 1) == 1)
                 {
-                    holes.Add(CreateHole(offset + 1, bit + bitOffset, true));
+                    yield return UseHole(bit + bitOffset, true);
                 }
 
                 if (bit == 2)
                 {
-                    holes.Add(CreateHole(offset + 1, 3, false));
+                    yield return UseHole(3, false);
 
                     bitOffset = 1;
                 }
-            }
-
-            return new XElement(svgNamespace + "g", holes);
+            }            
         }
-
-        private static XElement CreateHole(int offset, int bit, bool dataHole)
+        private static XElement UseHole(int bit, bool dataHole)
         {
-            var hole = new XElement(svgNamespace +"ellipse");            
+            var holeType = dataHole ? "data" : "feeder";
 
-            hole.SetAttributeValue("rx", dataHole ? dataWidth / 2 : feederWidth / 2);
-            hole.SetAttributeValue("ry", dataHole ? dataWidth / 2 : feederWidth / 2);
-            hole.SetAttributeValue("cx", offset * spacing);
-            hole.SetAttributeValue("cy", (bit + 1) * spacing);
-
-            return hole;
+            return new XElement(svg + "use", new XAttribute(xlink + "href", $"#{holeType}"), new XAttribute("y", (bit + 1) * spacing));
         }
     }
 }
