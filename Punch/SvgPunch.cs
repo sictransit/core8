@@ -61,7 +61,7 @@ namespace Core8
 
                 if (bit == 2)
                 {
-                    holes.Add(CreateHole(offset + 1, 3, true));
+                    holes.Add(CreateHole(offset + 1, 3, false));
 
                     bitOffset = 1;
                 }
