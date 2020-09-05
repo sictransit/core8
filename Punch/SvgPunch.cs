@@ -1,103 +1,82 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Reflection.Metadata.Ecma335;
 using System.Xml.Linq;
 
 namespace Core8
 {
-    public static class SvgPunch
+    public static class SVGPunch
     {
         private static readonly XNamespace svg = "http://www.w3.org/2000/svg";
         private static readonly XNamespace xlink = "http://www.w3.org/1999/xlink";
 
         private const int spacing = 100;
         private const int dataWidth = 72;
-        private const int feederWidth = 46;        
-        
-        private static readonly Func<bool, XElement> HoleFunc = isData => 
-        {
-            var type = isData ? "data" : "feeder";
+        private const int feederWidth = 46;
 
-            return new XElement(
-                svg + "circle", 
-                new XAttribute("fill", "red"), 
-                new XAttribute("stroke-width", "0"), 
-                new XAttribute("stroke", "#fff"), 
-                new XAttribute("r", isData ? dataWidth / 2 : feederWidth / 2), 
-                new XAttribute("id",$"{type}"));
-        };
-
-        public static string Punch(byte[] data)
+        public static string Punch(byte[] data, string label)
         {
             var width = (data.Length + 1) * spacing;
-            var height = spacing * 10;            
+            var height = spacing * 10;
 
-            var defs = new XElement(svg + "defs", HoleFunc(true), HoleFunc(false), data.Distinct().OrderBy(x=>x).Select(x => CreateRowShape(x)));
-
-            var rows = data.Select((x, i) => UseRowShape(i, x));
-
-            var holes = new XElement(svg + "g", rows);            
+            var defs = new XElement(svg + "defs", Hole(true), Hole(false), data.Distinct().OrderBy(x => x).Select(x => CreateRowShape(x)));
 
             var paper = CreatePaper(width, height);
 
-            var tape = new XElement(svg + "svg", new XAttribute("width", width), new XAttribute("height", height), new XAttribute(XNamespace.Xmlns + "xlink", xlink), defs, paper, holes);
+            var holes = new XElement(svg + "g", data.Select((x, i) => UseRowShape(i, x)));
+
+            var tape = new XElement(svg + "svg", new XAttribute("width", width), new XAttribute("height", height), new XAttribute(XNamespace.Xmlns + "xlink", xlink), Style, defs, paper, Label(label), holes);
 
             return tape.ToString();
         }
 
-        private static XElement UseRowShape(int offset, int b)
-        {
-            var use = new XElement(svg + "use", new XAttribute(xlink + "href", $"#b{b}"), new XAttribute("x", (offset + 1) * spacing));
+        private static string ByteRowID(int b) => $"byte{b}";
 
-            return use;
-        }
+        private static XElement Style => new XElement(svg + "style", ".label { font: 64px courier; fill: red; }");
 
-        private static XElement CreateRowShape(int b)
-        {
-            var shape = new XElement(svg + "g", CreateRow(b));
-            
-            shape.SetAttributeValue("id", $"b{b}");
-            
-            return shape;
-        }
+        private static XElement Label(string text) => new XElement(svg + "text", new XAttribute("x", spacing), new XAttribute("y", spacing / 2), new XAttribute("class", "label"), text);
 
-        private static XElement CreatePaper(int width, int height)
-        {
-            var paper = new XElement(svg + "rect");
-            paper.SetAttributeValue("x", 0);
-            paper.SetAttributeValue("y", 0);
-            paper.SetAttributeValue("width", width);
-            paper.SetAttributeValue("height", height);
-            paper.SetAttributeValue("fill", "#ffffaa");
+        private static XElement CreateRowShape(int b) => new XElement(
+            svg + "g", 
+            new XAttribute("id", ByteRowID(b)), 
+            CreateRow(b)
+            );
 
-            return new XElement(svg + "g", paper);
-        }
+        private static XElement UseRowShape(int offset, int b) => new XElement(
+            svg + "use", 
+            new XAttribute(xlink + "href", "#"+ ByteRowID(b)), 
+            new XAttribute("x", (offset + 1) * spacing)
+            );
 
-        private static IEnumerable<XElement> CreateRow(int data)
-        {
-            var bitOffset = 0;
+        private static XElement CreatePaper(int width, int height) => new XElement(
+            svg + "g", 
+            new XElement(
+                svg + "rect", 
+                new XAttribute("width", width), 
+                new XAttribute("height", height), 
+                new XAttribute("fill", "#ffffaa")
+                )
+            );
 
-            for (int bit = 0; bit < 8; bit++)
-            {
-                if (((data >> bit) & 1) == 1)
-                {
-                    yield return UseHole(bit + bitOffset, true);
-                }
+        private static string HoleTypeID(bool isData) => isData ? "data" : "feeder";
 
-                if (bit == 2)
-                {
-                    yield return UseHole(3, false);
+        private static XElement Hole(bool isData) => new XElement(
+            svg + "circle",
+            new XAttribute("fill", "black"),
+            new XAttribute("stroke-width", "0"),
+            new XAttribute("stroke", "#fff"),
+            new XAttribute("r", isData ? dataWidth / 2 : feederWidth / 2),
+            new XAttribute("id", HoleTypeID(isData))
+            );
 
-                    bitOffset = 1;
-                }
-            }            
-        }
-        private static XElement UseHole(int bit, bool dataHole)
-        {
-            var holeType = dataHole ? "data" : "feeder";
+        private static XElement UseHole(int bit, bool isData) => new XElement(
+            svg + "use",
+            new XAttribute(xlink + "href", "#" + HoleTypeID(isData)),
+            new XAttribute("y", (bit + 1) * spacing)
+            );
 
-            return new XElement(svg + "use", new XAttribute(xlink + "href", $"#{holeType}"), new XAttribute("y", (bit + 1) * spacing));
-        }
+        private static IEnumerable<XElement> CreateRow(int data) => Enumerable.Range(0, 8)
+            .Where(bit => ((data >> bit) & 1) == 1)
+            .Select(bit => UseHole(bit + (bit > 2 ? 1 : 0), true))
+            .Concat(new[] { UseHole(3, false) });
     }
 }
