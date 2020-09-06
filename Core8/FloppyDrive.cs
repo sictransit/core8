@@ -103,7 +103,9 @@ namespace Core8
 
         private bool errorFlag;
 
-        private bool transferRequestFlag;        
+        private bool runningFlag;
+
+        private bool transferRequestFlag;
 
         public bool InterruptRequested => interruptsEnabled && doneFlag;
 
@@ -113,7 +115,7 @@ namespace Core8
 
         private int BlockAddress => trackAddress * MAX_SECTOR * BLOCK_SIZE + (sectorAddress - 1) * BLOCK_SIZE;
 
-        
+
 
         public void Tick()
         {
@@ -160,61 +162,20 @@ namespace Core8
 
         public int LoadCommandRegister(int accumulator)
         {
-            if (state != ControllerState.Idle)
+            interfaceRegister = accumulator;
+
+            if (!doneFlag && !runningFlag)
             {
-                return accumulator;
+                commandRegister = accumulator & 0b_000_011_111_110;
+
+                runningFlag = true; // We have accepted a command!
             }
-
-            bufferPointer = 0;
-
-            commandRegister = accumulator & 0b_000_011_111_110;
 
             if (MaintenanceMode)
             {
-                SetDone(0, 0);
+                doneFlag = transferRequestFlag = errorFlag = true;
 
-                return interfaceRegister;
-            }
-
-            interfaceRegister = accumulator;
-
-            switch (Function)
-            {
-                case FILL_BUFFER:
-                    SetState(ControllerState.FillBuffer);
-                    errorStatusRegister &= ERROR_STATUS_INIT_DONE;
-                    transferRequestFlag = true;
-                    break;
-                case EMPTY_BUFFER:
-                    SetState(ControllerState.EmptyBuffer);
-                    errorStatusRegister &= ERROR_STATUS_INIT_DONE;
-                    transferRequestFlag = true;
-                    break;
-                case WRITE_SECTOR:
-                    SetState(ControllerState.WriteSector);
-                    errorStatusRegister &= ERROR_STATUS_INIT_DONE;
-                    transferRequestFlag = true;
-                    break;
-                case READ_SECTOR:
-                    SetState(ControllerState.ReadSector);
-                    errorStatusRegister &= ERROR_STATUS_INIT_DONE;
-                    transferRequestFlag = true;
-                    break;
-                case NO_OPERATION:
-                    SetState(ControllerState.Done);
-                    controllerDoneAt = DateTime.UtcNow;
-                    break;
-                case READ_STATUS:
-                    SetState(ControllerState.ReadStatus);
-                    controllerDoneAt = DateTime.UtcNow + ReadStatusTime;
-                    break;
-                case WRITE_DELETED_DATA_SECTOR:
-                    throw new NotImplementedException();
-                case READ_ERROR_REGISTER:
-                    SetDone(0, 0, true);
-                    break;
-                default:
-                    throw new NotImplementedException();
+                runningFlag = false;
             }
 
             return 0;
@@ -305,50 +266,82 @@ namespace Core8
 
         public int TransferDataRegister(int accumulator)
         {
-            errorStatusRegister &= ERROR_STATUS_INIT_DONE;
-
-            switch (state)
+            if (!MaintenanceMode && !doneFlag)
             {
-                case ControllerState.Idle:
-                    break;
-
-                case ControllerState.FillBuffer:
-                    interfaceRegister = accumulator;
-                    FillBuffer();
-                    break;
-
-                case ControllerState.EmptyBuffer:
-                    EmptyBuffer();
-                    break;
-
-                case ControllerState.WriteSector:
-                    interfaceRegister = accumulator;
-                    SetSector();
-                    state = ControllerState.WriteTrack;
-                    break;
-
-                case ControllerState.WriteTrack:
-                    interfaceRegister = accumulator;
-                    SetTrack();
-                    break;
-
-                case ControllerState.ReadSector:
-                    interfaceRegister = accumulator;
-                    SetSector();
-                    state = ControllerState.ReadTrack;
-                    break;
-
-                case ControllerState.ReadTrack:
-                    interfaceRegister = accumulator;
-                    SetTrack();
-                    break;
-
-                default:
-                    throw new InvalidOperationException(state.ToString());
+                switch (FunctionSelect)
+                {
+                    case ControllerFunction.FillBuffer:
+                    case ControllerFunction.ReadSector:
+                    case ControllerFunction.WriteSector:
+                    case ControllerFunction.WriteDeletedDataSector:
+                        interfaceRegister = accumulator;
+                        runningFlag = true;
+                        break;
+                    case ControllerFunction.EmptyBuffer:
+                        runningFlag = true;
+                        break;
+                    default:
+                        runningFlag = false;
+                        break;
+                }
             }
 
-            return interfaceRegister;
+            if (EightBitMode)
+            {
+                throw new NotImplementedException();
+            }
+            else
+            {
+                return interfaceRegister;
+            }
         }
+
+        //public int TransferDataRegister(int accumulator)
+        //{
+        //    errorStatusRegister &= ERROR_STATUS_INIT_DONE;
+
+        //    switch (state)
+        //    {
+        //        case ControllerState.Idle:
+        //            break;
+
+        //        case ControllerState.FillBuffer:
+        //            interfaceRegister = accumulator;
+        //            FillBuffer();
+        //            break;
+
+        //        case ControllerState.EmptyBuffer:
+        //            EmptyBuffer();
+        //            break;
+
+        //        case ControllerState.WriteSector:
+        //            interfaceRegister = accumulator;
+        //            SetSector();
+        //            state = ControllerState.WriteTrack;
+        //            break;
+
+        //        case ControllerState.WriteTrack:
+        //            interfaceRegister = accumulator;
+        //            SetTrack();
+        //            break;
+
+        //        case ControllerState.ReadSector:
+        //            interfaceRegister = accumulator;
+        //            SetSector();
+        //            state = ControllerState.ReadTrack;
+        //            break;
+
+        //        case ControllerState.ReadTrack:
+        //            interfaceRegister = accumulator;
+        //            SetTrack();
+        //            break;
+
+        //        default:
+        //            throw new InvalidOperationException(state.ToString());
+        //    }
+
+        //    return interfaceRegister;
+        //}
 
         public void Initialize()
         {

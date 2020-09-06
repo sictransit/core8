@@ -148,7 +148,7 @@ namespace Core8.Tests
             Assert.IsFalse(floppy.SkipNotDone());
 
             floppy.Load(0, disk);
-            floppy.Initialize();            
+            floppy.Initialize();
 
             AssertDoneFlagSet(floppy);
 

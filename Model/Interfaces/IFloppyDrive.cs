@@ -2,7 +2,7 @@
 {
     public interface IFloppyDrive : IRequestsInterrupts
     {
-        void Tick();        
+        void Tick();
 
         void Load(byte unit, byte[] disk);
 

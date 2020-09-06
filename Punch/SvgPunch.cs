@@ -1,19 +1,17 @@
-﻿using System.Collections.Generic;
+﻿using Core8.Abstract;
+using System.Collections.Generic;
 using System.Linq;
 using System.Xml.Linq;
 
 namespace Core8
 {
-    public static class SVGPunch
+    public class SVGPunch : SVGBase
     {
-        private static readonly XNamespace svg = "http://www.w3.org/2000/svg";
-        private static readonly XNamespace xlink = "http://www.w3.org/1999/xlink";
-
         private const int spacing = 100;
         private const int dataWidth = 72;
         private const int feederWidth = 46;
 
-        public static string Punch(byte[] data, string label)
+        public string Punch(byte[] data, string label)
         {
             var width = (data.Length + 1) * spacing;
             var height = spacing * 10;
@@ -29,30 +27,30 @@ namespace Core8
             return tape.ToString();
         }
 
-        private static string ByteRowID(int b) => $"byte{b}";
+        private static string ByteRowID(int b) => $"{ByteRowPrefix}{b}";
 
         private static XElement Style => new XElement(svg + "style", ".label { font: 64px courier; fill: red; }");
 
         private static XElement Label(string text) => new XElement(svg + "text", new XAttribute("x", spacing), new XAttribute("y", spacing / 2), new XAttribute("class", "label"), text);
 
         private static XElement CreateRowShape(int b) => new XElement(
-            svg + "g", 
-            new XAttribute("id", ByteRowID(b)), 
+            svg + "g",
+            new XAttribute("id", ByteRowID(b)),
             CreateRow(b)
             );
 
         private static XElement UseRowShape(int offset, int b) => new XElement(
-            svg + "use", 
-            new XAttribute(xlink + "href", "#"+ ByteRowID(b)), 
+            svg + "use",
+            new XAttribute(xlink + "href", "#" + ByteRowID(b)),
             new XAttribute("x", (offset + 1) * spacing)
             );
 
         private static XElement CreatePaper(int width, int height) => new XElement(
-            svg + "g", 
+            svg + "g",
             new XElement(
-                svg + "rect", 
-                new XAttribute("width", width), 
-                new XAttribute("height", height), 
+                svg + "rect",
+                new XAttribute("width", width),
+                new XAttribute("height", height),
                 new XAttribute("fill", "#ffffaa")
                 )
             );
