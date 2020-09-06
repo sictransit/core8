@@ -11,14 +11,15 @@ namespace Core8.Tests
         [TestMethod]
         public void TestPunch()
         {
-            //byte[] data = (new HttpClient()).GetByteArrayAsync(@"https://github.com/PontusPih/TINT8/releases/download/v0.1.0-alpha/tint.bin").Result;
-
             var label = "Punched paper tape as Scalable Vector Graphics (SVG), a beautiful anachronism!";
+
             byte[] data = Encoding.ASCII.GetBytes(label);
 
             var svg = SVGPunch.Punch(data, label);
 
             Assert.IsTrue(!string.IsNullOrWhiteSpace(svg));
+
+            Assert.IsTrue(svg.StartsWith("<svg width=\"7900\" height=\"1000\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" xmlns=\"http://www.w3.org/2000/svg\">"));
         }
     }
 
