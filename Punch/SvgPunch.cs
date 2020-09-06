@@ -1,4 +1,6 @@
 ﻿using Core8.Abstract;
+using Core8.Model.Extensions;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Xml.Linq;
@@ -11,44 +13,89 @@ namespace Core8
         private const int dataWidth = 72;
         private const int feederWidth = 46;
 
-        public string Punch(byte[] data, string label)
+        public string Punch(byte[] data, string label, int wrap = 80)
         {
-            var width = (data.Length + 1) * spacing;
-            var height = spacing * 10;
+            if (data is null)
+            {
+                throw new ArgumentNullException(nameof(data));
+            }
+
+            label ??= string.Empty;
+
+            if (wrap < 0)
+            {
+                throw new ArgumentOutOfRangeException(nameof(wrap));
+            }
+
+            wrap = wrap == 0 ? data.Length : wrap;
+
+            var paperWidth = (wrap) * spacing ;
+            var paperHeight = spacing * 10;
 
             var defs = new XElement(svg + "defs", Hole(true), Hole(false), data.Distinct().OrderBy(x => x).Select(x => CreateRowShape(x)));
 
-            var paper = CreatePaper(width, height);
+            var totalHeight = spacing;
 
-            var holes = new XElement(svg + "g", data.Select((x, i) => UseRowShape(i, x)));
+            var strips = new List<XElement>();
 
-            var tape = new XElement(svg + "svg", new XAttribute("width", width), new XAttribute("height", height), new XAttribute(XNamespace.Xmlns + "xlink", xlink), Style, defs, paper, Label(label), holes);
+            var rows = new List<XElement>();
+
+            foreach (var chunk in data.Concat(new byte[wrap-(data.Length % wrap)]).ChunkBy(wrap))
+            {
+                var strip = CreatePaper(spacing, totalHeight, paperWidth, paperHeight);
+
+                strips.Add(strip);
+
+                var row = new XElement(svg + "g", chunk.Select((x, i) => UseRowShape(spacing/2, totalHeight, i, x)));
+
+                rows.Add(row);
+
+                totalHeight += paperHeight + spacing;
+            }            
+
+            var tape = new XElement(svg + "svg", new XAttribute("width", paperWidth + 2 * spacing), new XAttribute("height", totalHeight), new XAttribute(XNamespace.Xmlns + "xlink", xlink), LabelStyle, RowLabelStyle, defs, strips, Label(label), rows);
 
             return tape.ToString();
         }
 
         private static string ByteRowID(int b) => $"{ByteRowPrefix}{b}";
 
-        private static XElement Style => new XElement(svg + "style", ".label { font: 64px courier; fill: red; }");
+        private static XElement LabelStyle => new XElement(
+            svg + "style", 
+            ".label { font: 64px courier; fill: red; }"
+            );
 
-        private static XElement Label(string text) => new XElement(svg + "text", new XAttribute("x", spacing), new XAttribute("y", spacing / 2), new XAttribute("class", "label"), text);
+        private static XElement RowLabelStyle => new XElement(
+            svg + "style",
+            ".rowLabel { font: 64px courier; fill: gray; }"
+            );
+
+        private static XElement Label(string text) => new XElement(
+            svg + "text", 
+            new XAttribute("x", spacing + spacing / 2), 
+            new XAttribute("y", spacing + spacing / 2), 
+            new XAttribute("class", "label"), text
+            );
 
         private static XElement CreateRowShape(int b) => new XElement(
             svg + "g",
             new XAttribute("id", ByteRowID(b)),
-            CreateRow(b)
+            CreateRow(b)            
             );
 
-        private static XElement UseRowShape(int offset, int b) => new XElement(
+        private static XElement UseRowShape(int x, int y, int offset, int b) => new XElement(
             svg + "use",
             new XAttribute(xlink + "href", "#" + ByteRowID(b)),
-            new XAttribute("x", (offset + 1) * spacing)
+            new XAttribute("x", (offset + 1) * spacing + x),
+            new XAttribute("y", y)
             );
 
-        private static XElement CreatePaper(int width, int height) => new XElement(
+        private static XElement CreatePaper(int x, int y, int width, int height) => new XElement(
             svg + "g",
             new XElement(
                 svg + "rect",
+                new XAttribute("x", x),
+                new XAttribute("y", y),
                 new XAttribute("width", width),
                 new XAttribute("height", height),
                 new XAttribute("fill", "#ffffaa")
