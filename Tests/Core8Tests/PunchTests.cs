@@ -1,26 +1,22 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Linq;
-using System.Net.Http;
+using System.Text;
 
 namespace Core8.Tests
 {
     [TestClass]
     public class PunchTests
     {
+        private const string Label = "Punched paper tape as Scalable Vector Graphics (SVG), a beautiful anachronism! Today, folded for your convenience.";
+
+        private byte[] TestData => Encoding.ASCII.GetBytes(Label).Concat(Enumerable.Range(0, 256).Select(x => (byte)x)).ToArray();
+
         [TestMethod]
         public void TestPunch()
         {
-            var label = "Punched paper tape as Scalable Vector Graphics (SVG), a beautiful anachronism! Today, folded for your convenience.";
-
-            var url = @"https://github.com/PontusPih/TINT8/releases/download/v0.1.0-alpha/tint.bin";
-
-            var data = new HttpClient().GetByteArrayAsync(url).Result.ToArray();
-
-            //byte[] data = Encoding.ASCII.GetBytes(label).Concat(Enumerable.Range(0,256).Select(x=>(byte)x)).ToArray();
-
             var punch = new SVGPunch();
 
-            var svg = punch.Punch(data, url);
+            var svg = punch.Punch(TestData, Label);
 
             Assert.IsTrue(!string.IsNullOrWhiteSpace(svg));
 
@@ -30,24 +26,20 @@ namespace Core8.Tests
         [TestMethod]
         public void TestReader()
         {
-            var url = @"https://github.com/PontusPih/TINT8/releases/download/v0.1.0-alpha/tint.bin";
-
-            var d0 = new HttpClient().GetByteArrayAsync(url).Result.ToArray();
-
             var punch = new SVGPunch();
 
-            var svg = punch.Punch(d0, url);
+            var svg = punch.Punch(TestData, Label);
 
             var reader = new SVGReader();
 
-            var d1 = reader.Read(svg.ToString()).ToArray();
+            var data = reader.Read(svg.ToString()).ToArray();
 
-            Assert.IsNotNull(d1);
-            Assert.IsTrue(d1.Any());
+            Assert.IsNotNull(data);
+            Assert.IsTrue(data.Any());
 
-            for (int i = 0; i < d0.Length; i++)
+            for (int i = 0; i < TestData.Length; i++)
             {
-                Assert.AreEqual(d0[i], d1[i]);
+                Assert.AreEqual(TestData[i], data[i]);
             }
         }
     }
