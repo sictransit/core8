@@ -31,6 +31,8 @@ namespace Core8.Tests
             {
                 floppy.TransferDataRegister(0);
 
+                floppy.Tick();
+
                 if (i != 63)
                 {
                     Assert.IsTrue(floppy.SkipTransferRequest());
@@ -114,6 +116,8 @@ namespace Core8.Tests
         private void LoadCommand(IFloppyDrive floppy, int command)
         {
             floppy.LoadCommandRegister(command);
+
+            floppy.Tick();
 
             Assert.IsTrue(floppy.SkipTransferRequest());
         }

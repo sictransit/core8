@@ -91,6 +91,8 @@ namespace Core8
 
         private bool initializingFlag;
 
+        private bool expectDataFlag;
+
         public bool InterruptRequested => interruptsEnabled && doneFlag;
 
         private int sectorAddress;
@@ -113,8 +115,31 @@ namespace Core8
                 InitializeDone();
             }
             else
-            { 
-
+            {
+                switch (Function)
+                {
+                    case ControllerFunction.FillBuffer:                        
+                        if (!expectDataFlag)
+                        {
+                            transferRequestFlag = true;
+                            expectDataFlag = true;
+                        }
+                        else
+                        {
+                            var more = FillBuffer();
+                            expectDataFlag = transferRequestFlag = more;
+                            doneFlag = !more;
+                        }
+                        break;
+                    case ControllerFunction.ReadSector:
+                    case ControllerFunction.WriteSector:
+                    case ControllerFunction.WriteDeletedDataSector:
+                    case ControllerFunction.EmptyBuffer:
+                        break;
+                    default:
+                        runningFlag = false;
+                        break;
+                }
             }
         }
 
@@ -338,7 +363,7 @@ namespace Core8
             }
         }
 
-        private void FillBuffer()
+        private bool FillBuffer()
         {
             if (EightBitMode)
             {
@@ -347,14 +372,7 @@ namespace Core8
 
             buffer[bufferPointer++] = interfaceRegister;
 
-            if (bufferPointer >= buffer.Length)
-            {
-                controllerDoneAt = DateTime.UtcNow;
-            }
-            else
-            {
-                transferRequestFlag = true;
-            }
+            return bufferPointer < buffer.Length;
         }
 
         private void EmptyBuffer()
