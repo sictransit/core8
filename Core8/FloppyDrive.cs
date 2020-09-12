@@ -48,20 +48,6 @@ namespace Core8
             ReadErrorRegister = READ_ERROR_REGISTER
         }
 
-        public enum ControllerState
-        {
-            Idle,
-            Initialize,
-            FillBuffer,
-            EmptyBuffer,
-            WriteSector,
-            WriteTrack,
-            ReadSector,
-            ReadTrack,
-            ReadStatus,
-            Done,
-        }
-
         [Flags]
         private enum ErrorStatusFlags
         {
@@ -87,11 +73,7 @@ namespace Core8
 
         private readonly byte[][] disk = new byte[2][];
 
-        private ControllerState state;
-
-        private ControllerFunction FunctionSelect => (ControllerFunction)Function;
-
-        private int Function => (commandRegister & 0b_000_000_001_110);
+        private ControllerFunction Function => (ControllerFunction)(commandRegister & 0b_000_000_001_110);
 
         private bool EightBitMode => (commandRegister & 0b_000_001_000_000) != 0;
 
@@ -107,6 +89,8 @@ namespace Core8
 
         private bool transferRequestFlag;
 
+        private bool initializingFlag;
+
         public bool InterruptRequested => interruptsEnabled && doneFlag;
 
         private int sectorAddress;
@@ -115,44 +99,23 @@ namespace Core8
 
         private int BlockAddress => trackAddress * MAX_SECTOR * BLOCK_SIZE + (sectorAddress - 1) * BLOCK_SIZE;
 
-
-
         public void Tick()
         {
-            if (state != ControllerState.Idle && DateTime.UtcNow > controllerDoneAt)
+            if (!runningFlag || DateTime.UtcNow < controllerDoneAt)
             {
-                ControllerAction();
-
-                //controllerDoneAt = DateTime.MaxValue; // Ugly! Check state instead?
-            }
-        }
-
-        private void SetDone(int errorStatus = 0, int errorCode = 0, bool readErrorRegister = false)
-        {
-            if (errorCode != 0)
-            {
-                errorFlag = true;
+                return;
             }
 
-            errorCodeRegister = errorCode;
+            runningFlag = false;
 
-            errorStatusRegister |= errorStatus;
-
-            errorStatusRegister |= (disk[UnitSelect] != null ? ERROR_STATUS_DEVICE_READY : 0);
-
-            if (!MaintenanceMode)
+            if (initializingFlag)
             {
-                interfaceRegister = readErrorRegister ? errorCodeRegister : errorStatusRegister;
+                InitializeDone();
             }
+            else
+            { 
 
-            SetState(ControllerState.Idle);
-
-            doneFlag = true;
-        }
-
-        private void SetState(ControllerState state)
-        {
-            this.state = state;
+            }
         }
 
         public void Load(byte unit, byte[] disk)
@@ -233,42 +196,11 @@ namespace Core8
             Array.Copy(block, 0, disk[UnitSelect], BlockAddress, block.Length);
         }
 
-        private void ControllerAction()
-        {
-            switch (state)
-            {
-                case ControllerState.FillBuffer:
-                case ControllerState.EmptyBuffer:
-                    SetDone();
-                    break;
-                case ControllerState.Initialize:
-                    ReadBlock();
-                    SetDone(ERROR_STATUS_INIT_DONE | ERROR_STATUS_DEVICE_READY, 0);
-                    break;
-                case ControllerState.Done:
-                    SetDone();
-                    break;
-                case ControllerState.ReadTrack:
-                    ReadBlock();
-                    SetDone();
-                    break;
-                case ControllerState.WriteTrack:
-                    WriteBlock();
-                    SetDone();
-                    break;
-                case ControllerState.ReadStatus:
-                    SetDone();
-                    break;
-                default:
-                    throw new InvalidOperationException(state.ToString());
-            }
-        }
-
         public int TransferDataRegister(int accumulator)
         {
             if (!MaintenanceMode && !doneFlag)
             {
-                switch (FunctionSelect)
+                switch (Function)
                 {
                     case ControllerFunction.FillBuffer:
                     case ControllerFunction.ReadSector:
@@ -345,14 +277,15 @@ namespace Core8
 
         public void Initialize()
         {
-            if (disk[UnitSelect] == null)
-            {
-                return;
-            }
+            initializingFlag = runningFlag = true;
 
-            SetState(ControllerState.Initialize);
+            controllerDoneAt = DateTime.UtcNow + InitializeTime;
+        }
 
-            doneFlag = false;
+        private void InitializeDone()
+        {
+            initializingFlag = false;
+            doneFlag = true;
             errorFlag = false;
 
             interruptsEnabled = false;
@@ -363,8 +296,6 @@ namespace Core8
 
             trackAddress = 1;
             sectorAddress = 1;
-
-            controllerDoneAt = DateTime.UtcNow + InitializeTime;
         }
 
         private void SetSector()
@@ -382,19 +313,19 @@ namespace Core8
             {
                 Log.Warning($"Bad track address: {trackAddress}");
 
-                SetDone(0, ERROR_CODE_BAD_TRACK);
+                //SetDone(0, ERROR_CODE_BAD_TRACK);
             }
             else if (sectorAddress < MIN_SECTOR || sectorAddress > MAX_SECTOR)
             {
                 Log.Warning($"Bad sector address: {sectorAddress}");
 
-                SetDone(0, ERROR_CODE_BAD_SECTOR);
+                //SetDone(0, ERROR_CODE_BAD_SECTOR);
             }
             else if (disk[UnitSelect] == null)
             {
                 Log.Warning($"No disk in drive: {UnitSelect}");
 
-                SetDone(0, ERROR_CODE_NO_DISK_IN_DRIVE);
+                //SetDone(0, ERROR_CODE_NO_DISK_IN_DRIVE);
             }
             else
             {
@@ -488,7 +419,7 @@ namespace Core8
 
         public override string ToString()
         {
-            return $"[RX01] {FunctionSelect} dn={(doneFlag ? 1 : 0)} tr={(transferRequestFlag ? 1 : 0)} er={(errorFlag ? 1 : 0)} md={(EightBitMode ? 8 : 12)} mnt={(MaintenanceMode ? 1 : 0)} unt={UnitSelect} trk={trackAddress} sc={sectorAddress} bp={bufferPointer}";
+            return $"[RX01] {Function} dn={(doneFlag ? 1 : 0)} tr={(transferRequestFlag ? 1 : 0)} er={(errorFlag ? 1 : 0)} md={(EightBitMode ? 8 : 12)} mnt={(MaintenanceMode ? 1 : 0)} unt={UnitSelect} trk={trackAddress} sc={sectorAddress} bp={bufferPointer}";
         }
     }
 }

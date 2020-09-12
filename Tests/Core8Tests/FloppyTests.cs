@@ -11,6 +11,16 @@ namespace Core8.Tests
     public class FloppyTests
     {
         [TestMethod]
+        public void TestInitialize()
+        {
+            var floppy = new FloppyDrive();
+
+            floppy.Initialize();
+
+            AssertDoneFlagSet(floppy);
+        }
+
+        [TestMethod]
         public void TestFillBuffer()
         {
             var floppy = new FloppyDrive();
