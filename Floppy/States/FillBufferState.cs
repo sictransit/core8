@@ -2,7 +2,8 @@
 
 namespace Core8.Floppy.States
 {
-    internal class FillBufferState : StateBase
+    internal class FillBufferState : BusyState
     { 
+        
     }
 }

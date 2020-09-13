@@ -13,18 +13,13 @@ namespace Core8.Floppy.States.Abstract
 
         protected RX01 RX01 { get; private set; }
 
-        public virtual bool Done => false;
+        public virtual void Tick() { }
 
-        public virtual bool TransferRequest => false;
+        public virtual int LCD(int acc) => acc;
+        public virtual int XDR(int acc) => acc;
 
-        public virtual int LCD(int acc)
-        {
-            return acc;
-        }
+        public virtual bool SND() => false;
 
-        public virtual int XDR(int acc)
-        {
-            return acc;
-        }
+        public virtual bool STR() => false;
     }
 }
