@@ -29,10 +29,12 @@ namespace Core8.Floppy.States
                 case Constants.ControllerFunction.FillBuffer:
                     newState = new FillBufferState(this.Controller);
                     break;
+                case Constants.ControllerFunction.NoOperation:
+                    newState = new NoOperationState(this.Controller); 
+                    break;
                 case Constants.ControllerFunction.EmptyBuffer:
                 case Constants.ControllerFunction.WriteSector:
-                case Constants.ControllerFunction.ReadSector:
-                case Constants.ControllerFunction.NoOperation:
+                case Constants.ControllerFunction.ReadSector:                
                 case Constants.ControllerFunction.ReadStatus:
                 case Constants.ControllerFunction.WriteDeletedDataSector:
                 case Constants.ControllerFunction.ReadErrorRegister:
