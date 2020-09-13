@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Core8.Floppy.Interfaces;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -6,12 +7,14 @@ namespace Core8.Floppy.States.Abstract
 {
     internal abstract class StateBase
     {
-        public StateBase()
+        public StateBase(IController controller)
         {
-            //RX01 = rx01 ?? throw new ArgumentNullException(nameof(rx01));
+            Controller = controller;            
         }
 
         protected RX01 RX01 { get; private set; }
+
+        protected IController Controller { get; }
 
         public virtual void Tick() { }
 

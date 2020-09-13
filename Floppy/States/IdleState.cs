@@ -1,4 +1,6 @@
-﻿using Core8.Floppy.States.Abstract;
+﻿using Core8.Floppy.Interfaces;
+using Core8.Floppy.States.Abstract;
+using System;
 
 namespace Core8.Floppy.States
 {
@@ -6,7 +8,7 @@ namespace Core8.Floppy.States
     {
         private bool done;
 
-        public IdleState()
+        public IdleState(IController controller) : base(controller)
         {
             done = true;
         }        
@@ -18,7 +20,30 @@ namespace Core8.Floppy.States
                 return base.LCD(acc);
             }
 
-            return base.LCD(acc);
+            Controller.SetCommandRegister(acc);
+
+            StateBase newState;
+
+            switch (Controller.CurrentFunction)
+            {
+                case Constants.ControllerFunction.FillBuffer:
+                    newState = new FillBufferState(this.Controller);
+                    break;
+                case Constants.ControllerFunction.EmptyBuffer:
+                case Constants.ControllerFunction.WriteSector:
+                case Constants.ControllerFunction.ReadSector:
+                case Constants.ControllerFunction.NoOperation:
+                case Constants.ControllerFunction.ReadStatus:
+                case Constants.ControllerFunction.WriteDeletedDataSector:
+                case Constants.ControllerFunction.ReadErrorRegister:
+                    throw new NotImplementedException(Controller.CurrentFunction.ToString());
+                default:
+                    throw new NotImplementedException(Controller.CurrentFunction.ToString());
+            }
+
+            Controller.SetState(newState);
+
+            return 0;
         }
 
         public override bool SND()

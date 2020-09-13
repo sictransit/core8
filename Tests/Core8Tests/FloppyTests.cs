@@ -25,7 +25,7 @@ namespace Core8.Tests
         {
             var floppy = new FloppyDrive();
 
-            LoadCommand(floppy, FloppyDrive.FILL_BUFFER);
+            LoadCommand(floppy, Floppy.Constants.Functions.FILL_BUFFER);
 
             for (int i = 0; i < 64; i++)
             {
@@ -51,7 +51,7 @@ namespace Core8.Tests
         {
             var floppy = new FloppyDrive();
 
-            LoadCommand(floppy, FloppyDrive.EMPTY_BUFFER);
+            LoadCommand(floppy, Floppy.Constants.Functions.EMPTY_BUFFER);
 
             for (int i = 0; i < 64; i++)
             {
@@ -124,7 +124,7 @@ namespace Core8.Tests
 
         private void FillBuffer(FloppyDrive floppy, int[] data)
         {
-            LoadCommand(floppy, FloppyDrive.FILL_BUFFER);
+            LoadCommand(floppy, Floppy.Constants.Functions.FILL_BUFFER);
 
             for (int i = 0; i < data.Length; i++)
             {
@@ -136,7 +136,7 @@ namespace Core8.Tests
 
         private int[] EmptyBuffer(FloppyDrive floppy)
         {
-            LoadCommand(floppy, FloppyDrive.EMPTY_BUFFER);
+            LoadCommand(floppy, Floppy.Constants.Functions.EMPTY_BUFFER);
 
             var data = new int[64];
 
@@ -173,7 +173,7 @@ namespace Core8.Tests
             var track = 47;
             var sector = 11;
 
-            LoadCommand(floppy, FloppyDrive.WRITE_SECTOR);
+            LoadCommand(floppy, Floppy.Constants.Functions.WRITE_SECTOR);
 
             floppy.TransferDataRegister(sector);
 
@@ -186,7 +186,7 @@ namespace Core8.Tests
 
             AssertDoneFlagSet(floppy);
 
-            LoadCommand(floppy, FloppyDrive.READ_SECTOR);
+            LoadCommand(floppy, Floppy.Constants.Functions.READ_SECTOR);
 
             floppy.TransferDataRegister(sector);
 

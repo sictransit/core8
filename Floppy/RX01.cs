@@ -1,6 +1,8 @@
-﻿namespace Core8.Floppy
+﻿using Core8.Floppy.Interfaces;
+
+namespace Core8.Floppy
 {
-    public class RX01
+    internal class RX01 : IDrive
     {
     }
 }

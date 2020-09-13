@@ -1,4 +1,8 @@
-﻿using Core8.Model.Interfaces;
+﻿using Core8.Floppy;
+using Core8.Floppy.Constants;
+using Core8.Floppy.Interfaces;
+using Core8.Floppy.States;
+using Core8.Model.Interfaces;
 using Serilog;
 using System;
 
@@ -6,19 +10,26 @@ namespace Core8
 {
     public class FloppyDrive : IFloppyDrive
     {
+        private readonly IDrive drive;
+        private readonly IController controller;
+
+        public FloppyDrive()
+        {
+            controller = new RX8E();
+            drive = new RX01();
+
+            controller.SetState(new IdleState(controller));
+        }
+
+        public void SetCommandRegister(int acc)
+        {
+            commandRegister = acc & 0b_000_011_111_110;
+        }
+
         public static TimeSpan InitializeTime => TimeSpan.FromMilliseconds(1800);
         public static TimeSpan ReadStatusTime => TimeSpan.FromMilliseconds(250);
         public static TimeSpan CommandTime => TimeSpan.FromMilliseconds(100);
         public static TimeSpan AverageAccessTime => TimeSpan.FromMilliseconds(488);
-
-        public const int FILL_BUFFER = 0 << 1;
-        public const int EMPTY_BUFFER = 1 << 1;
-        public const int WRITE_SECTOR = 2 << 1;
-        public const int READ_SECTOR = 3 << 1;
-        public const int NO_OPERATION = 4 << 1;
-        public const int READ_STATUS = 5 << 1;
-        public const int WRITE_DELETED_DATA_SECTOR = 6 << 1;
-        public const int READ_ERROR_REGISTER = 7 << 1;
 
         private const int MIN_TRACK = 0;
         private const int MAX_TRACK = 76;
@@ -36,17 +47,6 @@ namespace Core8
         private const int TRACK_MASK = 0b_000_001_111_111;
         private const int SECTOR_MASK = 0b_000_000_011_111;
 
-        private enum ControllerFunction
-        {
-            FillBuffer = FILL_BUFFER,
-            EmptyBuffer = EMPTY_BUFFER,
-            WriteSector = WRITE_SECTOR,
-            ReadSector = READ_SECTOR,
-            NoOperation = NO_OPERATION,
-            ReadStatus = READ_STATUS,
-            WriteDeletedDataSector = WRITE_DELETED_DATA_SECTOR,
-            ReadErrorRegister = READ_ERROR_REGISTER
-        }
 
         [Flags]
         private enum ErrorStatusFlags
