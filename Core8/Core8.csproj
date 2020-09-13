@@ -19,6 +19,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Floppy\Floppy.csproj" />
     <ProjectReference Include="..\Model\Model.csproj" />
   </ItemGroup>
 

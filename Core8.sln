@@ -15,7 +15,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TerminalServer", "TerminalS
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Model", "Model\Model.csproj", "{712814F0-3517-4946-8676-C8829E3B5BE5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Punch", "Punch\Punch.csproj", "{FE30BA13-FD05-4C3E-9628-72A99F82516E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Punch", "Punch\Punch.csproj", "{FE30BA13-FD05-4C3E-9628-72A99F82516E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Floppy", "Floppy\Floppy.csproj", "{0867C6D4-60A3-41D5-A4FD-E93869C10BC4}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -47,6 +49,10 @@ Global
 		{FE30BA13-FD05-4C3E-9628-72A99F82516E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FE30BA13-FD05-4C3E-9628-72A99F82516E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FE30BA13-FD05-4C3E-9628-72A99F82516E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0867C6D4-60A3-41D5-A4FD-E93869C10BC4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0867C6D4-60A3-41D5-A4FD-E93869C10BC4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0867C6D4-60A3-41D5-A4FD-E93869C10BC4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0867C6D4-60A3-41D5-A4FD-E93869C10BC4}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
