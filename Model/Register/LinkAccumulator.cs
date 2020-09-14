@@ -11,10 +11,7 @@ namespace Core8.Model.Register
 
         protected override string ShortName => "LAC";
 
-        public void ByteSwap()
-        {
-            Content = (Content & Masks.LINK) | ((Content & Masks.AC_HIGH) >> 6) | ((Content & Masks.AC_LOW) << 6);
-        }
+        public void ByteSwap() => Content = (Content & Masks.LINK) | ((Content & Masks.AC_HIGH) >> 6) | ((Content & Masks.AC_LOW) << 6);
 
         public void RAR(bool twice = false)
         {
@@ -36,54 +33,24 @@ namespace Core8.Model.Register
             }
         }
 
-        public void ComplementLink()
-        {
-            Content ^= Masks.LINK;
-        }
+        public void ComplementLink() => Content ^= Masks.LINK;
 
-        public void ComplementAccumulator()
-        {
-            Content ^= Masks.AC;
-        }
+        public void ComplementAccumulator() => Content ^= Masks.AC;
 
-        public void ClearAccumulator()
-        {
-            Content &= Masks.LINK;
-        }
+        public void ClearAccumulator() => Content &= Masks.LINK;
 
-        public void ClearLink()
-        {
-            Content &= Masks.AC;
-        }
+        public void ClearLink() => Content &= Masks.AC;
 
-        public void SetAccumulator(int value)
-        {
-            Content = (Content & Masks.LINK) | (value & Masks.AC);
-        }
+        public void SetAccumulator(int value) => Content = (Content & Masks.LINK) | (value & Masks.AC);
 
-        public void ORAccumulator(int value)
-        {
-            Content |= value & Masks.AC;
-        }
+        public void ORAccumulator(int value) => Content |= value & Masks.AC;
 
-        public void ANDAccumulator(int value)
-        {
-            Content &= Masks.LINK | (Content & value);
-        }
+        public void ANDAccumulator(int value) => Content &= Masks.LINK | (Content & value);
 
-        public void SetLink(int value)
-        {
-            Content = ((value & Masks.FLAG) << 12) | (Content & Masks.AC);
-        }
+        public void SetLink(int value) => Content = ((value & Masks.FLAG) << 12) | (Content & Masks.AC);
 
-        public void AddWithCarry(int value)
-        {
-            Content = (Content + value) & Masks.AC_LINK;
-        }
+        public void AddWithCarry(int value) => Content = (Content + value) & Masks.AC_LINK;
 
-        public override string ToString()
-        {
-            return string.Format($"{base.ToString()} {Link} {Accumulator.ToOctalString()}");
-        }
+        public override string ToString() => $"[{ShortName}] {Link} {Accumulator.ToOctalString()}";
     }
 }

@@ -1,5 +1,4 @@
-﻿using Core8.Model.Extensions;
-using Core8.Model.Register.Abstract;
+﻿using Core8.Model.Register.Abstract;
 
 namespace Core8.Model.Register
 {
@@ -7,14 +6,8 @@ namespace Core8.Model.Register
     {
         protected override string ShortName => "UB";
 
-        public void SetUB(int value)
-        {
-            Content = value & Masks.UB;
-        }
+        protected override int Digits => 1;
 
-        public override string ToString()
-        {
-            return string.Format($"{base.ToString()} {Content.ToOctalString(1)}");
-        }
+        public void SetUB(int value) => Content = value & Masks.UB;
     }
 }

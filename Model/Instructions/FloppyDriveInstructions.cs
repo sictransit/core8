@@ -88,7 +88,7 @@ namespace Core8.Model.Instructions
         {
             if (FloppyDrive.SkipTransferRequest())
             {
-                CPU.Registers.PC.Increment();
+                Registers.PC.Increment();
             }
         }
 

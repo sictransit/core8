@@ -7,14 +7,11 @@ namespace Core8.Model.Register
     {
         protected override string ShortName => "DF";
 
-        public void SetDF(int value)
-        {
-            Content = value & Masks.DF;
-        }
+        public void SetDF(int value) => Content = value & Masks.DF;
 
         public override string ToString()
         {
-            return string.Format($"{base.ToString()} {Content.ToOctalString(1)}");
+            return $"[{ShortName}] {Content.ToOctalString(1)}";
         }
     }
 }

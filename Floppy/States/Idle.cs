@@ -14,11 +14,11 @@ namespace Core8.Floppy.States
 
         protected override int LoadCommand(int acc)
         {
-            Controller.SetCommandRegister(acc);
+            Controller.CR.SetCR(acc);
 
             StateBase newState;
 
-            switch (Controller.CurrentFunction)
+            switch (Controller.CR.CurrentFunction)
             {
                 case ControllerFunction.FillBuffer:
                     newState = new FillBuffer(this.Controller);
@@ -38,9 +38,9 @@ namespace Core8.Floppy.States
                 case ControllerFunction.ReadStatus:
                 case ControllerFunction.WriteDeletedDataSector:
                 case ControllerFunction.ReadErrorRegister:
-                    throw new NotImplementedException(Controller.CurrentFunction.ToString());
+                    throw new NotImplementedException(Controller.CR.CurrentFunction.ToString());
                 default:
-                    throw new NotImplementedException(Controller.CurrentFunction.ToString());
+                    throw new NotImplementedException(Controller.CR.CurrentFunction.ToString());
             }
 
             Controller.SetState(newState);

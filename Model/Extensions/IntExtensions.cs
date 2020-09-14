@@ -4,8 +4,6 @@ namespace Core8.Model.Extensions
 {
     public static class IntExtensions
     {
-
-
         public static int ToDecimal(this int oct)
         {
             return Convert.ToInt32(oct.ToString(), 8);
@@ -21,6 +19,4 @@ namespace Core8.Model.Extensions
             return dec.ToOctal().ToString($"d{digits}");
         }
     }
-
-
 }

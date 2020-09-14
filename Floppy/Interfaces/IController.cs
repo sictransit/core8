@@ -1,4 +1,4 @@
-﻿using Core8.Floppy.Declarations;
+﻿using Core8.Floppy.Registers;
 using Core8.Floppy.States.Abstract;
 
 namespace Core8.Floppy.Interfaces
@@ -7,15 +7,17 @@ namespace Core8.Floppy.Interfaces
     {
         void SetState(StateBase state);
 
-        void SetCommandRegister(int acc);
-
         void Load(byte unit, byte[] disk = null);
 
         void WriteSector();
 
         void ReadSector();
 
-        ControllerFunction CurrentFunction { get; }
+        CommandRegister CR { get; }
+
+        InterfaceRegister IR { get; }
+
+        ErrorStatusRegister ES { get; }
 
         void SetInterrupts(int acc);
 
@@ -30,8 +32,6 @@ namespace Core8.Floppy.Interfaces
         bool STR();
 
         bool SER();
-
-        bool MaintenanceMode { get; }
 
         int[] Buffer { get; }
 

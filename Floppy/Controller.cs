@@ -1,5 +1,6 @@
 ﻿using Core8.Floppy.Declarations;
 using Core8.Floppy.Interfaces;
+using Core8.Floppy.Registers;
 using Core8.Floppy.States.Abstract;
 using Serilog;
 using System;
@@ -10,7 +11,17 @@ namespace Core8.Floppy
     {
         private StateBase state;
 
-        private int commandRegister;
+        public CommandRegister CR { get; }
+
+        public InterfaceRegister IR { get; }
+
+        public TrackAddressRegister TA { get; }
+
+        public SectorAddressRegister SA { get; }
+
+        public ErrorCodeRegister EC { get; }
+
+        public ErrorStatusRegister ES { get; }
 
         private bool interruptsEnabled;
 
@@ -19,16 +30,16 @@ namespace Core8.Floppy
         public Controller()
         {
             Buffer = new int[64];
+
+            CR = new CommandRegister();
+            IR = new InterfaceRegister();
+            TA = new TrackAddressRegister();
+            SA = new SectorAddressRegister();
+            ES = new ErrorStatusRegister();
+            EC = new ErrorCodeRegister();
         }
 
         public int[] Buffer { get; }
-
-        public ControllerFunction CurrentFunction => (ControllerFunction)(commandRegister & 0b_000_000_001_110);
-
-        public void SetCommandRegister(int acc)
-        {
-            commandRegister = acc & 0b_000_011_111_110;
-        }
 
         public void SetState(StateBase state)
         {
@@ -37,9 +48,6 @@ namespace Core8.Floppy
             this.state = state;
         }
 
-        public bool MaintenanceMode => (commandRegister & 0b_000_010_000_000) != 0;
-
-        private bool EightBitMode => (commandRegister & 0b_000_001_000_000) != 0;
 
         public int LCD(int acc) => state.LCD(acc);
 
@@ -53,14 +61,16 @@ namespace Core8.Floppy
 
         public void ReadSector()
         {
-            if (EightBitMode)
+            if (CR.EightBitMode)
             {
                 throw new NotImplementedException();
             }
 
-            if (disk[UnitSelect] == null)
+            var disk = disks[CR.UnitSelect];
+
+            if (disk == null)
             {
-                Log.Warning($"No disk in drive: {UnitSelect}");
+                Log.Warning($"No disk in drive: {CR.UnitSelect}");
 
                 errorFlag = true;
 
@@ -75,11 +85,11 @@ namespace Core8.Floppy
                 {
                     if (bufferPointer % 2 == 0)
                     {
-                        Buffer[bufferPointer++] = (disk[UnitSelect][BlockAddress + i] << 4) | ((disk[UnitSelect][BlockAddress + i + 1] >> 4) & 0b_001_111);
+                        Buffer[bufferPointer++] = (disk[BlockAddress + i] << 4) | ((disk[BlockAddress + i + 1] >> 4) & 0b_001_111);
                     }
                     else
                     {
-                        Buffer[bufferPointer++] = ((disk[UnitSelect][BlockAddress + i] & 0b_001_111) << 8) | (disk[UnitSelect][BlockAddress + i + 1]);
+                        Buffer[bufferPointer++] = ((disk[BlockAddress + i] & 0b_001_111) << 8) | (disk[BlockAddress + i + 1]);
                     }
                 }
             }
@@ -87,22 +97,23 @@ namespace Core8.Floppy
 
         public void WriteSector()
         {
-            if (EightBitMode)
+            if (CR.EightBitMode)
             {
                 throw new NotImplementedException();
             }
 
-            if (disk[UnitSelect] == null)
+            var disk = disks[CR.UnitSelect];
+
+            if (disk == null)
             {
-                Log.Warning($"No disk in drive: {UnitSelect}");
+                Log.Warning($"No disk in drive: {CR.UnitSelect}");
 
                 errorFlag = true;
 
                 return;
             }
 
-
-            var block = new byte[BlockSize];
+            var block = new byte[DiskLayout.BlockSize];
 
             var position = 0;
 
@@ -119,49 +130,39 @@ namespace Core8.Floppy
                 }
             }
 
-            Array.Copy(block, 0, disk[UnitSelect], BlockAddress, block.Length);
+            Array.Copy(block, 0, disk, BlockAddress, block.Length);
         }
 
-        private int trackAddress = 0;
-        private int sectorAddress = 0;
 
-        private const int FirstTrack = 0;
-        private const int LastTrack = 76;
-        private const int FirstSector = 1;
-        private const int LastSector = 26;
-        private const int BlockSize = 128;
+        private readonly byte[][] disks = new byte[2][];
 
-        private readonly byte[][] disk = new byte[2][];
-
-        private int BlockAddress => trackAddress * LastSector * BlockSize + (sectorAddress - 1) * BlockSize;
-
-        private int UnitSelect => (commandRegister & 0b_000_000_010_000) >> 4;
+        private int BlockAddress => TA.Content * DiskLayout.LastSector * DiskLayout.BlockSize + (SA.Content - 1) * DiskLayout.BlockSize;
 
         public bool IRQ => interruptsEnabled && state.IRQ;
 
         public void SetSectorAddress(int sector)
         {
-            sectorAddress = sector & 0b_000_001_111_111;
+            SA.SetSAR(sector);
 
-            if (sectorAddress < FirstSector || sectorAddress > LastSector)
+            if (SA.Content < DiskLayout.FirstSector || SA.Content > DiskLayout.LastSector)
             {
-                Log.Warning($"Bad sector address: {sectorAddress}");
+                Log.Warning($"Bad sector address: {SA.Content}");
             }
         }
 
         public void SetTrackAddress(int track)
         {
-            trackAddress = track & 0b_000_011_111_111;
+            TA.SetTAR(track);
 
-            if (trackAddress < FirstTrack || trackAddress > LastTrack)
+            if (TA.Content < DiskLayout.FirstTrack || TA.Content > DiskLayout.LastTrack)
             {
-                Log.Warning($"Bad track address: {trackAddress}");
+                Log.Warning($"Bad track address: {TA.Content}");
             }
         }
 
         public void Load(byte unit, byte[] disk = null)
         {
-            this.disk[unit] = disk ?? new byte[(LastTrack + 1) * LastSector * BlockSize];
+            this.disks[unit] = disk ?? new byte[(DiskLayout.LastTrack + 1) * DiskLayout.LastSector * DiskLayout.BlockSize];
         }
 
         public void SetInterrupts(int acc)
@@ -173,7 +174,7 @@ namespace Core8.Floppy
         {
             if (errorFlag)
             {
-                errorFlag = MaintenanceMode;
+                errorFlag = CR.MaintenanceMode;
 
                 return true;
             }

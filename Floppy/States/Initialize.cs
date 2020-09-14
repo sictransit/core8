@@ -16,10 +16,14 @@ namespace Core8.Floppy.States
 
         protected override bool EndState()
         {
-            Controller.SetCommandRegister(0);
+            Controller.CR.Clear();
+            Controller.ES.Clear();
+            Controller.IR.Clear();
 
             Controller.SetTrackAddress(1);
             Controller.SetTrackAddress(1);
+
+            Controller.ES.SetInitializationDone(true);
 
             Controller.ReadSector();
 

@@ -17,7 +17,7 @@ namespace Core8.Floppy.States.Abstract
         {
             Controller = controller ?? throw new ArgumentNullException(nameof(controller));
 
-            error = transferRequest = done = controller.MaintenanceMode;
+            error = transferRequest = done = controller.CR.MaintenanceMode;
 
             stateChangeDue = DateTime.UtcNow + StateLatency;
         }
@@ -68,7 +68,7 @@ namespace Core8.Floppy.States.Abstract
         {
             if (done)
             {
-                done = Controller.MaintenanceMode;
+                done = Controller.CR.MaintenanceMode;
 
                 return true;
             }
@@ -81,7 +81,7 @@ namespace Core8.Floppy.States.Abstract
         {
             if (transferRequest)
             {
-                transferRequest = Controller.MaintenanceMode;
+                transferRequest = Controller.CR.MaintenanceMode;
 
                 return true;
             }
