@@ -238,9 +238,7 @@ namespace Core8
 
         public void Initialize()
         {
-            initializingFlag = runningFlag = true;
-
-            controllerDoneAt = DateTime.UtcNow + Latencies.InitializeTime;
+            controller.SetState(new Initialize(controller, drive));
         }
 
         private void InitializeDone()

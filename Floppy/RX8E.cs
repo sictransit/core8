@@ -1,6 +1,7 @@
 ﻿using Core8.Floppy.Declarations;
 using Core8.Floppy.Interfaces;
 using Core8.Floppy.States.Abstract;
+using Serilog;
 
 namespace Core8.Floppy
 {
@@ -20,6 +21,8 @@ namespace Core8.Floppy
 
         public void SetState(StateBase state)
         {
+            Log.Information($"Controller state transition: {this.state} -> {state}");
+
             this.state = state;
         }
 

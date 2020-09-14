@@ -16,6 +16,8 @@ namespace Core8.Tests
         {
             var floppy = new FloppyDrive();
 
+            AssertDoneFlagSet(floppy);
+
             floppy.Initialize();
 
             AssertDoneFlagSet(floppy);
@@ -109,7 +111,7 @@ namespace Core8.Tests
 
             do
             {
-                Thread.Sleep(100);
+                Thread.Sleep(20);
 
                 floppy.Tick();
 
