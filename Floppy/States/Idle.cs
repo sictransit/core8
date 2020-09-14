@@ -12,7 +12,7 @@ namespace Core8.Floppy.States
             done = true;
         }
 
-        protected override int LoadCommand(int acc)
+        protected override void LoadCommand(int acc)
         {
             Controller.CR.SetCR(acc);
 
@@ -37,15 +37,12 @@ namespace Core8.Floppy.States
                     break;
                 case ControllerFunction.ReadStatus:
                 case ControllerFunction.WriteDeletedDataSector:
-                case ControllerFunction.ReadErrorRegister:
-                    throw new NotImplementedException(Controller.CR.CurrentFunction.ToString());
+                case ControllerFunction.ReadErrorRegister:                    
                 default:
                     throw new NotImplementedException(Controller.CR.CurrentFunction.ToString());
             }
 
-            Controller.SetState(newState);
-
-            return 0;
+            Controller.SetState(newState);            
         }
     }
 }

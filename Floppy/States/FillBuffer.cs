@@ -15,11 +15,13 @@ namespace Core8.Floppy.States
 
         protected override int TransferData(int acc)
         {
-            Controller.Buffer[bufferPointer++] = acc & Masks.AC;
+            Controller.IR.SetIR(acc);
+
+            Controller.Buffer[bufferPointer++] = Controller.IR.Content;
 
             transferRequest = bufferPointer < Controller.Buffer.Length;
 
-            return acc;
+            return Controller.IR.Content;
         }
 
         protected override bool EndState() => bufferPointer == Controller.Buffer.Length;

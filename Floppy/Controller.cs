@@ -15,9 +15,9 @@ namespace Core8.Floppy
 
         public InterfaceRegister IR { get; }
 
-        public TrackAddressRegister TA { get; }
+        private TrackAddressRegister TA { get; }
 
-        public SectorAddressRegister SA { get; }
+        private SectorAddressRegister SA { get; }
 
         public ErrorCodeRegister EC { get; }
 
@@ -48,8 +48,7 @@ namespace Core8.Floppy
             this.state = state;
         }
 
-
-        public int LCD(int acc) => state.LCD(acc);
+        public void LCD(int acc) => state.LCD(acc);
 
         public int XDR(int acc) => state.XDR(acc);
 
@@ -73,6 +72,8 @@ namespace Core8.Floppy
                 Log.Warning($"No disk in drive: {CR.UnitSelect}");
 
                 errorFlag = true;
+
+                ES.SetWriteProtect(true);
 
                 return;
             }
@@ -109,6 +110,8 @@ namespace Core8.Floppy
                 Log.Warning($"No disk in drive: {CR.UnitSelect}");
 
                 errorFlag = true;
+
+                ES.SetWriteProtect(true);
 
                 return;
             }

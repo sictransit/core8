@@ -40,16 +40,19 @@ namespace Core8.Floppy.States.Abstract
             }
         }
 
-        protected virtual int LoadCommand(int acc) => acc;
+        protected virtual void LoadCommand(int acc) 
+        {
+            Log.Warning("LCD in state when not expected");
+        }
 
-        public int LCD(int acc)
+        public void LCD(int acc)
         {
             if (done)
             {
                 Log.Warning("LCD with DF set!");
             }
 
-            return LoadCommand(acc);
+            LoadCommand(acc);
         }
 
         protected virtual int TransferData(int acc) => acc;

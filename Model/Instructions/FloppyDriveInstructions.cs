@@ -99,7 +99,9 @@ namespace Core8.Model.Instructions
 
         private void LCD()
         {
-            Registers.AC.SetAccumulator(FloppyDrive.LoadCommandRegister(Registers.AC.Accumulator));
+            FloppyDrive.LoadCommandRegister(Registers.AC.Accumulator);
+
+            Registers.AC.ClearAccumulator();
         }
 
         private void SEL()

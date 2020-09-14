@@ -18,14 +18,18 @@ namespace Core8.Floppy.States
         {
             Controller.CR.Clear();
             Controller.ES.Clear();
+            Controller.EC.Clear();
             Controller.IR.Clear();
 
             Controller.SetTrackAddress(1);
             Controller.SetTrackAddress(1);
 
             Controller.ES.SetInitializationDone(true);
+            Controller.ES.SetWriteProtect(true);
 
-            Controller.ReadSector();
+            //Controller.ReadSector();
+
+            Controller.SetInterrupts(0);
 
             return true;
         }

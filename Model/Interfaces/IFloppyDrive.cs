@@ -6,7 +6,7 @@
 
         void Load(byte unit, byte[] disk = null);
 
-        int LoadCommandRegister(int accumulator);
+        void LoadCommandRegister(int accumulator);
 
         int TransferDataRegister(int accumulator);
 

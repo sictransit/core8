@@ -13,7 +13,7 @@ namespace Core8
         {
             controller = new Controller();
 
-            controller.SetState(new Idle(controller));
+            controller.SetState(new Initialize(controller));
         }
 
         public bool InterruptRequested => controller.IRQ;
@@ -22,7 +22,7 @@ namespace Core8
 
         public void Load(byte unit, byte[] disk = null) => controller.Load(unit, disk);
 
-        public int LoadCommandRegister(int accumulator) => controller.LCD(accumulator);
+        public void LoadCommandRegister(int accumulator) => controller.LCD(accumulator);
 
         public int TransferDataRegister(int accumulator) => controller.XDR(accumulator);
 

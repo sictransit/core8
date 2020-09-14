@@ -19,11 +19,13 @@ namespace Core8.Floppy.Interfaces
 
         ErrorStatusRegister ES { get; }
 
+        ErrorCodeRegister EC { get; }
+
         void SetInterrupts(int acc);
 
         bool IRQ { get; }
 
-        int LCD(int acc);
+        void LCD(int acc);
 
         int XDR(int acc);
 

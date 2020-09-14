@@ -20,20 +20,22 @@ namespace Core8.Floppy.States
 
         protected override int TransferData(int acc)
         {
+            Controller.IR.SetIR(acc);
+
             if (!sectorTransferred)
             {
-                Controller.SetSectorAddress(acc);
+                Controller.SetSectorAddress(Controller.IR.Content);
 
                 sectorTransferred = transferRequest = true;
             }
             else if (!trackTransferred)
             {
-                Controller.SetTrackAddress(acc);
+                Controller.SetTrackAddress(Controller.IR.Content);
 
                 trackTransferred = true;
             }
 
-            return acc;
+            return Controller.IR.Content;
         }
 
         protected override bool EndState()
