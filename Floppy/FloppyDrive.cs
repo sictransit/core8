@@ -157,37 +157,8 @@ namespace Core8
             Array.Copy(block, 0, disk[UnitSelect], BlockAddress, block.Length);
         }
 
-        public int TransferDataRegister(int accumulator)
-        {
-            if (!MaintenanceMode && !doneFlag)
-            {
-                switch (Function)
-                {
-                    case ControllerFunction.FillBuffer:
-                    case ControllerFunction.ReadSector:
-                    case ControllerFunction.WriteSector:
-                    case ControllerFunction.WriteDeletedDataSector:
-                        interfaceRegister = accumulator;
-                        runningFlag = true;
-                        break;
-                    case ControllerFunction.EmptyBuffer:
-                        runningFlag = true;
-                        break;
-                    default:
-                        runningFlag = false;
-                        break;
-                }
-            }
+        public int TransferDataRegister(int accumulator) => controller.XDR(accumulator);
 
-            if (EightBitMode)
-            {
-                throw new NotImplementedException();
-            }
-            else
-            {
-                return interfaceRegister;
-            }
-        }
 
         //public int TransferDataRegister(int accumulator)
         //{

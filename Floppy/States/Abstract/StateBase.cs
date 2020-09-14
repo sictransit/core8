@@ -26,13 +26,22 @@ namespace Core8.Floppy.States.Abstract
 
         protected IDrive Drive { get; }
 
-        protected bool IsStateChangeDue => DateTime.UtcNow > stateChangeDue;
+        protected virtual TimeSpan StateLatency => Latencies.CommandTime; 
+        
+        private bool IsStateChangeDue => DateTime.UtcNow > stateChangeDue;
 
-        public virtual void Tick() { }
+        protected virtual bool EndState() => false;
 
-        protected virtual TimeSpan StateLatency => Latencies.CommandTime;
+        public virtual void Tick() 
+        {
+            if (IsStateChangeDue && EndState())
+            {
+                Controller.SetState(new Idle(Controller, Drive));
+            }
+        }        
 
         public virtual int LCD(int acc) => acc;
+
         public virtual int XDR(int acc) => acc;
 
         public virtual bool SND()

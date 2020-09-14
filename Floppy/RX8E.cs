@@ -11,8 +11,14 @@ namespace Core8.Floppy
 
         private int commandRegister;
 
-        public ControllerFunction CurrentFunction => (ControllerFunction)(commandRegister & 0b_000_000_001_110);
+        public RX8E()
+        {
+            Buffer = new int[64];
+        }
 
+        public int[] Buffer { get; }        
+
+        public ControllerFunction CurrentFunction => (ControllerFunction)(commandRegister & 0b_000_000_001_110);
 
         public void SetCommandRegister(int acc)
         {
@@ -29,6 +35,8 @@ namespace Core8.Floppy
         public bool MaintenanceMode => (commandRegister & 0b_000_010_000_000) != 0;
 
         public int LCD(int acc) => state.LCD(acc);
+
+        public int XDR(int acc) => state.XDR(acc);
 
         public bool SND() => state.SND();
 

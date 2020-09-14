@@ -13,11 +13,15 @@ namespace Core8.Floppy.Interfaces
 
         int LCD(int acc);
 
+        int XDR(int acc);
+
         bool SND();
 
         bool STR();
 
         bool MaintenanceMode { get; }
+
+        int[] Buffer { get; }
 
         void Tick();
     }

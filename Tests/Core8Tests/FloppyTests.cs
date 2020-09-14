@@ -41,7 +41,11 @@ namespace Core8.Tests
         {
             var floppy = new FloppyDrive();
 
-            LoadCommand(floppy, Functions.FILL_BUFFER);
+            AssertDoneFlagSet(floppy);
+
+            floppy.LoadCommandRegister(Functions.FILL_BUFFER);
+
+            Assert.IsTrue(floppy.SkipTransferRequest());
 
             for (int i = 0; i < 64; i++)
             {
@@ -49,7 +53,7 @@ namespace Core8.Tests
 
                 floppy.Tick();
 
-                if (i != 63)
+                if (i < 63)
                 {
                     Assert.IsTrue(floppy.SkipTransferRequest());
                 }

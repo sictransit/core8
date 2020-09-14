@@ -14,14 +14,11 @@ namespace Core8.Floppy.States
 
         protected override TimeSpan StateLatency => Latencies.InitializeTime;
 
-        public override void Tick()
+        protected override bool EndState()
         {
-            if (IsStateChangeDue)
-            {
-                // TODO: init magic!
+            // TODO: init magic!
 
-                Controller.SetState(new Idle(this.Controller, this.Drive));
-            }
+            return true;
         }
     }
 }

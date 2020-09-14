@@ -10,12 +10,6 @@ namespace Core8.Floppy.States
 
         }
 
-        public override void Tick()
-        {
-            if (IsStateChangeDue)
-            {
-                Controller.SetState(new Idle(this.Controller, this.Drive));
-            }
-        }
+        protected override bool EndState() => true;
     }
 }
