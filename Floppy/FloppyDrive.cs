@@ -10,15 +10,13 @@ namespace Core8
 {
     public class FloppyDrive : IFloppyDrive
     {
-        private readonly IDrive drive;
         private readonly IController controller;
 
         public FloppyDrive()
         {
-            controller = new Controller();
-            drive = new Drive();
+            controller = new Controller(new Drive());
 
-            controller.SetState(new Idle(controller, drive));
+            controller.SetState(new Idle(controller));
         }
 
         public void SetCommandRegister(int acc)
@@ -209,7 +207,7 @@ namespace Core8
 
         public void Initialize()
         {
-            controller.SetState(new Initialize(controller, drive));
+            controller.SetState(new Initialize(controller));
         }
 
         private void InitializeDone()

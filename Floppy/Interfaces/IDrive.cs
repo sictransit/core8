@@ -2,5 +2,8 @@
 {
     internal interface IDrive
     {
+        void SetSectorAddress(int sector);
+
+        void SetTrackAddress(int track);
     }
 }

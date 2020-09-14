@@ -5,9 +5,15 @@ namespace Core8.Floppy.Interfaces
 {
     internal interface IController
     {
+        IDrive Drive { get; }
+
         void SetState(StateBase state);
 
         void SetCommandRegister(int acc);
+
+        void WriteSector();
+
+        void ReadSector();
 
         ControllerFunction CurrentFunction { get; }
 

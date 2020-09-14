@@ -11,12 +11,14 @@ namespace Core8.Floppy
 
         private int commandRegister;
 
-        public Controller()
+        public Controller(IDrive drive)
         {
             Buffer = new int[64];
+
+            Drive = drive ?? throw new System.ArgumentNullException(nameof(drive));
         }
 
-        public int[] Buffer { get; }        
+        public int[] Buffer { get; }
 
         public ControllerFunction CurrentFunction => (ControllerFunction)(commandRegister & 0b_000_000_001_110);
 
@@ -34,6 +36,8 @@ namespace Core8.Floppy
 
         public bool MaintenanceMode => (commandRegister & 0b_000_010_000_000) != 0;
 
+        public IDrive Drive { get; }
+
         public int LCD(int acc) => state.LCD(acc);
 
         public int XDR(int acc) => state.XDR(acc);
@@ -43,5 +47,15 @@ namespace Core8.Floppy
         public bool STR() => state.STR();
 
         public void Tick() => state.Tick();
+
+        public void ReadSector()
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public void WriteSector()
+        {
+            throw new System.NotImplementedException();
+        }
     }
 }

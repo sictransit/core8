@@ -5,7 +5,7 @@ namespace Core8.Floppy.States
 {
     internal class NoOperation : StateBase
     {
-        public NoOperation(IController controller, IDrive drive) : base(controller, drive)
+        public NoOperation(IController controller) : base(controller)
         {
 
         }

@@ -7,18 +7,13 @@ namespace Core8.Floppy.States
 {
     internal class Idle : StateBase
     {
-        public Idle(IController controller, IDrive drive) : base(controller, drive)
+        public Idle(IController controller) : base(controller)
         {
             done = true;
         }
 
-        public override int LCD(int acc)
+        protected override int LoadCommand(int acc)
         {
-            if (done)
-            {
-                return base.LCD(acc);
-            }
-
             Controller.SetCommandRegister(acc);
 
             StateBase newState;
@@ -26,16 +21,20 @@ namespace Core8.Floppy.States
             switch (Controller.CurrentFunction)
             {
                 case ControllerFunction.FillBuffer:
-                    newState = new FillBuffer(this.Controller, this.Drive);
+                    newState = new FillBuffer(this.Controller);
                     break;
                 case ControllerFunction.NoOperation:
-                    newState = new NoOperation(this.Controller, this.Drive);
+                    newState = new NoOperation(this.Controller);
                     break;
                 case ControllerFunction.EmptyBuffer:
-                    newState = new EmptyBuffer(this.Controller, this.Drive);
+                    newState = new EmptyBuffer(this.Controller);
                     break;
                 case ControllerFunction.WriteSector:
+                    newState = new ReadWriteSector(this.Controller, false);
+                    break;
                 case ControllerFunction.ReadSector:
+                    newState = new ReadWriteSector(this.Controller);
+                    break;
                 case ControllerFunction.ReadStatus:
                 case ControllerFunction.WriteDeletedDataSector:
                 case ControllerFunction.ReadErrorRegister:

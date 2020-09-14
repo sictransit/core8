@@ -1,5 +1,6 @@
 ﻿using Core8.Floppy.Declarations;
 using Core8.Floppy.Interfaces;
+using Serilog;
 using System;
 
 namespace Core8.Floppy.States.Abstract
@@ -12,10 +13,9 @@ namespace Core8.Floppy.States.Abstract
 
         private readonly DateTime stateChangeDue;
 
-        public StateBase(IController controller, IDrive drive)
+        public StateBase(IController controller)
         {
             Controller = controller ?? throw new ArgumentNullException(nameof(controller));
-            Drive = drive ?? throw new ArgumentNullException(nameof(drive));
 
             error = transferRequest = done = controller.MaintenanceMode;
 
@@ -24,25 +24,43 @@ namespace Core8.Floppy.States.Abstract
 
         protected IController Controller { get; }
 
-        protected IDrive Drive { get; }
+        protected virtual TimeSpan StateLatency => Latencies.CommandTime;
 
-        protected virtual TimeSpan StateLatency => Latencies.CommandTime; 
-        
         private bool IsStateChangeDue => DateTime.UtcNow > stateChangeDue;
 
         protected virtual bool EndState() => false;
 
-        public virtual void Tick() 
+        public virtual void Tick()
         {
             if (IsStateChangeDue && EndState())
             {
-                Controller.SetState(new Idle(Controller, Drive));
+                Controller.SetState(new Idle(Controller));
             }
-        }        
+        }
 
-        public virtual int LCD(int acc) => acc;
+        protected virtual int LoadCommand(int acc) => acc;
 
-        public virtual int XDR(int acc) => acc;
+        public int LCD(int acc)
+        {
+            if (done)
+            {
+                Log.Warning("LCD with DF set!");
+            }
+
+            return LoadCommand(acc);
+        }
+
+        protected virtual int TransferData(int acc) => acc;
+
+        public int XDR(int acc)
+        {
+            if (transferRequest)
+            {
+                Log.Warning("XDR with TR high");
+            }
+
+            return TransferData(acc);
+        }
 
         public virtual bool SND()
         {
@@ -81,9 +99,6 @@ namespace Core8.Floppy.States.Abstract
             return false;
         }
 
-        public override string ToString()
-        {
-            return $"{this.GetType().Name} dne={done} tr={transferRequest} err={error}";
-        }
+        public override string ToString() => $"{GetType().Name} dne={done} tr={transferRequest} err={error}";
     }
 }

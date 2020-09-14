@@ -1,7 +1,5 @@
 ﻿using Core8.Floppy.Interfaces;
 using Core8.Floppy.States.Abstract;
-using Serilog;
-using System;
 
 namespace Core8.Floppy.States
 {
@@ -9,25 +7,16 @@ namespace Core8.Floppy.States
     {
         private int bufferPointer;
 
-        public EmptyBuffer(IController controller, IDrive drive) : base(controller, drive)
+        public EmptyBuffer(IController controller) : base(controller)
         {
             transferRequest = true;
         }
 
-        public override int XDR(int acc)
+        protected override int TransferData(int acc)
         {
-            var data = acc;
+            var data = Controller.Buffer[bufferPointer++];
 
-            if (transferRequest)
-            {
-                Log.Error("XDR with TR high");
-            }
-            else
-            {
-                data = Controller.Buffer[bufferPointer++];
-
-                transferRequest = bufferPointer < Controller.Buffer.Length;
-            }
+            transferRequest = bufferPointer < Controller.Buffer.Length;
 
             return data;
         }
