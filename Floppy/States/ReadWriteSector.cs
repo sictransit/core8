@@ -22,13 +22,13 @@ namespace Core8.Floppy.States
         {
             if (!sectorTransferred)
             {
-                Controller.Drive.SetSectorAddress(acc);
+                Controller.SetSectorAddress(acc);
 
                 sectorTransferred = transferRequest = true;
             }
             else if (!trackTransferred)
             {
-                Controller.Drive.SetTrackAddress(acc);
+                Controller.SetTrackAddress(acc);
 
                 trackTransferred = true;
             }

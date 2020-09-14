@@ -22,6 +22,8 @@ namespace Core8.Floppy.States.Abstract
             stateChangeDue = DateTime.UtcNow + StateLatency;
         }
 
+        public bool IRQ => done;
+
         protected IController Controller { get; }
 
         protected virtual TimeSpan StateLatency => Latencies.CommandTime;
@@ -80,18 +82,6 @@ namespace Core8.Floppy.States.Abstract
             if (transferRequest)
             {
                 transferRequest = Controller.MaintenanceMode;
-
-                return true;
-            }
-
-            return false;
-        }
-
-        public virtual bool SER()
-        {
-            if (error)
-            {
-                error = Controller.MaintenanceMode;
 
                 return true;
             }

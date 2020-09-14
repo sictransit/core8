@@ -174,11 +174,10 @@ namespace Core8.Tests
         {
             var floppy = new FloppyDrive();
 
-            var disk = new byte[77 * 26 * 128];
+            AssertDoneFlagSet(floppy);
 
-            Assert.IsFalse(floppy.SkipNotDone());
+            floppy.Load(0);
 
-            floppy.Load(0, disk);
             floppy.Initialize();
 
             AssertDoneFlagSet(floppy);
@@ -190,29 +189,27 @@ namespace Core8.Tests
             var track = 47;
             var sector = 11;
 
-            LoadCommand(floppy, Functions.WRITE_SECTOR);
+            floppy.LoadCommandRegister(Functions.WRITE_SECTOR);
+
+            Assert.IsTrue(floppy.SkipTransferRequest());
 
             floppy.TransferDataRegister(sector);
 
             Assert.IsTrue(floppy.SkipTransferRequest());
 
             floppy.TransferDataRegister(track);
-
-            Assert.IsFalse(floppy.SkipTransferRequest());
-            Assert.IsFalse(floppy.SkipNotDone());
 
             AssertDoneFlagSet(floppy);
 
-            LoadCommand(floppy, Functions.READ_SECTOR);
+            floppy.LoadCommandRegister(Functions.READ_SECTOR);
+
+            Assert.IsTrue(floppy.SkipTransferRequest());
 
             floppy.TransferDataRegister(sector);
 
             Assert.IsTrue(floppy.SkipTransferRequest());
 
             floppy.TransferDataRegister(track);
-
-            Assert.IsFalse(floppy.SkipTransferRequest());
-            Assert.IsFalse(floppy.SkipNotDone());
 
             AssertDoneFlagSet(floppy);
 

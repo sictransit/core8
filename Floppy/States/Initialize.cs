@@ -16,7 +16,12 @@ namespace Core8.Floppy.States
 
         protected override bool EndState()
         {
-            // TODO: init magic!
+            Controller.SetCommandRegister(0);
+
+            Controller.SetTrackAddress(1);
+            Controller.SetTrackAddress(1);
+
+            Controller.ReadSector();
 
             return true;
         }

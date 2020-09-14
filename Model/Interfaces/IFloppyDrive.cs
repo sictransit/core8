@@ -4,7 +4,7 @@
     {
         void Tick();
 
-        void Load(byte unit, byte[] disk);
+        void Load(byte unit, byte[] disk = null);
 
         int LoadCommandRegister(int accumulator);
 
