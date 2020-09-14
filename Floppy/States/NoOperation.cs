@@ -3,16 +3,16 @@ using Core8.Floppy.States.Abstract;
 
 namespace Core8.Floppy.States
 {
-    internal class NoOperationState : StateBase
+    internal class NoOperation : StateBase
     {
-        public NoOperationState(IController controller) : base(controller)
+        public NoOperation(IController controller) : base(controller)
         {
 
         }
 
         public override void Tick()
         {
-            Controller.SetState(new IdleState(this.Controller));
+            Controller.SetState(new Idle(this.Controller));
         }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using Core8.Floppy;
 using Core8.Floppy.Constants;
+using Core8.Floppy.Declarations;
 using Core8.Floppy.Interfaces;
 using Core8.Floppy.States;
 using Core8.Model.Interfaces;
@@ -18,18 +19,13 @@ namespace Core8
             controller = new RX8E();
             drive = new RX01();
 
-            controller.SetState(new IdleState(controller));
+            controller.SetState(new Idle(controller));
         }
 
         public void SetCommandRegister(int acc)
         {
             commandRegister = acc & 0b_000_011_111_110;
         }
-
-        public static TimeSpan InitializeTime => TimeSpan.FromMilliseconds(1800);
-        public static TimeSpan ReadStatusTime => TimeSpan.FromMilliseconds(250);
-        public static TimeSpan CommandTime => TimeSpan.FromMilliseconds(100);
-        public static TimeSpan AverageAccessTime => TimeSpan.FromMilliseconds(488);
 
         private const int MIN_TRACK = 0;
         private const int MAX_TRACK = 76;
@@ -118,7 +114,7 @@ namespace Core8
             {
                 switch (Function)
                 {
-                    case ControllerFunction.FillBuffer:                        
+                    case ControllerFunction.FillBuffer:
                         if (!expectDataFlag)
                         {
                             transferRequestFlag = true;
@@ -304,7 +300,7 @@ namespace Core8
         {
             initializingFlag = runningFlag = true;
 
-            controllerDoneAt = DateTime.UtcNow + InitializeTime;
+            controllerDoneAt = DateTime.UtcNow + Latencies.InitializeTime;
         }
 
         private void InitializeDone()
@@ -359,7 +355,7 @@ namespace Core8
                     Log.Warning("@ track #0");
                 }
 
-                controllerDoneAt = DateTime.UtcNow + AverageAccessTime;
+                controllerDoneAt = DateTime.UtcNow + Latencies.AverageAccessTime;
             }
         }
 
@@ -394,17 +390,7 @@ namespace Core8
             }
         }
 
-        public bool SkipTransferRequest()
-        {
-            if (transferRequestFlag)
-            {
-                transferRequestFlag = MaintenanceMode;
-
-                return true;
-            }
-
-            return false;
-        }
+        public bool SkipTransferRequest() => controller.STR();
 
         public bool SkipError()
         {
@@ -418,17 +404,7 @@ namespace Core8
             return false;
         }
 
-        public bool SkipNotDone()
-        {
-            if (doneFlag)
-            {
-                doneFlag = false;
-
-                return true;
-            }
-
-            return false;
-        }
+        public bool SkipNotDone() => controller.SND();
 
         public void SetInterrupts(int accumulator)
         {

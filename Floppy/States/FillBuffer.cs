@@ -3,9 +3,9 @@ using Core8.Floppy.States.Abstract;
 
 namespace Core8.Floppy.States
 {
-    internal class FillBufferState : BusyState
+    internal class FillBuffer : BusyState
     {
-        public FillBufferState(IController controller) : base(controller)
+        public FillBuffer(IController controller) : base(controller)
         {
 
         }

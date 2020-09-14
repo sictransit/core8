@@ -1,7 +1,4 @@
 ﻿using Core8.Floppy.Interfaces;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Core8.Floppy.States.Abstract
 {
@@ -9,7 +6,7 @@ namespace Core8.Floppy.States.Abstract
     {
         public StateBase(IController controller)
         {
-            Controller = controller;            
+            Controller = controller;
         }
 
         protected RX01 RX01 { get; private set; }

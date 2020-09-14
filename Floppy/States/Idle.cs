@@ -4,14 +4,14 @@ using System;
 
 namespace Core8.Floppy.States
 {
-    internal class IdleState : StateBase
+    internal class Idle : StateBase
     {
         private bool done;
 
-        public IdleState(IController controller) : base(controller)
+        public Idle(IController controller) : base(controller)
         {
             done = true;
-        }        
+        }
 
         public override int LCD(int acc)
         {
@@ -27,14 +27,14 @@ namespace Core8.Floppy.States
             switch (Controller.CurrentFunction)
             {
                 case Constants.ControllerFunction.FillBuffer:
-                    newState = new FillBufferState(this.Controller);
+                    newState = new FillBuffer(this.Controller);
                     break;
                 case Constants.ControllerFunction.NoOperation:
-                    newState = new NoOperationState(this.Controller); 
+                    newState = new NoOperation(this.Controller);
                     break;
                 case Constants.ControllerFunction.EmptyBuffer:
                 case Constants.ControllerFunction.WriteSector:
-                case Constants.ControllerFunction.ReadSector:                
+                case Constants.ControllerFunction.ReadSector:
                 case Constants.ControllerFunction.ReadStatus:
                 case Constants.ControllerFunction.WriteDeletedDataSector:
                 case Constants.ControllerFunction.ReadErrorRegister:

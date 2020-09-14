@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using Core8.Floppy.Declarations;
 
 namespace Core8.Floppy.Constants
 {

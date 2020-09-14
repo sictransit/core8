@@ -1,7 +1,6 @@
 ﻿using Core8.Floppy.Constants;
 using Core8.Floppy.Interfaces;
 using Core8.Floppy.States.Abstract;
-using System;
 
 namespace Core8.Floppy
 {
@@ -11,7 +10,7 @@ namespace Core8.Floppy
 
         private int commandRegister;
 
-        public ControllerFunction CurrentFunction => (ControllerFunction)(commandRegister & 0b_000_000_001_110);        
+        public ControllerFunction CurrentFunction => (ControllerFunction)(commandRegister & 0b_000_000_001_110);
 
         public void SetCommandRegister(int acc)
         {
@@ -22,5 +21,11 @@ namespace Core8.Floppy
         {
             this.state = state;
         }
+
+        public bool SND() => state.SND();
+
+        public bool STR() => state.STR();
+
+        public void Tick() => state.Tick();
     }
 }

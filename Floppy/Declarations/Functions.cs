@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Core8.Floppy.Constants
+﻿namespace Core8.Floppy.Declarations
 {
     public class Functions
     {
