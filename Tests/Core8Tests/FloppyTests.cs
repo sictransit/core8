@@ -22,6 +22,19 @@ namespace Core8.Tests
         }
 
         [TestMethod]
+        public void TestNOP()
+        {
+            var floppy = new FloppyDrive();
+
+            AssertDoneFlagSet(floppy);
+
+            floppy.LoadCommandRegister(Functions.NO_OPERATION);
+
+            AssertDoneFlagSet(floppy);
+        }
+
+
+        [TestMethod]
         public void TestFillBuffer()
         {
             var floppy = new FloppyDrive();

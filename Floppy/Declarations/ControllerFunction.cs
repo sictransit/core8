@@ -1,6 +1,4 @@
-﻿using Core8.Floppy.Declarations;
-
-namespace Core8.Floppy.Constants
+﻿namespace Core8.Floppy.Declarations
 {
     internal enum ControllerFunction
     {

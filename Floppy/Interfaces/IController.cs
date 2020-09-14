@@ -1,4 +1,4 @@
-﻿using Core8.Floppy.Constants;
+﻿using Core8.Floppy.Declarations;
 using Core8.Floppy.States.Abstract;
 
 namespace Core8.Floppy.Interfaces
@@ -11,9 +11,13 @@ namespace Core8.Floppy.Interfaces
 
         ControllerFunction CurrentFunction { get; }
 
+        int LCD(int acc);
+
         bool SND();
 
         bool STR();
+
+        bool MaintenanceMode { get; }
 
         void Tick();
     }

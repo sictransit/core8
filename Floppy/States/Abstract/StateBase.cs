@@ -4,22 +4,63 @@ namespace Core8.Floppy.States.Abstract
 {
     internal abstract class StateBase
     {
-        public StateBase(IController controller)
+        protected bool done;
+        protected bool transferRequest;
+        protected bool error;
+
+        public StateBase(IController controller, IDrive drive)
         {
-            Controller = controller;
+            Controller = controller ?? throw new System.ArgumentNullException(nameof(controller));
+            Drive = drive ?? throw new System.ArgumentNullException(nameof(drive));
+
+            error = transferRequest = done = controller.MaintenanceMode;
         }
 
-        protected RX01 RX01 { get; private set; }
-
         protected IController Controller { get; }
+
+        protected IDrive Drive { get; }
 
         public virtual void Tick() { }
 
         public virtual int LCD(int acc) => acc;
         public virtual int XDR(int acc) => acc;
 
-        public virtual bool SND() => false;
+        public virtual bool SND()
+        {
+            if (done)
+            {
+                done = Controller.MaintenanceMode;
 
-        public virtual bool STR() => false;
+                return true;
+            }
+
+            return false;
+        }
+
+
+        public virtual bool STR()
+        {
+            if (transferRequest)
+            {
+                transferRequest = Controller.MaintenanceMode;
+
+                return true;
+            }
+
+            return false;
+        }
+
+
+        public virtual bool SER()
+        {
+            if (error)
+            {
+                error = Controller.MaintenanceMode;
+
+                return true;
+            }
+
+            return false;
+        }
     }
 }

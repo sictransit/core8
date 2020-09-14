@@ -1,4 +1,5 @@
-﻿using Core8.Floppy.Interfaces;
+﻿using Core8.Floppy.Declarations;
+using Core8.Floppy.Interfaces;
 using Core8.Floppy.States.Abstract;
 using System;
 
@@ -6,9 +7,7 @@ namespace Core8.Floppy.States
 {
     internal class Idle : StateBase
     {
-        private bool done;
-
-        public Idle(IController controller) : base(controller)
+        public Idle(IController controller, IDrive drive) : base(controller, drive)
         {
             done = true;
         }
@@ -26,18 +25,18 @@ namespace Core8.Floppy.States
 
             switch (Controller.CurrentFunction)
             {
-                case Constants.ControllerFunction.FillBuffer:
-                    newState = new FillBuffer(this.Controller);
+                case ControllerFunction.FillBuffer:
+                    newState = new FillBuffer(this.Controller, this.Drive);
                     break;
-                case Constants.ControllerFunction.NoOperation:
-                    newState = new NoOperation(this.Controller);
+                case ControllerFunction.NoOperation:
+                    newState = new NoOperation(this.Controller, this.Drive);
                     break;
-                case Constants.ControllerFunction.EmptyBuffer:
-                case Constants.ControllerFunction.WriteSector:
-                case Constants.ControllerFunction.ReadSector:
-                case Constants.ControllerFunction.ReadStatus:
-                case Constants.ControllerFunction.WriteDeletedDataSector:
-                case Constants.ControllerFunction.ReadErrorRegister:
+                case ControllerFunction.EmptyBuffer:
+                case ControllerFunction.WriteSector:
+                case ControllerFunction.ReadSector:
+                case ControllerFunction.ReadStatus:
+                case ControllerFunction.WriteDeletedDataSector:
+                case ControllerFunction.ReadErrorRegister:
                     throw new NotImplementedException(Controller.CurrentFunction.ToString());
                 default:
                     throw new NotImplementedException(Controller.CurrentFunction.ToString());
@@ -46,18 +45,6 @@ namespace Core8.Floppy.States
             Controller.SetState(newState);
 
             return 0;
-        }
-
-        public override bool SND()
-        {
-            if (done)
-            {
-                done = false;
-
-                return true;
-            }
-
-            return false;
         }
     }
 }

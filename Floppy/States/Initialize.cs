@@ -5,7 +5,7 @@ namespace Core8.Floppy.States
 {
     internal class Initialize : StateBase
     {
-        public Initialize(IController controller) : base(controller)
+        public Initialize(IController controller, IDrive drive) : base(controller, drive)
         {
 
         }

@@ -5,14 +5,14 @@ namespace Core8.Floppy.States
 {
     internal class NoOperation : StateBase
     {
-        public NoOperation(IController controller) : base(controller)
+        public NoOperation(IController controller, IDrive drive) : base(controller, drive)
         {
 
         }
 
         public override void Tick()
         {
-            Controller.SetState(new Idle(this.Controller));
+            Controller.SetState(new Idle(this.Controller, this.Drive));
         }
     }
 }

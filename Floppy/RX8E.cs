@@ -1,4 +1,4 @@
-﻿using Core8.Floppy.Constants;
+﻿using Core8.Floppy.Declarations;
 using Core8.Floppy.Interfaces;
 using Core8.Floppy.States.Abstract;
 
@@ -12,6 +12,7 @@ namespace Core8.Floppy
 
         public ControllerFunction CurrentFunction => (ControllerFunction)(commandRegister & 0b_000_000_001_110);
 
+
         public void SetCommandRegister(int acc)
         {
             commandRegister = acc & 0b_000_011_111_110;
@@ -21,6 +22,10 @@ namespace Core8.Floppy
         {
             this.state = state;
         }
+
+        public bool MaintenanceMode => (commandRegister & 0b_000_010_000_000) != 0;
+
+        public int LCD(int acc) => state.LCD(acc);
 
         public bool SND() => state.SND();
 

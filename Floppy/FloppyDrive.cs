@@ -1,5 +1,4 @@
 ﻿using Core8.Floppy;
-using Core8.Floppy.Constants;
 using Core8.Floppy.Declarations;
 using Core8.Floppy.Interfaces;
 using Core8.Floppy.States;
@@ -19,7 +18,7 @@ namespace Core8
             controller = new RX8E();
             drive = new RX01();
 
-            controller.SetState(new Idle(controller));
+            controller.SetState(new Idle(controller, drive));
         }
 
         public void SetCommandRegister(int acc)
@@ -97,73 +96,14 @@ namespace Core8
 
         private int BlockAddress => trackAddress * MAX_SECTOR * BLOCK_SIZE + (sectorAddress - 1) * BLOCK_SIZE;
 
-        public void Tick()
-        {
-            if (!runningFlag || DateTime.UtcNow < controllerDoneAt)
-            {
-                return;
-            }
-
-            runningFlag = false;
-
-            if (initializingFlag)
-            {
-                InitializeDone();
-            }
-            else
-            {
-                switch (Function)
-                {
-                    case ControllerFunction.FillBuffer:
-                        if (!expectDataFlag)
-                        {
-                            transferRequestFlag = true;
-                            expectDataFlag = true;
-                        }
-                        else
-                        {
-                            var more = FillBuffer();
-                            expectDataFlag = transferRequestFlag = more;
-                            doneFlag = !more;
-                        }
-                        break;
-                    case ControllerFunction.ReadSector:
-                    case ControllerFunction.WriteSector:
-                    case ControllerFunction.WriteDeletedDataSector:
-                    case ControllerFunction.EmptyBuffer:
-                        break;
-                    default:
-                        runningFlag = false;
-                        break;
-                }
-            }
-        }
+        public void Tick() => controller.Tick();
 
         public void Load(byte unit, byte[] disk)
         {
             this.disk[unit] = disk;
         }
 
-        public int LoadCommandRegister(int accumulator)
-        {
-            interfaceRegister = accumulator;
-
-            if (!doneFlag && !runningFlag)
-            {
-                commandRegister = accumulator & 0b_000_011_111_110;
-
-                runningFlag = true; // We have accepted a command!
-            }
-
-            if (MaintenanceMode)
-            {
-                doneFlag = transferRequestFlag = errorFlag = true;
-
-                runningFlag = false;
-            }
-
-            return 0;
-        }
+        public int LoadCommandRegister(int accumulator) => controller.LCD(accumulator);
 
         private void ReadBlock()
         {
