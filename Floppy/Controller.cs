@@ -58,6 +58,15 @@ namespace Core8.Floppy
                 throw new NotImplementedException();
             }
 
+            if (disk[UnitSelect] == null)
+            {
+                Log.Warning($"No disk in drive: {UnitSelect}");
+
+                errorFlag = true;
+
+                return;
+            }
+
             var bufferPointer = 0;
 
             for (int i = 0; i < 96; i++)
@@ -82,6 +91,16 @@ namespace Core8.Floppy
             {
                 throw new NotImplementedException();
             }
+
+            if (disk[UnitSelect] == null)
+            {
+                Log.Warning($"No disk in drive: {UnitSelect}");
+
+                errorFlag = true;
+
+                return;
+            }
+
 
             var block = new byte[BlockSize];
 

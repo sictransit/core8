@@ -45,7 +45,7 @@ namespace Core8
 
             running.Set();
 
-            using var server = new TelnetServer(IPAddress.Any, port, publisher, subscriber)
+            using var server = new TelnetServer(IPAddress.Any, port, publisher)
             {
                 OptionReuseAddress = true
             };
@@ -65,7 +65,6 @@ namespace Core8
             server.Stop();
 
             Log.Information("Server stopped.");
-
         }
 
         public void Stop()

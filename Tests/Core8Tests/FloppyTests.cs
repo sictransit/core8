@@ -106,15 +106,6 @@ namespace Core8.Tests
             return Enumerable.Range(0, 64).Select(x => rnd.Next(0, 4096)).ToArray();
         }
 
-        private void LoadCommand(IFloppyDrive floppy, int command)
-        {
-            floppy.LoadCommandRegister(command);
-
-            floppy.Tick();
-
-            Assert.IsTrue(floppy.SkipTransferRequest());
-        }
-
         private void FillBuffer(FloppyDrive floppy, int[] data)
         {
             floppy.LoadCommandRegister(Functions.FILL_BUFFER);

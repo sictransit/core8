@@ -9,7 +9,7 @@ namespace Core8
 {
     internal class TelnetSession : TcpSession
     {
-        private PublisherSocket publisher;
+        private readonly PublisherSocket publisher;
 
         public TelnetSession(TelnetServer server, PublisherSocket publisher) : base(server)
         {

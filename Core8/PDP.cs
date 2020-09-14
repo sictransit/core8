@@ -193,7 +193,7 @@ namespace Core8
 
             printZeroSpan();
 
-            Log.Information($"Memory dump:{Environment.NewLine}{sb.ToString()}");
+            Log.Information($"Memory dump:{Environment.NewLine}{sb}");
         }
 
         public void Clear()

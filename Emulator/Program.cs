@@ -10,7 +10,7 @@ namespace Core8
 {
     public static class Program
     {
-        private static LoggingLevelSwitch loggingLevel = new LoggingLevelSwitch(Serilog.Events.LogEventLevel.Information);
+        private static readonly LoggingLevelSwitch loggingLevel = new LoggingLevelSwitch(Serilog.Events.LogEventLevel.Information);
 
         private static PDP pdp;
 

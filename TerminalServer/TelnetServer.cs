@@ -8,13 +8,11 @@ namespace Core8
 {
     internal class TelnetServer : TcpServer
     {
-        private PublisherSocket publisher;
-        private SubscriberSocket subscriber;
+        private readonly PublisherSocket publisher;        
 
-        public TelnetServer(IPAddress address, int port, PublisherSocket publisher, SubscriberSocket subscriber) : base(address, port)
+        public TelnetServer(IPAddress address, int port, PublisherSocket publisher) : base(address, port)
         {
-            this.publisher = publisher;
-            this.subscriber = subscriber;
+            this.publisher = publisher;            
         }
 
         protected override TcpSession CreateSession()

@@ -131,7 +131,7 @@ namespace Core8
             }
             catch (Exception ex)
             {
-                Log.Fatal($"Caught Exception in CPU: {ex.ToString()}");
+                Log.Fatal($"Caught Exception in CPU: {ex}");
 
                 throw;
             }
