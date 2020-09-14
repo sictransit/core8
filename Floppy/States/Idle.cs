@@ -32,6 +32,8 @@ namespace Core8.Floppy.States
                     newState = new NoOperation(this.Controller, this.Drive);
                     break;
                 case ControllerFunction.EmptyBuffer:
+                    newState = new EmptyBuffer(this.Controller, this.Drive);
+                    break;
                 case ControllerFunction.WriteSector:
                 case ControllerFunction.ReadSector:
                 case ControllerFunction.ReadStatus:

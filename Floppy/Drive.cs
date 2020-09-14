@@ -2,7 +2,7 @@
 
 namespace Core8.Floppy
 {
-    internal class RX01 : IDrive
+    internal class Drive : IDrive
     {
     }
 }

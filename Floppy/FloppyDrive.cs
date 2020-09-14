@@ -15,8 +15,8 @@ namespace Core8
 
         public FloppyDrive()
         {
-            controller = new RX8E();
-            drive = new RX01();
+            controller = new Controller();
+            drive = new Drive();
 
             controller.SetState(new Idle(controller, drive));
         }

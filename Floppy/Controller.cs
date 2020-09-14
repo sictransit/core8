@@ -5,13 +5,13 @@ using Serilog;
 
 namespace Core8.Floppy
 {
-    internal class RX8E : IController
+    internal class Controller : IController
     {
         private StateBase state;
 
         private int commandRegister;
 
-        public RX8E()
+        public Controller()
         {
             Buffer = new int[64];
         }

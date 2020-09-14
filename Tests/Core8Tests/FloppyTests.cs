@@ -43,27 +43,7 @@ namespace Core8.Tests
 
             AssertDoneFlagSet(floppy);
 
-            floppy.LoadCommandRegister(Functions.FILL_BUFFER);
-
-            Assert.IsTrue(floppy.SkipTransferRequest());
-
-            for (int i = 0; i < 64; i++)
-            {
-                floppy.TransferDataRegister(0);
-
-                floppy.Tick();
-
-                if (i < 63)
-                {
-                    Assert.IsTrue(floppy.SkipTransferRequest());
-                }
-                else
-                {
-                    Assert.IsFalse(floppy.SkipTransferRequest());
-                }
-            }
-
-            AssertDoneFlagSet(floppy);
+            FillBuffer(floppy, new int[64]);
         }
 
         [TestMethod]
@@ -71,28 +51,21 @@ namespace Core8.Tests
         {
             var floppy = new FloppyDrive();
 
-            LoadCommand(floppy, Functions.EMPTY_BUFFER);
-
-            for (int i = 0; i < 64; i++)
-            {
-                var acc = floppy.TransferDataRegister(0);
-
-                Assert.AreEqual(0, acc);
-
-                Assert.IsTrue(floppy.SkipTransferRequest());
-            }
-
-            var _ = floppy.TransferDataRegister(0);
-
-            Assert.IsFalse(floppy.SkipTransferRequest());
-
             AssertDoneFlagSet(floppy);
+
+            var buffer = EmptyBuffer(floppy);
+
+            Assert.IsNotNull(buffer);
+
+            Assert.AreEqual(64, buffer.Length);
         }
 
         [TestMethod]
         public void TestBufferIntegrity()
         {
             var floppy = new FloppyDrive();
+
+            AssertDoneFlagSet(floppy);
 
             var inData = GenerateRandomBlock();
 
@@ -144,11 +117,24 @@ namespace Core8.Tests
 
         private void FillBuffer(FloppyDrive floppy, int[] data)
         {
-            LoadCommand(floppy, Functions.FILL_BUFFER);
+            floppy.LoadCommandRegister(Functions.FILL_BUFFER);
+
+            Assert.IsTrue(floppy.SkipTransferRequest());
 
             for (int i = 0; i < data.Length; i++)
             {
                 floppy.TransferDataRegister(data[i]);
+
+                floppy.Tick();
+
+                if (i < data.Length - 1)
+                {
+                    Assert.IsTrue(floppy.SkipTransferRequest());
+                }
+                else
+                {
+                    Assert.IsFalse(floppy.SkipTransferRequest());
+                }
             }
 
             AssertDoneFlagSet(floppy);
@@ -156,20 +142,31 @@ namespace Core8.Tests
 
         private int[] EmptyBuffer(FloppyDrive floppy)
         {
-            LoadCommand(floppy, Functions.EMPTY_BUFFER);
+            var buffer = new int[64];
 
-            var data = new int[64];
+            floppy.LoadCommandRegister(Functions.EMPTY_BUFFER);
 
-            for (int i = 0; i < data.Length; i++)
+            Assert.IsTrue(floppy.SkipTransferRequest());
+
+            for (int i = 0; i < buffer.Length; i++)
             {
-                data[i] = floppy.TransferDataRegister(0);
-            }
+                buffer[i] = floppy.TransferDataRegister(0);
 
-            floppy.TransferDataRegister(0);
+                floppy.Tick();
+
+                if (i < 63)
+                {
+                    Assert.IsTrue(floppy.SkipTransferRequest());
+                }
+                else
+                {
+                    Assert.IsFalse(floppy.SkipTransferRequest());
+                }
+            }
 
             AssertDoneFlagSet(floppy);
 
-            return data;
+            return buffer;
         }
 
         [TestMethod]
