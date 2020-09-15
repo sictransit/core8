@@ -60,8 +60,8 @@ namespace Core8
 
                         if (o.Floppy)
                         {
-                            FloppyTesting();
-                            //FloppyDevelopment();
+                            //FloppyTesting();
+                            FloppyDevelopment();
                         }
 
                         if (o.TTY)
@@ -93,10 +93,8 @@ namespace Core8
 
             //loggingLevel.MinimumLevel = Serilog.Events.LogEventLevel.Debug;
 
-            pdp.LoadFloppy(0);
-            pdp.LoadFloppy(1);
-
-
+            //pdp.LoadFloppy(0);
+            //pdp.LoadFloppy(1);
 
             pdp.Continue(waitForHalt: true);
 
@@ -207,11 +205,13 @@ namespace Core8
 
             pdp.Load8(0022);
 
-            pdp.LoadFloppy(0, File.ReadAllBytes(@"C:\tmp\OS-8\os8.rx01"));
+            pdp.LoadFloppy(0, File.ReadAllBytes(@"C:\tmp\OS-8\os8.rx01"));            
 
             pdp.Clear();
 
             //pdp.DumpMemory();
+
+            //loggingLevel.MinimumLevel = Serilog.Events.LogEventLevel.Debug;
 
             pdp.Continue(waitForHalt: false);
 

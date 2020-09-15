@@ -12,24 +12,24 @@ namespace Core8.Floppy.States
             Controller.SetDone(false);
             Controller.SetTransferRequest(false);
             Controller.SetError(false);
-
             Controller.SetInterrupts(0);
+
+            Controller.CR.Clear();
+            Controller.ES.Clear();
+            Controller.EC.Clear();
+            Controller.IR.Clear();
         }
 
         protected override TimeSpan StateLatency => Latencies.InitializeTime;
 
         protected override bool FinalizeState()
         {
-            Controller.CR.Clear();
-            Controller.ES.Clear();
-            Controller.EC.Clear();
-            Controller.IR.Clear();
-
             Controller.SetSectorAddress(1);
             Controller.SetTrackAddress(1);
 
             Controller.ES.SetInitializationDone(true);
-            Controller.ES.SetWriteProtect(true);
+            Controller.ES.SetReady(true);
+            //Controller.ES.SetWriteProtect(true);
 
             Controller.ReadSector();                                    
 

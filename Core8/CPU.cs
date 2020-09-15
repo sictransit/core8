@@ -85,7 +85,7 @@ namespace Core8
                         if (i != interrupts)
                         {
                             interrupts = i;
-                            Log.Debug(interrupts);
+                            Log.Information(interrupts);
                         }
 
                         var t = Teletype.ToString();
@@ -110,10 +110,11 @@ namespace Core8
 
                     Interrupts.Interrupt();
 
-                    if (tick++ > 100)
+                    if (tick++ > 10)
                     {
                         Teletype.Tick();
                         FloppyDrive.Tick();
+
                         tick = 0;
                     }
 
@@ -165,8 +166,9 @@ namespace Core8
             return (data & Masks.OP_CODE) switch
             {
                 Masks.MCI when (data & Masks.GROUP) == 0 => instructionSet.Group1,
-                Masks.MCI when ((data & Masks.GROUP_3) == Masks.GROUP_3) && ((data & Masks.GROUP_3_EAE) == 0) => instructionSet.Group3,
-                Masks.MCI when (data & Masks.GROUP_3) == Masks.GROUP_3 => instructionSet.NOP,
+                //Masks.MCI when ((data & Masks.GROUP_3) == Masks.GROUP_3) && ((data & Masks.GROUP_3_EAE) == 0) => instructionSet.Group3,
+                Masks.MCI when ((data & Masks.GROUP_3) == Masks.GROUP_3) => instructionSet.Group3,
+                //Masks.MCI when (data & Masks.GROUP_3) == Masks.GROUP_3 => instructionSet.NOP,
                 Masks.MCI when (data & Masks.GROUP_2_AND) == Masks.GROUP_2_AND => instructionSet.Group2AND,
                 Masks.MCI => instructionSet.Group2OR,
                 Masks.IOT when (data & Masks.FLOPPY) == Masks.FLOPPY => instructionSet.FloppyDrive,

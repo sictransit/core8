@@ -26,8 +26,8 @@ namespace Core8.Floppy.States
                 ControllerFunction.FillBuffer => new FillBuffer(this.Controller),
                 ControllerFunction.NoOperation => new NoOperation(this.Controller),
                 ControllerFunction.EmptyBuffer => new EmptyBuffer(this.Controller),
-                ControllerFunction.WriteSector => new ReadWriteSector(this.Controller, false),
-                ControllerFunction.ReadSector => new ReadWriteSector(this.Controller),
+                ControllerFunction.WriteSector => new WriteSector(this.Controller),
+                ControllerFunction.ReadSector => new ReadSector(this.Controller),
                 ControllerFunction.ReadErrorRegister => new ReadErrorRegister(this.Controller),
                 _ => throw new NotImplementedException(Controller.CR.CurrentFunction.ToString()),
             };

@@ -1,5 +1,6 @@
 ﻿using Core8.Floppy.Interfaces;
 using Core8.Floppy.States.Abstract;
+using System;
 
 namespace Core8.Floppy.States
 {
@@ -11,5 +12,7 @@ namespace Core8.Floppy.States
         }
 
         protected override bool FinalizeState() => true;
+
+        protected override TimeSpan StateLatency => TimeSpan.Zero;
     }
 }

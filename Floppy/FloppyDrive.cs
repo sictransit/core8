@@ -13,6 +13,9 @@ namespace Core8
         {
             controller = new Controller();
 
+            controller.Load(0);
+            controller.Load(1);
+
             controller.SetState(new Initialize(controller));
         }
 

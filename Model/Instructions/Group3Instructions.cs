@@ -1,5 +1,6 @@
 ﻿using Core8.Model.Instructions.Abstract;
 using Core8.Model.Interfaces;
+using Serilog;
 using System;
 
 namespace Core8.Model.Instructions
@@ -44,6 +45,11 @@ namespace Core8.Model.Instructions
 
                     Registers.AC.ClearAccumulator();
                 }
+            }
+
+            if ((Data & Masks.GROUP_3_EAE) != 0)
+            {
+                Log.Warning($"{this} EAE micro-code ignored");
             }
         }
 

@@ -4,13 +4,11 @@ using Core8.Model;
 
 namespace Core8.Floppy.States
 {
-    internal class FillBuffer : StateBase
+    internal class FillBuffer : FillEmptyBufferBase
     {
-        private int bufferPointer;
-
         public FillBuffer(IController controller) : base(controller)
         {
-            Controller.SetTransferRequest(true);
+        
         }
 
         protected override int TransferData(int acc)
@@ -23,7 +21,5 @@ namespace Core8.Floppy.States
 
             return Controller.IR.Content;
         }
-
-        protected override bool FinalizeState() => bufferPointer == Controller.Buffer.Length;
     }
 }

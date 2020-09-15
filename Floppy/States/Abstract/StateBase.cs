@@ -14,7 +14,7 @@ namespace Core8.Floppy.States.Abstract
             Controller = controller ?? throw new ArgumentNullException(nameof(controller));
 
             stateChangeDue = DateTime.UtcNow + StateLatency;
-        }        
+        }
 
         protected IController Controller { get; }
 
@@ -36,7 +36,7 @@ namespace Core8.Floppy.States.Abstract
             }
         }
 
-        protected virtual void LoadCommand(int acc) 
+        protected virtual void LoadCommand(int acc)
         {
             Log.Warning("LCD in state when not expected");
         }
@@ -51,7 +51,9 @@ namespace Core8.Floppy.States.Abstract
             LoadCommand(acc);
         }
 
-        protected virtual int TransferData(int acc) => acc;
+        protected virtual int TransferData(int acc)  {
+            return acc; 
+        }
 
         public int XDR(int acc)
         {

@@ -1,5 +1,6 @@
 ﻿using Core8.Model.Instructions.Abstract;
 using Core8.Model.Interfaces;
+using Serilog;
 
 namespace Core8.Model.Instructions
 {
@@ -13,6 +14,7 @@ namespace Core8.Model.Instructions
 
         protected override void PrivilegedExecute()
         {
+            Log.Warning(this.ToString());
         }
     }
 }
