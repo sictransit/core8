@@ -35,5 +35,8 @@ namespace Core8
         public bool SkipNotDone() => controller.SND();
 
         public void SetInterrupts(int accumulator) => controller.SetInterrupts(accumulator);
+
+        public override string ToString() => controller.ToString();
+        
     }
 }

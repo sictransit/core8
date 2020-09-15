@@ -10,7 +10,7 @@ namespace Core8.Floppy.States
 
         public FillBuffer(IController controller) : base(controller)
         {
-            transferRequest = true;
+            Controller.SetTransferRequest(true);
         }
 
         protected override int TransferData(int acc)
@@ -19,11 +19,11 @@ namespace Core8.Floppy.States
 
             Controller.Buffer[bufferPointer++] = Controller.IR.Content;
 
-            transferRequest = bufferPointer < Controller.Buffer.Length;
+            Controller.SetTransferRequest(bufferPointer < Controller.Buffer.Length);
 
             return Controller.IR.Content;
         }
 
-        protected override bool EndState() => bufferPointer == Controller.Buffer.Length;
+        protected override bool FinalizeState() => bufferPointer == Controller.Buffer.Length;
     }
 }

@@ -13,7 +13,7 @@ namespace Core8.Floppy.States
 
         public ReadWriteSector(IController controller, bool readMode = true) : base(controller)
         {
-            transferRequest = true;
+            Controller.SetTransferRequest(true);
 
             this.readMode = readMode;
         }
@@ -26,7 +26,9 @@ namespace Core8.Floppy.States
             {
                 Controller.SetSectorAddress(Controller.IR.Content);
 
-                sectorTransferred = transferRequest = true;
+                sectorTransferred = true;
+
+                Controller.SetTransferRequest(true);
             }
             else if (!trackTransferred)
             {
@@ -38,7 +40,7 @@ namespace Core8.Floppy.States
             return Controller.IR.Content;
         }
 
-        protected override bool EndState()
+        protected override bool FinalizeState()
         {
             if (sectorTransferred && trackTransferred)
             {
@@ -54,7 +56,7 @@ namespace Core8.Floppy.States
                 return true;
             }
 
-            return base.EndState();
+            return base.FinalizeState();
         }
 
         protected override TimeSpan StateLatency => Latencies.AverageAccessTime;

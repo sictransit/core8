@@ -9,27 +9,29 @@ namespace Core8.Floppy.States
     {
         public Initialize(IController controller) : base(controller)
         {
+            Controller.SetDone(false);
+            Controller.SetTransferRequest(false);
+            Controller.SetError(false);
 
+            Controller.SetInterrupts(0);
         }
 
         protected override TimeSpan StateLatency => Latencies.InitializeTime;
 
-        protected override bool EndState()
+        protected override bool FinalizeState()
         {
             Controller.CR.Clear();
             Controller.ES.Clear();
             Controller.EC.Clear();
             Controller.IR.Clear();
 
-            Controller.SetTrackAddress(1);
+            Controller.SetSectorAddress(1);
             Controller.SetTrackAddress(1);
 
             Controller.ES.SetInitializationDone(true);
             Controller.ES.SetWriteProtect(true);
 
-            //Controller.ReadSector();
-
-            Controller.SetInterrupts(0);
+            Controller.ReadSector();                                    
 
             return true;
         }

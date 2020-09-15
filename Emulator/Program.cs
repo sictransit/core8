@@ -77,15 +77,15 @@ namespace Core8
 
             pdp.LoadPaperTape(new HttpClient().GetByteArrayAsync(@"https://www.dropbox.com/s/mvm1mh47jybfl5t/dirxa-d-pb?dl=1").Result);
 
-            //pdp.Load8(0021);
-            //pdp.Deposit8(0000);
-            //pdp.Deposit8(0400);
-            //pdp.Toggle8(0000);
-
-            pdp.Load8(0020);
+            pdp.Load8(0021);
             pdp.Deposit8(0000);
-            pdp.Deposit8(4000);
+            pdp.Deposit8(0400);
             pdp.Toggle8(0000);
+
+            //pdp.Load8(0020);
+            //pdp.Deposit8(0000);
+            //pdp.Deposit8(4000);
+            //pdp.Toggle8(0000);
 
             pdp.Clear();
 
@@ -93,8 +93,8 @@ namespace Core8
 
             //loggingLevel.MinimumLevel = Serilog.Events.LogEventLevel.Debug;
 
-            //pdp.LoadFloppy(0, new byte[77 * 26 * 128]);
-            //pdp.LoadFloppy(1, new byte[77 * 26 * 128]);
+            pdp.LoadFloppy(0);
+            pdp.LoadFloppy(1);
 
 
 

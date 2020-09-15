@@ -21,6 +21,18 @@ namespace Core8.Floppy.Interfaces
 
         ErrorCodeRegister EC { get; }
 
+        bool Done { get; }
+
+        bool Error { get; }
+
+        bool TransferRequest { get; }
+
+        void SetTransferRequest(bool state);
+
+        void SetDone(bool state);
+
+        void SetError(bool state);
+
         void SetInterrupts(int acc);
 
         bool IRQ { get; }

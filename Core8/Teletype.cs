@@ -97,9 +97,9 @@ namespace Core8
             OutputBuffer = c;
 
             outputPending = true;
-            outputPendingAt = DateTime.UtcNow.AddMilliseconds(100);
+            outputPendingAt = DateTime.UtcNow.AddMilliseconds(50);
 
-            Log.Information($"Paper: {c.ToPrintableAscii()}");
+            Log.Debug($"Paper: {c.ToPrintableAscii()}");
         }
 
         public void MountPaperTape(byte[] chars)

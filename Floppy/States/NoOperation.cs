@@ -10,6 +10,6 @@ namespace Core8.Floppy.States
 
         }
 
-        protected override bool EndState() => true;
+        protected override bool FinalizeState() => true;
     }
 }

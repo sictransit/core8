@@ -78,7 +78,7 @@ namespace Core8
                         if (f != floppy)
                         {
                             floppy = f;
-                            Log.Debug(floppy);
+                            Log.Information(floppy);
                         }
 
                         var i = Interrupts.ToString();

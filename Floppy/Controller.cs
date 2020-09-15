@@ -25,7 +25,15 @@ namespace Core8.Floppy
 
         private bool interruptsEnabled;
 
+        private bool doneFlag;
+        private bool transferRequestFlag;
         private bool errorFlag;
+
+        public bool Done => doneFlag || CR.MaintenanceMode;
+
+        public bool TransferRequest => transferRequestFlag || CR.MaintenanceMode;
+
+        public bool Error => errorFlag || CR.MaintenanceMode;
 
         public Controller()
         {
@@ -43,18 +51,20 @@ namespace Core8.Floppy
 
         public void SetState(StateBase state)
         {
-            Log.Information($"Controller state transition: {this.state} -> {state}");
+            Log.Debug($"Controller state transition: {this.state} -> {state}");
 
             this.state = state;
         }
 
+        public void SetTransferRequest(bool state) => transferRequestFlag = state;
+
+        public void SetDone(bool state) => doneFlag = state;
+
+        public void SetError(bool state) => errorFlag = state;
+
         public void LCD(int acc) => state.LCD(acc);
 
         public int XDR(int acc) => state.XDR(acc);
-
-        public bool SND() => state.SND();
-
-        public bool STR() => state.STR();
 
         public void Tick() => state.Tick();
 
@@ -141,7 +151,7 @@ namespace Core8.Floppy
 
         private int BlockAddress => TA.Content * DiskLayout.LastSector * DiskLayout.BlockSize + (SA.Content - 1) * DiskLayout.BlockSize;
 
-        public bool IRQ => interruptsEnabled && state.IRQ;
+        public bool IRQ => interruptsEnabled && Done;
 
         public void SetSectorAddress(int sector)
         {
@@ -175,7 +185,7 @@ namespace Core8.Floppy
 
         public bool SER()
         {
-            if (errorFlag)
+            if (Error)
             {
                 errorFlag = CR.MaintenanceMode;
 
@@ -183,6 +193,36 @@ namespace Core8.Floppy
             }
 
             return false;
+        }
+
+        public bool SND()
+        {
+            if (Done)
+            {
+                doneFlag = CR.MaintenanceMode;
+
+                return true;
+            }
+
+            return false;
+        }
+
+
+        public bool STR()
+        {
+            if (TransferRequest)
+            {
+                transferRequestFlag = CR.MaintenanceMode;
+
+                return true;
+            }
+
+            return false;
+        }
+
+        public override string ToString()
+        {
+            return $"[{GetType().Name}] {state} dn={(Done ? 1 : 0)} err={(Error ? 1 : 0)} tr={(TransferRequest ? 1 : 0)} mm={(CR.MaintenanceMode ? 1 : 0)}";
         }
     }
 }

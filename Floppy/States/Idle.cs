@@ -9,38 +9,28 @@ namespace Core8.Floppy.States
     {
         public Idle(IController controller) : base(controller)
         {
-            done = true;
+            Controller.SetDone(true);
+        }
+
+        protected override int TransferData(int acc)
+        {
+            return Controller.IR.Content;
         }
 
         protected override void LoadCommand(int acc)
         {
             Controller.CR.SetCR(acc);
-
-            StateBase newState;
-
-            switch (Controller.CR.CurrentFunction)
+            
+            StateBase newState = Controller.CR.CurrentFunction switch
             {
-                case ControllerFunction.FillBuffer:
-                    newState = new FillBuffer(this.Controller);
-                    break;
-                case ControllerFunction.NoOperation:
-                    newState = new NoOperation(this.Controller);
-                    break;
-                case ControllerFunction.EmptyBuffer:
-                    newState = new EmptyBuffer(this.Controller);
-                    break;
-                case ControllerFunction.WriteSector:
-                    newState = new ReadWriteSector(this.Controller, false);
-                    break;
-                case ControllerFunction.ReadSector:
-                    newState = new ReadWriteSector(this.Controller);
-                    break;
-                case ControllerFunction.ReadStatus:
-                case ControllerFunction.WriteDeletedDataSector:
-                case ControllerFunction.ReadErrorRegister:                    
-                default:
-                    throw new NotImplementedException(Controller.CR.CurrentFunction.ToString());
-            }
+                ControllerFunction.FillBuffer => new FillBuffer(this.Controller),
+                ControllerFunction.NoOperation => new NoOperation(this.Controller),
+                ControllerFunction.EmptyBuffer => new EmptyBuffer(this.Controller),
+                ControllerFunction.WriteSector => new ReadWriteSector(this.Controller, false),
+                ControllerFunction.ReadSector => new ReadWriteSector(this.Controller),
+                ControllerFunction.ReadErrorRegister => new ReadErrorRegister(this.Controller),
+                _ => throw new NotImplementedException(Controller.CR.CurrentFunction.ToString()),
+            };
 
             Controller.SetState(newState);            
         }

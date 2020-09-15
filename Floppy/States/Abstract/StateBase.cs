@@ -7,22 +7,14 @@ namespace Core8.Floppy.States.Abstract
 {
     internal abstract class StateBase
     {
-        protected bool done;
-        protected bool transferRequest;
-        protected bool error;
-
         private readonly DateTime stateChangeDue;
 
         public StateBase(IController controller)
         {
             Controller = controller ?? throw new ArgumentNullException(nameof(controller));
 
-            error = transferRequest = done = controller.CR.MaintenanceMode;
-
             stateChangeDue = DateTime.UtcNow + StateLatency;
-        }
-
-        public bool IRQ => done;
+        }        
 
         protected IController Controller { get; }
 
@@ -30,13 +22,17 @@ namespace Core8.Floppy.States.Abstract
 
         private bool IsStateChangeDue => DateTime.UtcNow > stateChangeDue;
 
-        protected virtual bool EndState() => false;
+        protected virtual bool FinalizeState() => false;
+
+        protected virtual void SetIR() => Controller.IR.SetIR(Controller.ES.Content);
 
         public virtual void Tick()
         {
-            if (IsStateChangeDue && EndState())
+            if (IsStateChangeDue && FinalizeState())
             {
                 Controller.SetState(new Idle(Controller));
+
+                SetIR();
             }
         }
 
@@ -47,7 +43,7 @@ namespace Core8.Floppy.States.Abstract
 
         public void LCD(int acc)
         {
-            if (done)
+            if (Controller.Done)
             {
                 Log.Warning("LCD with DF set!");
             }
@@ -59,7 +55,7 @@ namespace Core8.Floppy.States.Abstract
 
         public int XDR(int acc)
         {
-            if (transferRequest)
+            if (Controller.TransferRequest)
             {
                 Log.Warning("XDR with TR high");
             }
@@ -67,31 +63,6 @@ namespace Core8.Floppy.States.Abstract
             return TransferData(acc);
         }
 
-        public virtual bool SND()
-        {
-            if (done)
-            {
-                done = Controller.CR.MaintenanceMode;
-
-                return true;
-            }
-
-            return false;
-        }
-
-
-        public virtual bool STR()
-        {
-            if (transferRequest)
-            {
-                transferRequest = Controller.CR.MaintenanceMode;
-
-                return true;
-            }
-
-            return false;
-        }
-
-        public override string ToString() => $"{GetType().Name} dne={done} tr={transferRequest} err={error}";
+        public override string ToString() => $"{GetType().Name}";
     }
 }
