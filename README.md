@@ -28,7 +28,7 @@ As a bonus, the emulator is stable enough to run [TINT8](https://github.com/Pont
 
 ## Work in Progress
 
-The implementation of an RX01 floppy drive is very much work-in-progress. A bit harder than I first expected, but we'll get there eventually.
+The implementation of an RX01 floppy drive is very much work-in-progress. A bit harder than I first expected, but we'll get there eventually. The goal is certainly to boot OS/8 from a floppy image.
 
 ## TODO
 
