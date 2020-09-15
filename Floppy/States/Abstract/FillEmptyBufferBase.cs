@@ -1,7 +1,4 @@
 ﻿using Core8.Floppy.Interfaces;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Core8.Floppy.States.Abstract
 {

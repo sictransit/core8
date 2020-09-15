@@ -51,8 +51,9 @@ namespace Core8.Floppy.States.Abstract
             LoadCommand(acc);
         }
 
-        protected virtual int TransferData(int acc)  {
-            return acc; 
+        protected virtual int TransferData(int acc)
+        {
+            return acc;
         }
 
         public int XDR(int acc)

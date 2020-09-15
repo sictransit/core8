@@ -7,7 +7,7 @@ namespace Core8.Floppy.Interfaces
     {
         void SetState(StateBase state);
 
-        void Load(byte unit, byte[] disk = null);
+        void Load(byte unit, byte[] data = null);
 
         void WriteSector();
 

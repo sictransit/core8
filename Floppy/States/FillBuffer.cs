@@ -1,6 +1,5 @@
 ﻿using Core8.Floppy.Interfaces;
 using Core8.Floppy.States.Abstract;
-using Core8.Model;
 
 namespace Core8.Floppy.States
 {
@@ -8,7 +7,7 @@ namespace Core8.Floppy.States
     {
         public FillBuffer(IController controller) : base(controller)
         {
-        
+
         }
 
         protected override int TransferData(int acc)

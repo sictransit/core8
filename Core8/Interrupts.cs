@@ -6,7 +6,7 @@ namespace Core8
     {
         private readonly ICPU cpu;
 
-        private bool delay = false;
+        private bool delay;
 
         public Interrupts(ICPU cpu)
         {

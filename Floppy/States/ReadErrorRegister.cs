@@ -1,6 +1,5 @@
 ﻿using Core8.Floppy.Interfaces;
 using Core8.Floppy.States.Abstract;
-using System.Runtime.InteropServices.ComTypes;
 
 namespace Core8.Floppy.States
 {

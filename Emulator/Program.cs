@@ -60,8 +60,8 @@ namespace Core8
 
                         if (o.Floppy)
                         {
-                            //FloppyTesting();
-                            FloppyDevelopment();
+                            FloppyTesting();
+                            //FloppyDevelopment();
                         }
 
                         if (o.TTY)
@@ -73,7 +73,7 @@ namespace Core8
 
         private static void FloppyTesting()
         {
-            //loggingLevel.MinimumLevel = Serilog.Events.LogEventLevel.Debug;
+            loggingLevel.MinimumLevel = Serilog.Events.LogEventLevel.Information;
 
             pdp.LoadPaperTape(new HttpClient().GetByteArrayAsync(@"https://www.dropbox.com/s/mvm1mh47jybfl5t/dirxa-d-pb?dl=1").Result);
 
@@ -91,26 +91,15 @@ namespace Core8
 
             pdp.Load8(0200);
 
-            //loggingLevel.MinimumLevel = Serilog.Events.LogEventLevel.Debug;
-
-            //pdp.LoadFloppy(0);
-            //pdp.LoadFloppy(1);
+            //pdp.SetBreakpoint8(400);
 
             pdp.Continue(waitForHalt: true);
 
-            //var init = false;
+            //loggingLevel.MinimumLevel = Serilog.Events.LogEventLevel.Debug;
 
-            //while (pdp.Running)
-            //{
-            //    if (!init && pdp.CPU.Teletype.Printout.Contains("0000"))
-            //    {
-            //        pdp.CPU.FloppyDrive.Initialize();
+            //pdp.RemoveAllBreakpoints();
 
-            //        init = true;
-            //    }
-
-            //    Thread.Sleep(200);
-            //}
+            //pdp.Continue(waitForHalt: true);
         }
 
         private static void FloppyDevelopment()
@@ -205,7 +194,7 @@ namespace Core8
 
             pdp.Load8(0022);
 
-            pdp.LoadFloppy(0, File.ReadAllBytes(@"C:\tmp\OS-8\os8.rx01"));            
+            pdp.LoadFloppy(0, File.ReadAllBytes(@"C:\tmp\OS-8\os8.rx01"));
 
             pdp.Clear();
 

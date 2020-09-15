@@ -1,10 +1,11 @@
 ﻿using Core8.Floppy.Declarations;
 using Core8.Floppy.Interfaces;
+using Core8.Floppy.Media;
 using Core8.Floppy.Registers;
 using Core8.Floppy.States.Abstract;
 using Serilog;
 using System;
-using System.Runtime.Intrinsics.X86;
+using System.Linq;
 
 namespace Core8.Floppy
 {
@@ -69,6 +70,44 @@ namespace Core8.Floppy
 
         public void Tick() => state.Tick();
 
+        private bool TryRetrieveSector(out Sector sector)
+        {
+            sector = null;
+
+            var disk = disks[CR.UnitSelect];
+
+            if (disk != null)
+            {
+                if (disk.Tracks.TryGetValue(TA.Content, out var track))
+                {
+                    Log.Debug($"Found: {track}");
+
+                    if (!track.Sectors.TryGetValue(SA.Content, out sector))
+                    {
+                        Log.Warning($"Bad sector address: {SA.Content}");                
+
+                        EC.SetEC(ErrorCodes.SeekFailed);
+                    }
+                }
+                else
+                {
+                    Log.Warning($"Bad track address: {TA.Content}");                
+
+                    EC.SetEC(ErrorCodes.BadTrackAddress);
+                }
+            }
+            else
+            {
+                Log.Warning($"No disk in drive: {CR.UnitSelect}");                
+
+                ES.SetWriteProtect(true);
+            }
+
+            errorFlag = sector == null;
+
+            return !errorFlag;
+        }
+
         public void ReadSector()
         {
             if (CR.EightBitMode)
@@ -76,46 +115,22 @@ namespace Core8.Floppy
                 throw new NotImplementedException();
             }
 
-            var disk = disks[CR.UnitSelect];
-
-            if (disk == null)
+            if (TryRetrieveSector(out var sector))
             {
-                Log.Warning($"No disk in drive: {CR.UnitSelect}");
+                Log.Debug($"Found: {sector}");
 
-                errorFlag = true;
+                var bufferPointer = 0;
 
-                ES.SetWriteProtect(true);
-
-                return;
+                for (int i = 0; i < 96; i += 3)
+                {
+                    Buffer[bufferPointer++] = sector.Data[i] << 4 | sector.Data[i + 1] >> 4;
+                    Buffer[bufferPointer++] = (sector.Data[i + 1] & 0b_001_111) << 8 | sector.Data[i + 2];
+                }
             }
-
-            var bufferPointer = 0;
-
-            // byte:  0 1 2   3 4 5   6 7 8
-            // word: 001 122 334 455 667 788
-
-            for (int i = 0; i < 96; i+=3)
+            else
             {
-                var position = BlockAddress + i;
-
-                Buffer[bufferPointer++] = disk[position] << 4 | disk[position + 1] >> 4;
-                Buffer[bufferPointer++] = (disk[position + 1] & 0b_001_111) << 8 | disk[position + 2];
+                Log.Warning("Failed to retrieve sector.");
             }
-
-            //for (int i = 0; i < 96; i++)
-            //{
-            //    if ((i + 1) % 3 != 0)
-            //    {
-            //        if (bufferPointer % 2 == 0)
-            //        {
-            //            Buffer[bufferPointer++] = (disk[BlockAddress + i] << 4) | ((disk[BlockAddress + i + 1] >> 4) & 0b_001_111);
-            //        }
-            //        else
-            //        {
-            //            Buffer[bufferPointer++] = ((disk[BlockAddress + i] & 0b_001_111) << 8) | (disk[BlockAddress + i + 1]);
-            //        }
-            //    }
-            //}
         }
 
         public void WriteSector()
@@ -125,78 +140,51 @@ namespace Core8.Floppy
                 throw new NotImplementedException();
             }
 
-            var disk = disks[CR.UnitSelect];
-
-            if (disk == null)
+            if (TryRetrieveSector(out var sector))
             {
-                Log.Warning($"No disk in drive: {CR.UnitSelect}");
+                Log.Debug($"Found: {sector}");
 
-                errorFlag = true;
+                var position = 0;
 
-                ES.SetWriteProtect(true);
-
-                return;
-            }
-
-            var block = new byte[DiskLayout.BlockSize];
-
-            var position = 0;
-
-            // byte:  0  1  2  3  4  5
-            // word: 00 01 11 22 23 33
-            for (int i = 0; i < Buffer.Length; i++)
-            {
-                if (i % 2 == 0)
+                // byte:  0  1  2  3  4  5
+                // word: 00 01 11 22 23 33
+                for (int i = 0; i < Buffer.Length; i++)
                 {
-                    block[position++] = (byte)(Buffer[i] >> 4);
-                    block[position++] = (byte)(((Buffer[i] & 0b_001_111) << 4) | ((Buffer[i + 1] >> 8) & 0b_001_111));
-                }
-                else
-                {
-                    block[position++] = (byte)(Buffer[i] & 0b_011_111_111);
+                    if (i % 2 == 0)
+                    {
+                        sector.Data[position++] = (byte)(Buffer[i] >> 4);
+                        sector.Data[position++] = (byte)(((Buffer[i] & 0b_001_111) << 4) | ((Buffer[i + 1] >> 8) & 0b_001_111));
+                    }
+                    else
+                    {
+                        sector.Data[position++] = (byte)(Buffer[i] & 0b_011_111_111);
+                    }
                 }
             }
-
-            Array.Copy(block, 0, disk, BlockAddress, block.Length);
+            else
+            {
+                Log.Warning("Failed to retrieve sector.");
+            }
         }
 
-        private readonly byte[][] disks = new byte[2][];
-
-        private int BlockAddress => TA.Content * DiskLayout.LastSector * DiskLayout.BlockSize + (SA.Content - 1) * DiskLayout.BlockSize;
+        private readonly Disk[] disks = new Disk[2];
 
         public bool IRQ => interruptsEnabled && (Done || Error);
 
-        public void SetSectorAddress(int sector)
-        {
-            SA.SetSAR(sector);
+        public void SetSectorAddress(int sector) => SA.SetSAR(sector);
 
-            if (SA.Content < DiskLayout.FirstSector || SA.Content > DiskLayout.LastSector)
+        public void SetTrackAddress(int track) => TA.SetTAR(track);
+
+        public void Load(byte unit, byte[] data = null)
+        {
+            var disk = new Disk(unit);
+
+            if (data != null)
             {
-                Log.Warning($"Bad sector address: {SA.Content}");
-
-                errorFlag = true;
-
-                EC.SetEC(ErrorCodes.SeekFailed);
+                disk.LoadFromArray(data);
             }
-        }
 
-        public void SetTrackAddress(int track)
-        {
-            TA.SetTAR(track);
-
-            if (TA.Content < DiskLayout.FirstTrack || TA.Content > DiskLayout.LastTrack)
-            {
-                Log.Warning($"Bad track address: {TA.Content}");
-
-                errorFlag = true;
-
-                EC.SetEC(ErrorCodes.BadTrackAddress);
-            }
-        }
-
-        public void Load(byte unit, byte[] disk = null)
-        {
-            this.disks[unit] = disk ?? new byte[(DiskLayout.LastTrack + 1) * DiskLayout.LastSector * DiskLayout.BlockSize];
+            this.disks[unit] = disk;
         }
 
         public void SetInterrupts(int acc) => interruptsEnabled = (acc & 1) == 1;
@@ -240,7 +228,9 @@ namespace Core8.Floppy
 
         public override string ToString()
         {
-            return $"[{GetType().Name}] {state} dn={(Done ? 1 : 0)} err={(Error ? 1 : 0)} tr={(TransferRequest ? 1 : 0)} mm={(CR.MaintenanceMode ? 1 : 0)} dsk={CR.UnitSelect}:{TA.Content}:{SA.Content} mode={(CR.EightBitMode ? 8 : 12)} func={CR.CurrentFunction}";
+            var flags = new[] { Done ? "dne" : null, Error ? "err" : null, TransferRequest ? "tr" : null, CR.MaintenanceMode ? "mm" : null, CR.EightBitMode ? "8" : "12" }.Where(x => x != null);
+
+            return $"[{GetType().Name}] {state} {string.Join(',', flags)} dsk={CR.UnitSelect}:{TA.Content}:{SA.Content}";
         }
     }
 }

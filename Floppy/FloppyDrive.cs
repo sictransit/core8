@@ -40,6 +40,6 @@ namespace Core8
         public void SetInterrupts(int accumulator) => controller.SetInterrupts(accumulator);
 
         public override string ToString() => controller.ToString();
-        
+
     }
 }

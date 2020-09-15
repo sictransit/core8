@@ -64,7 +64,7 @@ namespace Core8
 
             string interrupts = null;
             string floppy = null;
-            string teletype = null;
+            string registerAC = null;
 
             int tick = 0;
 
@@ -88,11 +88,11 @@ namespace Core8
                             Log.Information(interrupts);
                         }
 
-                        var t = Teletype.ToString();
-                        if (t != teletype)
+                        var ac = Registers.AC.ToString();
+                        if (ac != registerAC)
                         {
-                            teletype = t;
-                            Log.Debug(teletype);
+                            registerAC = ac;
+                            Log.Debug(registerAC);
                         }
 
                         if (breakpoints.Contains(Registers.PC.Content))

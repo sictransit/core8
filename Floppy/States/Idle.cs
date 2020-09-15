@@ -20,7 +20,7 @@ namespace Core8.Floppy.States
         protected override void LoadCommand(int acc)
         {
             Controller.CR.SetCR(acc);
-            
+
             StateBase newState = Controller.CR.CurrentFunction switch
             {
                 ControllerFunction.FillBuffer => new FillBuffer(this.Controller),
@@ -32,7 +32,7 @@ namespace Core8.Floppy.States
                 _ => throw new NotImplementedException(Controller.CR.CurrentFunction.ToString()),
             };
 
-            Controller.SetState(newState);            
+            Controller.SetState(newState);
         }
     }
 }
