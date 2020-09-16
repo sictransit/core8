@@ -31,6 +31,8 @@ namespace Core8.Floppy.States
             Controller.ES.SetReady(true);
             //Controller.ES.SetWriteProtect(true);
 
+            //Controller.SetInterrupts(1);
+
             Controller.ReadSector();
 
             return true;

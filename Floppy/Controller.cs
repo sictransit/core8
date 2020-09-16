@@ -84,21 +84,21 @@ namespace Core8.Floppy
 
                     if (!track.Sectors.TryGetValue(SA.Content, out sector))
                     {
-                        Log.Warning($"Bad sector address: {SA.Content}");                
+                        Log.Warning($"Bad sector address: {SA.Content}");
 
                         EC.SetEC(ErrorCodes.SeekFailed);
                     }
                 }
                 else
                 {
-                    Log.Warning($"Bad track address: {TA.Content}");                
+                    Log.Warning($"Bad track address: {TA.Content}");
 
                     EC.SetEC(ErrorCodes.BadTrackAddress);
                 }
             }
             else
             {
-                Log.Warning($"No disk in drive: {CR.UnitSelect}");                
+                Log.Warning($"No disk in drive: {CR.UnitSelect}");
 
                 ES.SetWriteProtect(true);
             }

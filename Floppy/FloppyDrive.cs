@@ -16,7 +16,7 @@ namespace Core8
             controller.Load(0);
             controller.Load(1);
 
-            controller.SetState(new Initialize(controller));
+            controller.SetState(new Idle(controller));
         }
 
         public bool InterruptRequested => controller.IRQ;

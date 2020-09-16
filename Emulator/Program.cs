@@ -21,8 +21,8 @@ namespace Core8
             File.Delete(logFilename);
 
             Log.Logger = new LoggerConfiguration()
-                .WriteTo.Console()
-                .WriteTo.File(logFilename)
+                .WriteTo.Console(restrictedToMinimumLevel: Serilog.Events.LogEventLevel.Information)
+                .WriteTo.File(logFilename, restrictedToMinimumLevel: Serilog.Events.LogEventLevel.Debug)
                 .MinimumLevel.ControlledBy(loggingLevel)
                 .CreateLogger();
 
@@ -77,10 +77,12 @@ namespace Core8
 
             pdp.LoadPaperTape(new HttpClient().GetByteArrayAsync(@"https://www.dropbox.com/s/mvm1mh47jybfl5t/dirxa-d-pb?dl=1").Result);
 
+            pdp.Load8(0020);
+            pdp.Deposit8(0000);
             pdp.Load8(0021);
             pdp.Deposit8(0000);
             pdp.Deposit8(0400);
-            pdp.Toggle8(0000);
+            pdp.Toggle8(0400);
 
             //pdp.Load8(0020);
             //pdp.Deposit8(0000);
@@ -91,7 +93,7 @@ namespace Core8
 
             pdp.Load8(0200);
 
-            //pdp.SetBreakpoint8(400);
+            //pdp.SetBreakpoint8(600);
 
             pdp.Continue(waitForHalt: true);
 

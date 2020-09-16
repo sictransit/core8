@@ -70,6 +70,8 @@ namespace Core8
 
             try
             {
+                IInstruction instruction;
+
                 while (running)
                 {
                     if (debug)
@@ -110,7 +112,7 @@ namespace Core8
 
                     Interrupts.Interrupt();
 
-                    if (tick++ > 10)
+                    if (tick++ > 100)
                     {
                         Teletype.Tick();
                         FloppyDrive.Tick();
@@ -118,7 +120,7 @@ namespace Core8
                         tick = 0;
                     }
 
-                    var instruction = Fetch(Registers.PC.Content);
+                    instruction = Fetch(Registers.PC.Content);
 
                     Registers.PC.Increment();
 
