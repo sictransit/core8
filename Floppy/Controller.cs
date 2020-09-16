@@ -1,4 +1,5 @@
-﻿using Core8.Peripherals.Floppy.Declarations;
+﻿using Core8.Model.Extensions;
+using Core8.Peripherals.Floppy.Declarations;
 using Core8.Peripherals.Floppy.Interfaces;
 using Core8.Peripherals.Floppy.Media;
 using Core8.Peripherals.Floppy.Registers;
@@ -49,7 +50,7 @@ namespace Core8.Peripherals.Floppy
             EC = new ErrorCodeRegister();
         }
 
-        public int[] Buffer { get; }
+        public int[] Buffer { get; private set; }
 
         public void SetState(StateBase state)
         {
@@ -119,13 +120,7 @@ namespace Core8.Peripherals.Floppy
             {
                 Log.Debug($"Found: {sector}");
 
-                var bufferPointer = 0;
-
-                for (int i = 0; i < 96; i += 3)
-                {
-                    Buffer[bufferPointer++] = sector.Data[i] << 4 | sector.Data[i + 1] >> 4;
-                    Buffer[bufferPointer++] = (sector.Data[i + 1] & 0b_001_111) << 8 | sector.Data[i + 2];
-                }
+                Buffer = sector.Data.Pack(Buffer.Length).ToArray();
             }
             else
             {
@@ -144,22 +139,7 @@ namespace Core8.Peripherals.Floppy
             {
                 Log.Debug($"Found: {sector}");
 
-                var position = 0;
-
-                // byte:  0  1  2  3  4  5
-                // word: 00 01 11 22 23 33
-                for (int i = 0; i < Buffer.Length; i++)
-                {
-                    if (i % 2 == 0)
-                    {
-                        sector.Data[position++] = (byte)(Buffer[i] >> 4);
-                        sector.Data[position++] = (byte)((Buffer[i] & 0b_001_111) << 4 | Buffer[i + 1] >> 8 & 0b_001_111);
-                    }
-                    else
-                    {
-                        sector.Data[position++] = (byte)(Buffer[i] & 0b_011_111_111);
-                    }
-                }
+                sector.Data = Buffer.Unpack(96, sector.Data.Length).ToArray();
             }
             else
             {
