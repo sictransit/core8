@@ -1,11 +1,11 @@
-﻿using Core8.Floppy.Declarations;
-using Core8.Floppy.Media.Abstract;
-using Core8.Model.Extensions;
+﻿using Core8.Model.Extensions;
+using Core8.Peripherals.Floppy.Declarations;
+using Core8.Peripherals.Floppy.Media.Abstract;
 using Serilog;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Core8.Floppy.Media
+namespace Core8.Peripherals.Floppy.Media
 {
     internal class Disk : MediaBase
     {
@@ -24,7 +24,7 @@ namespace Core8.Floppy.Media
             {
                 foreach (var sector in track.Sectors.Values.OrderBy(x => x.Number))
                 {
-                    sector.Data = blocks[cnt++].Select(x => (byte)x).ToArray();
+                    sector.Data = blocks[cnt++].Select(x => x).ToArray();
                 }
             }
 

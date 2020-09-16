@@ -1,7 +1,7 @@
 ﻿using Core8.Model;
 using Core8.Model.Interfaces;
 
-namespace Core8
+namespace Core8.Core
 {
     public class Memory : IMemory
     {
@@ -18,7 +18,7 @@ namespace Core8
 
         public int Read(int address, bool indirect = false)
         {
-            if (indirect && ((address & 0b_111_111_111_000) == 0b_001_000))
+            if (indirect && (address & 0b_111_111_111_000) == 0b_001_000)
             {
                 return Write(address, ram[address] + 1);
             }

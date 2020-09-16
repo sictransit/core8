@@ -1,6 +1,6 @@
-﻿using Core8.Floppy.Interfaces;
+﻿using Core8.Peripherals.Floppy.Interfaces;
 
-namespace Core8.Floppy.States.Abstract
+namespace Core8.Peripherals.Floppy.States.Abstract
 {
     internal abstract class FillEmptyBufferBase : StateBase
     {

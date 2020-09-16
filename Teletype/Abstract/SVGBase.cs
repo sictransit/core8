@@ -1,6 +1,6 @@
 ﻿using System.Xml.Linq;
 
-namespace Core8.Abstract
+namespace Core8.Peripherals.Teletype.Abstract
 {
     public abstract class SVGBase
     {

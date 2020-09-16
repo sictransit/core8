@@ -4,7 +4,7 @@ using Serilog;
 using System.Net;
 using System.Net.Sockets;
 
-namespace Core8
+namespace Core8.Peripherals
 {
     internal class TelnetServer : TcpServer
     {

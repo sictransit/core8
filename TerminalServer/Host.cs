@@ -5,7 +5,7 @@ using System;
 using System.Net;
 using System.Threading;
 
-namespace Core8
+namespace Core8.Peripherals
 {
     public class Host : IDisposable
     {

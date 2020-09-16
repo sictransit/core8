@@ -9,9 +9,9 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Core8
+namespace Core8.Peripherals.Teletype
 {
-    public class Teletype : ITeletype
+    public class ASR33 : ITeletype
     {
         private readonly List<byte> paper = new List<byte>();
 
@@ -35,7 +35,7 @@ namespace Core8
 
 
 
-        public Teletype(string inputAddress, string outputAddress)
+        public ASR33(string inputAddress, string outputAddress)
         {
             publisherSocket = new PublisherSocket();
             publisherSocket.Connect(outputAddress);

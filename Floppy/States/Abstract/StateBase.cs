@@ -1,9 +1,9 @@
-﻿using Core8.Floppy.Declarations;
-using Core8.Floppy.Interfaces;
+﻿using Core8.Peripherals.Floppy.Declarations;
+using Core8.Peripherals.Floppy.Interfaces;
 using Serilog;
 using System;
 
-namespace Core8.Floppy.States.Abstract
+namespace Core8.Peripherals.Floppy.States.Abstract
 {
     internal abstract class StateBase
     {

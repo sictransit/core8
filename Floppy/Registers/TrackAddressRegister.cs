@@ -1,6 +1,6 @@
 ﻿using Core8.Model.Register.Abstract;
 
-namespace Core8.Floppy.Registers
+namespace Core8.Peripherals.Floppy.Registers
 {
     internal class TrackAddressRegister : RegisterBase
     {

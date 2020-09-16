@@ -1,7 +1,7 @@
-﻿using Core8.Floppy.Registers;
-using Core8.Floppy.States.Abstract;
+﻿using Core8.Peripherals.Floppy.Registers;
+using Core8.Peripherals.Floppy.States.Abstract;
 
-namespace Core8.Floppy.Interfaces
+namespace Core8.Peripherals.Floppy.Interfaces
 {
     internal interface IController
     {

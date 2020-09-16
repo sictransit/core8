@@ -2,7 +2,7 @@
 using Serilog.Core;
 using System;
 
-namespace Core8
+namespace Core8.Peripherals
 {
     public static class Program
     {

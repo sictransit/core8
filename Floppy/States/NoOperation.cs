@@ -1,8 +1,8 @@
-﻿using Core8.Floppy.Interfaces;
-using Core8.Floppy.States.Abstract;
+﻿using Core8.Peripherals.Floppy.Interfaces;
+using Core8.Peripherals.Floppy.States.Abstract;
 using System;
 
-namespace Core8.Floppy.States
+namespace Core8.Peripherals.Floppy.States
 {
     internal class NoOperation : StateBase
     {

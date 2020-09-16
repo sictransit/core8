@@ -1,11 +1,12 @@
 ﻿using Core8.Model.Extensions;
 using Core8.Model.Interfaces;
+using Core8.Peripherals.Teletype;
 using Serilog;
 using System;
 using System.Text;
 using System.Threading;
 
-namespace Core8
+namespace Core8.Core
 {
     public class PDP
     {
@@ -13,7 +14,7 @@ namespace Core8
 
         public PDP()
         {
-            var teletype = new Teletype(@"tcp://127.0.0.1:17232", @"tcp://127.0.0.1:17233");
+            var teletype = new ASR33(@"tcp://127.0.0.1:17232", @"tcp://127.0.0.1:17233");
 
             CPU = new CPU(teletype);
 

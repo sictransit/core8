@@ -1,6 +1,6 @@
 ﻿using Core8.Model.Interfaces;
 
-namespace Core8
+namespace Core8.Core
 {
     public class Interrupts : IInterrupts
     {

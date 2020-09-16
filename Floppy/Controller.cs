@@ -1,13 +1,13 @@
-﻿using Core8.Floppy.Declarations;
-using Core8.Floppy.Interfaces;
-using Core8.Floppy.Media;
-using Core8.Floppy.Registers;
-using Core8.Floppy.States.Abstract;
+﻿using Core8.Peripherals.Floppy.Declarations;
+using Core8.Peripherals.Floppy.Interfaces;
+using Core8.Peripherals.Floppy.Media;
+using Core8.Peripherals.Floppy.Registers;
+using Core8.Peripherals.Floppy.States.Abstract;
 using Serilog;
 using System;
 using System.Linq;
 
-namespace Core8.Floppy
+namespace Core8.Peripherals.Floppy
 {
     internal class Controller : IController
     {
@@ -153,7 +153,7 @@ namespace Core8.Floppy
                     if (i % 2 == 0)
                     {
                         sector.Data[position++] = (byte)(Buffer[i] >> 4);
-                        sector.Data[position++] = (byte)(((Buffer[i] & 0b_001_111) << 4) | ((Buffer[i + 1] >> 8) & 0b_001_111));
+                        sector.Data[position++] = (byte)((Buffer[i] & 0b_001_111) << 4 | Buffer[i + 1] >> 8 & 0b_001_111);
                     }
                     else
                     {
@@ -184,7 +184,7 @@ namespace Core8.Floppy
                 disk.LoadFromArray(data);
             }
 
-            this.disks[unit] = disk;
+            disks[unit] = disk;
         }
 
         public void SetInterrupts(int acc) => interruptsEnabled = (acc & 1) == 1;

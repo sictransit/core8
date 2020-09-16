@@ -1,7 +1,7 @@
 ﻿using Core8.Model.Instructions;
 using Core8.Model.Interfaces;
 
-namespace Core8
+namespace Core8.Core
 {
     public class InstructionSet
     {

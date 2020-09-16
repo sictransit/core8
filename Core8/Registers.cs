@@ -3,7 +3,7 @@ using Core8.Model.Register;
 using Core8.Model.Register.Abstract;
 using System.Linq;
 
-namespace Core8
+namespace Core8.Core
 {
     public class Registers : IRegisters
     {

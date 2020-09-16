@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Core8.Floppy.Declarations
+namespace Core8.Peripherals.Floppy.Declarations
 {
     public class Latencies
     {

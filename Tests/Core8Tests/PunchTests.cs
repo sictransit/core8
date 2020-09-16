@@ -1,4 +1,5 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using Core8.Peripherals.Teletype;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Linq;
 using System.Text;
 

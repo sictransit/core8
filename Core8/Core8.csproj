@@ -5,7 +5,7 @@
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <ApplicationIcon />
     <StartupObject />
-    <RootNamespace>Core8</RootNamespace>
+    <RootNamespace>Core8.Core</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>
@@ -13,7 +13,6 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="NetMQ" Version="4.0.1.6" />
     <PackageReference Include="Serilog" Version="2.10.0" />
     <PackageReference Include="Serilog.Sinks.Console" Version="3.1.1" />
   </ItemGroup>
@@ -21,6 +20,8 @@
   <ItemGroup>
     <ProjectReference Include="..\Floppy\Floppy.csproj" />
     <ProjectReference Include="..\Model\Model.csproj" />
+    <ProjectReference Include="..\Punch\Teletype.csproj" />
+    <ProjectReference Include="..\Teletype\Teletype.csproj" />
   </ItemGroup>
 
   <ItemGroup>

@@ -1,6 +1,6 @@
 ﻿using Core8.Model.Register.Abstract;
 
-namespace Core8.Floppy.Registers
+namespace Core8.Peripherals.Floppy.Registers
 {
     internal class ErrorStatusRegister : RegisterBase
     {
@@ -12,14 +12,14 @@ namespace Core8.Floppy.Registers
 
         public bool Ready => (Content & RDY_MASK) != 0;
 
-        public void SetReady(bool state) => Content = (Content & ~RDY_MASK) | (state ? RDY_MASK : 0);
+        public void SetReady(bool state) => Content = Content & ~RDY_MASK | (state ? RDY_MASK : 0);
 
         public bool WriteProtect => (Content & WP_MASK) != 0;
 
-        public void SetWriteProtect(bool state) => Content = (Content & ~WP_MASK) | (state ? WP_MASK : 0);
+        public void SetWriteProtect(bool state) => Content = Content & ~WP_MASK | (state ? WP_MASK : 0);
 
         public bool InitializationDone => (Content & ID_MASK) != 0;
 
-        public void SetInitializationDone(bool state) => Content = (Content & ~ID_MASK) | (state ? ID_MASK : 0);
+        public void SetInitializationDone(bool state) => Content = Content & ~ID_MASK | (state ? ID_MASK : 0);
     }
 }

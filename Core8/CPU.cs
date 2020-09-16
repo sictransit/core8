@@ -1,11 +1,12 @@
 ﻿using Core8.Model;
 using Core8.Model.Extensions;
 using Core8.Model.Interfaces;
+using Core8.Peripherals.Floppy;
 using Serilog;
 using System;
 using System.Collections.Generic;
 
-namespace Core8
+namespace Core8.Core
 {
     public class CPU : ICPU
     {
@@ -112,12 +113,16 @@ namespace Core8
 
                     Interrupts.Interrupt();
 
-                    if (tick++ > 100)
+                    tick++;
+
+                    if (tick % 97 == 0)
                     {
                         Teletype.Tick();
-                        FloppyDrive.Tick();
+                    }
 
-                        tick = 0;
+                    if (tick % 53 == 0)
+                    {
+                        FloppyDrive.Tick();
                     }
 
                     instruction = Fetch(Registers.PC.Content);
@@ -169,7 +174,7 @@ namespace Core8
             {
                 Masks.MCI when (data & Masks.GROUP) == 0 => instructionSet.Group1,
                 //Masks.MCI when ((data & Masks.GROUP_3) == Masks.GROUP_3) && ((data & Masks.GROUP_3_EAE) == 0) => instructionSet.Group3,
-                Masks.MCI when ((data & Masks.GROUP_3) == Masks.GROUP_3) => instructionSet.Group3,
+                Masks.MCI when (data & Masks.GROUP_3) == Masks.GROUP_3 => instructionSet.Group3,
                 //Masks.MCI when (data & Masks.GROUP_3) == Masks.GROUP_3 => instructionSet.NOP,
                 Masks.MCI when (data & Masks.GROUP_2_AND) == Masks.GROUP_2_AND => instructionSet.Group2AND,
                 Masks.MCI => instructionSet.Group2OR,

@@ -1,9 +1,8 @@
-﻿using Core8.Floppy;
-using Core8.Floppy.Interfaces;
-using Core8.Floppy.States;
-using Core8.Model.Interfaces;
+﻿using Core8.Model.Interfaces;
+using Core8.Peripherals.Floppy.Interfaces;
+using Core8.Peripherals.Floppy.States;
 
-namespace Core8
+namespace Core8.Peripherals.Floppy
 {
     public class FloppyDrive : IFloppyDrive
     {

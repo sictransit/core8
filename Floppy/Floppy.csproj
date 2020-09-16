@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
-    <RootNamespace>Core8.Floppy</RootNamespace>
+    <RootNamespace>Core8.Peripherals.Floppy</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>

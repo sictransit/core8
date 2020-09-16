@@ -1,11 +1,11 @@
-﻿using Core8.Abstract;
-using Core8.Model.Extensions;
+﻿using Core8.Model.Extensions;
+using Core8.Peripherals.Teletype.Abstract;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Xml.Linq;
 
-namespace Core8
+namespace Core8.Peripherals.Teletype
 {
     public class SVGPunch : SVGBase
     {
@@ -29,7 +29,7 @@ namespace Core8
 
             wrap = wrap == 0 ? data.Length : wrap;
 
-            var paperWidth = (wrap) * spacing;
+            var paperWidth = wrap * spacing;
             var paperHeight = spacing * 10;
 
             var defs = new XElement(svg + "defs", Hole(true), Hole(false), data.Distinct().OrderBy(x => x).Select(x => CreateRowShape(x)));
@@ -40,7 +40,7 @@ namespace Core8
 
             var rows = new List<XElement>();
 
-            foreach (var chunk in data.Concat(new byte[wrap - (data.Length % wrap)]).ChunkBy(wrap))
+            foreach (var chunk in data.Concat(new byte[wrap - data.Length % wrap]).ChunkBy(wrap))
             {
                 var strip = CreatePaper(spacing, totalHeight, paperWidth, paperHeight);
 
@@ -120,7 +120,7 @@ namespace Core8
             );
 
         private static IEnumerable<XElement> CreateRow(int data) => Enumerable.Range(0, 8)
-            .Where(bit => ((data >> bit) & 1) == 1)
+            .Where(bit => (data >> bit & 1) == 1)
             .Select(bit => UseHole(bit + (bit > 2 ? 1 : 0), true))
             .Concat(new[] { UseHole(3, false) });
     }

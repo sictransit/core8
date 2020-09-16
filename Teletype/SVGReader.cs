@@ -1,9 +1,9 @@
-﻿using Core8.Abstract;
+﻿using Core8.Peripherals.Teletype.Abstract;
 using System.Collections.Generic;
 using System.Linq;
 using System.Xml.Linq;
 
-namespace Core8
+namespace Core8.Peripherals.Teletype
 {
     public class SVGReader : SVGBase
     {

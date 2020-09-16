@@ -1,9 +1,8 @@
-﻿using Core8.Floppy.Declarations;
-using Core8.Floppy.Interfaces;
-using Core8.Floppy.States.Abstract;
+﻿using Core8.Peripherals.Floppy.Declarations;
+using Core8.Peripherals.Floppy.Interfaces;
 using System;
 
-namespace Core8.Floppy.States
+namespace Core8.Peripherals.Floppy.States.Abstract
 {
     internal abstract class ReadWriteSectorBase : StateBase
     {

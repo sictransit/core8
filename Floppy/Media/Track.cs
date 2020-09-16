@@ -1,8 +1,8 @@
-﻿using Core8.Floppy.Declarations;
-using Core8.Floppy.Media.Abstract;
+﻿using Core8.Peripherals.Floppy.Declarations;
+using Core8.Peripherals.Floppy.Media.Abstract;
 using System.Collections.Generic;
 
-namespace Core8.Floppy.Media
+namespace Core8.Peripherals.Floppy.Media
 {
     internal class Track : MediaBase
     {

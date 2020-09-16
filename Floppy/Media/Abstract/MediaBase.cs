@@ -1,4 +1,4 @@
-﻿namespace Core8.Floppy.Media.Abstract
+﻿namespace Core8.Peripherals.Floppy.Media.Abstract
 {
     internal abstract class MediaBase
     {

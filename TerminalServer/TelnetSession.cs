@@ -5,7 +5,7 @@ using Serilog;
 using System;
 using System.Net.Sockets;
 
-namespace Core8
+namespace Core8.Peripherals
 {
     internal class TelnetSession : TcpSession
     {

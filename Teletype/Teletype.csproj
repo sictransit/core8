@@ -2,10 +2,12 @@
 
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
-    <RootNamespace>Core8</RootNamespace>
+    <RootNamespace>Core8.Peripherals.Teletype</RootNamespace>
+    <AssemblyName>Teletype</AssemblyName>
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="NetMQ" Version="4.0.1.6" />
     <PackageReference Include="Serilog" Version="2.10.0" />
   </ItemGroup>
 

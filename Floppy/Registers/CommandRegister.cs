@@ -1,7 +1,7 @@
-﻿using Core8.Floppy.Declarations;
-using Core8.Model.Register.Abstract;
+﻿using Core8.Model.Register.Abstract;
+using Core8.Peripherals.Floppy.Declarations;
 
-namespace Core8.Floppy.Registers
+namespace Core8.Peripherals.Floppy.Registers
 {
     internal class CommandRegister : RegisterBase
     {
@@ -16,7 +16,7 @@ namespace Core8.Floppy.Registers
 
         public void SetCR(int value) => Content = value & REGISTER_MASK;
 
-        public ControllerFunction CurrentFunction => (ControllerFunction)(base.Content & FUNCTION_MASK);
+        public ControllerFunction CurrentFunction => (ControllerFunction)(Content & FUNCTION_MASK);
 
         public bool MaintenanceMode => (Content & MAINTENANCE_MODE_MASK) != 0;
 
