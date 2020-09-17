@@ -54,7 +54,7 @@ namespace Core8.Model.Instructions
         }
 
         [Flags]
-        private enum Group3OpCodes : int
+        private enum Group3OpCodes
         {
             MQL = MQL_MASK,
             MQA = MQA_MASK,

@@ -20,7 +20,6 @@
   <ItemGroup>
     <ProjectReference Include="..\Floppy\Floppy.csproj" />
     <ProjectReference Include="..\Model\Model.csproj" />
-    <ProjectReference Include="..\Punch\Teletype.csproj" />
     <ProjectReference Include="..\Teletype\Teletype.csproj" />
   </ItemGroup>
 

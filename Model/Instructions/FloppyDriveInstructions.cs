@@ -106,11 +106,11 @@ namespace Core8.Model.Instructions
 
         private void SEL()
         {
-            Log.Warning($"SEL is currently no-op:");
+            Log.Warning("SEL is currently no-op:");
             Log.Warning(Registers.AC.ToString());
         }
 
-        private enum FloppyDriveOpCode : int
+        private enum FloppyDriveOpCode
         {
             SEL = SEL_MASK,
             LCD = LCD_MASK,

@@ -152,24 +152,24 @@ namespace Core8.Core
         {
             var sb = new StringBuilder();
 
-            int zeroAddress = 0;
-            bool zeroSet = false;
+            var zeroAddress = 0;
+            var zeroSet = false;
 
-            void printZeroSpan()
+            void PrintZeroSpan()
             {
                 if (zeroSet && zeroAddress != 0)
                 {
                     sb.AppendLine($" --> {zeroAddress.ToOctalString(5)}");
                 }
-            };
+            }
 
-            for (int address = 0; address < CPU.Memory.Size; address++)
+            for (var address = 0; address < CPU.Memory.Size; address++)
             {
                 var instruction = CPU.Debug10(address);
 
                 if (instruction.Data != 0)
                 {
-                    printZeroSpan();
+                    PrintZeroSpan();
 
                     sb.AppendLine(instruction.ToString());
 
@@ -192,7 +192,7 @@ namespace Core8.Core
                 }
             }
 
-            printZeroSpan();
+            PrintZeroSpan();
 
             Log.Information($"Memory dump:{Environment.NewLine}{sb}");
         }

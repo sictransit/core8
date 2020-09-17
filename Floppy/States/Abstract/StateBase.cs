@@ -9,7 +9,7 @@ namespace Core8.Peripherals.Floppy.States.Abstract
     {
         private readonly DateTime stateChangeDue;
 
-        public StateBase(IController controller)
+        protected StateBase(IController controller)
         {
             Controller = controller ?? throw new ArgumentNullException(nameof(controller));
 

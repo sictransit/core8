@@ -17,7 +17,7 @@ namespace Core8.Peripherals.Floppy.Media
         {
             Sectors = new Dictionary<int, Sector>();
 
-            for (int i = DiskLayout.FirstSector; i <= DiskLayout.LastSector; i++)
+            for (var i = DiskLayout.FirstSector; i <= DiskLayout.LastSector; i++)
             {
                 var sector = new Sector(i);
                 sector.Format();

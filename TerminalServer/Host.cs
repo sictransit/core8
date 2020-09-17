@@ -11,7 +11,7 @@ namespace Core8.Peripherals
     {
         private readonly int port;
         private readonly ManualResetEvent running = new ManualResetEvent(false);
-        private bool disposedValue = false;
+        private bool disposedValue;
 
         private Thread hostThread;
 
@@ -80,10 +80,7 @@ namespace Core8.Peripherals
             {
                 if (disposing)
                 {
-                    if (running != null)
-                    {
-                        running.Dispose();
-                    }
+                    running?.Dispose();
                 }
 
                 disposedValue = true;

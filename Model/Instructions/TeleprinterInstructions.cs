@@ -80,7 +80,7 @@ namespace Core8.Model.Instructions
             }
         }
 
-        private enum TeleprinterOpCode : int
+        private enum TeleprinterOpCode
         {
             TFL = TFL_MASK,
             TSF = TSF_MASK,

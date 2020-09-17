@@ -50,12 +50,12 @@ namespace Core8.Model.Instructions
 
             if ((Data & RAR_MASK) != 0)
             {
-                Registers.AC.RAR(twice: (Data & BSW_MASK) != 0);
+                Registers.AC.RAR((Data & BSW_MASK) != 0);
             }
 
             if ((Data & RAL_MASK) != 0)
             {
-                Registers.AC.RAL(twice: (Data & BSW_MASK) != 0);
+                Registers.AC.RAL((Data & BSW_MASK) != 0);
             }
 
             if ((Data & (BSW_MASK | RAR_MASK | RAL_MASK)) == BSW_MASK)
@@ -65,7 +65,7 @@ namespace Core8.Model.Instructions
         }
 
         [Flags]
-        private enum Group1OpCodes : int
+        private enum Group1OpCodes
         {
             NOP = 0,
             IAC = IAC_MASK,

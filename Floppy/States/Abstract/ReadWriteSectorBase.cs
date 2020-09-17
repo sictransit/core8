@@ -6,10 +6,10 @@ namespace Core8.Peripherals.Floppy.States.Abstract
 {
     internal abstract class ReadWriteSectorBase : StateBase
     {
-        protected bool sectorTransferred;
-        protected bool trackTransferred;
+        protected bool SectorTransferred;
+        protected bool TrackTransferred;
 
-        public ReadWriteSectorBase(IController controller) : base(controller)
+        protected ReadWriteSectorBase(IController controller) : base(controller)
         {
             Controller.SetTransferRequest(true);
         }
@@ -18,19 +18,19 @@ namespace Core8.Peripherals.Floppy.States.Abstract
         {
             Controller.IR.SetIR(acc);
 
-            if (!sectorTransferred)
+            if (!SectorTransferred)
             {
                 Controller.SetSectorAddress(Controller.IR.Content);
 
-                sectorTransferred = true;
+                SectorTransferred = true;
 
                 Controller.SetTransferRequest(true);
             }
-            else if (!trackTransferred)
+            else if (!TrackTransferred)
             {
                 Controller.SetTrackAddress(Controller.IR.Content);
 
-                trackTransferred = true;
+                TrackTransferred = true;
             }
 
             return Controller.IR.Content;

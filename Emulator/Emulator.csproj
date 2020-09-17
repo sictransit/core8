@@ -19,6 +19,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Core8\Core8.csproj" />
+    <ProjectReference Include="..\Teletype\Teletype.csproj" />
   </ItemGroup>
 
 </Project>

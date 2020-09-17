@@ -23,7 +23,7 @@ namespace Core8.Model.Instructions
 
         }
 
-        protected override string OpCodeText => string.Join(" ", (new[] { ((MemoryReferenceOpCode)(Data & Masks.OP_CODE)).ToString(), Indirect ? "I" : null, Zero ? "Z" : null }).Where(x => !string.IsNullOrEmpty(x)));
+        protected override string OpCodeText => string.Join(" ", new[] { ((MemoryReferenceOpCode)(Data & Masks.OP_CODE)).ToString(), Indirect ? "I" : null, Zero ? "Z" : null }.Where(x => !string.IsNullOrEmpty(x)));
 
         private bool Indirect => (Data & INDIRECT) != 0;
 
@@ -35,7 +35,7 @@ namespace Core8.Model.Instructions
 
         private int Field => Address & Masks.IF;
 
-        public int Location => Field | (Zero ? Word : (Page | Word));
+        public int Location => Field | (Zero ? Word : Page | Word);
 
         private IMemory Memory => CPU.Memory;
 
@@ -141,7 +141,7 @@ namespace Core8.Model.Instructions
             return $"{base.ToString()} ({Location.ToOctalString()})";
         }
 
-        private enum MemoryReferenceOpCode : int
+        private enum MemoryReferenceOpCode
         {
             AND = AND_MASK,
             TAD = TAD_MASK,

@@ -12,7 +12,7 @@ namespace Core8.Peripherals.Floppy
 {
     internal class Controller : IController
     {
-        private StateBase state;
+        private StateBase currentState;
 
         public CommandRegister CR { get; }
 
@@ -52,11 +52,11 @@ namespace Core8.Peripherals.Floppy
 
         public int[] Buffer { get; private set; }
 
-        public void SetState(StateBase state)
+        public void SetState(StateBase newState)
         {
-            Log.Debug($"Controller state transition: {this.state} -> {state}");
+            Log.Debug($"Controller state transition: {currentState} -> {newState}");
 
-            this.state = state;
+            currentState = newState;
         }
 
         public void SetTransferRequest(bool state) => transferRequestFlag = state;
@@ -65,11 +65,11 @@ namespace Core8.Peripherals.Floppy
 
         public void SetError(bool state) => errorFlag = state;
 
-        public void LCD(int acc) => state.LCD(acc);
+        public void LCD(int acc) => currentState.LCD(acc);
 
-        public int XDR(int acc) => state.XDR(acc);
+        public int XDR(int acc) => currentState.XDR(acc);
 
-        public void Tick() => state.Tick();
+        public void Tick() => currentState.Tick();
 
         private bool TryRetrieveSector(out Sector sector)
         {
@@ -210,7 +210,7 @@ namespace Core8.Peripherals.Floppy
         {
             var flags = new[] { Done ? "dne" : null, Error ? "err" : null, TransferRequest ? "tr" : null, CR.MaintenanceMode ? "mm" : null, CR.EightBitMode ? "8" : "12" }.Where(x => x != null);
 
-            return $"[{GetType().Name}] {state} {string.Join(',', flags)} dsk={CR.UnitSelect}:{TA.Content}:{SA.Content}";
+            return $"[{GetType().Name}] {currentState} {string.Join(',', flags)} dsk={CR.UnitSelect}:{TA.Content}:{SA.Content}";
         }
     }
 }

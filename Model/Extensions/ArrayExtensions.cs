@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace Core8.Model.Extensions
 {
@@ -13,7 +12,7 @@ namespace Core8.Model.Extensions
                 throw new ArgumentNullException(nameof(data));
             }
 
-            for (int i = 0; i < length / 2 * 3; i += 3)
+            for (var i = 0; i < length / 2 * 3; i += 3)
             {
                 yield return data[i] << 4 | data[i + 1] >> 4;
 
@@ -28,7 +27,7 @@ namespace Core8.Model.Extensions
                 throw new ArgumentNullException(nameof(data));
             }
 
-            for (int i = 0; i < length / 3 * 2; i++)
+            for (var i = 0; i < length / 3 * 2; i++)
             {
                 if (i % 2 == 0)
                 {
@@ -41,7 +40,7 @@ namespace Core8.Model.Extensions
                 }
             }
 
-            for (int i = length; i < pad; i++)
+            for (var i = length; i < pad; i++)
             {
                 yield return 0;
             }

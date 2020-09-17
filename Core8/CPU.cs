@@ -10,11 +10,11 @@ namespace Core8.Core
 {
     public class CPU : ICPU
     {
-        private volatile bool running = false;
+        private volatile bool running;
 
-        private bool singleStep = false;
+        private bool singleStep;
 
-        private bool debug = false;
+        private bool debug;
 
         private readonly HashSet<int> breakpoints = new HashSet<int>();
 
@@ -67,12 +67,10 @@ namespace Core8.Core
             string floppy = null;
             string registerAC = null;
 
-            int tick = 0;
+            var tick = 0;
 
             try
             {
-                IInstruction instruction;
-
                 while (running)
                 {
                     if (debug)
@@ -100,7 +98,7 @@ namespace Core8.Core
 
                         if (breakpoints.Contains(Registers.PC.Content))
                         {
-                            Log.Information($"Breakpoint hit!");
+                            Log.Information("Breakpoint hit!");
 
                             break;
                         }
@@ -125,7 +123,7 @@ namespace Core8.Core
                         FloppyDrive.Tick();
                     }
 
-                    instruction = Fetch(Registers.PC.Content);
+                    var instruction = Fetch(Registers.PC.Content);
 
                     Registers.PC.Increment();
 

@@ -148,13 +148,13 @@ namespace Core8.Model.Instructions
         }
 
         [Flags]
-        private enum MemoryManagementChangeOpCodes : int
+        private enum MemoryManagementChangeOpCodes
         {
             CDF = CDF_MASK,
             CIF = CIF_MASK
         }
 
-        private enum MemoryManagementReadOpCode : int
+        private enum MemoryManagementReadOpCode
         {
             CINT = CINT_MASK,
             RDF = RDF_MASK,

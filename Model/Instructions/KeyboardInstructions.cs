@@ -78,7 +78,7 @@ namespace Core8.Model.Instructions
             }
         }
 
-        private enum KeyboardOpCode : int
+        private enum KeyboardOpCode
         {
             KCF = KCF_MASK,
             KSF = KSF_MASK,

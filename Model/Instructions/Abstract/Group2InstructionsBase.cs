@@ -39,7 +39,7 @@ namespace Core8.Model.Instructions.Abstract
         }
 
         [Flags]
-        private enum Group2PrivilegedOpCodes : int
+        private enum Group2PrivilegedOpCodes
         {
             HLT = HLT_MASK,
             OSR = OSR_MASK,

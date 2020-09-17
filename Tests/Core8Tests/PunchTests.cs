@@ -34,12 +34,12 @@ namespace Core8.Tests
 
             var reader = new SVGReader();
 
-            var data = reader.Read(svg.ToString()).ToArray();
+            var data = reader.Read(svg).ToArray();
 
             Assert.IsNotNull(data);
             Assert.IsTrue(data.Any());
 
-            for (int i = 0; i < TestData.Length; i++)
+            for (var i = 0; i < TestData.Length; i++)
             {
                 Assert.AreEqual(TestData[i], data[i]);
             }

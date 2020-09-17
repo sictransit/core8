@@ -74,7 +74,7 @@ namespace Core8.Tests
 
             var outData = EmptyBuffer(floppy);
 
-            for (int i = 0; i < inData.Length; i++)
+            for (var i = 0; i < inData.Length; i++)
             {
                 Assert.AreEqual(inData[i], outData[i]);
             }
@@ -113,7 +113,7 @@ namespace Core8.Tests
 
             Assert.IsTrue(floppy.SkipTransferRequest());
 
-            for (int i = 0; i < data.Length; i++)
+            for (var i = 0; i < data.Length; i++)
             {
                 floppy.TransferDataRegister(data[i]);
 
@@ -140,7 +140,7 @@ namespace Core8.Tests
 
             Assert.IsTrue(floppy.SkipTransferRequest());
 
-            for (int i = 0; i < buffer.Length; i++)
+            for (var i = 0; i < buffer.Length; i++)
             {
                 buffer[i] = floppy.TransferDataRegister(0);
 
@@ -207,7 +207,7 @@ namespace Core8.Tests
 
             var read = EmptyBuffer(floppy);
 
-            for (int i = 0; i < written.Length; i++)
+            for (var i = 0; i < written.Length; i++)
             {
                 Assert.AreEqual(written[i], read[i]);
             }

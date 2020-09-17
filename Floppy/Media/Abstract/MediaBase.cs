@@ -2,7 +2,7 @@
 {
     internal abstract class MediaBase
     {
-        public MediaBase(int number)
+        protected MediaBase(int number)
         {
             Number = number;
         }

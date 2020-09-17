@@ -6,7 +6,7 @@ namespace Core8.Peripherals.Floppy.States.Abstract
     {
         protected int bufferPointer;
 
-        public FillEmptyBufferBase(IController controller) : base(controller)
+        protected FillEmptyBufferBase(IController controller) : base(controller)
         {
             Controller.SetTransferRequest(true);
         }

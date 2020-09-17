@@ -40,7 +40,7 @@ namespace Core8.Peripherals.Floppy.Media
         {
             Tracks = new Dictionary<int, Track>();
 
-            for (int i = DiskLayout.FirstTrack; i <= DiskLayout.LastTrack; i++)
+            for (var i = DiskLayout.FirstTrack; i <= DiskLayout.LastTrack; i++)
             {
                 var track = new Track(i);
                 track.Format();

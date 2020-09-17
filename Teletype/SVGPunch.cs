@@ -46,7 +46,9 @@ namespace Core8.Peripherals.Teletype
 
                 strips.Add(strip);
 
-                var row = new XElement(svg + "g", chunk.Select((x, i) => UseRowShape(spacing / 2, totalHeight, i, x)));
+                var height = totalHeight;
+
+                var row = new XElement(svg + "g", chunk.Select((x, i) => UseRowShape(spacing / 2, height, i, x)));
 
                 rows.Add(row);
 

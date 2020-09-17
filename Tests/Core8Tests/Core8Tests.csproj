@@ -24,7 +24,6 @@
   <ItemGroup>
     <ProjectReference Include="..\..\Core8\Core8.csproj" />
     <ProjectReference Include="..\..\Floppy\Floppy.csproj" />
-    <ProjectReference Include="..\..\Punch\Teletype.csproj" />
     <ProjectReference Include="..\..\Teletype\Teletype.csproj" />
   </ItemGroup>
 

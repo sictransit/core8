@@ -22,19 +22,19 @@ namespace Core8.Model.Instructions
 
         public override void Execute()
         {
-            bool skip = false;
+            var skip = false;
 
             if ((Data & SMA_MASK) != 0)
             {
                 skip = (Registers.AC.Accumulator & Masks.AC_SIGN) != 0;
             }
 
-            if (!skip && ((Data & SZA_MASK) != 0))
+            if (!skip && (Data & SZA_MASK) != 0)
             {
                 skip = Registers.AC.Accumulator == 0;
             }
 
-            if (!skip && ((Data & SNL_MASK) != 0))
+            if (!skip && (Data & SNL_MASK) != 0)
             {
                 skip = Registers.AC.Link != 0;
             }
@@ -53,7 +53,7 @@ namespace Core8.Model.Instructions
         }
 
         [Flags]
-        private enum Group2OROpCodes : int
+        private enum Group2OROpCodes
         {
             CLA = CLA_MASK,
             SMA = SMA_MASK,

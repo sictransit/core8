@@ -22,8 +22,8 @@ namespace Core8
             File.Delete(logFilename);
 
             Log.Logger = new LoggerConfiguration()
-                .WriteTo.Console(restrictedToMinimumLevel: Serilog.Events.LogEventLevel.Information)
-                .WriteTo.File(logFilename, restrictedToMinimumLevel: Serilog.Events.LogEventLevel.Debug)
+                .WriteTo.Console(Serilog.Events.LogEventLevel.Information)
+                .WriteTo.File(logFilename, Serilog.Events.LogEventLevel.Debug)
                 .MinimumLevel.ControlledBy(loggingLevel)
                 .CreateLogger();
 
@@ -96,7 +96,7 @@ namespace Core8
 
             //pdp.SetBreakpoint8(600);
 
-            pdp.Continue(waitForHalt: true);
+            pdp.Continue(true);
 
             //loggingLevel.MinimumLevel = Serilog.Events.LogEventLevel.Debug;
 
@@ -205,7 +205,7 @@ namespace Core8
 
             //loggingLevel.MinimumLevel = Serilog.Events.LogEventLevel.Debug;
 
-            pdp.Continue(waitForHalt: false);
+            pdp.Continue(false);
 
             while (pdp.Running)
             {
@@ -258,7 +258,7 @@ namespace Core8
 
             //pdp.CPU.Debug(true);
 
-            pdp.Continue(waitForHalt: true);
+            pdp.Continue(true);
 
             Thread.Sleep(1000);
         }

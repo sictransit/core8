@@ -35,7 +35,7 @@ namespace Core8.Tests.MAINDEC.Abstract
 
         protected void StartAndWaitForCompletion()
         {
-            PDP.Continue(waitForHalt: false);
+            PDP.Continue(false);
 
             var sw = new Stopwatch();
             sw.Start();
@@ -50,7 +50,7 @@ namespace Core8.Tests.MAINDEC.Abstract
 
                 failed = UnexpectedOutput.Any(x => PDP.CPU.Teletype.Printout.Contains(x));
 
-                timeout = !Debugger.IsAttached && (sw.Elapsed > MaxRunningTime);
+                timeout = !Debugger.IsAttached && sw.Elapsed > MaxRunningTime;
 
                 Thread.Sleep(50);
             }

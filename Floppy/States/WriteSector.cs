@@ -12,7 +12,7 @@ namespace Core8.Peripherals.Floppy.States
 
         protected override bool FinalizeState()
         {
-            if (sectorTransferred && trackTransferred)
+            if (SectorTransferred && TrackTransferred)
             {
                 Controller.WriteSector();
 

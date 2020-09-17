@@ -84,7 +84,7 @@ namespace Core8.Model.Instructions
 
         private void GTF()
         {
-            var acc = (Registers.AC.Link << 11) | ((Interrupts.Requested ? 1 : 0) << 9) | ((Interrupts.Pending ? 1 : 0) << 7) | (Registers.SF.Content);
+            var acc = (Registers.AC.Link << 11) | ((Interrupts.Requested ? 1 : 0) << 9) | ((Interrupts.Pending ? 1 : 0) << 7) | Registers.SF.Content;
 
             Registers.AC.SetAccumulator(acc);
         }
@@ -115,7 +115,7 @@ namespace Core8.Model.Instructions
             CPU.Clear();
         }
 
-        private enum InterruptOpCode : int
+        private enum InterruptOpCode
         {
             SKON = SKON_MASK,
             ION = ION_MASK,

@@ -18,7 +18,7 @@ namespace Core8.Model.Extensions
                 throw new ArgumentOutOfRangeException(nameof(size));
             }
 
-            return items.Select((item, index) => new { item, index }).GroupBy(x => x.index / size).Select(x => x.Select(x => x.item));
+            return items.Select((item, index) => new { item, index }).GroupBy(x => x.index / size).Select(x => x.Select(y => y.item));
         }
     }
 }
