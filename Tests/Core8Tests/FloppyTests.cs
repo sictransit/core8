@@ -5,6 +5,8 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Diagnostics;
 using System.Linq;
+using System.Net.Http;
+using System.Resources;
 using System.Threading;
 
 namespace Core8.Tests
@@ -107,7 +109,7 @@ namespace Core8.Tests
             return Enumerable.Range(0, 64).Select(x => rnd.Next(0, 4096)).ToArray();
         }
 
-        private void FillBuffer(FloppyDrive floppy, int[] data)
+        private void FillBuffer(IFloppyDrive floppy, int[] data)
         {
             floppy.LoadCommandRegister(Functions.FILL_BUFFER);
 
@@ -132,7 +134,7 @@ namespace Core8.Tests
             AssertDoneFlagSet(floppy);
         }
 
-        private int[] EmptyBuffer(FloppyDrive floppy)
+        private int[] EmptyBuffer(IFloppyDrive floppy)
         {
             var buffer = new int[64];
 
@@ -181,29 +183,9 @@ namespace Core8.Tests
             var track = 47;
             var sector = 11;
 
-            floppy.LoadCommandRegister(Functions.WRITE_SECTOR);
+            WriteSector(floppy, track, sector);
 
-            Assert.IsTrue(floppy.SkipTransferRequest());
-
-            floppy.TransferDataRegister(sector);
-
-            Assert.IsTrue(floppy.SkipTransferRequest());
-
-            floppy.TransferDataRegister(track);
-
-            AssertDoneFlagSet(floppy);
-
-            floppy.LoadCommandRegister(Functions.READ_SECTOR);
-
-            Assert.IsTrue(floppy.SkipTransferRequest());
-
-            floppy.TransferDataRegister(sector);
-
-            Assert.IsTrue(floppy.SkipTransferRequest());
-
-            floppy.TransferDataRegister(track);
-
-            AssertDoneFlagSet(floppy);
+            ReadSector(floppy, track, sector);
 
             var read = EmptyBuffer(floppy);
 
@@ -211,6 +193,63 @@ namespace Core8.Tests
             {
                 Assert.AreEqual(written[i], read[i]);
             }
+        }
+
+        [TestMethod]
+        public void TestLoadDiskImage()
+        {
+            var floppy = new FloppyDrive();
+
+            AssertDoneFlagSet(floppy);
+
+            var image = new HttpClient().GetByteArrayAsync(@"https://www.dropbox.com/s/l4t8h28exvj7zsj/os8_rx.rx01?dl=1").Result;
+
+            floppy.Load(0, image);
+
+            floppy.Initialize();
+
+            AssertDoneFlagSet(floppy);
+
+            for (int track = DiskLayout.FIRST_TRACK; track <= DiskLayout.LAST_TRACK; track++)
+            {
+                for (int sector = DiskLayout.FIRST_SECTOR; sector <= DiskLayout.LAST_SECTOR; sector++)
+                {
+                    ReadSector(floppy, track, sector);
+
+                    var buffer = EmptyBuffer(floppy);
+
+                    Assert.IsNotNull(buffer);
+
+                    Assert.AreEqual(64, buffer.Length);                    
+                }                
+            }
+        }
+
+        private void WriteSector(IFloppyDrive floppy, int track, int sector)
+        {
+            floppy.LoadCommandRegister(Functions.WRITE_SECTOR);
+
+            SetSector(floppy, track, sector);
+        }
+
+        private void ReadSector(IFloppyDrive floppy, int track, int sector)
+        {
+            floppy.LoadCommandRegister(Functions.READ_SECTOR);
+
+            SetSector(floppy, track, sector);
+        }
+
+        private void SetSector(IFloppyDrive floppy, int track, int sector)
+        {
+            Assert.IsTrue(floppy.SkipTransferRequest());
+
+            floppy.TransferDataRegister(sector);
+
+            Assert.IsTrue(floppy.SkipTransferRequest());
+
+            floppy.TransferDataRegister(track);
+
+            AssertDoneFlagSet(floppy);
         }
     }
 }
