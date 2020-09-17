@@ -1,6 +1,6 @@
 ﻿namespace Core8.Peripherals.Floppy.Declarations
 {
-    public class Functions
+    public static class Functions
     {
         public const int FILL_BUFFER = 0 << 1;
         public const int EMPTY_BUFFER = 1 << 1;

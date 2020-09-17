@@ -28,7 +28,7 @@ namespace Core8
                 .CreateLogger();
 
             Parser.Default.ParseArguments<Options>(args)
-                    .WithParsed<Options>(o =>
+                    .WithParsed(o =>
                     {
                         pdp = new PDP();
 
@@ -96,7 +96,7 @@ namespace Core8
 
             //pdp.SetBreakpoint8(600);
 
-            pdp.Continue(true);
+            pdp.Continue();
 
             //loggingLevel.MinimumLevel = Serilog.Events.LogEventLevel.Debug;
 
@@ -258,7 +258,7 @@ namespace Core8
 
             //pdp.CPU.Debug(true);
 
-            pdp.Continue(true);
+            pdp.Continue();
 
             Thread.Sleep(1000);
         }

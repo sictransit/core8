@@ -110,9 +110,6 @@
         public const int PRIVILEGED_GROUP_2_FLAGS
             = 0b_000_000_000_110;
 
-        public const int KEYBOARD_BUFFER_MASK
-            = 0b_000_011_111_111;
-
         public const int TELEPRINTER_BUFFER_MASK
             = 0b_000_001_111_111;
 

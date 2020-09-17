@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using Core8.Tests.MAINDEC.Abstract;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
@@ -8,9 +9,9 @@ namespace Core8.Tests.MAINDEC
     {
         protected override string TapeName => @"MAINDEC/tapes/MAINDEC-8E-D0HC-PB.bin";
 
-        protected override string[] ExpectedOutput => new[] { "\r\nHC" };
+        protected override IEnumerable<string> ExpectedOutput => new[] { "\r\nHC" };
 
-        protected override string[] UnexpectedOutput => new[] { "Z =" };
+        protected override IEnumerable<string> UnexpectedOutput => new[] { "Z =" };
 
         [TestMethod]
         public override void Start()

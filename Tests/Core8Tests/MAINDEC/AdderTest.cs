@@ -1,6 +1,7 @@
 using Core8.Tests.MAINDEC.Abstract;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
+using System.Collections.Generic;
 
 namespace Core8.Tests.MAINDEC
 {
@@ -9,7 +10,7 @@ namespace Core8.Tests.MAINDEC
     {
         protected override string TapeName => @"MAINDEC/tapes/MAINDEC-8E-D0CC-PB.bin";
 
-        protected override string[] ExpectedOutput => new[] { "SIMAD", "SIMROT", "FCT", "RANDOM" };
+        protected override IEnumerable<string> ExpectedOutput => new[] { "SIMAD", "SIMROT", "FCT", "RANDOM" };
 
         protected override TimeSpan MaxRunningTime => TimeSpan.FromSeconds(600);
 

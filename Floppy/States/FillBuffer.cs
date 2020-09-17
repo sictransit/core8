@@ -14,9 +14,9 @@ namespace Core8.Peripherals.Floppy.States
         {
             Controller.IR.SetIR(acc);
 
-            Controller.Buffer[bufferPointer++] = Controller.IR.Content;
+            Controller.Buffer[BufferPointer++] = Controller.IR.Content;
 
-            Controller.SetTransferRequest(bufferPointer < Controller.Buffer.Length);
+            Controller.SetTransferRequest(BufferPointer < Controller.Buffer.Length);
 
             return Controller.IR.Content;
         }

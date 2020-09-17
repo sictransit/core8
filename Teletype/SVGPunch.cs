@@ -32,7 +32,7 @@ namespace Core8.Peripherals.Teletype
             var paperWidth = wrap * spacing;
             var paperHeight = spacing * 10;
 
-            var defs = new XElement(svg + "defs", Hole(true), Hole(false), data.Distinct().OrderBy(x => x).Select(x => CreateRowShape(x)));
+            var definition = new XElement(svg + "defs", Hole(true), Hole(false), data.Distinct().OrderBy(x => x).Select(x => CreateRowShape(x)));
 
             var totalHeight = spacing;
 
@@ -55,7 +55,7 @@ namespace Core8.Peripherals.Teletype
                 totalHeight += paperHeight + spacing;
             }
 
-            var tape = new XElement(svg + "svg", new XAttribute("width", paperWidth + 2 * spacing), new XAttribute("height", totalHeight), new XAttribute(XNamespace.Xmlns + "xlink", xlink), LabelStyle, RowLabelStyle, defs, strips, Label(label), rows);
+            var tape = new XElement(svg + "svg", new XAttribute("width", paperWidth + 2 * spacing), new XAttribute("height", totalHeight), new XAttribute(XNamespace.Xmlns + "xlink", xlink), LabelStyle, RowLabelStyle, definition, strips, Label(label), rows);
 
             return tape.ToString();
         }

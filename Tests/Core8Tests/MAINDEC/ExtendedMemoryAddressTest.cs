@@ -1,6 +1,7 @@
 using Core8.Tests.MAINDEC.Abstract;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
+using System.Collections.Generic;
 
 namespace Core8.Tests.MAINDEC
 {
@@ -9,9 +10,9 @@ namespace Core8.Tests.MAINDEC
     {
         protected override string TapeName => @"MAINDEC/tapes/MAINDEC-8E-D1FB-PB.bin";
 
-        protected override string[] UnexpectedOutput => new[] { "PR LOC   ADDR   GOOD  BAD  TEST" };
+        protected override IEnumerable<string> UnexpectedOutput => new[] { "PR LOC   ADDR   GOOD  BAD  TEST" };
 
-        protected override string[] ExpectedOutput => new[] { "\r\n5" };
+        protected override IEnumerable<string> ExpectedOutput => new[] { "\r\n5" };
 
         protected override TimeSpan MaxRunningTime => TimeSpan.FromSeconds(60);
 

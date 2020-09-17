@@ -45,13 +45,13 @@ namespace Core8.Peripherals.Teletype
             subscriberSocket.SubscribeToAnyTopic();
         }
 
-        public bool InputFlag { get; set; }
+        public bool InputFlag { get; private set; }
 
-        public bool OutputFlag { get; set; }
+        public bool OutputFlag { get; private set; }
 
         public byte InputBuffer { get; private set; }
 
-        public byte OutputBuffer { get; private set; }
+        private byte OutputBuffer { get; set; }
 
         public void SetDeviceControl(int data)
         {

@@ -307,7 +307,7 @@ namespace Core8.Core
             }
         }
 
-        public void MountPaperTape(byte[] tape)
+        private void MountPaperTape(byte[] tape)
         {
             if (tape is null)
             {

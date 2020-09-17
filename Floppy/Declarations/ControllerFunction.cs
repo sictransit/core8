@@ -2,13 +2,13 @@
 {
     internal enum ControllerFunction
     {
-        FillBuffer = Functions.FILL_BUFFER,
-        EmptyBuffer = Functions.EMPTY_BUFFER,
-        WriteSector = Functions.WRITE_SECTOR,
-        ReadSector = Functions.READ_SECTOR,
-        NoOperation = Functions.NO_OPERATION,
-        ReadStatus = Functions.READ_STATUS,
-        WriteDeletedDataSector = Functions.WRITE_DELETED_DATA_SECTOR,
-        ReadErrorRegister = Functions.READ_ERROR_REGISTER
+        FILL_BUFFER = Functions.FILL_BUFFER,
+        EMPTY_BUFFER = Functions.EMPTY_BUFFER,
+        WRITE_SECTOR = Functions.WRITE_SECTOR,
+        READ_SECTOR = Functions.READ_SECTOR,
+        NO_OPERATION = Functions.NO_OPERATION,
+        READ_STATUS = Functions.READ_STATUS,
+        WRITE_DELETED_DATA_SECTOR = Functions.WRITE_DELETED_DATA_SECTOR,
+        READ_ERROR_REGISTER = Functions.READ_ERROR_REGISTER
     }
 }

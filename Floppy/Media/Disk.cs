@@ -11,12 +11,12 @@ namespace Core8.Peripherals.Floppy.Media
     {
         public Disk(int number) : base(number)
         {
-            Format();
+
         }
 
         public void LoadFromArray(byte[] data)
         {
-            var blocks = data.ChunkBy(DiskLayout.BlockSize).ToArray();
+            var blocks = data.ChunkBy(DiskLayout.BLOCK_SIZE).ToArray();
 
             var cnt = 0;
 
@@ -40,7 +40,7 @@ namespace Core8.Peripherals.Floppy.Media
         {
             Tracks = new Dictionary<int, Track>();
 
-            for (var i = DiskLayout.FirstTrack; i <= DiskLayout.LastTrack; i++)
+            for (var i = DiskLayout.FIRST_TRACK; i <= DiskLayout.LAST_TRACK; i++)
             {
                 var track = new Track(i);
                 track.Format();

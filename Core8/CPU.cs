@@ -33,15 +33,15 @@ namespace Core8.Core
             instructionSet = new InstructionSet(this);
         }
 
-        public IInterrupts Interrupts { get; private set; }
+        public IInterrupts Interrupts { get; }
 
-        public IRegisters Registers { get; private set; }
+        public IRegisters Registers { get; }
 
-        public ITeletype Teletype { get; private set; }
+        public ITeletype Teletype { get; }
 
-        public IFloppyDrive FloppyDrive { get; private set; }
+        public IFloppyDrive FloppyDrive { get; }
 
-        public IMemory Memory { get; private set; }
+        public IMemory Memory { get; }
 
         public void Clear()
         {

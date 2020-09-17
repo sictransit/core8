@@ -35,7 +35,7 @@ namespace Core8.Model.Instructions
 
         private int Field => Address & Masks.IF;
 
-        public int Location => Field | (Zero ? Word : Page | Word);
+        private int Location => Field | (Zero ? Word : Page | Word);
 
         private IMemory Memory => CPU.Memory;
 

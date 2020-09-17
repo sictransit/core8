@@ -23,12 +23,12 @@ namespace Core8.Peripherals.Floppy.States
 
             StateBase newState = Controller.CR.CurrentFunction switch
             {
-                ControllerFunction.FillBuffer => new FillBuffer(Controller),
-                ControllerFunction.NoOperation => new NoOperation(Controller),
-                ControllerFunction.EmptyBuffer => new EmptyBuffer(Controller),
-                ControllerFunction.WriteSector => new WriteSector(Controller),
-                ControllerFunction.ReadSector => new ReadSector(Controller),
-                ControllerFunction.ReadErrorRegister => new ReadErrorRegister(Controller),
+                ControllerFunction.FILL_BUFFER => new FillBuffer(Controller),
+                ControllerFunction.NO_OPERATION => new NoOperation(Controller),
+                ControllerFunction.EMPTY_BUFFER => new EmptyBuffer(Controller),
+                ControllerFunction.WRITE_SECTOR => new WriteSector(Controller),
+                ControllerFunction.READ_SECTOR => new ReadSector(Controller),
+                ControllerFunction.READ_ERROR_REGISTER => new ReadErrorRegister(Controller),
                 _ => throw new NotImplementedException(Controller.CR.CurrentFunction.ToString()),
             };
 

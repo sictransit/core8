@@ -4,15 +4,15 @@ namespace Core8.Peripherals.Floppy.States.Abstract
 {
     internal abstract class FillEmptyBufferBase : StateBase
     {
-        protected int bufferPointer;
+        protected int BufferPointer;
 
         protected FillEmptyBufferBase(IController controller) : base(controller)
         {
             Controller.SetTransferRequest(true);
         }
 
-        protected override bool FinalizeState() => bufferPointer == Controller.Buffer.Length;
+        protected override bool FinalizeState() => BufferPointer == Controller.Buffer.Length;
 
-        public override string ToString() => $"{base.ToString()} ptr={bufferPointer}";
+        public override string ToString() => $"{base.ToString()} ptr={BufferPointer}";
     }
 }

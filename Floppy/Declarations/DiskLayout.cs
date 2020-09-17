@@ -1,15 +1,15 @@
 ﻿namespace Core8.Peripherals.Floppy.Declarations
 {
-    public class DiskLayout
+    public static class DiskLayout
     {
-        public const int FirstTrack = 0;
+        public const int FIRST_TRACK = 0;
 
-        public const int LastTrack = 76;
+        public const int LAST_TRACK = 76;
 
-        public const int FirstSector = 1;
+        public const int FIRST_SECTOR = 1;
 
-        public const int LastSector = 26;
+        public const int LAST_SECTOR = 26;
 
-        public const int BlockSize = 128;
+        public const int BLOCK_SIZE = 128;
     }
 }

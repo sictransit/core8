@@ -1,6 +1,7 @@
 ﻿using Core8.Tests.Abstract;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -13,9 +14,9 @@ namespace Core8.Tests.MAINDEC.Abstract
     {
         protected abstract string TapeName { get; }
 
-        protected virtual string[] ExpectedOutput => new string[] { };
+        protected virtual IEnumerable<string> ExpectedOutput => new string[] { };
 
-        protected virtual string[] UnexpectedOutput => new string[] { };
+        protected virtual IEnumerable<string> UnexpectedOutput => new string[] { };
 
         protected virtual TimeSpan MaxRunningTime => TimeSpan.FromSeconds(15);
 

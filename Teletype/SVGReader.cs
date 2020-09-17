@@ -13,9 +13,9 @@ namespace Core8.Peripherals.Teletype
 
             foreach (var useElement in xml.Descendants().Where(x => x.Name == svg + "use"))
             {
-                var value = useElement.Attribute(xlink + "href").Value;
+                var value = useElement.Attribute(xlink + "href")?.Value;
 
-                if (value.StartsWith($"#{ByteRowPrefix}"))
+                if (value != null && value.StartsWith($"#{ByteRowPrefix}"))
                 {
                     yield return byte.Parse(value.Remove(0, ByteRowPrefix.Length + 1));
                 }

@@ -14,7 +14,7 @@ namespace Core8.Core
             ram = new int[Size];
         }
 
-        public int Size { get; private set; }
+        public int Size { get; }
 
         public int Read(int address, bool indirect = false)
         {

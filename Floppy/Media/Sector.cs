@@ -14,7 +14,7 @@ namespace Core8.Peripherals.Floppy.Media
 
         public override void Format()
         {
-            Data = new byte[DiskLayout.BlockSize];
+            Data = new byte[DiskLayout.BLOCK_SIZE];
         }
     }
 }

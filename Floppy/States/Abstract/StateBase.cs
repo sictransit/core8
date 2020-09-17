@@ -7,26 +7,26 @@ namespace Core8.Peripherals.Floppy.States.Abstract
 {
     internal abstract class StateBase
     {
-        private readonly DateTime stateChangeDue;
+        private readonly DateTime stateInitiated;
 
         protected StateBase(IController controller)
         {
             Controller = controller ?? throw new ArgumentNullException(nameof(controller));
 
-            stateChangeDue = DateTime.UtcNow + StateLatency;
+            stateInitiated = DateTime.UtcNow;
         }
 
         protected IController Controller { get; }
 
         protected virtual TimeSpan StateLatency => Latencies.CommandTime;
 
-        private bool IsStateChangeDue => DateTime.UtcNow > stateChangeDue;
+        private bool IsStateChangeDue => DateTime.UtcNow > stateInitiated + StateLatency;
 
         protected virtual bool FinalizeState() => false;
 
         protected virtual void SetIR() => Controller.IR.SetIR(Controller.ES.Content);
 
-        public virtual void Tick()
+        public void Tick()
         {
             if (IsStateChangeDue && FinalizeState())
             {

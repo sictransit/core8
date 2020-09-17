@@ -87,14 +87,14 @@ namespace Core8.Peripherals.Floppy
                     {
                         Log.Warning($"Bad sector address: {SA.Content}");
 
-                        EC.SetEC(ErrorCodes.SeekFailed);
+                        EC.SetEC(ErrorCodes.SEEK_FAILED);
                     }
                 }
                 else
                 {
                     Log.Warning($"Bad track address: {TA.Content}");
 
-                    EC.SetEC(ErrorCodes.BadTrackAddress);
+                    EC.SetEC(ErrorCodes.BAD_TRACK_ADDRESS);
                 }
             }
             else
@@ -158,6 +158,8 @@ namespace Core8.Peripherals.Floppy
         public void Load(byte unit, byte[] data = null)
         {
             var disk = new Disk(unit);
+
+            disk.Format();
 
             if (data != null)
             {
