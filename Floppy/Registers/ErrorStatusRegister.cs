@@ -1,4 +1,5 @@
 ﻿using Core8.Model.Register.Abstract;
+using System.Linq;
 
 namespace Core8.Peripherals.Floppy.Registers
 {
@@ -21,5 +22,12 @@ namespace Core8.Peripherals.Floppy.Registers
         public bool InitializationDone => (Content & ID_MASK) != 0;
 
         public void SetInitializationDone(bool state) => Content = Content & ~ID_MASK | (state ? ID_MASK : 0);
+
+        public override string ToString()
+        {
+            var flags = new[] { InitializationDone ? "id" : null, Ready ? "rdy" : null, WriteProtect ? "wp" : null }.Where(x => x != null);
+
+            return string.Join(',', flags);
+        }
     }
 }

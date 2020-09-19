@@ -10,14 +10,16 @@ namespace Core8.Peripherals.Floppy.States
 
         }
 
-        protected override bool FinalizeState() => true;
-
-        protected override void SetIR()
+        protected override bool FinalizeState() 
         {
             Controller.ES.SetInitializationDone(false);
 
-            Controller.IR.SetIR(Controller.IR.Content << 8 | Controller.ES.Content);
+            return true;
         }
 
+        protected override void SetIR()
+        {
+            Controller.IR.SetIR(Controller.IR.Content << 8 | Controller.ES.Content);
+        }
     }
 }

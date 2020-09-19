@@ -23,13 +23,10 @@ namespace Core8.Peripherals.Floppy.States
             Controller.SetSectorAddress(1);
             Controller.SetTrackAddress(1);
 
+            Controller.ReadSector();
+
             Controller.ES.SetInitializationDone(true);
             Controller.ES.SetReady(true);
-            //Controller.ES.SetWriteProtect(true);
-
-            //Controller.SetInterrupts(1);
-
-            Controller.ReadSector();
 
             return true;
         }

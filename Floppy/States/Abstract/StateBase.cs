@@ -19,9 +19,7 @@ namespace Core8.Peripherals.Floppy.States.Abstract
 
         protected virtual int StateTicks => 30;
 
-        private bool IsStateChangeDue => Controller.Ticks > initialTicks + StateTicks;
-
-        //private bool IsStateChangeDue => DateTime.UtcNow > stateInitiated + Latencies.CommandTime;
+        private bool IsStateChangeDue => Controller.Ticks > initialTicks + StateTicks;        
 
         protected virtual bool FinalizeState() => false;
 
@@ -31,39 +29,29 @@ namespace Core8.Peripherals.Floppy.States.Abstract
         {
             if (IsStateChangeDue && FinalizeState())
             {
-                Controller.SetState(new Idle(Controller));
-
-                SetIR();
+                SetIR(); 
+                
+                Controller.SetState(new Idle(Controller));                
             }
         }
 
         protected virtual void LoadCommand(int acc)
         {
-            Log.Warning("LCD in state when not expected");
+            throw new InvalidOperationException($"LCD in state {GetType().Name}!");
         }
 
         public void LCD(int acc)
         {
-            if (Controller.Done)
-            {
-                Log.Warning("LCD with DF set!");
-            }
-
             LoadCommand(acc);
         }
 
         protected virtual int TransferData(int acc)
         {
-            return acc;
+            throw new InvalidOperationException($"XDR in state {GetType().Name}!");
         }
 
         public int XDR(int acc)
         {
-            if (Controller.TransferRequest)
-            {
-                Log.Warning("XDR with TR high");
-            }
-
             return TransferData(acc);
         }
 

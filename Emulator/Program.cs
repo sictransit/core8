@@ -80,7 +80,7 @@ namespace Core8
 
             pdp.Load8(0021);
             pdp.Deposit8(0000);
-            pdp.Deposit8(0400);            
+            pdp.Deposit8(0400);
 
             //pdp.Load8(0020);
             //pdp.Deposit8(0000);
@@ -91,7 +91,7 @@ namespace Core8
 
             pdp.Load8(0200);
 
-            pdp.Toggle8(0400);
+            pdp.Toggle8(0000);
 
             //pdp.SetBreakpoint8(01723); // Error test?
             //pdp.SetBreakpoint8(00406); // CAF
@@ -101,7 +101,7 @@ namespace Core8
             //pdp.SetBreakpoint8(03306); // LCD
             //pdp.SetBreakpoint8(06206); // LCD
 
-            pdp.DumpMemory();
+            //pdp.DumpMemory();
 
             pdp.Continue();
 

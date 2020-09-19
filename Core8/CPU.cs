@@ -73,27 +73,6 @@ namespace Core8.Core
                 {
                     if (debug)
                     {
-                        var f = FloppyDrive?.ToString();
-                        if (f != floppy)
-                        {
-                            floppy = f;
-                            Log.Information(floppy);
-                        }
-
-                        var i = Interrupts.ToString();
-                        if (i != interrupts)
-                        {
-                            interrupts = i;
-                            Log.Information(interrupts);
-                        }
-
-                        var ac = Registers.AC.ToString();
-                        if (ac != registerAC)
-                        {
-                            registerAC = ac;
-                            Log.Debug(registerAC);
-                        }
-
                         if (breakpoints.Contains(Registers.PC.Content))
                         {
                             Log.Information("Breakpoint hit!");
@@ -122,13 +101,28 @@ namespace Core8.Core
                     var instruction = Fetch(Registers.PC.Content);
 
                     Registers.PC.Increment();
+                    
+                    instruction.Execute();
 
                     if (debug)
                     {
                         Log.Debug(instruction.ToString());
-                    }
 
-                    instruction.Execute();
+                        var f = FloppyDrive?.ToString();
+                        if (f != floppy)
+                        {
+                            floppy = f;
+                            Log.Information(instruction.ToString());
+                            Log.Information(floppy);
+                        }
+
+                        var i = Interrupts.ToString();
+                        if (i != interrupts)
+                        {
+                            interrupts = i;
+                            Log.Information(interrupts);
+                        }
+                    }
                 }
             }
             catch (Exception ex)
