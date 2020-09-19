@@ -1,7 +1,5 @@
-﻿using Core8.Peripherals.Floppy.Declarations;
-using Core8.Peripherals.Floppy.Interfaces;
+﻿using Core8.Peripherals.Floppy.Interfaces;
 using Core8.Peripherals.Floppy.States.Abstract;
-using System;
 
 namespace Core8.Peripherals.Floppy.States
 {
@@ -19,8 +17,6 @@ namespace Core8.Peripherals.Floppy.States
             Controller.EC.Clear();
             Controller.IR.Clear();
         }
-
-        protected override TimeSpan StateLatency => Latencies.InitializeTime;
 
         protected override bool FinalizeState()
         {

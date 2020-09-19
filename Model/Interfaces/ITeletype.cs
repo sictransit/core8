@@ -1,9 +1,7 @@
 ﻿namespace Core8.Model.Interfaces
 {
-    public interface ITeletype : IRequestsInterrupts
+    public interface ITeletype : IIODevice
     {
-        void Tick();
-
         void Type(byte c);
 
         void Clear();

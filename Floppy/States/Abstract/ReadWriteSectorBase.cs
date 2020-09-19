@@ -1,6 +1,4 @@
-﻿using Core8.Peripherals.Floppy.Declarations;
-using Core8.Peripherals.Floppy.Interfaces;
-using System;
+﻿using Core8.Peripherals.Floppy.Interfaces;
 
 namespace Core8.Peripherals.Floppy.States.Abstract
 {
@@ -35,7 +33,5 @@ namespace Core8.Peripherals.Floppy.States.Abstract
 
             return Controller.IR.Content;
         }
-
-        protected override TimeSpan StateLatency => Latencies.AverageAccessTime;
     }
 }

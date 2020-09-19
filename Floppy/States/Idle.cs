@@ -29,6 +29,7 @@ namespace Core8.Peripherals.Floppy.States
                 ControllerFunction.WRITE_SECTOR => new WriteSector(Controller),
                 ControllerFunction.READ_SECTOR => new ReadSector(Controller),
                 ControllerFunction.READ_ERROR_REGISTER => new ReadErrorRegister(Controller),
+                ControllerFunction.READ_STATUS => new ReadStatus(Controller),
                 _ => throw new NotImplementedException(Controller.CR.CurrentFunction.ToString()),
             };
 

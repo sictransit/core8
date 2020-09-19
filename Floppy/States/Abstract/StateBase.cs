@@ -1,5 +1,4 @@
-﻿using Core8.Peripherals.Floppy.Declarations;
-using Core8.Peripherals.Floppy.Interfaces;
+﻿using Core8.Peripherals.Floppy.Interfaces;
 using Serilog;
 using System;
 
@@ -7,20 +6,22 @@ namespace Core8.Peripherals.Floppy.States.Abstract
 {
     internal abstract class StateBase
     {
-        private readonly DateTime stateInitiated;
+        private readonly int initialTicks;
 
         protected StateBase(IController controller)
         {
             Controller = controller ?? throw new ArgumentNullException(nameof(controller));
 
-            stateInitiated = DateTime.UtcNow;
+            initialTicks = controller.Ticks;
         }
 
         protected IController Controller { get; }
 
-        protected virtual TimeSpan StateLatency => Latencies.CommandTime;
+        protected virtual int StateTicks => 30;
 
-        private bool IsStateChangeDue => DateTime.UtcNow > stateInitiated + StateLatency;
+        private bool IsStateChangeDue => Controller.Ticks > initialTicks + StateTicks;
+
+        //private bool IsStateChangeDue => DateTime.UtcNow > stateInitiated + Latencies.CommandTime;
 
         protected virtual bool FinalizeState() => false;
 

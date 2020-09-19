@@ -30,7 +30,7 @@ namespace Core8
             Parser.Default.ParseArguments<Options>(args)
                     .WithParsed(o =>
                     {
-                        pdp = new PDP();
+                        pdp = new PDP(true);
 
                         if (o.Debug)
                         {
@@ -61,8 +61,8 @@ namespace Core8
 
                         if (o.Floppy)
                         {
-                            //FloppyTesting();
-                            FloppyDevelopment();
+                            FloppyTesting();
+                            //FloppyDevelopment();
                         }
 
                         if (o.TTY)
@@ -78,23 +78,30 @@ namespace Core8
 
             pdp.LoadPaperTape(new HttpClient().GetByteArrayAsync(@"https://www.dropbox.com/s/mvm1mh47jybfl5t/dirxa-d-pb?dl=1").Result);
 
-            //pdp.Load8(0021);
-            //pdp.Deposit8(0000);
-            //pdp.Deposit8(0400);
-            //pdp.Toggle8(0400);
-
-            pdp.Load8(0020);
+            pdp.Load8(0021);
             pdp.Deposit8(0000);
-            pdp.Deposit8(4000);
-            pdp.Toggle8(0000);
+            pdp.Deposit8(0400);            
+
+            //pdp.Load8(0020);
+            //pdp.Deposit8(0000);
+            //pdp.Deposit8(4000);
+            //pdp.Toggle8(0000);
 
             pdp.Clear();
 
             pdp.Load8(0200);
 
-            pdp.Toggle8(0000);
+            pdp.Toggle8(0400);
 
-            //pdp.SetBreakpoint8(600);
+            //pdp.SetBreakpoint8(01723); // Error test?
+            //pdp.SetBreakpoint8(00406); // CAF
+            //pdp.SetBreakpoint8(01532); // CAF
+            //pdp.SetBreakpoint8(10473); // CAF
+
+            //pdp.SetBreakpoint8(03306); // LCD
+            //pdp.SetBreakpoint8(06206); // LCD
+
+            pdp.DumpMemory();
 
             pdp.Continue();
 

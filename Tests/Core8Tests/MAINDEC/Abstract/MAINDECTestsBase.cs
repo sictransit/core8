@@ -18,7 +18,7 @@ namespace Core8.Tests.MAINDEC.Abstract
 
         protected virtual IEnumerable<string> UnexpectedOutput => new string[] { };
 
-        protected virtual TimeSpan MaxRunningTime => TimeSpan.FromSeconds(15);
+        protected virtual TimeSpan MaxRunningTime => TimeSpan.FromSeconds(30);
 
         protected virtual bool ExpectHLT => false;
 

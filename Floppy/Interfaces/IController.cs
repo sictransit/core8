@@ -49,6 +49,8 @@ namespace Core8.Peripherals.Floppy.Interfaces
 
         int[] Buffer { get; }
 
+        int Ticks { get; }
+
         void Tick();
 
         void SetSectorAddress(int sector);

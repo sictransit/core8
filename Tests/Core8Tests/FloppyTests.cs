@@ -6,8 +6,6 @@ using System;
 using System.Diagnostics;
 using System.Linq;
 using System.Net.Http;
-using System.Resources;
-using System.Threading;
 
 namespace Core8.Tests
 {
@@ -82,7 +80,7 @@ namespace Core8.Tests
             }
         }
 
-        private void AssertDoneFlagSet(IFloppyDrive floppy, int timeout = 10000)
+        private void AssertDoneFlagSet(IFloppyDrive floppy)
         {
             var sw = new Stopwatch();
             sw.Start();
@@ -91,13 +89,11 @@ namespace Core8.Tests
 
             do
             {
-                Thread.Sleep(20);
-
                 floppy.Tick();
 
                 done = floppy.SkipNotDone();
 
-            } while (!done && sw.ElapsedMilliseconds < timeout);
+            } while (!done && sw.ElapsedMilliseconds < 1000);
 
             Assert.IsTrue(done);
         }
@@ -220,8 +216,8 @@ namespace Core8.Tests
 
                     Assert.IsNotNull(buffer);
 
-                    Assert.AreEqual(64, buffer.Length);                    
-                }                
+                    Assert.AreEqual(64, buffer.Length);
+                }
             }
         }
 

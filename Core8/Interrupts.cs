@@ -21,7 +21,7 @@ namespace Core8.Core
 
         private bool TeletypeRequested => cpu.Teletype.InterruptRequested;
 
-        private bool FloppyRequested => cpu.FloppyDrive.InterruptRequested;
+        private bool FloppyRequested => cpu.FloppyDrive?.InterruptRequested ?? false;
 
         public bool Inhibited { get; private set; }
 

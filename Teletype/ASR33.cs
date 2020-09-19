@@ -15,6 +15,10 @@ namespace Core8.Peripherals.Teletype
     {
         private readonly List<byte> paper = new List<byte>();
 
+        private int ticks;
+
+        private const int TickDelay = 100;
+
         private readonly ConcurrentQueue<byte> reader = new ConcurrentQueue<byte>();
 
         private readonly PublisherSocket publisherSocket;
@@ -23,17 +27,15 @@ namespace Core8.Peripherals.Teletype
         private int deviceControl;
 
         private bool outputPending;
-        private DateTime outputPendingAt;
-        private DateTime inputPendingAt;
 
         private const int INTERRUPT_ENABLE = 1 << 0;
         private const int STATUS_ENABLE = 1 << 1;
 
-        private bool inputIRQ;
+        private bool InterruptEnable => ((deviceControl & INTERRUPT_ENABLE) != 0);
 
-        private bool outputIRQ;
+        private bool InputIRQ => InputFlag && InterruptEnable;
 
-
+        private bool OutputIRQ => OutputFlag && InterruptEnable;
 
         public ASR33(string inputAddress, string outputAddress)
         {
@@ -70,34 +72,21 @@ namespace Core8.Peripherals.Teletype
             reader.Clear();
         }
 
-        public void ClearInputFlag()
-        {
-            InputFlag = inputIRQ = false;
-        }
+        public void ClearInputFlag() => InputFlag = false;
 
-        private void SetInputFlag()
-        {
-            InputFlag = true;
-            inputIRQ = (deviceControl & INTERRUPT_ENABLE) != 0;
-        }
+        private void SetInputFlag() => InputFlag = true;
 
-        public void ClearOutputFlag()
-        {
-            OutputFlag = outputIRQ = false;
-        }
+        public void ClearOutputFlag() => OutputFlag = false;
 
-        public void SetOutputFlag()
-        {
-            OutputFlag = true;
-            outputIRQ = (deviceControl & INTERRUPT_ENABLE) != 0;
-        }
+        public void SetOutputFlag() => OutputFlag = true;
 
         public void Type(byte c)
         {
             OutputBuffer = c;
 
             outputPending = true;
-            outputPendingAt = DateTime.UtcNow.AddMilliseconds(50);
+
+            ticks = 0;
 
             Log.Debug($"Paper: {c.ToPrintableAscii()}");
         }
@@ -119,16 +108,23 @@ namespace Core8.Peripherals.Teletype
 
         public string Printout => Encoding.ASCII.GetString(paper.ToArray());
 
-        public bool InterruptRequested => inputIRQ || outputIRQ;
+        public bool InterruptRequested => InputIRQ || OutputIRQ;
 
         public override string ToString()
         {
-            return $"[TT] if={(InputFlag ? 1 : 0)} ib={InputBuffer} of={(OutputFlag ? 1 : 0)} ob={OutputBuffer} irq/in={(inputIRQ ? 1 : 0)} irq/out={(outputIRQ ? 1 : 0)} (tq= {reader.Count})";
+            return $"[TT] if={(InputFlag ? 1 : 0)} ib={InputBuffer} of={(OutputFlag ? 1 : 0)} ob={OutputBuffer} irq/in={(InputIRQ ? 1 : 0)} irq/out={(OutputIRQ ? 1 : 0)} (tq= {reader.Count})";
         }
 
         public void Tick()
         {
-            if (!InputFlag && DateTime.UtcNow > inputPendingAt)
+            if (ticks++ < TickDelay)
+            {
+                return;
+            }
+
+            ticks = 0;
+
+            if (!InputFlag)
             {
                 while (subscriberSocket.TryReceiveFrameBytes(TimeSpan.Zero, out var frame))
                 {
@@ -136,8 +132,6 @@ namespace Core8.Peripherals.Teletype
                     {
                         reader.Enqueue(key);
                     }
-
-                    inputPendingAt = DateTime.UtcNow.AddMilliseconds(100);
                 }
 
                 if (reader.TryDequeue(out var b))
@@ -150,7 +144,7 @@ namespace Core8.Peripherals.Teletype
                 }
             }
 
-            if (outputPending && DateTime.UtcNow > outputPendingAt)
+            if (outputPending)
             {
                 paper.Add(OutputBuffer);
 

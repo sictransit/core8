@@ -1,10 +1,10 @@
 ﻿using Core8.Model;
 using Core8.Model.Extensions;
 using Core8.Model.Interfaces;
-using Core8.Peripherals.Floppy;
 using Serilog;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 
 namespace Core8.Core
 {
@@ -20,13 +20,13 @@ namespace Core8.Core
 
         private readonly InstructionSet instructionSet;
 
-        public CPU(ITeletype teletype)
+        public CPU(ITeletype teletype, IFloppyDrive floppy)
         {
             Teletype = teletype ?? throw new ArgumentNullException(nameof(teletype));
 
             Memory = new Memory();
             Registers = new Registers();
-            FloppyDrive = new FloppyDrive();
+            FloppyDrive = floppy;
 
             Interrupts = new Interrupts(this);
 
@@ -49,7 +49,7 @@ namespace Core8.Core
             Registers.AC.Clear();
             Interrupts.ClearUser();
             Interrupts.Disable();
-            FloppyDrive.Initialize();
+            FloppyDrive?.Initialize();
         }
 
         public void Halt()
@@ -67,15 +67,13 @@ namespace Core8.Core
             string floppy = null;
             string registerAC = null;
 
-            var tick = 0;
-
             try
             {
                 while (running)
                 {
                     if (debug)
                     {
-                        var f = FloppyDrive.ToString();
+                        var f = FloppyDrive?.ToString();
                         if (f != floppy)
                         {
                             floppy = f;
@@ -100,7 +98,14 @@ namespace Core8.Core
                         {
                             Log.Information("Breakpoint hit!");
 
-                            break;
+                            if (Debugger.IsAttached)
+                            {
+                                Debugger.Break();
+                            }
+                            else
+                            {
+                                break;
+                            }
                         }
 
                         if (singleStep)
@@ -111,17 +116,8 @@ namespace Core8.Core
 
                     Interrupts.Interrupt();
 
-                    tick++;
-
-                    if (tick % 97 == 0)
-                    {
-                        Teletype.Tick();
-                    }
-
-                    if (tick % 53 == 0)
-                    {
-                        FloppyDrive.Tick();
-                    }
+                    Teletype.Tick();
+                    FloppyDrive?.Tick();
 
                     var instruction = Fetch(Registers.PC.Content);
 

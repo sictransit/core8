@@ -1,9 +1,7 @@
 ﻿namespace Core8.Model.Interfaces
 {
-    public interface IFloppyDrive : IRequestsInterrupts
+    public interface IFloppyDrive : IIODevice
     {
-        void Tick();
-
         void Load(byte unit, byte[] disk = null);
 
         void LoadCommandRegister(int accumulator);

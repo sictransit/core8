@@ -14,7 +14,7 @@ namespace Core8.Tests.MAINDEC
 
         protected override IEnumerable<string> ExpectedOutput => new[] { "\r\n5" };
 
-        protected override TimeSpan MaxRunningTime => TimeSpan.FromSeconds(60);
+        protected override TimeSpan MaxRunningTime => TimeSpan.FromSeconds(120);
 
         [TestMethod]
         public override void Start()

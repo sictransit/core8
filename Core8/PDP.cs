@@ -1,5 +1,6 @@
 ﻿using Core8.Model.Extensions;
 using Core8.Model.Interfaces;
+using Core8.Peripherals.Floppy;
 using Core8.Peripherals.Teletype;
 using Serilog;
 using System;
@@ -12,11 +13,13 @@ namespace Core8.Core
     {
         private Thread cpuThread;
 
-        public PDP()
+        public PDP(bool attachFloppy = false)
         {
             var teletype = new ASR33(@"tcp://127.0.0.1:17232", @"tcp://127.0.0.1:17233");
 
-            CPU = new CPU(teletype);
+            IFloppyDrive floppy = attachFloppy ? new FloppyDrive() : null;
+
+            CPU = new CPU(teletype, floppy);
 
             ToggleRIMAndBinLoader();
         }

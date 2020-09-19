@@ -69,7 +69,12 @@ namespace Core8.Peripherals.Floppy
 
         public int XDR(int acc) => currentState.XDR(acc);
 
-        public void Tick() => currentState.Tick();
+        public void Tick()
+        {
+            Ticks++;
+
+            currentState.Tick();
+        }
 
         private bool TryRetrieveSector(out Sector sector)
         {
@@ -150,6 +155,8 @@ namespace Core8.Peripherals.Floppy
         private readonly Disk[] disks = new Disk[2];
 
         public bool IRQ => interruptsEnabled && (Done || Error);
+
+        public int Ticks { get; private set; }
 
         public void SetSectorAddress(int sector) => SA.SetSAR(sector);
 

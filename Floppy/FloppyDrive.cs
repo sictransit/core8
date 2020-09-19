@@ -15,7 +15,7 @@ namespace Core8.Peripherals.Floppy
             controller.Load(0);
             controller.Load(1);
 
-            controller.SetState(new Idle(controller));
+            controller.SetState(new Initialize(controller));
         }
 
         public bool InterruptRequested => controller.IRQ;
