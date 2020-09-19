@@ -1,5 +1,4 @@
 ﻿using Core8.Peripherals.Floppy.Interfaces;
-using Serilog;
 using System;
 
 namespace Core8.Peripherals.Floppy.States.Abstract
@@ -19,7 +18,7 @@ namespace Core8.Peripherals.Floppy.States.Abstract
 
         protected virtual int StateTicks => 30;
 
-        private bool IsStateChangeDue => Controller.Ticks > initialTicks + StateTicks;        
+        private bool IsStateChangeDue => Controller.Ticks > initialTicks + StateTicks;
 
         protected virtual bool FinalizeState() => false;
 
@@ -29,9 +28,9 @@ namespace Core8.Peripherals.Floppy.States.Abstract
         {
             if (IsStateChangeDue && FinalizeState())
             {
-                SetIR(); 
-                
-                Controller.SetState(new Idle(Controller));                
+                SetIR();
+
+                Controller.SetState(new Idle(Controller));
             }
         }
 

@@ -2,7 +2,6 @@
 using Core8.Peripherals.Floppy.Interfaces;
 using Core8.Peripherals.Floppy.States.Abstract;
 using System;
-using System.Diagnostics;
 
 namespace Core8.Peripherals.Floppy.States
 {

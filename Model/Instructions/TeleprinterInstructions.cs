@@ -10,7 +10,7 @@ namespace Core8.Model.Instructions
         private const int TSF_MASK = 1 << 0;
         private const int TCF_MASK = 1 << 1;
         private const int TPC_MASK = 1 << 2;
-        private const int TSK_MASK = 1 << 2 | 1 << 0;
+        private const int TSK_MASK = TPC_MASK | TSF_MASK;
         private const int TLS_MASK = TCF_MASK | TPC_MASK;
 
         public TeleprinterInstructions(ICPU cpu) : base(cpu)

@@ -6,11 +6,11 @@ namespace Core8.Model.Instructions
 {
     public class KeyboardInstructions : TeleptypeInstructionsBase
     {
-        private const int KCF_MASK = 0b_000;
-        private const int KSF_MASK = 0b_001;
-        private const int KCC_MASK = 0b_010;
-        private const int KRS_MASK = 0b_100;
-        private const int KIE_MASK = 0b_101;
+        private const int KCF_MASK = 0 << 0;
+        private const int KSF_MASK = 1 << 0;
+        private const int KCC_MASK = 1 << 1;
+        private const int KRS_MASK = 1 << 2;
+        private const int KIE_MASK = KSF_MASK | KRS_MASK;
         private const int KRB_MASK = KCC_MASK | KRS_MASK;
 
         public KeyboardInstructions(ICPU cpu) : base(cpu)

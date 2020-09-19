@@ -78,7 +78,8 @@ namespace Core8
 
             pdp.LoadPaperTape(new HttpClient().GetByteArrayAsync(@"https://www.dropbox.com/s/mvm1mh47jybfl5t/dirxa-d-pb?dl=1").Result);
 
-            pdp.Load8(0021);
+            pdp.Load8(0020);
+            pdp.Deposit8(0000);
             pdp.Deposit8(0000);
             pdp.Deposit8(0400);
 

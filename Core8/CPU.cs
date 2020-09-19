@@ -101,7 +101,7 @@ namespace Core8.Core
                     var instruction = Fetch(Registers.PC.Content);
 
                     Registers.PC.Increment();
-                    
+
                     instruction.Execute();
 
                     if (debug)

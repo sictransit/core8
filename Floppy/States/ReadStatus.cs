@@ -10,7 +10,7 @@ namespace Core8.Peripherals.Floppy.States
 
         }
 
-        protected override bool FinalizeState() 
+        protected override bool FinalizeState()
         {
             Controller.ES.SetInitializationDone(false);
 

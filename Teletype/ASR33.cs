@@ -31,7 +31,7 @@ namespace Core8.Peripherals.Teletype
         private const int INTERRUPT_ENABLE = 1 << 0;
         private const int STATUS_ENABLE = 1 << 1;
 
-        private bool InterruptEnable => ((deviceControl & INTERRUPT_ENABLE) != 0);
+        private bool InterruptEnable => (deviceControl & INTERRUPT_ENABLE) != 0;
 
         private bool InputIRQ => InputFlag && InterruptEnable;
 
@@ -82,13 +82,20 @@ namespace Core8.Peripherals.Teletype
 
         public void Type(byte c)
         {
-            OutputBuffer = c;
+            if (!outputPending)
+            {
+                OutputBuffer = c;
 
-            outputPending = true;
+                outputPending = true;
 
-            ticks = 0;
+                ticks = 0;
 
-            Log.Debug($"Paper: {c.ToPrintableAscii()}");
+                Log.Debug($"Paper: {c.ToPrintableAscii()}");
+            }
+            else
+            {
+                Log.Warning($"Type with char in buffer: {c.ToPrintableAscii()}");
+            }
         }
 
         public void MountPaperTape(byte[] chars)
