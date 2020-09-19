@@ -47,6 +47,7 @@ namespace Core8.Model.Instructions
                 }
             }
 
+            // TODO: Is this correct, or should we skip the entire instruction?
             if ((Data & Masks.GROUP_3_EAE) != 0)
             {
                 Log.Warning($"{this} EAE micro-code ignored");

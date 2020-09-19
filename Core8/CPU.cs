@@ -161,9 +161,7 @@ namespace Core8.Core
             return (data & Masks.OP_CODE) switch
             {
                 Masks.MCI when (data & Masks.GROUP) == 0 => instructionSet.Group1,
-                //Masks.MCI when ((data & Masks.GROUP_3) == Masks.GROUP_3) && ((data & Masks.GROUP_3_EAE) == 0) => instructionSet.Group3,
                 Masks.MCI when (data & Masks.GROUP_3) == Masks.GROUP_3 => instructionSet.Group3,
-                //Masks.MCI when (data & Masks.GROUP_3) == Masks.GROUP_3 => instructionSet.NOP,
                 Masks.MCI when (data & Masks.GROUP_2_AND) == Masks.GROUP_2_AND => instructionSet.Group2AND,
                 Masks.MCI => instructionSet.Group2OR,
                 Masks.IOT when (data & Masks.FLOPPY) == Masks.FLOPPY => instructionSet.FloppyDrive,

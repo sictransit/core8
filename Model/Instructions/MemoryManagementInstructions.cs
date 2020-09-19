@@ -116,11 +116,9 @@ namespace Core8.Model.Instructions
 
         private void RMF()
         {
-            var sf = Registers.SF;
-
-            Registers.IB.SetIB(sf.IF);
-            Registers.DF.SetDF(sf.DF);
-            Registers.UB.SetUB(sf.UF);
+            Registers.IB.SetIB(Registers.SF.IF);
+            Registers.DF.SetDF(Registers.SF.DF);
+            Registers.UB.SetUB(Registers.SF.UF);
 
             Interrupts.Inhibit();
         }

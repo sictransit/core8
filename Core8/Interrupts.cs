@@ -68,16 +68,9 @@ namespace Core8.Core
         {
             if (Enabled && Requested && !Inhibited)
             {
-                //if (Log.IsEnabled(Serilog.Events.LogEventLevel.Debug))
-                //{
-                //    Log.Debug("Interrupt!");
-                //}
-
                 cpu.Memory.Write(0, cpu.Registers.PC.Address); // JMS 0000
 
-                cpu.Registers.SF.SetIF(cpu.Registers.PC.IF);
-                cpu.Registers.SF.SetDF(cpu.Registers.DF.Content);
-                cpu.Registers.SF.SetUF(cpu.Registers.UF.Content);
+                cpu.Registers.SF.Save(cpu.Registers.DF.Content, cpu.Registers.PC.IF, cpu.Registers.UF.Content);
 
                 cpu.Registers.DF.Clear();
                 cpu.Registers.IB.Clear();

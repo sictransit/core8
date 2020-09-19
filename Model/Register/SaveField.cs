@@ -14,10 +14,9 @@ namespace Core8.Model.Register
 
         protected override int Digits => 3;
 
-        public void SetDF(int value) => Content = (Content & Masks.SF_IF) | (value & Masks.SF_DF);
-
-        public void SetIF(int value) => Content = ((value << 3) & Masks.SF_IF) | (Content & Masks.SF_DF);
-
-        public void SetUF(int value) => Content = ((value & Masks.FLAG) << 6) | (Content & (Masks.SF_IF | Masks.SF_DF));
+        public void Save(int df, int @if, int uf)
+        {
+            Content = ((uf & Masks.FLAG) << 6) | ((@if << 3) & Masks.SF_IF) | (df & Masks.SF_DF);
+        }
     }
 }
