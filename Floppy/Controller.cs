@@ -1,4 +1,4 @@
-﻿using Core8.Model.Extensions;
+﻿using Core8.Extensions;
 using Core8.Peripherals.Floppy.Declarations;
 using Core8.Peripherals.Floppy.Interfaces;
 using Core8.Peripherals.Floppy.Media;

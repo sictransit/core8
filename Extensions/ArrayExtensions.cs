@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Core8.Model.Extensions
+namespace Core8.Extensions
 {
     public static class ArrayExtensions
     {

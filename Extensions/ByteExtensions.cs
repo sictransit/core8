@@ -1,6 +1,6 @@
 ﻿using System.Text;
 
-namespace Core8.Model.Extensions
+namespace Core8.Extensions
 {
     public static class ByteExtensions
     {

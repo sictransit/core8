@@ -1,4 +1,4 @@
-﻿using Core8.Model.Extensions;
+﻿using Core8.Extensions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 

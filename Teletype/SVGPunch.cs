@@ -1,4 +1,4 @@
-﻿using Core8.Model.Extensions;
+﻿using Core8.Extensions;
 using Core8.Peripherals.Teletype.Abstract;
 using System;
 using System.Collections.Generic;

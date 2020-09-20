@@ -1,4 +1,4 @@
-﻿using Core8.Model.Extensions;
+﻿using Core8.Extensions;
 using Core8.Model.Instructions.Abstract;
 using Core8.Model.Interfaces;
 using System;

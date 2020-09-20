@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Core8.Model.Extensions
+namespace Core8.Extensions
 {
     public static class EnumerableExtensions
     {
