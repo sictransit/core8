@@ -8,12 +8,13 @@ using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Text;
+using System.Xml.Serialization;
 
 namespace Core8.Peripherals.Teletype
 {
     public class ASR33 : ITeletype
     {
-        private readonly List<byte> paper = new List<byte>();
+        private readonly List<char> paper = new List<char>();
 
         private int ticks;
 
@@ -24,12 +25,9 @@ namespace Core8.Peripherals.Teletype
         private readonly PublisherSocket publisherSocket;
         private readonly SubscriberSocket subscriberSocket;
 
-        private int deviceControl;
+        private int deviceControl;        
 
-        private bool outputPending;
-
-        private const int INTERRUPT_ENABLE = 1 << 0;
-        private const int STATUS_ENABLE = 1 << 1;
+        private const int INTERRUPT_ENABLE = 1 << 0;        
 
         private bool InterruptEnable => (deviceControl & INTERRUPT_ENABLE) != 0;
 
@@ -53,11 +51,11 @@ namespace Core8.Peripherals.Teletype
 
         public byte InputBuffer { get; private set; }
 
-        private byte OutputBuffer { get; set; }
+        private char? OutputBuffer { get; set; }
 
         public void SetDeviceControl(int data)
         {
-            deviceControl = data & (INTERRUPT_ENABLE | STATUS_ENABLE);
+            deviceControl = data & INTERRUPT_ENABLE;
         }
 
         public void Clear()
@@ -67,7 +65,7 @@ namespace Core8.Peripherals.Teletype
             ClearInputFlag();
             ClearOutputFlag();
 
-            outputPending = false;
+            OutputBuffer = null;
 
             reader.Clear();
         }
@@ -82,11 +80,9 @@ namespace Core8.Peripherals.Teletype
 
         public void Type(byte c)
         {
-            if (!outputPending)
+            if (OutputBuffer == null)
             {
-                OutputBuffer = c;
-
-                outputPending = true;
+                OutputBuffer = (char)c;
 
                 ticks = 0;
 
@@ -113,7 +109,7 @@ namespace Core8.Peripherals.Teletype
             }
         }
 
-        public string Printout => Encoding.ASCII.GetString(paper.ToArray());
+        public string Printout => new string(paper.ToArray());
 
         public bool InterruptRequested => InputIRQ || OutputIRQ;
 
@@ -131,39 +127,56 @@ namespace Core8.Peripherals.Teletype
 
             ticks = 0;
 
-            if (!InputFlag)
+            if (!HandleOutput())
             {
-                while (subscriberSocket.TryReceiveFrameBytes(TimeSpan.Zero, out var frame))
-                {
-                    foreach (var key in frame)
-                    {
-                        reader.Enqueue(key);
-                    }
-                }
+                HandleInput();
+            }            
+        }
 
-                if (reader.TryDequeue(out var b))
-                {
-                    Log.Debug($"Keyboard: {b.ToPrintableAscii()}");
-
-                    InputBuffer = b;
-
-                    SetInputFlag();
-                }
-            }
-
-            if (outputPending)
+        private bool HandleOutput()
+        {
+            if (OutputBuffer.HasValue)
             {
-                paper.Add(OutputBuffer);
+                paper.Add(OutputBuffer.Value);
 
-                if (!publisherSocket.TrySendFrame(new[] { OutputBuffer }))
+                if (!publisherSocket.TrySendFrame(new[] { (byte)OutputBuffer }))
                 {
                     Log.Warning("Failed to send 0MQ frame.");
                 }
 
-                outputPending = false;
+                OutputBuffer = null;
 
                 SetOutputFlag();
+
+                return true;
             }
+
+            return false;
+        }
+
+        private void HandleInput()
+        {
+            if (InputFlag)
+            {
+                return;
+            }            
+            
+            while (subscriberSocket.TryReceiveFrameBytes(TimeSpan.Zero, out var frame))
+            {
+                foreach (var key in frame)
+                {
+                    reader.Enqueue(key);
+                }
+            }
+
+            if (reader.TryDequeue(out var b))
+            {
+                Log.Debug($"Keyboard: {b.ToPrintableAscii()}");
+
+                InputBuffer = b;
+
+                SetInputFlag();
+            }            
         }
     }
 }
