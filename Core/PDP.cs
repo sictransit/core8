@@ -284,7 +284,7 @@ namespace Core8.Core
             cpuThread = new Thread(CPU.Run)
             {
                 IsBackground = true,
-                Priority = ThreadPriority.AboveNormal
+                Priority = ThreadPriority.Normal
             };
 
             cpuThread.Start();
