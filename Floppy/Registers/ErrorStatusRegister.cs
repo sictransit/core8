@@ -11,15 +11,15 @@ namespace Core8.Peripherals.Floppy.Registers
 
         protected override string ShortName => "ES";
 
-        public bool Ready => (Content & RDY_MASK) != 0;
+        private bool Ready => (Content & RDY_MASK) != 0;
 
         public void SetReady(bool state) => Content = Content & ~RDY_MASK | (state ? RDY_MASK : 0);
 
-        public bool WriteProtect => (Content & WP_MASK) != 0;
+        private bool WriteProtect => (Content & WP_MASK) != 0;
 
         public void SetWriteProtect(bool state) => Content = Content & ~WP_MASK | (state ? WP_MASK : 0);
 
-        public bool InitializationDone => (Content & ID_MASK) != 0;
+        private bool InitializationDone => (Content & ID_MASK) != 0;
 
         public void SetInitializationDone(bool state) => Content = Content & ~ID_MASK | (state ? ID_MASK : 0);
 

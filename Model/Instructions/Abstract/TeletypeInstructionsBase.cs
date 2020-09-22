@@ -2,9 +2,9 @@
 
 namespace Core8.Model.Instructions.Abstract
 {
-    public abstract class TeleptypeInstructionsBase : PrivilegedInstructionsBase
+    public abstract class TeletypeInstructionsBase : PrivilegedInstructionsBase
     {
-        protected TeleptypeInstructionsBase(ICPU cpu) : base(cpu)
+        protected TeletypeInstructionsBase(ICPU cpu) : base(cpu)
         {
         }
 

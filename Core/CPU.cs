@@ -1,12 +1,12 @@
 ﻿using Core8.Extensions;
 using Core8.Model;
+using Core8.Model.Instructions;
 using Core8.Model.Interfaces;
 using Core8.Model.Registers;
 using Serilog;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using Core8.Model.Instructions;
 
 namespace Core8.Core
 {
@@ -107,7 +107,6 @@ namespace Core8.Core
 
             string interrupts = null;
             string floppy = null;
-            string registerAC = null;
 
             try
             {

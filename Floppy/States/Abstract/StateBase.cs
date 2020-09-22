@@ -16,9 +16,9 @@ namespace Core8.Peripherals.Floppy.States.Abstract
 
         protected IController Controller { get; }
 
-        protected virtual int StateTicks => 30;
+        private const int STATE_TICKS = 30;
 
-        private bool IsStateChangeDue => Controller.Ticks > initialTicks + StateTicks;
+        private bool IsStateChangeDue => Controller.Ticks > initialTicks + STATE_TICKS;
 
         protected virtual bool FinalizeState() => false;
 
