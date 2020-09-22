@@ -1,4 +1,5 @@
-﻿using Core8.Model.Interfaces;
+﻿using System;
+using Core8.Model.Interfaces;
 
 namespace Core8.Core
 {
@@ -10,7 +11,7 @@ namespace Core8.Core
 
         public Interrupts(ICPU cpu)
         {
-            this.cpu = cpu;
+            this.cpu = cpu ?? throw new ArgumentNullException(nameof(cpu));
         }
 
         public bool Enabled { get; private set; }
@@ -68,17 +69,17 @@ namespace Core8.Core
         {
             if (Enabled && Requested && !Inhibited)
             {
-                cpu.Memory.Write(0, cpu.Registers.PC.Address); // JMS 0000
+                cpu.Memory.Write(0, cpu.PC.Address); // JMS 0000
 
-                cpu.Registers.SF.Save(cpu.Registers.DF.Content, cpu.Registers.PC.IF, cpu.Registers.UF.Content);
+                cpu.SF.Save(cpu.DF.Content, cpu.PC.IF, cpu.UF.Content);
 
-                cpu.Registers.DF.Clear();
-                cpu.Registers.IB.Clear();
-                cpu.Registers.UF.Clear();
-                cpu.Registers.UB.Clear();
+                cpu.DF.Clear();
+                cpu.IB.Clear();
+                cpu.UF.Clear();
+                cpu.UB.Clear();
 
-                cpu.Registers.PC.SetInterruptAddress();
-
+                cpu.PC.SetInterruptAddress();
+                
                 Disable();
             }
 

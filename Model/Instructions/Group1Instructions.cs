@@ -25,42 +25,42 @@ namespace Core8.Model.Instructions
         {
             if ((Data & CLA_MASK) != 0)
             {
-                Registers.AC.ClearAccumulator();
+                AC.ClearAccumulator();
             }
 
             if ((Data & CLL_MASK) != 0)
             {
-                Registers.AC.ClearLink();
+                AC.ClearLink();
             }
 
             if ((Data & CMA_MASK) != 0)
             {
-                Registers.AC.ComplementAccumulator();
+                AC.ComplementAccumulator();
             }
 
             if ((Data & CML_MASK) != 0)
             {
-                Registers.AC.ComplementLink();
+                AC.ComplementLink();
             }
 
             if ((Data & IAC_MASK) != 0)
             {
-                Registers.AC.AddWithCarry(1);
+                AC.AddWithCarry(1);
             }
 
             if ((Data & RAR_MASK) != 0)
             {
-                Registers.AC.RAR((Data & BSW_MASK) != 0);
+                AC.RAR((Data & BSW_MASK) != 0);
             }
 
             if ((Data & RAL_MASK) != 0)
             {
-                Registers.AC.RAL((Data & BSW_MASK) != 0);
+                AC.RAL((Data & BSW_MASK) != 0);
             }
 
             if ((Data & (BSW_MASK | RAR_MASK | RAL_MASK)) == BSW_MASK)
             {
-                Registers.AC.ByteSwap();
+                AC.ByteSwap();
             }
         }
 

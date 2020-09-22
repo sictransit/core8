@@ -1,4 +1,4 @@
-﻿using Core8.Model.Register.Abstract;
+﻿using Core8.Model.Registers.Abstract;
 using Core8.Peripherals.Floppy.Declarations;
 
 namespace Core8.Peripherals.Floppy.Registers

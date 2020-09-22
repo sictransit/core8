@@ -1,6 +1,6 @@
 ﻿using Core8.Extensions;
 
-namespace Core8.Model.Register.Abstract
+namespace Core8.Model.Registers.Abstract
 {
     public abstract class RegisterBase
     {

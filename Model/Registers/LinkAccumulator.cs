@@ -1,7 +1,7 @@
 ﻿using Core8.Extensions;
-using Core8.Model.Register.Abstract;
+using Core8.Model.Registers.Abstract;
 
-namespace Core8.Model.Register
+namespace Core8.Model.Registers
 {
     public class LinkAccumulator : RegisterBase
     {

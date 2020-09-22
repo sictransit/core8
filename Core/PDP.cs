@@ -212,20 +212,20 @@ namespace Core8.Core
 
         public void Deposit10(int data)
         {
-            CPU.Registers.SR.SetSR(data);
+            CPU.SR.SetSR(data);
 
             Deposit();
         }
 
         private void Deposit()
         {
-            var data = CPU.Registers.SR.Content;
+            var data = CPU.SR.Content;
 
-            CPU.Memory.Write(CPU.Registers.PC.Address, data);
+            CPU.Memory.Write(CPU.PC.Address, data);
 
-            Log.Information($"DEP: {CPU.Registers.PC} {data.ToOctalString()}");
+            Log.Information($"DEP: {CPU.PC} {data.ToOctalString()}");
 
-            CPU.Registers.PC.Increment();
+            CPU.PC.Increment();
         }
 
         public void Load8(int address)
@@ -235,16 +235,16 @@ namespace Core8.Core
 
         public void Load10(int address)
         {
-            CPU.Registers.SR.SetSR(address);
+            CPU.SR.SetSR(address);
 
             Load();
         }
 
         private void Load()
         {
-            CPU.Registers.PC.SetPC(CPU.Registers.SR.Content);
+            CPU.PC.SetPC(CPU.SR.Content);
 
-            Log.Information($"LOAD: {CPU.Registers.PC}");
+            Log.Information($"LOAD: {CPU.PC}");
         }
 
         public void Toggle8(int word)
@@ -254,7 +254,7 @@ namespace Core8.Core
 
         public void Toggle10(int word)
         {
-            CPU.Registers.SR.SetSR(word);
+            CPU.SR.SetSR(word);
         }
 
         public void SetBreakpoint8(int address)
@@ -274,9 +274,9 @@ namespace Core8.Core
 
         public void Exam()
         {
-            CPU.Registers.AC.SetAccumulator(CPU.Memory.Read(CPU.Registers.PC.Address));
+            CPU.AC.SetAccumulator(CPU.Memory.Read(CPU.PC.Address));
 
-            Log.Information($"EXAM: {CPU.Registers.AC}");
+            Log.Information($"EXAM: {CPU.AC}");
         }
 
         public void Continue(bool waitForHalt = true)

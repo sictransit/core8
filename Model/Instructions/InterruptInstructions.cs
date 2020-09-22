@@ -58,7 +58,7 @@ namespace Core8.Model.Instructions
         {
             if (Interrupts.Enabled)
             {
-                Registers.PC.Increment();
+                PC.Increment();
             }
 
             Interrupts.Disable();
@@ -78,15 +78,15 @@ namespace Core8.Model.Instructions
         {
             if (Interrupts.Requested)
             {
-                Registers.PC.Increment();
+                PC.Increment();
             }
         }
 
         private void GTF()
         {
-            var acc = (Registers.AC.Link << 11) | ((Interrupts.Requested ? 1 : 0) << 9) | ((Interrupts.Pending ? 1 : 0) << 7) | Registers.SF.Content;
+            var acc = (AC.Link << 11) | ((Interrupts.Requested ? 1 : 0) << 9) | ((Interrupts.Pending ? 1 : 0) << 7) | SF.Content;
 
-            Registers.AC.SetAccumulator(acc);
+            AC.SetAccumulator(acc);
         }
 
         private void SGT()
@@ -98,13 +98,13 @@ namespace Core8.Model.Instructions
 
         private void RTF()
         {
-            var acc = Registers.AC.Accumulator;
+            var acc = AC.Accumulator;
 
-            Registers.AC.SetLink((acc >> 11) & Masks.FLAG);
+            AC.SetLink((acc >> 11) & Masks.FLAG);
 
-            Registers.IB.SetIB(acc >> 3);
-            Registers.DF.SetDF(acc);
-            Registers.UB.SetUB(acc >> 6);
+            IB.SetIB(acc >> 3);
+            DF.SetDF(acc);
+            UB.SetUB(acc >> 6);
 
             Interrupts.Enable(false);
             Interrupts.Inhibit();

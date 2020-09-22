@@ -57,8 +57,8 @@ namespace Core8.Model.Instructions
             {
                 Interrupts.Allow();
 
-                Registers.PC.SetIF(Registers.IB.Content);
-                Registers.UF.SetUF(Registers.UB.Content);
+                PC.SetIF(IB.Content);
+                UF.SetUF(UB.Content);
             }
 
             var operand = Indirect ? Field | Memory.Read(Location, true) : Location;
@@ -78,7 +78,7 @@ namespace Core8.Model.Instructions
 
         private void ExecuteNonBranching()
         {
-            var operand = Indirect ? (Registers.DF.Content << 12) | Memory.Read(Location, true) : Location;
+            var operand = Indirect ? (DF.Content << 12) | Memory.Read(Location, true) : Location;
 
             switch (Data & Masks.OP_CODE)
             {
@@ -101,39 +101,39 @@ namespace Core8.Model.Instructions
 
         private void AND(int operand)
         {
-            Registers.AC.ANDAccumulator(Memory.Read(operand));
+            AC.ANDAccumulator(Memory.Read(operand));
         }
 
         private void DCA(int operand)
         {
-            Memory.Write(operand, Registers.AC.Accumulator);
+            Memory.Write(operand, AC.Accumulator);
 
-            Registers.AC.ClearAccumulator();
+            AC.ClearAccumulator();
         }
 
         private void ISZ(int operand)
         {
             if (Memory.Write(operand, Memory.Read(operand) + 1) == 0)
             {
-                Registers.PC.Increment();
+                PC.Increment();
             }
         }
 
         private void JMP(int operand)
         {
-            Registers.PC.Jump(operand);
+            PC.Jump(operand);
         }
 
-        public void JMS(int operand)
+        private void JMS(int operand)
         {
-            Memory.Write(operand, Registers.PC.Address);
+            Memory.Write(operand, PC.Address);
 
-            Registers.PC.Jump(operand + 1);
+            PC.Jump(operand + 1);
         }
 
         private void TAD(int operand)
         {
-            Registers.AC.AddWithCarry(Memory.Read(operand));
+            AC.AddWithCarry(Memory.Read(operand));
         }
 
         public override string ToString()

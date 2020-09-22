@@ -1,5 +1,6 @@
 ﻿using Core8.Extensions;
 using Core8.Model.Interfaces;
+using Core8.Model.Registers;
 
 namespace Core8.Model.Instructions.Abstract
 {
@@ -20,9 +21,25 @@ namespace Core8.Model.Instructions.Abstract
 
         protected ICPU CPU { get; }
 
-        protected IRegisters Registers => CPU.Registers;
-
         protected IInterrupts Interrupts => CPU.Interrupts;
+
+        protected LinkAccumulator AC => CPU.AC;
+
+        protected InstructionFieldProgramCounter PC => CPU.PC;
+
+        protected SwitchRegister SR => CPU.SR;
+
+        protected MultiplierQuotient MQ => CPU.MQ;
+
+        protected DataField DF => CPU.DF;
+
+        protected InstructionBuffer IB => CPU.IB;
+
+        protected UserBuffer UB => CPU.UB;
+
+        protected UserFlag UF => CPU.UF;
+
+        protected SaveField SF => CPU.SF;
 
         public IInstruction Load(int address, int data)
         {

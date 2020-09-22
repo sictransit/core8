@@ -59,7 +59,7 @@ namespace Core8.Model.Instructions
 
         private void TPC()
         {
-            var c = Registers.AC.Accumulator & Masks.TELEPRINTER_BUFFER_MASK;
+            var c = AC.Accumulator & Masks.TELEPRINTER_BUFFER_MASK;
 
             Teletype.Type((byte)c);
         }
@@ -68,7 +68,7 @@ namespace Core8.Model.Instructions
         {
             if (Teletype.OutputFlag || Teletype.InputFlag)
             {
-                Registers.PC.Increment();
+                PC.Increment();
             }
         }
 
@@ -76,7 +76,7 @@ namespace Core8.Model.Instructions
         {
             if (Teletype.OutputFlag)
             {
-                Registers.PC.Increment();
+                PC.Increment();
             }
         }
 

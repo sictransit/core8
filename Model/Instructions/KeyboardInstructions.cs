@@ -50,7 +50,7 @@ namespace Core8.Model.Instructions
 
         private void KCC()
         {
-            Registers.AC.ClearAccumulator();
+            AC.ClearAccumulator();
 
             Teletype.ClearInputFlag();
         }
@@ -62,19 +62,19 @@ namespace Core8.Model.Instructions
 
         private void KRS()
         {
-            Registers.AC.ORAccumulator(Teletype.InputBuffer);
+            AC.ORAccumulator(Teletype.InputBuffer);
         }
 
         private void KIE()
         {
-            Teletype.SetDeviceControl(Registers.AC.Accumulator);
+            Teletype.SetDeviceControl(AC.Accumulator);
         }
 
         private void KSF()
         {
             if (Teletype.InputFlag)
             {
-                Registers.PC.Increment();
+                PC.Increment();
             }
         }
 

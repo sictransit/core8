@@ -82,12 +82,12 @@ namespace Core8.Model.Instructions
         {
             if ((Data & CDF_MASK) != 0)
             {
-                Registers.DF.SetDF(Data >> 3);
+                DF.SetDF(Data >> 3);
             }
 
             if ((Data & CIF_MASK) != 0)
             {
-                Registers.IB.SetIB(Data >> 3);
+                IB.SetIB(Data >> 3);
 
                 Interrupts.Inhibit();
             }
@@ -101,24 +101,24 @@ namespace Core8.Model.Instructions
 
         private void RDF()
         {
-            Registers.AC.ORAccumulator(Registers.DF.Content << 3);
+            AC.ORAccumulator(DF.Content << 3);
         }
 
         private void RIB()
         {
-            Registers.AC.ORAccumulator(Registers.SF.Content & (Masks.SF_UF | Masks.SF_IF | Masks.SF_DF));
+            AC.ORAccumulator(SF.Content & (Masks.SF_UF | Masks.SF_IF | Masks.SF_DF));
         }
 
         private void RIF()
         {
-            Registers.AC.ORAccumulator(Registers.PC.IF << 3);
+            AC.ORAccumulator(PC.IF << 3);
         }
 
         private void RMF()
         {
-            Registers.IB.SetIB(Registers.SF.IF);
-            Registers.DF.SetDF(Registers.SF.DF);
-            Registers.UB.SetUB(Registers.SF.UF);
+            IB.SetIB(SF.IF);
+            DF.SetDF(SF.DF);
+            UB.SetUB(SF.UF);
 
             Interrupts.Inhibit();
         }
@@ -127,20 +127,20 @@ namespace Core8.Model.Instructions
         {
             if (Interrupts.UserRequested)
             {
-                Registers.PC.Increment();
+                PC.Increment();
             }
         }
 
         private void CUF()
         {
-            Registers.UB.Clear();
+            UB.Clear();
 
             Interrupts.Inhibit();
         }
 
         private void SUF()
         {
-            Registers.UB.SetUB(1);
+            UB.SetUB(1);
 
             Interrupts.Inhibit();
         }

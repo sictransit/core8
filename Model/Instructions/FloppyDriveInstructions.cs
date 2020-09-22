@@ -65,14 +65,14 @@ namespace Core8.Model.Instructions
 
         private void INTR()
         {
-            FloppyDrive.SetInterrupts(Registers.AC.Accumulator);
+            FloppyDrive.SetInterrupts(AC.Accumulator);
         }
 
         private void SDN()
         {
             if (FloppyDrive.SkipNotDone())
             {
-                Registers.PC.Increment();
+                PC.Increment();
             }
         }
 
@@ -80,7 +80,7 @@ namespace Core8.Model.Instructions
         {
             if (FloppyDrive.SkipError())
             {
-                Registers.PC.Increment();
+                PC.Increment();
             }
         }
 
@@ -88,26 +88,26 @@ namespace Core8.Model.Instructions
         {
             if (FloppyDrive.SkipTransferRequest())
             {
-                Registers.PC.Increment();
+                PC.Increment();
             }
         }
 
         private void XDR()
         {
-            Registers.AC.SetAccumulator(FloppyDrive.TransferDataRegister(Registers.AC.Accumulator));
+            AC.SetAccumulator(FloppyDrive.TransferDataRegister(AC.Accumulator));
         }
 
         private void LCD()
         {
-            FloppyDrive.LoadCommandRegister(Registers.AC.Accumulator);
+            FloppyDrive.LoadCommandRegister(AC.Accumulator);
 
-            Registers.AC.ClearAccumulator();
+            AC.ClearAccumulator();
         }
 
         private void SEL()
         {
             Log.Warning("SEL is currently no-op:");
-            Log.Warning(Registers.AC.ToString());
+            Log.Warning(AC.ToString());
         }
 
         private enum FloppyDriveOpCode

@@ -5,6 +5,7 @@ using Serilog;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using Core8.Model.Registers;
 
 namespace Core8.Core
 {
@@ -24,8 +25,19 @@ namespace Core8.Core
         {
             Teletype = teletype ?? throw new ArgumentNullException(nameof(teletype));
 
+            AC = new LinkAccumulator();
+            PC = new InstructionFieldProgramCounter();
+            SR = new SwitchRegister();
+            MQ = new MultiplierQuotient();
+            DF = new DataField();
+            IB = new InstructionBuffer();
+            UB = new UserBuffer();
+            UF = new UserFlag();
+            SF = new SaveField();
+
+
             Memory = new Memory();
-            Registers = new Registers();
+            
             FloppyDrive = floppy;
 
             Interrupts = new Interrupts(this);
@@ -33,9 +45,25 @@ namespace Core8.Core
             instructionSet = new InstructionSet(this);
         }
 
-        public IInterrupts Interrupts { get; }
+        public LinkAccumulator AC { get; }
 
-        public IRegisters Registers { get; }
+        public InstructionFieldProgramCounter PC { get; }
+
+        public SwitchRegister SR { get; }
+
+        public MultiplierQuotient MQ { get; }
+
+        public DataField DF { get; }
+
+        public InstructionBuffer IB { get; }
+
+        public UserBuffer UB { get; }
+
+        public UserFlag UF { get; }
+
+        public SaveField SF { get; }
+
+        public IInterrupts Interrupts { get; }
 
         public ITeletype Teletype { get; }
 
@@ -46,7 +74,7 @@ namespace Core8.Core
         public void Clear()
         {
             Teletype.Clear();
-            Registers.AC.Clear();
+            AC.Clear();
             Interrupts.ClearUser();
             Interrupts.Disable();
             FloppyDrive?.Initialize();
@@ -61,7 +89,7 @@ namespace Core8.Core
         {
             running = true;
 
-            Log.Information($"CONT @ {Registers.PC} (dbg: {debug})");
+            Log.Information($"CONT @ {PC} (dbg: {debug})");
 
             string interrupts = null;
             string floppy = null;
@@ -73,7 +101,7 @@ namespace Core8.Core
                 {
                     if (debug)
                     {
-                        if (breakpoints.Contains(Registers.PC.Content))
+                        if (breakpoints.Contains(PC.Content))
                         {
                             Log.Information("Breakpoint hit!");
 
@@ -98,9 +126,9 @@ namespace Core8.Core
                     Teletype.Tick();
                     FloppyDrive?.Tick();
 
-                    var instruction = Fetch(Registers.PC.Content);
+                    var instruction = Fetch(PC.Content);
 
-                    Registers.PC.Increment();
+                    PC.Increment();
 
                     instruction.Execute();
 
@@ -135,7 +163,7 @@ namespace Core8.Core
             {
                 running = false;
 
-                Log.Information($"HLT @ {Registers.PC}");
+                Log.Information($"HLT @ {PC}");
             }
         }
 

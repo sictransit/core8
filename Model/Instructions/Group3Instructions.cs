@@ -22,28 +22,28 @@ namespace Core8.Model.Instructions
         {
             if ((Data & CLA_MASK) != 0)
             {
-                Registers.AC.ClearAccumulator();
+                AC.ClearAccumulator();
             }
 
             if ((Data & SWP_MASK) == SWP_MASK)
             {
-                var mq = Registers.MQ.Content;
+                var mq = MQ.Content;
 
-                Registers.MQ.SetMQ(Registers.AC.Accumulator);
-                Registers.AC.SetAccumulator(mq);
+                MQ.SetMQ(AC.Accumulator);
+                AC.SetAccumulator(mq);
             }
             else
             {
                 if ((Data & MQA_MASK) != 0)
                 {
-                    Registers.AC.ORAccumulator(Registers.MQ.Content);
+                    AC.ORAccumulator(MQ.Content);
                 }
 
                 if ((Data & MQL_MASK) != 0)
                 {
-                    Registers.MQ.SetMQ(Registers.AC.Accumulator);
+                    MQ.SetMQ(AC.Accumulator);
 
-                    Registers.AC.ClearAccumulator();
+                    AC.ClearAccumulator();
                 }
             }
 

@@ -29,7 +29,7 @@ namespace Core8.Model.Instructions.Abstract
         {
             if ((Data & OSR_MASK) != 0)
             {
-                CPU.Registers.AC.ORAccumulator(CPU.Registers.SR.Content);
+                AC.ORAccumulator(SR.Content);
             }
 
             if ((Data & HLT_MASK) != 0)

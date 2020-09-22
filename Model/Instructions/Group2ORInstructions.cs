@@ -26,27 +26,27 @@ namespace Core8.Model.Instructions
 
             if ((Data & SMA_MASK) != 0)
             {
-                skip = (Registers.AC.Accumulator & Masks.AC_SIGN) != 0;
+                skip = (AC.Accumulator & Masks.AC_SIGN) != 0;
             }
 
             if (!skip && (Data & SZA_MASK) != 0)
             {
-                skip = Registers.AC.Accumulator == 0;
+                skip = AC.Accumulator == 0;
             }
 
             if (!skip && (Data & SNL_MASK) != 0)
             {
-                skip = Registers.AC.Link != 0;
+                skip = AC.Link != 0;
             }
 
             if (skip)
             {
-                Registers.PC.Increment();
+                PC.Increment();
             }
 
             if ((Data & CLA_MASK) != 0)
             {
-                Registers.AC.ClearAccumulator();
+                AC.ClearAccumulator();
             }
 
             base.Execute();

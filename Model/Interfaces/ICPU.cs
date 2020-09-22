@@ -1,4 +1,6 @@
-﻿namespace Core8.Model.Interfaces
+﻿using Core8.Model.Registers;
+
+namespace Core8.Model.Interfaces
 {
     public interface ICPU
     {
@@ -24,12 +26,29 @@
 
         IInterrupts Interrupts { get; }
 
-        IRegisters Registers { get; }
-
         IMemory Memory { get; }
 
         ITeletype Teletype { get; }
 
         IFloppyDrive FloppyDrive { get; }
+
+        LinkAccumulator AC { get; }
+
+        InstructionFieldProgramCounter PC { get; }
+
+        SwitchRegister SR { get; }
+
+        MultiplierQuotient MQ { get; }
+
+        DataField DF { get; }
+
+        InstructionBuffer IB { get; }
+
+        UserBuffer UB { get; }
+
+        UserFlag UF { get; }
+
+        SaveField SF { get; }
+
     }
 }
