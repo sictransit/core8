@@ -6,6 +6,7 @@ using Serilog;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using Core8.Model.Instructions;
 
 namespace Core8.Core
 {
@@ -19,7 +20,18 @@ namespace Core8.Core
 
         private readonly HashSet<int> breakpoints = new HashSet<int>();
 
-        private readonly InstructionSet instructionSet;
+        private readonly Group1Instructions group1Instructions;
+        private readonly Group2ANDInstructions group2AndInstructions;
+        private readonly Group2ORInstructions group2OrInstructions;
+        private readonly Group3Instructions group3Instructions;
+        private readonly MemoryReferenceInstructions memoryReferenceInstructions;
+        private readonly MemoryManagementInstructions memoryManagementInstructions;
+        private readonly KeyboardInstructions keyboardInstructions;
+        private readonly TeleprinterInstructions teleprinterInstructions;
+        private readonly InterruptInstructions interruptInstructions;
+        private readonly NoOperationInstruction noOperationInstruction;
+        private readonly PrivilegedNoOperationInstruction privilegedNoOperationInstruction;
+        private readonly FloppyDriveInstructions floppyDriveInstructions;
 
         public CPU(ITeletype teletype, IFloppyDrive floppy)
         {
@@ -35,32 +47,34 @@ namespace Core8.Core
             UF = new UserFlag();
             SF = new SaveField();
 
-
             Memory = new Memory();
 
             FloppyDrive = floppy;
 
             Interrupts = new Interrupts(this);
 
-            instructionSet = new InstructionSet(this);
+            group1Instructions = new Group1Instructions(this);
+            group2AndInstructions = new Group2ANDInstructions(this);
+            group2OrInstructions = new Group2ORInstructions(this);
+            group3Instructions = new Group3Instructions(this);
+            memoryReferenceInstructions = new MemoryReferenceInstructions(this);
+            memoryManagementInstructions = new MemoryManagementInstructions(this);
+            keyboardInstructions = new KeyboardInstructions(this);
+            teleprinterInstructions = new TeleprinterInstructions(this);
+            interruptInstructions = new InterruptInstructions(this);
+            noOperationInstruction = new NoOperationInstruction(this);
+            privilegedNoOperationInstruction = new PrivilegedNoOperationInstruction(this);
+            floppyDriveInstructions = new FloppyDriveInstructions(this);
         }
 
         public LinkAccumulator AC { get; }
-
         public InstructionFieldProgramCounter PC { get; }
-
         public SwitchRegister SR { get; }
-
         public MultiplierQuotient MQ { get; }
-
         public DataField DF { get; }
-
         public InstructionBuffer IB { get; }
-
         public UserBuffer UB { get; }
-
         public UserFlag UF { get; }
-
         public SaveField SF { get; }
 
         public IInterrupts Interrupts { get; }
@@ -188,17 +202,17 @@ namespace Core8.Core
         {
             return (data & Masks.OP_CODE) switch
             {
-                Masks.MCI when (data & Masks.GROUP) == 0 => instructionSet.Group1,
-                Masks.MCI when (data & Masks.GROUP_3) == Masks.GROUP_3 => instructionSet.Group3,
-                Masks.MCI when (data & Masks.GROUP_2_AND) == Masks.GROUP_2_AND => instructionSet.Group2AND,
-                Masks.MCI => instructionSet.Group2OR,
-                Masks.IOT when (data & Masks.FLOPPY) == Masks.FLOPPY => instructionSet.FloppyDrive,
-                Masks.IOT when (data & Masks.MEMORY_MANAGEMENT) == Masks.MEMORY_MANAGEMENT => instructionSet.MemoryManagement,
-                Masks.IOT when (data & Masks.INTERRUPT_MASK) == 0 => instructionSet.Interrupt,
-                Masks.IOT when (data & Masks.IO) >> 3 == 3 => instructionSet.Keyboard,
-                Masks.IOT when (data & Masks.IO) >> 3 == 4 => instructionSet.Teleprinter,
-                Masks.IOT => instructionSet.PrivilegedNOP,
-                _ => instructionSet.MemoryReference,
+                Masks.MCI when (data & Masks.GROUP) == 0 => group1Instructions,
+                Masks.MCI when (data & Masks.GROUP_3) == Masks.GROUP_3 => group3Instructions,
+                Masks.MCI when (data & Masks.GROUP_2_AND) == Masks.GROUP_2_AND => group2AndInstructions,
+                Masks.MCI => group2OrInstructions,
+                Masks.IOT when (data & Masks.FLOPPY) == Masks.FLOPPY => floppyDriveInstructions,
+                Masks.IOT when (data & Masks.MEMORY_MANAGEMENT) == Masks.MEMORY_MANAGEMENT => memoryManagementInstructions,
+                Masks.IOT when (data & Masks.INTERRUPT_MASK) == 0 => interruptInstructions,
+                Masks.IOT when (data & Masks.IO) >> 3 == 3 => keyboardInstructions,
+                Masks.IOT when (data & Masks.IO) >> 3 == 4 => teleprinterInstructions,
+                Masks.IOT => privilegedNoOperationInstruction,
+                _ => memoryReferenceInstructions,
             };
         }
 
