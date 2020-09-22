@@ -206,9 +206,9 @@ namespace Core8.Tests
 
             AssertDoneFlagSet(floppy);
 
-            for (int track = DiskLayout.FIRST_TRACK; track <= DiskLayout.LAST_TRACK; track++)
+            for (var track = DiskLayout.FIRST_TRACK; track <= DiskLayout.LAST_TRACK; track++)
             {
-                for (int sector = DiskLayout.FIRST_SECTOR; sector <= DiskLayout.LAST_SECTOR; sector++)
+                for (var sector = DiskLayout.FIRST_SECTOR; sector <= DiskLayout.LAST_SECTOR; sector++)
                 {
                     ReadSector(floppy, track, sector);
 

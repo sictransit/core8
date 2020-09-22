@@ -7,8 +7,6 @@ using Serilog;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Text;
-using System.Xml.Serialization;
 
 namespace Core8.Peripherals.Teletype
 {
@@ -25,9 +23,9 @@ namespace Core8.Peripherals.Teletype
         private readonly PublisherSocket publisherSocket;
         private readonly SubscriberSocket subscriberSocket;
 
-        private int deviceControl;        
+        private int deviceControl;
 
-        private const int INTERRUPT_ENABLE = 1 << 0;        
+        private const int INTERRUPT_ENABLE = 1 << 0;
 
         private bool InterruptEnable => (deviceControl & INTERRUPT_ENABLE) != 0;
 
@@ -130,7 +128,7 @@ namespace Core8.Peripherals.Teletype
             if (!HandleOutput())
             {
                 HandleInput();
-            }            
+            }
         }
 
         private bool HandleOutput()
@@ -159,8 +157,8 @@ namespace Core8.Peripherals.Teletype
             if (InputFlag)
             {
                 return;
-            }            
-            
+            }
+
             while (subscriberSocket.TryReceiveFrameBytes(TimeSpan.Zero, out var frame))
             {
                 foreach (var key in frame)
@@ -176,7 +174,7 @@ namespace Core8.Peripherals.Teletype
                 InputBuffer = b;
 
                 SetInputFlag();
-            }            
+            }
         }
     }
 }

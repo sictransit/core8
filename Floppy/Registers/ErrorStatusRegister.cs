@@ -1,5 +1,5 @@
-﻿using System.Linq;
-using Core8.Model.Registers.Abstract;
+﻿using Core8.Model.Registers.Abstract;
+using System.Linq;
 
 namespace Core8.Peripherals.Floppy.Registers
 {

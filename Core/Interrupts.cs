@@ -1,5 +1,5 @@
-﻿using System;
-using Core8.Model.Interfaces;
+﻿using Core8.Model.Interfaces;
+using System;
 
 namespace Core8.Core
 {
@@ -79,7 +79,7 @@ namespace Core8.Core
                 cpu.UB.Clear();
 
                 cpu.PC.SetInterruptAddress();
-                
+
                 Disable();
             }
 
