@@ -134,41 +134,45 @@ namespace Core8.Peripherals.Teletype
 
         private void HandleOutput()
         {
-            if (OutputBuffer.HasValue)
+            if (!OutputBuffer.HasValue)
             {
-                paper.Add(OutputBuffer.Value);
-
-                if (!publisherSocket.TrySendFrame(new[] { (byte)OutputBuffer }))
-                {
-                    Log.Warning("Failed to send 0MQ frame.");
-                }
-
-                OutputBuffer = null;
-
-                SetOutputFlag();
+                return;
             }
+
+            paper.Add(OutputBuffer.Value);
+
+            if (!publisherSocket.TrySendFrame(new[] { (byte)OutputBuffer }))
+            {
+                Log.Warning("Failed to send 0MQ frame.");
+            }
+
+            OutputBuffer = null;
+
+            SetOutputFlag();
         }
 
         private void HandleInput()
         {
-            if (!InputFlag)
+            if (InputFlag)
             {
-                while (subscriberSocket.TryReceiveFrameBytes(TimeSpan.Zero, out var frame))
+                return;
+            }
+
+            while (subscriberSocket.TryReceiveFrameBytes(TimeSpan.Zero, out var frame))
+            {
+                foreach (var key in frame)
                 {
-                    foreach (var key in frame)
-                    {
-                        reader.Enqueue(key);
-                    }
+                    reader.Enqueue(key);
                 }
+            }
 
-                if (reader.TryDequeue(out var b))
-                {
-                    Log.Debug($"Keyboard: {b.ToPrintableAscii()}");
+            if (reader.TryDequeue(out var b))
+            {
+                Log.Debug($"Keyboard: {b.ToPrintableAscii()}");
 
-                    InputBuffer = b;
+                InputBuffer = b;
 
-                    SetInputFlag();
-                }
+                SetInputFlag();
             }
         }
     }
