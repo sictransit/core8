@@ -66,6 +66,8 @@ namespace Core8.Peripherals.Teletype
             OutputBuffer = null;
 
             reader.Clear();
+
+            ticks = 0;
         }
 
         public void ClearInputFlag() => InputFlag = false;
@@ -125,13 +127,12 @@ namespace Core8.Peripherals.Teletype
 
             ticks = 0;
 
-            if (!HandleOutput())
-            {
-                HandleInput();
-            }
+            HandleInput();
+
+            HandleOutput();
         }
 
-        private bool HandleOutput()
+        private void HandleOutput()
         {
             if (OutputBuffer.HasValue)
             {
@@ -145,35 +146,29 @@ namespace Core8.Peripherals.Teletype
                 OutputBuffer = null;
 
                 SetOutputFlag();
-
-                return true;
             }
-
-            return false;
         }
 
         private void HandleInput()
         {
-            if (InputFlag)
+            if (!InputFlag)
             {
-                return;
-            }
-
-            while (subscriberSocket.TryReceiveFrameBytes(TimeSpan.Zero, out var frame))
-            {
-                foreach (var key in frame)
+                while (subscriberSocket.TryReceiveFrameBytes(TimeSpan.Zero, out var frame))
                 {
-                    reader.Enqueue(key);
+                    foreach (var key in frame)
+                    {
+                        reader.Enqueue(key);
+                    }
                 }
-            }
 
-            if (reader.TryDequeue(out var b))
-            {
-                Log.Debug($"Keyboard: {b.ToPrintableAscii()}");
+                if (reader.TryDequeue(out var b))
+                {
+                    Log.Debug($"Keyboard: {b.ToPrintableAscii()}");
 
-                InputBuffer = b;
+                    InputBuffer = b;
 
-                SetInputFlag();
+                    SetInputFlag();
+                }
             }
         }
     }

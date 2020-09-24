@@ -134,10 +134,10 @@ namespace Core8.Core
                         }
                     }
 
-                    Interrupts.Interrupt();
-
                     Teletype.Tick();
                     FloppyDrive?.Tick();
+
+                    Interrupts.Interrupt();
 
                     var instruction = Fetch(PC.Content);
 
