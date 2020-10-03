@@ -64,6 +64,9 @@
     <None Update="MAINDEC\Tapes\MAINDEC-8E-D1HA-PB.bin">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Update="Tapes\IDENT.bin">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
 </Project>

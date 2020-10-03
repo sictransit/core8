@@ -107,7 +107,7 @@ namespace Core8
 
             pdp.Load8(0200);
 
-            pdp.Toggle8(0000);
+            pdp.Toggle8(0400);
 
             //pdp.SetBreakpoint8(01723); // Error test?
             //pdp.SetBreakpoint8(00406); // CAF
