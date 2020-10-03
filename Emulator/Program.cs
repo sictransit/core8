@@ -1,11 +1,13 @@
 ﻿using CommandLine;
 using Core8.Core;
+using Core8.Extensions;
 using Serilog;
 using Serilog.Core;
 using System;
 using System.IO;
 using System.Net.Http;
 using System.Threading;
+using System.Xml;
 
 namespace Core8
 {
@@ -35,6 +37,11 @@ namespace Core8
                         if (o.Debug)
                         {
                             pdp.CPU.Debug(true);
+                        }
+
+                        if (!string.IsNullOrWhiteSpace(o.Convert))
+                        {
+                            Convert(o.Convert);
                         }
 
                         if (o.TINT)
@@ -70,6 +77,14 @@ namespace Core8
                             Console.WriteLine(pdp.CPU.Teletype.Printout);
                         }
                     });
+        }
+
+        private static void Convert(string s)
+        {
+            foreach (var c in s)
+            {
+                Console.WriteLine($"{c}: {((int)c).ToOctalString()}");
+            }
         }
 
         private static void FloppyTesting()
@@ -269,6 +284,11 @@ namespace Core8
             pdp.Continue();
 
             Thread.Sleep(1000);
+
+            if (dumpMemory)
+            {
+                pdp.DumpMemory();
+            }
         }
 
         private static void Load(string binFile)

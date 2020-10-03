@@ -7,8 +7,6 @@ namespace Core8.Peripherals.Floppy.States
     {
         public Initialize(IController controller) : base(controller)
         {
-            Controller.SetDone(false);
-            Controller.SetTransferRequest(false);
             Controller.SetError(false);
             Controller.SetInterrupts(0);
 

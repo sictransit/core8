@@ -11,6 +11,9 @@ namespace Core8.Peripherals.Floppy.States.Abstract
         {
             Controller = controller ?? throw new ArgumentNullException(nameof(controller));
 
+            Controller.SetDone(false);
+            Controller.SetTransferRequest(false);
+
             initialTicks = controller.Ticks;
         }
 

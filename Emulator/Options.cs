@@ -25,13 +25,16 @@ namespace Core8
         [Option(Required = false, Default = 200, HelpText = "starting address")]
         public int StartingAddress { get; set; }
 
-        [Option(Required = false, Default = false, HelpText = "dump memory before run")]
-        public bool DumpMemory { get; set; }
+        [Option(Required = false, Default = false, HelpText = "dump memory")]
+        public bool DumpMemory { get; set; }        
 
         [Option(Required = false, Default = false, HelpText = "floppy development and debugging")]
         public bool Floppy { get; set; }
 
         [Option(Required = false, Default = false, HelpText = "debug mode")]
         public bool Debug { get; set; }
+
+        [Option(Required = false, HelpText = "convert ASCII string to octal words")]
+        public string Convert { get; set; }
     }
 }

@@ -29,12 +29,6 @@ namespace Core8.Model.Instructions
 
         private bool Zero => (Data & ZERO) == 0;
 
-        private int Word => Data & Masks.ADDRESS_WORD;
-
-        private int Page => Address & Masks.ADDRESS_PAGE;
-
-        private int Field => Address & Masks.IF;
-
         private int Location => Field | (Zero ? Word : Page | Word);
 
         private IMemory Memory => CPU.Memory;

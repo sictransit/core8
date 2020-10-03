@@ -13,24 +13,14 @@ namespace Core8.Model.Registers
 
         public void ByteSwap() => Content = (Content & Masks.LINK) | ((Content & Masks.AC_HIGH) >> 6) | ((Content & Masks.AC_LOW) << 6);
 
-        public void RAR(bool twice = false)
+        public void RAR()
         {
             Content = ((Content >> 1) & Masks.AC) | ((Content << 12) & Masks.LINK);
-
-            if (twice)
-            {
-                RAR();
-            }
         }
 
-        public void RAL(bool twice = false)
+        public void RAL()
         {
             Content = ((Content << 1) & Masks.AC_LINK) | ((Content >> 12) & Masks.FLAG);
-
-            if (twice)
-            {
-                RAL();
-            }
         }
 
         public void ComplementLink() => Content ^= Masks.LINK;

@@ -48,19 +48,33 @@ namespace Core8.Model.Instructions
                 AC.AddWithCarry(1);
             }
 
-            if ((Data & RAR_MASK) != 0)
+            switch (Data & (RAL_MASK | RAR_MASK | BSW_MASK))
             {
-                AC.RAR((Data & BSW_MASK) != 0);
-            }
-
-            if ((Data & RAL_MASK) != 0)
-            {
-                AC.RAL((Data & BSW_MASK) != 0);
-            }
-
-            if ((Data & (BSW_MASK | RAR_MASK | RAL_MASK)) == BSW_MASK)
-            {
-                AC.ByteSwap();
+                case RAR_MASK:
+                    AC.RAR();
+                    break;
+                case RAR_MASK | BSW_MASK:
+                    AC.RAR();
+                    AC.RAR();
+                    break;
+                case RAL_MASK:
+                    AC.RAL();
+                    break;
+                case RAL_MASK | BSW_MASK:
+                    AC.RAL();
+                    AC.RAL();
+                    break;
+                case RAL_MASK | RAR_MASK:
+                    AC.ANDAccumulator(Data);
+                    break;
+                case RAL_MASK | RAR_MASK | BSW_MASK:
+                    AC.SetAccumulator(Page | Word);
+                    break;
+                case BSW_MASK:
+                    AC.ByteSwap();
+                    break;
+                default:
+                    break;
             }
         }
 

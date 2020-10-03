@@ -19,6 +19,12 @@ namespace Core8.Model.Instructions.Abstract
 
         protected abstract string OpCodeText { get; }
 
+        protected int Word => Data & Masks.ADDRESS_WORD;
+
+        protected int Page => Address & Masks.ADDRESS_PAGE;
+
+        protected int Field => Address & Masks.IF;
+
         protected ICPU CPU { get; }
 
         protected IInterrupts Interrupts => CPU.Interrupts;
