@@ -66,6 +66,8 @@ namespace Core8.Peripherals.Teletype
             OutputBuffer = null;
 
             reader.Clear();
+
+            ticks = 0;
         }
 
         public void ClearInputFlag() => InputFlag = false;
@@ -125,31 +127,28 @@ namespace Core8.Peripherals.Teletype
 
             ticks = 0;
 
-            if (!HandleOutput())
-            {
-                HandleInput();
-            }
+            HandleInput();
+
+            HandleOutput();
         }
 
-        private bool HandleOutput()
+        private void HandleOutput()
         {
-            if (OutputBuffer.HasValue)
+            if (!OutputBuffer.HasValue)
             {
-                paper.Add(OutputBuffer.Value);
-
-                if (!publisherSocket.TrySendFrame(new[] { (byte)OutputBuffer }))
-                {
-                    Log.Warning("Failed to send 0MQ frame.");
-                }
-
-                OutputBuffer = null;
-
-                SetOutputFlag();
-
-                return true;
+                return;
             }
 
-            return false;
+            paper.Add(OutputBuffer.Value);
+
+            if (!publisherSocket.TrySendFrame(new[] { (byte)OutputBuffer }))
+            {
+                Log.Warning("Failed to send 0MQ frame.");
+            }
+
+            OutputBuffer = null;
+
+            SetOutputFlag();
         }
 
         private void HandleInput()
