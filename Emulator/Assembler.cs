@@ -35,7 +35,7 @@ namespace Core8
             {
                 FileName = palbart,
                 UseShellExecute = false,
-                Arguments = source,
+                Arguments = $"\"{source}\"",
                 RedirectStandardError = true
             };
 

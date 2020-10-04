@@ -13,7 +13,7 @@ namespace Core8.Peripherals.Teletype
         private const int dataWidth = 72;
         private const int feederWidth = 46;
 
-        public string Punch(byte[] data, string label, int wrap = 80)
+        public string Punch(IEnumerable<byte> data, string label, int wrap = 80)
         {
             if (data is null)
             {
@@ -27,7 +27,7 @@ namespace Core8.Peripherals.Teletype
                 throw new ArgumentOutOfRangeException(nameof(wrap));
             }
 
-            wrap = wrap == 0 ? data.Length : wrap;
+            wrap = wrap == 0 ? data.Count() : wrap;
 
             var paperWidth = wrap * spacing;
             var paperHeight = spacing * 10;
@@ -40,7 +40,11 @@ namespace Core8.Peripherals.Teletype
 
             var rows = new List<XElement>();
 
-            foreach (var chunk in data.Concat(new byte[wrap - data.Length % wrap]).ChunkBy(wrap))
+            var padding = new byte[(wrap - (data.Count() % wrap)) % wrap];
+
+            var content = data.Concat(padding);
+
+            foreach (var chunk in content.ChunkBy(wrap))
             {
                 var strip = CreatePaper(spacing, totalHeight, paperWidth, paperHeight);
 

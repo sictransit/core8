@@ -107,6 +107,8 @@ namespace Core8.Core
 
             string interrupts = null;
             string floppy = null;
+            string ifpc = null;
+            string lac = null;
 
             try
             {
@@ -152,8 +154,7 @@ namespace Core8.Core
                         var f = FloppyDrive?.ToString();
                         if (f != floppy)
                         {
-                            floppy = f;
-                            Log.Information(instruction.ToString());
+                            floppy = f;                            
                             Log.Information(floppy);
                         }
 
@@ -162,6 +163,20 @@ namespace Core8.Core
                         {
                             interrupts = i;
                             Log.Information(interrupts);
+                        }
+
+                        var pc = PC.ToString();
+                        if (ifpc != pc)
+                        {
+                            ifpc = pc;
+                            Log.Debug(ifpc);
+                        }
+
+                        var ac = AC.ToString();
+                        if (lac != ac)
+                        {
+                            lac = ac;
+                            Log.Debug(lac);
                         }
                     }
                 }

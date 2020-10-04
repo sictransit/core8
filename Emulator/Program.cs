@@ -1,10 +1,12 @@
 ﻿using CommandLine;
 using Core8.Core;
 using Core8.Extensions;
+using Core8.Peripherals.Teletype;
 using Serilog;
 using Serilog.Core;
 using System;
 using System.IO;
+using System.Linq;
 using System.Net.Http;
 using System.Threading;
 using System.Xml;
@@ -24,7 +26,7 @@ namespace Core8
             File.Delete(logFilename);
 
             Log.Logger = new LoggerConfiguration()
-                .WriteTo.Console(Serilog.Events.LogEventLevel.Information)
+                .WriteTo.Console(Serilog.Events.LogEventLevel.Debug)
                 .WriteTo.File(logFilename, Serilog.Events.LogEventLevel.Debug)
                 .MinimumLevel.ControlledBy(loggingLevel)
                 .CreateLogger();
@@ -50,7 +52,7 @@ namespace Core8
                         }
                         else if (!string.IsNullOrWhiteSpace(o.Assemble))
                         {
-                            if (TryAssemble(o.PALBART, o.Assemble, out var binary) && o.Run)
+                            if (TryAssemble(o.PALBART, o.Assemble, out var binary))
                             {
                                 o.Load = binary;
                             }
@@ -68,7 +70,8 @@ namespace Core8
 
                         if (o.Floppy)
                         {
-                            FloppyTesting();
+                            GeoCache();
+                            //FloppyTesting();
                             //FloppyDevelopment();
                         }
 
@@ -76,7 +79,29 @@ namespace Core8
                         {
                             Console.WriteLine(pdp.CPU.Teletype.Printout);
                         }
+
+                        if (!string.IsNullOrEmpty(o.Punch))
+                        {
+                            Punch(o.Punch);
+                        }
                     });
+        }
+
+        private static void Punch(string binFile)
+        {
+            var file = new FileInfo(binFile);
+
+            var data = File.ReadAllBytes(binFile);
+
+            var punch = new SVGPunch();
+
+            var label = $"GC8Y3MW: START @ 0200. PROGRAM WILL HLT AND WAIT FOR SR INPUT. ENTER MAGIC NUMBER AND CONTINUE. GZ COORDS IN 0021-0024 IF HLT @ PC 0220. NB! OVERFLOW IF HLT @ PC 0223.";
+
+            var tape = punch.Punch(data.Reverse().Take(80).Reverse(), label);
+
+            var svgFile = Path.ChangeExtension(file.FullName, ".svg");
+
+            File.WriteAllText(svgFile, tape);
         }
 
         private static void Convert(string s)
@@ -249,6 +274,17 @@ namespace Core8
             pdp.Clear();
 
             Run(200, false);
+        }
+
+        private static void GeoCache()
+        {
+            loggingLevel.MinimumLevel = Serilog.Events.LogEventLevel.Debug;
+
+            pdp.Load8(0200);
+            pdp.Continue();
+            pdp.Toggle8(4711);            
+            pdp.Continue();
+            pdp.DumpMemory();
         }
 
 

@@ -26,7 +26,7 @@ namespace Core8
         public int StartingAddress { get; set; }
 
         [Option(Required = false, Default = false, HelpText = "dump memory")]
-        public bool DumpMemory { get; set; }        
+        public bool DumpMemory { get; set; }
 
         [Option(Required = false, Default = false, HelpText = "floppy development and debugging")]
         public bool Floppy { get; set; }
@@ -36,5 +36,9 @@ namespace Core8
 
         [Option(Required = false, HelpText = "convert ASCII string to octal words")]
         public string Convert { get; set; }
+
+        [Option(Required = false, HelpText = "punch paper tape, i.e. copy bin image")]
+        public string Punch { get; set; }
+
     }
 }
