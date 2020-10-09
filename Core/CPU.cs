@@ -154,7 +154,7 @@ namespace Core8.Core
                         var f = FloppyDrive?.ToString();
                         if (f != floppy)
                         {
-                            floppy = f;                            
+                            floppy = f;
                             Log.Information(floppy);
                         }
 

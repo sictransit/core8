@@ -6,10 +6,8 @@ using Serilog;
 using Serilog.Core;
 using System;
 using System.IO;
-using System.Linq;
 using System.Net.Http;
 using System.Threading;
-using System.Xml;
 
 namespace Core8
 {
@@ -70,8 +68,7 @@ namespace Core8
 
                         if (o.Floppy)
                         {
-                            GeoCache();
-                            //FloppyTesting();
+                            FloppyTesting();
                             //FloppyDevelopment();
                         }
 
@@ -95,9 +92,7 @@ namespace Core8
 
             var punch = new SVGPunch();
 
-            var label = $"GC8Y3MW: START @ 0200. PROGRAM WILL HLT AND WAIT FOR SR INPUT. ENTER MAGIC NUMBER AND CONTINUE. GZ COORDS IN 0021-0024 IF HLT @ PC 0220. NB! OVERFLOW IF HLT @ PC 0223.";
-
-            var tape = punch.Punch(data.Reverse().Take(80).Reverse(), label);
+            var tape = punch.Punch(data, file.Name);
 
             var svgFile = Path.ChangeExtension(file.FullName, ".svg");
 
@@ -276,16 +271,6 @@ namespace Core8
             Run(200, false);
         }
 
-        private static void GeoCache()
-        {
-            loggingLevel.MinimumLevel = Serilog.Events.LogEventLevel.Debug;
-
-            pdp.Load8(0200);
-            pdp.Continue();
-            pdp.Toggle8(4711);            
-            pdp.Continue();
-            pdp.DumpMemory();
-        }
 
 
         private static bool TryAssemble(string palbart, string file, out string binary)
