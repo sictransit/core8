@@ -7,7 +7,7 @@ using System.IO;
 namespace Core8.Tests
 {
     [TestClass]
-    public class IdentityTest : InstructionTestsBase
+    public class IdentityTest : PDPTestsBase
     {
         [TestMethod]
         public void TestIdentity()
@@ -29,9 +29,9 @@ namespace Core8.Tests
 
             PDP.Continue();
 
-            Assert.IsTrue(PDP.CPU.AC.Accumulator != 0);
+            Assert.IsTrue(PDP.CPU.Registry.AC.Accumulator != 0);
 
-            string machine = PDP.CPU.AC.Accumulator switch
+            var machine = PDP.CPU.Registry.AC.Accumulator switch
             {
                 0 => "UNKNOWN (DCC112, MP-12?)",
                 1 => "PDP-5 (THE INCOMPATIBLE ONE!)",

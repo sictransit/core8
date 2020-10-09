@@ -28,6 +28,8 @@ namespace Core8.Core
 
         public bool UserRequested { get; private set; }
 
+        private IRegistry Registry => cpu.Registry;
+
         public void Disable()
         {
             Enabled = false;
@@ -69,16 +71,16 @@ namespace Core8.Core
         {
             if (Enabled && Requested && !Inhibited)
             {
-                cpu.Memory.Write(0, cpu.PC.Address); // JMS 0000
+                cpu.Memory.Write(0, Registry.PC.Address); // JMS 0000
 
-                cpu.SF.Save(cpu.DF.Content, cpu.PC.IF, cpu.UF.Content);
+                Registry.SF.Save(Registry.DF.Content, Registry.PC.IF, Registry.UF.Content);
 
-                cpu.DF.Clear();
-                cpu.IB.Clear();
-                cpu.UF.Clear();
-                cpu.UB.Clear();
+                Registry.DF.Clear();
+                Registry.IB.Clear();
+                Registry.UF.Clear();
+                Registry.UB.Clear();
 
-                cpu.PC.SetInterruptAddress();
+                Registry.PC.SetInterruptAddress();
 
                 Disable();
             }

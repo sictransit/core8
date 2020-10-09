@@ -10,7 +10,7 @@ using System.Threading;
 namespace Core8.Tests.MAINDEC.Abstract
 {
     [TestClass]
-    public abstract class MAINDECTestsBase : InstructionTestsBase
+    public abstract class MAINDECTestsBase : PDPTestsBase
     {
         protected abstract string TapeName { get; }
 
@@ -18,7 +18,7 @@ namespace Core8.Tests.MAINDEC.Abstract
 
         protected virtual IEnumerable<string> UnexpectedOutput => new string[] { };
 
-        protected virtual TimeSpan MaxRunningTime => TimeSpan.FromSeconds(30);
+        protected virtual TimeSpan MaxRunningTime => TimeSpan.FromSeconds(60);
 
         protected virtual bool ExpectHLT => false;
 
