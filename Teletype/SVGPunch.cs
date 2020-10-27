@@ -13,7 +13,7 @@ namespace Core8.Peripherals.Teletype
         private const int dataWidth = 72;
         private const int feederWidth = 46;
 
-        public string Punch(IEnumerable<byte> data, string label, int wrap = 80)
+        public string Punch(IEnumerable<byte> data, string label, int wrap = 80, bool colour = false)
         {
             if (data is null)
             {
@@ -32,7 +32,20 @@ namespace Core8.Peripherals.Teletype
             var paperWidth = wrap * spacing;
             var paperHeight = spacing * 10;
 
-            var definition = new XElement(svg + "defs", Hole(true), Hole(false), data.Distinct().OrderBy(x => x).Select(x => CreateRowShape(x)));
+            var definitions = new List<XElement>
+            {
+                Hole(true),
+                Hole(false)
+            };
+
+            definitions.AddRange(data.Distinct().OrderBy(x => x).Select(x => CreateRowShape(x)));
+
+            if (colour)
+            {
+                //TODO: implement colour coding ...
+            }
+
+            var definition = new XElement(svg + "defs", definitions);
 
             var totalHeight = spacing;
 
