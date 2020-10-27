@@ -29,23 +29,25 @@ namespace Core8.Model.Instructions.Abstract
 
         protected IInterrupts Interrupts => CPU.Interrupts;
 
-        protected LinkAccumulator AC => CPU.AC;
+        private IRegistry Registry => CPU.Registry;
 
-        protected InstructionFieldProgramCounter PC => CPU.PC;
+        protected LinkAccumulator AC => Registry.AC;
 
-        protected SwitchRegister SR => CPU.SR;
+        protected InstructionFieldProgramCounter PC => Registry.PC;
 
-        protected MultiplierQuotient MQ => CPU.MQ;
+        protected SwitchRegister SR => Registry.SR;
 
-        protected DataField DF => CPU.DF;
+        protected MultiplierQuotient MQ => Registry.MQ;
 
-        protected InstructionBuffer IB => CPU.IB;
+        protected DataField DF => Registry.DF;
 
-        protected UserBuffer UB => CPU.UB;
+        protected InstructionBuffer IB => Registry.IB;
 
-        protected UserFlag UF => CPU.UF;
+        protected UserBuffer UB => Registry.UB;
 
-        protected SaveField SF => CPU.SF;
+        protected UserFlag UF => Registry.UF;
+
+        protected SaveField SF => Registry.SF;
 
         public IInstruction Load(int address, int data)
         {

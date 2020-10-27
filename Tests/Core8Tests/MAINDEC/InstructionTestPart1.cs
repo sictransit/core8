@@ -21,7 +21,7 @@ namespace Core8.Tests.MAINDEC
 
             PDP.Continue();
 
-            Assert.AreEqual(0147.ToDecimal(), PDP.CPU.PC.Address);
+            Assert.AreEqual(0147.ToDecimal(), PDP.CPU.Registry.PC.Address);
 
             StartAndWaitForCompletion();
         }

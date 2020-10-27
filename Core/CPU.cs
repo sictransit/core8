@@ -1,8 +1,5 @@
 ﻿using Core8.Extensions;
-using Core8.Model;
-using Core8.Model.Instructions;
 using Core8.Model.Interfaces;
-using Core8.Model.Registers;
 using Serilog;
 using System;
 using System.Collections.Generic;
@@ -20,32 +17,9 @@ namespace Core8.Core
 
         private readonly HashSet<int> breakpoints = new HashSet<int>();
 
-        private readonly Group1Instructions group1Instructions;
-        private readonly Group2ANDInstructions group2AndInstructions;
-        private readonly Group2ORInstructions group2OrInstructions;
-        private readonly Group3Instructions group3Instructions;
-        private readonly MemoryReferenceInstructions memoryReferenceInstructions;
-        private readonly MemoryManagementInstructions memoryManagementInstructions;
-        private readonly KeyboardInstructions keyboardInstructions;
-        private readonly TeleprinterInstructions teleprinterInstructions;
-        private readonly InterruptInstructions interruptInstructions;
-        private readonly NoOperationInstruction noOperationInstruction;
-        private readonly PrivilegedNoOperationInstruction privilegedNoOperationInstruction;
-        private readonly FloppyDriveInstructions floppyDriveInstructions;
-
         public CPU(ITeletype teletype, IFloppyDrive floppy)
         {
             Teletype = teletype ?? throw new ArgumentNullException(nameof(teletype));
-
-            AC = new LinkAccumulator();
-            PC = new InstructionFieldProgramCounter();
-            SR = new SwitchRegister();
-            MQ = new MultiplierQuotient();
-            DF = new DataField();
-            IB = new InstructionBuffer();
-            UB = new UserBuffer();
-            UF = new UserFlag();
-            SF = new SaveField();
 
             Memory = new Memory();
 
@@ -53,29 +27,14 @@ namespace Core8.Core
 
             Interrupts = new Interrupts(this);
 
-            group1Instructions = new Group1Instructions(this);
-            group2AndInstructions = new Group2ANDInstructions(this);
-            group2OrInstructions = new Group2ORInstructions(this);
-            group3Instructions = new Group3Instructions(this);
-            memoryReferenceInstructions = new MemoryReferenceInstructions(this);
-            memoryManagementInstructions = new MemoryManagementInstructions(this);
-            keyboardInstructions = new KeyboardInstructions(this);
-            teleprinterInstructions = new TeleprinterInstructions(this);
-            interruptInstructions = new InterruptInstructions(this);
-            noOperationInstruction = new NoOperationInstruction(this);
-            privilegedNoOperationInstruction = new PrivilegedNoOperationInstruction(this);
-            floppyDriveInstructions = new FloppyDriveInstructions(this);
+            InstructionSet = new InstructionSet(this);
+
+            Registry = new Registry();
         }
 
-        public LinkAccumulator AC { get; }
-        public InstructionFieldProgramCounter PC { get; }
-        public SwitchRegister SR { get; }
-        public MultiplierQuotient MQ { get; }
-        public DataField DF { get; }
-        public InstructionBuffer IB { get; }
-        public UserBuffer UB { get; }
-        public UserFlag UF { get; }
-        public SaveField SF { get; }
+        public IRegistry Registry { get; }
+
+        public IInstructionSet InstructionSet { get; }
 
         public IInterrupts Interrupts { get; }
 
@@ -88,7 +47,7 @@ namespace Core8.Core
         public void Clear()
         {
             Teletype.Clear();
-            AC.Clear();
+            Registry.AC.Clear();
             Interrupts.ClearUser();
             Interrupts.Disable();
             FloppyDrive?.Initialize();
@@ -103,12 +62,10 @@ namespace Core8.Core
         {
             running = true;
 
-            Log.Information($"CONT @ {PC} (dbg: {debug})");
+            Log.Information($"CONT @ {Registry.PC} (dbg: {debug})");
 
             string interrupts = null;
             string floppy = null;
-            string ifpc = null;
-            string lac = null;
 
             try
             {
@@ -116,7 +73,7 @@ namespace Core8.Core
                 {
                     if (debug)
                     {
-                        if (breakpoints.Contains(PC.Content))
+                        if (breakpoints.Contains(Registry.PC.Content))
                         {
                             Log.Information("Breakpoint hit!");
 
@@ -141,9 +98,9 @@ namespace Core8.Core
 
                     Interrupts.Interrupt();
 
-                    var instruction = Fetch(PC.Content);
+                    var instruction = Fetch(Registry.PC.Content);
 
-                    PC.Increment();
+                    Registry.PC.Increment();
 
                     instruction.Execute();
 
@@ -164,20 +121,6 @@ namespace Core8.Core
                             interrupts = i;
                             Log.Information(interrupts);
                         }
-
-                        var pc = PC.ToString();
-                        if (ifpc != pc)
-                        {
-                            ifpc = pc;
-                            Log.Debug(ifpc);
-                        }
-
-                        var ac = AC.ToString();
-                        if (lac != ac)
-                        {
-                            lac = ac;
-                            Log.Debug(lac);
-                        }
                     }
                 }
             }
@@ -191,7 +134,9 @@ namespace Core8.Core
             {
                 running = false;
 
-                Log.Information($"HLT @ {PC}");
+                Log.Information($"HLT @ {Registry.PC}");
+
+                Log.Debug(Registry.ToString());
             }
         }
 
@@ -209,25 +154,7 @@ namespace Core8.Core
         {
             var data = Memory.Read(address);
 
-            return Decode(data).Load(address, data);
-        }
-
-        private IInstruction Decode(int data)
-        {
-            return (data & Masks.OP_CODE) switch
-            {
-                Masks.MCI when (data & Masks.GROUP) == 0 => group1Instructions,
-                Masks.MCI when (data & Masks.GROUP_3) == Masks.GROUP_3 => group3Instructions,
-                Masks.MCI when (data & Masks.GROUP_2_AND) == Masks.GROUP_2_AND => group2AndInstructions,
-                Masks.MCI => group2OrInstructions,
-                Masks.IOT when (data & Masks.FLOPPY) == Masks.FLOPPY => floppyDriveInstructions,
-                Masks.IOT when (data & Masks.MEMORY_MANAGEMENT) == Masks.MEMORY_MANAGEMENT => memoryManagementInstructions,
-                Masks.IOT when (data & Masks.INTERRUPT_MASK) == 0 => interruptInstructions,
-                Masks.IOT when (data & Masks.IO) >> 3 == 3 => keyboardInstructions,
-                Masks.IOT when (data & Masks.IO) >> 3 == 4 => teleprinterInstructions,
-                Masks.IOT => privilegedNoOperationInstruction,
-                _ => memoryReferenceInstructions,
-            };
+            return InstructionSet.Decode(data).Load(address, data);
         }
 
         public void SetBreakpoint(int address)

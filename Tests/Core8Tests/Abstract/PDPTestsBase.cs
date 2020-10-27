@@ -7,7 +7,7 @@ using System.Diagnostics;
 namespace Core8.Tests.Abstract
 {
     [TestClass]
-    public abstract class InstructionTestsBase
+    public abstract class PDPTestsBase
     {
         protected PDP PDP { get; private set; }
 

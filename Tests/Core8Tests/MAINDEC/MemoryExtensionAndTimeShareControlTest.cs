@@ -12,7 +12,7 @@ namespace Core8.Tests.MAINDEC
 
         protected override IEnumerable<string> ExpectedOutput => new[] { "\u0007" };
 
-        protected override TimeSpan MaxRunningTime => TimeSpan.FromSeconds(60);
+        protected override TimeSpan MaxRunningTime => TimeSpan.FromSeconds(600);
 
         [TestMethod]
         public override void Start()

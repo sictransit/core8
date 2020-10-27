@@ -5,7 +5,7 @@ using Serilog;
 namespace Core8.Tests
 {
     [TestClass]
-    public class CPUTests : InstructionTestsBase
+    public class CPUTests : PDPTestsBase
     {
         [TestMethod]
         public void TestHelloWorld()

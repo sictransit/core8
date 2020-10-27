@@ -73,8 +73,6 @@ namespace Core8.Model.Instructions
                 case BSW_MASK:
                     AC.ByteSwap();
                     break;
-                default:
-                    break;
             }
         }
 
