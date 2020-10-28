@@ -2,6 +2,7 @@
 using Core8.Peripherals.Teletype.Abstract;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Xml.Linq;
 
@@ -9,7 +10,7 @@ namespace Core8.Peripherals.Teletype
 {
     public class SVGPunch : SVGBase
     {
-        private const int spacing = 100;
+        private const int spacing = 100; // 1/1000 inches
         private const int dataWidth = 72;
         private const int feederWidth = 46;
 
@@ -59,7 +60,19 @@ namespace Core8.Peripherals.Teletype
                 totalHeight += paperHeight + spacing;
             }
 
-            var tape = new XElement(svg + "svg", new XAttribute("width", paperWidth + 2 * spacing), new XAttribute("height", totalHeight), new XAttribute(XNamespace.Xmlns + "xlink", xlink), LabelStyle, RowLabelStyle, definition, strips, Label(label), rows);
+            var totalWidth = paperWidth + 2 * spacing;
+
+            var tape = new XElement(
+                svg + "svg",
+                new XAttribute("width", $"{(totalWidth / 1000d).ToString(CultureInfo.InvariantCulture)}in"),
+                new XAttribute("height", $"{(totalHeight / 1000d).ToString(CultureInfo.InvariantCulture)}in"),
+                new XAttribute("viewBox", $"0 0 {totalWidth} {totalHeight}"),
+                new XAttribute(XNamespace.Xmlns + "xlink", xlink),
+                LabelStyle,
+                definition,
+                strips,
+                Label(label),
+                rows);
 
             return tape.ToString();
         }
@@ -69,11 +82,6 @@ namespace Core8.Peripherals.Teletype
         private static XElement LabelStyle => new XElement(
             svg + "style",
             ".label { font: 64px courier; fill: red; }"
-            );
-
-        private static XElement RowLabelStyle => new XElement(
-            svg + "style",
-            ".rowLabel { font: 64px courier; fill: gray; }"
             );
 
         private static XElement Label(string text) => new XElement(
