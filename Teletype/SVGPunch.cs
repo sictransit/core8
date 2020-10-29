@@ -14,7 +14,7 @@ namespace Core8.Peripherals.Teletype
         private const int dataWidth = 72;
         private const int feederWidth = 46;
 
-        public string Punch(byte[] data, string label, int wrap = 80)
+        public string Punch(byte[] data, string label, int wrap = 80, bool cutLeader = true)
         {
             if (data is null)
             {
@@ -26,6 +26,16 @@ namespace Core8.Peripherals.Teletype
             if (wrap < 0)
             {
                 throw new ArgumentOutOfRangeException(nameof(wrap));
+            }
+
+            if (cutLeader)
+            {
+                var trailer = data.Reverse().TakeWhile(x => IsLeaderTrailer(x)).ToArray();
+
+                if (trailer.Length != 0)
+                {
+                    data = trailer.Concat(data.SkipWhile(x => IsLeaderTrailer(x))).ToArray();
+                }                
             }
 
             wrap = wrap == 0 ? data.Length : wrap;
@@ -76,6 +86,8 @@ namespace Core8.Peripherals.Teletype
 
             return tape.ToString();
         }
+
+        private static bool IsLeaderTrailer(byte x) => x == 1 << 7;
 
         private static string ByteRowID(int b) => $"{ByteRowPrefix}{b}";
 

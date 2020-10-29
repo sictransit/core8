@@ -315,6 +315,12 @@ namespace Core8
         private static void Load(string binFile)
         {
             pdp.LoadPaperTape(File.ReadAllBytes(binFile));
+
+            if (pdp.CPU.Registry.AC.Accumulator != 0)
+            {
+                Log.Warning($"BIN format checksum error.");
+                Log.Information(pdp.CPU.Registry.AC.Accumulator.ToString());
+            }
         }
     }
 }
