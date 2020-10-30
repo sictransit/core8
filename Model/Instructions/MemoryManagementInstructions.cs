@@ -4,7 +4,7 @@ using System;
 
 namespace Core8.Model.Instructions
 {
-    public class MemoryManagementInstructions : PrivilegedInstructionsBase
+    internal class MemoryManagementInstructions : PrivilegedInstructionsBase
     {
         private const int MEM_MGMT_MASK = 0b_110_010_000_100;
 
@@ -28,7 +28,7 @@ namespace Core8.Model.Instructions
 
         protected override string OpCodeText =>
             IsReadInstruction
-            ? ((MemoryManagementReadOpCode)(Data & Masks.MEM_WORD)).ToString()
+            ? ((MemoryManagementReadOpCode)(Data & 0b_111_111_111_111)).ToString()
             : ((MemoryManagementChangeOpCodes)(Data & Masks.MEM_MGMT_CHANGE_FIELD)).ToString();
 
         private bool IsReadInstruction => (Data & Masks.MEM_MGMT_READ) == Masks.MEM_MGMT_READ;
@@ -47,7 +47,7 @@ namespace Core8.Model.Instructions
 
         private void PrivilegedExecuteRead()
         {
-            switch (Data & Masks.MEM_WORD)
+            switch (Data & 0b_111_111_111_111)
             {
                 case CINT_MASK:
                     CINT();

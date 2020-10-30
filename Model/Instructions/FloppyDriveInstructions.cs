@@ -5,7 +5,7 @@ using System;
 
 namespace Core8.Model.Instructions
 {
-    public class FloppyDriveInstructions : PrivilegedInstructionsBase
+    internal class FloppyDriveInstructions : PrivilegedInstructionsBase
     {
         private const int SEL_MASK = 0b_000;
         private const int LCD_MASK = 0b_001;

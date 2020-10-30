@@ -3,7 +3,7 @@ using System;
 
 namespace Core8.Model.Instructions.Abstract
 {
-    public abstract class Group2InstructionsBase : PrivilegedInstructionsBase
+    internal abstract class Group2InstructionsBase : PrivilegedInstructionsBase
     {
         private const int HLT_MASK = 1 << 1;
         private const int OSR_MASK = 1 << 2;

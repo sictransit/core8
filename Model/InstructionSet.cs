@@ -1,8 +1,7 @@
-﻿using Core8.Model;
-using Core8.Model.Instructions;
+﻿using Core8.Model.Instructions;
 using Core8.Model.Interfaces;
 
-namespace Core8.Core
+namespace Core8.Model
 {
     public class InstructionSet : IInstructionSet
     {

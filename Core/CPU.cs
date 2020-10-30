@@ -1,4 +1,5 @@
 ﻿using Core8.Extensions;
+using Core8.Model;
 using Core8.Model.Interfaces;
 using Serilog;
 using System;

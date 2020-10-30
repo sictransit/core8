@@ -1,5 +1,5 @@
-﻿using Core8.Core;
-using Core8.Extensions;
+﻿using Core8.Extensions;
+using Core8.Model;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Diagnostics;
 

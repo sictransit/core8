@@ -5,7 +5,7 @@ using System;
 
 namespace Core8.Model.Instructions
 {
-    public class Group3Instructions : InstructionsBase
+    internal class Group3Instructions : InstructionsBase
     {
         private const int MQL_MASK = 1 << 4;
         private const int MQA_MASK = 1 << 6;

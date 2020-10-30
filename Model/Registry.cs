@@ -4,7 +4,7 @@ using Core8.Model.Registers.Abstract;
 using System;
 using System.Linq;
 
-namespace Core8.Core
+namespace Core8.Model
 {
     public class Registry : IRegistry
     {

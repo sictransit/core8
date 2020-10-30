@@ -4,7 +4,7 @@ using Serilog;
 
 namespace Core8.Model.Instructions
 {
-    public class NoOperationInstruction : InstructionsBase
+    internal class NoOperationInstruction : InstructionsBase
     {
         public NoOperationInstruction(ICPU cpu) : base(cpu)
         {

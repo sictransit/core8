@@ -4,7 +4,7 @@ using System;
 
 namespace Core8.Model.Instructions
 {
-    public class KeyboardInstructions : TeletypeInstructionsBase
+    internal class KeyboardInstructions : TeletypeInstructionsBase
     {
         private const int KCF_MASK = 0 << 0;
         private const int KSF_MASK = 1 << 0;
