@@ -36,18 +36,28 @@ namespace Core8.Model
 
         public IInstruction Decode(int data)
         {
-            return (data & Masks.OP_CODE) switch
+            const int IOT = 0b_110_000_000_000;
+            const int MCI = 0b_111_000_000_000;
+            const int IO = 0b_000_111_111_000;
+            const int GROUP = 0b_000_100_000_000;
+            const int GROUP_3 = 0b_111_100_000_001;
+            const int GROUP_2_AND = 0b_111_100_001_000;
+            const int FLOPPY = 0b_000_111_000_000;
+            const int MEMORY_MANAGEMENT = 0b_110_010_000_000;
+            const int INTERRUPT_MASK = 0b_000_111_111_000;
+
+            return (data & 0b_111_000_000_000) switch
             {
-                Masks.MCI when (data & Masks.GROUP) == 0 => group1Instructions,
-                Masks.MCI when (data & Masks.GROUP_3) == Masks.GROUP_3 => group3Instructions,
-                Masks.MCI when (data & Masks.GROUP_2_AND) == Masks.GROUP_2_AND => group2AndInstructions,
-                Masks.MCI => group2OrInstructions,
-                Masks.IOT when (data & Masks.FLOPPY) == Masks.FLOPPY => floppyDriveInstructions,
-                Masks.IOT when (data & Masks.MEMORY_MANAGEMENT) == Masks.MEMORY_MANAGEMENT => memoryManagementInstructions,
-                Masks.IOT when (data & Masks.INTERRUPT_MASK) == 0 => interruptInstructions,
-                Masks.IOT when (data & Masks.IO) >> 3 == 3 => keyboardInstructions,
-                Masks.IOT when (data & Masks.IO) >> 3 == 4 => teleprinterInstructions,
-                Masks.IOT => privilegedNoOperationInstruction,
+                MCI when (data & GROUP) == 0 => group1Instructions,
+                MCI when (data & GROUP_3) == GROUP_3 => group3Instructions,
+                MCI when (data & GROUP_2_AND) == GROUP_2_AND => group2AndInstructions,
+                MCI => group2OrInstructions,
+                IOT when (data & FLOPPY) == FLOPPY => floppyDriveInstructions,
+                IOT when (data & MEMORY_MANAGEMENT) == MEMORY_MANAGEMENT => memoryManagementInstructions,
+                IOT when (data & INTERRUPT_MASK) == 0 => interruptInstructions,
+                IOT when (data & IO) >> 3 == 3 => keyboardInstructions,
+                IOT when (data & IO) >> 3 == 4 => teleprinterInstructions,
+                IOT => privilegedNoOperationInstruction,
                 _ => memoryReferenceInstructions,
             };
         }

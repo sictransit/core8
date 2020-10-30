@@ -4,11 +4,11 @@ namespace Core8.Model.Registers
 {
     public class SaveField : RegisterBase
     {
-        public int DF => Content & Masks.SF_DF;
+        public int DF => Content & 0b_111;
 
-        public int IF => (Content & Masks.SF_IF) >> 3;
+        public int IF => (Content & 0b_111_000) >> 3;
 
-        public int UF => (Content & Masks.SF_UF) >> 6;
+        public int UF => (Content & 0b_001_000_000) >> 6;
 
         protected override string ShortName => "SF";
 
@@ -16,7 +16,7 @@ namespace Core8.Model.Registers
 
         public void Save(int df, int @if, int uf)
         {
-            Content = ((uf & Masks.FLAG) << 6) | ((@if << 3) & Masks.SF_IF) | (df & Masks.SF_DF);
+            Content = ((uf & 0b_001) << 6) | ((@if << 3) & 0b_111_000) | (df & 0b_111);
         }
     }
 }

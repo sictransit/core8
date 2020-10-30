@@ -35,7 +35,7 @@ namespace Core8.Peripherals.Teletype
                 if (trailer.Length != 0)
                 {
                     data = trailer.Concat(data.SkipWhile(x => IsLeaderTrailer(x))).ToArray();
-                }                
+                }
             }
 
             wrap = wrap == 0 ? data.Length : wrap;

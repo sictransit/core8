@@ -29,9 +29,9 @@ namespace Core8.Model.Instructions
         protected override string OpCodeText =>
             IsReadInstruction
             ? ((MemoryManagementReadOpCode)(Data & 0b_111_111_111_111)).ToString()
-            : ((MemoryManagementChangeOpCodes)(Data & Masks.MEM_MGMT_CHANGE_FIELD)).ToString();
+            : ((MemoryManagementChangeOpCodes)(Data & 0b_000_000_000_011)).ToString();
 
-        private bool IsReadInstruction => (Data & Masks.MEM_MGMT_READ) == Masks.MEM_MGMT_READ;
+        private bool IsReadInstruction => (Data & 0b_000_000_000_100) == 0b_000_000_000_100;
 
         protected override void PrivilegedExecute()
         {
@@ -106,7 +106,7 @@ namespace Core8.Model.Instructions
 
         private void RIB()
         {
-            AC.ORAccumulator(SF.Content & (Masks.SF_UF | Masks.SF_IF | Masks.SF_DF));
+            AC.ORAccumulator(SF.Content & 0b_000_001_111_111);
         }
 
         private void RIF()

@@ -23,11 +23,11 @@ namespace Core8.Model.Instructions
 
         private IFloppyDrive FloppyDrive => CPU.FloppyDrive;
 
-        protected override string OpCodeText => ((FloppyDriveOpCode)(Data & Masks.FLOPPY_OPCODE)).ToString();
+        protected override string OpCodeText => ((FloppyDriveOpCode)(Data & 0b_111)).ToString();
 
         protected override void PrivilegedExecute()
         {
-            switch (Data & Masks.IO_OPCODE)
+            switch (Data & 0b_111)
             {
                 case SEL_MASK:
                     SEL();

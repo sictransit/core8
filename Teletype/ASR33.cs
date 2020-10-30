@@ -1,5 +1,4 @@
 ﻿using Core8.Extensions;
-using Core8.Model;
 using Core8.Model.Interfaces;
 using NetMQ;
 using NetMQ.Sockets;
@@ -58,7 +57,7 @@ namespace Core8.Peripherals.Teletype
 
         public void Clear()
         {
-            SetDeviceControl(Masks.IO_DEVICE_CONTROL_MASK);
+            SetDeviceControl(0b_000_000_000_011);
 
             ClearInputFlag();
             ClearOutputFlag();

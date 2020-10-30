@@ -8,6 +8,6 @@ namespace Core8.Model.Registers
 
         protected override int Digits => 1;
 
-        public void SetUB(int value) => Content = value & Masks.UB;
+        public void SetUB(int value) => Content = value & 0b_001;
     }
 }

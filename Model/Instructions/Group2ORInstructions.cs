@@ -16,9 +16,9 @@ namespace Core8.Model.Instructions
         }
 
         protected override string OpCodeText =>
-            (Data & Masks.GROUP_2_AND_OR_FLAGS) == 0
+            (Data & 0b_000_011_111_000) == 0
             ? base.OpCodeText
-            : string.Join(' ', ((Group2OROpCodes)(Data & Masks.GROUP_2_AND_OR_FLAGS)).ToString(), base.OpCodeText);
+            : string.Join(' ', ((Group2OROpCodes)(Data & 0b_000_011_111_000)).ToString(), base.OpCodeText);
 
         public override void Execute()
         {
@@ -26,7 +26,7 @@ namespace Core8.Model.Instructions
 
             if ((Data & SMA_MASK) != 0)
             {
-                skip = (AC.Accumulator & Masks.AC_SIGN) != 0;
+                skip = (AC.Accumulator & 0b_0_100_000_000_000) != 0;
             }
 
             if (!skip && (Data & SZA_MASK) != 0)

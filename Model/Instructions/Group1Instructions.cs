@@ -19,7 +19,7 @@ namespace Core8.Model.Instructions
         {
         }
 
-        protected override string OpCodeText => ((Group1OpCodes)(Data & Masks.GROUP_1_FLAGS)).ToString();
+        protected override string OpCodeText => ((Group1OpCodes)(Data & 0b_000_011_111_111)).ToString();
 
         public override void Execute()
         {

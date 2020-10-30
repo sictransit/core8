@@ -17,11 +17,11 @@ namespace Core8.Model.Instructions
         {
         }
 
-        protected override string OpCodeText => ((TeleprinterOpCode)(Data & Masks.IO_OPCODE)).ToString();
+        protected override string OpCodeText => ((TeleprinterOpCode)(Data & 0b_111)).ToString();
 
         protected override void PrivilegedExecute()
         {
-            switch (Data & Masks.IO_OPCODE)
+            switch (Data & 0b_111)
             {
                 case TFL_MASK:
                     TFL();
@@ -59,7 +59,7 @@ namespace Core8.Model.Instructions
 
         private void TPC()
         {
-            var c = AC.Accumulator & Masks.TELEPRINTER_BUFFER_MASK;
+            var c = AC.Accumulator & 0b_000_001_111_111;
 
             Teletype.Type((byte)c);
         }

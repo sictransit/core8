@@ -18,11 +18,11 @@ namespace Core8.Model.Instructions
 
         }
 
-        protected override string OpCodeText => ((KeyboardOpCode)(Data & Masks.IO_OPCODE)).ToString();
+        protected override string OpCodeText => ((KeyboardOpCode)(Data & 0b_111)).ToString();
 
         protected override void PrivilegedExecute()
         {
-            switch (Data & Masks.IO_OPCODE)
+            switch (Data & 0b_111)
             {
                 case KCC_MASK:
                     KCC();

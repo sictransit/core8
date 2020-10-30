@@ -16,7 +16,7 @@ namespace Core8.Model.Instructions
         {
         }
 
-        protected override string OpCodeText => ((Group3OpCodes)(Data & Masks.GROUP_3_FLAGS)).ToString();
+        protected override string OpCodeText => ((Group3OpCodes)(Data & 0b_000_011_010_000)).ToString();
 
         public override void Execute()
         {
@@ -48,7 +48,7 @@ namespace Core8.Model.Instructions
             }
 
             // TODO: Is this correct, or should we skip the entire instruction?
-            if ((Data & Masks.GROUP_3_EAE) != 0)
+            if ((Data & 0b_000_000_101_110) != 0)
             {
                 Log.Warning($"{this} EAE micro-code ignored");
             }

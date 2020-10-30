@@ -1,5 +1,4 @@
-﻿using Core8.Model;
-using Core8.Model.Interfaces;
+﻿using Core8.Model.Interfaces;
 
 namespace Core8.Core
 {
@@ -30,7 +29,7 @@ namespace Core8.Core
 
         public int Write(int address, int data)
         {
-            var value = data & Masks.MEM_WORD;
+            var value = data & 0b_111_111_111_111;
 
             ram[address] = value;
 

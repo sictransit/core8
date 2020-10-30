@@ -23,7 +23,7 @@ namespace Core8.Model.Instructions
 
         }
 
-        protected override string OpCodeText => string.Join(" ", new[] { ((MemoryReferenceOpCode)(Data & Masks.OP_CODE)).ToString(), Indirect ? "I" : null, Zero ? "Z" : null }.Where(x => !string.IsNullOrEmpty(x)));
+        protected override string OpCodeText => string.Join(" ", new[] { ((MemoryReferenceOpCode)(Data & 0b_111_000_000_000)).ToString(), Indirect ? "I" : null, Zero ? "Z" : null }.Where(x => !string.IsNullOrEmpty(x)));
 
         private bool Indirect => (Data & INDIRECT) != 0;
 
@@ -57,7 +57,7 @@ namespace Core8.Model.Instructions
 
             var operand = Indirect ? Field | Memory.Read(Location, true) : Location;
 
-            switch (Data & Masks.OP_CODE)
+            switch (Data & 0b_111_000_000_000)
             {
                 case JMS_MASK:
                     JMS(operand);
@@ -74,7 +74,7 @@ namespace Core8.Model.Instructions
         {
             var operand = Indirect ? (DF.Content << 12) | Memory.Read(Location, true) : Location;
 
-            switch (Data & Masks.OP_CODE)
+            switch (Data & 0b_111_000_000_000)
             {
                 case AND_MASK:
                     AND(operand);

@@ -5,41 +5,41 @@ namespace Core8.Model.Registers
 {
     public class LinkAccumulator : RegisterBase
     {
-        public int Link => (Content & Masks.LINK) >> 12;
+        public int Link => (Content & 0b_1_000_000_000_000) >> 12;
 
-        public int Accumulator => Content & Masks.AC;
+        public int Accumulator => Content & 0b_0_111_111_111_111;
 
         protected override string ShortName => "LAC";
 
-        public void ByteSwap() => Content = (Content & Masks.LINK) | ((Content & Masks.AC_HIGH) >> 6) | ((Content & Masks.AC_LOW) << 6);
+        public void ByteSwap() => Content = (Content & 0b_1_000_000_000_000) | ((Content & 0b_0_111_111_000_000) >> 6) | ((Content & 0b_0_000_000_111_111) << 6);
 
         public void RAR()
         {
-            Content = ((Content >> 1) & Masks.AC) | ((Content << 12) & Masks.LINK);
+            Content = ((Content >> 1) & 0b_0_111_111_111_111) | ((Content << 12) & 0b_1_000_000_000_000);
         }
 
         public void RAL()
         {
-            Content = ((Content << 1) & Masks.AC_LINK) | ((Content >> 12) & Masks.FLAG);
+            Content = ((Content << 1) & 0b_1_111_111_111_111) | ((Content >> 12) & 0b_001);
         }
 
-        public void ComplementLink() => Content ^= Masks.LINK;
+        public void ComplementLink() => Content ^= 0b_1_000_000_000_000;
 
-        public void ComplementAccumulator() => Content ^= Masks.AC;
+        public void ComplementAccumulator() => Content ^= 0b_0_111_111_111_111;
 
-        public void ClearAccumulator() => Content &= Masks.LINK;
+        public void ClearAccumulator() => Content &= 0b_1_000_000_000_000;
 
-        public void ClearLink() => Content &= Masks.AC;
+        public void ClearLink() => Content &= 0b_0_111_111_111_111;
 
-        public void SetAccumulator(int value) => Content = (Content & Masks.LINK) | (value & Masks.AC);
+        public void SetAccumulator(int value) => Content = (Content & 0b_1_000_000_000_000) | (value & 0b_0_111_111_111_111);
 
-        public void ORAccumulator(int value) => Content |= value & Masks.AC;
+        public void ORAccumulator(int value) => Content |= value & 0b_0_111_111_111_111;
 
-        public void ANDAccumulator(int value) => Content &= Masks.LINK | (Content & value);
+        public void ANDAccumulator(int value) => Content &= 0b_1_000_000_000_000 | (Content & value);
 
-        public void SetLink(int value) => Content = ((value & Masks.FLAG) << 12) | (Content & Masks.AC);
+        public void SetLink(int value) => Content = ((value & 0b_001) << 12) | (Content & 0b_0_111_111_111_111);
 
-        public void AddWithCarry(int value) => Content = (Content + value) & Masks.AC_LINK;
+        public void AddWithCarry(int value) => Content = (Content + value) & 0b_1_111_111_111_111;
 
         public override string ToString() => $"[{ShortName}] {Link} {Accumulator.ToOctalString()}";
     }

@@ -19,11 +19,11 @@ namespace Core8.Model.Instructions
         {
         }
 
-        protected override string OpCodeText => ((InterruptOpCode)(Data & Masks.INTERRUPT_FLAGS)).ToString();
+        protected override string OpCodeText => ((InterruptOpCode)(Data & 0b_000_000_000_111)).ToString();
 
         protected override void PrivilegedExecute()
         {
-            switch (Data & Masks.INTERRUPT_FLAGS)
+            switch (Data & 0b_000_000_000_111)
             {
                 case SKON_MASK:
                     SKON();
@@ -100,7 +100,7 @@ namespace Core8.Model.Instructions
         {
             var acc = AC.Accumulator;
 
-            AC.SetLink((acc >> 11) & Masks.FLAG);
+            AC.SetLink((acc >> 11) & 0b_001);
 
             IB.SetIB(acc >> 3);
             DF.SetDF(acc);

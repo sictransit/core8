@@ -13,13 +13,13 @@ namespace Core8.Model.Instructions.Abstract
         }
 
         protected override string OpCodeText =>
-            (Data & Masks.PRIVILEGED_GROUP_2_FLAGS) != 0
-            ? ((Group2PrivilegedOpCodes)(Data & Masks.PRIVILEGED_GROUP_2_FLAGS)).ToString()
+            (Data & 0b_000_000_000_110) != 0
+            ? ((Group2PrivilegedOpCodes)(Data & 0b_000_000_000_110)).ToString()
             : string.Empty;
 
         public override void Execute()
         {
-            if ((Data & Masks.PRIVILEGED_GROUP_2_FLAGS) != 0)
+            if ((Data & 0b_000_000_000_110) != 0)
             {
                 base.Execute();
             }
