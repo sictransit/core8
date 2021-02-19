@@ -16,7 +16,7 @@ namespace Core8.Tests.Abstract
         [TestInitialize]
         public void Initialize()
         {
-            LoggingLevel = new LoggingLevelSwitch(Serilog.Events.LogEventLevel.Information);
+            LoggingLevel = new LoggingLevelSwitch();
 
             //File.Delete("test.log");
 

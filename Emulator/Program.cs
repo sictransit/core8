@@ -13,7 +13,7 @@ namespace Core8
 {
     public static class Program
     {
-        private static readonly LoggingLevelSwitch loggingLevel = new LoggingLevelSwitch(Serilog.Events.LogEventLevel.Information);
+        private static readonly LoggingLevelSwitch LoggingLevel = new();
 
         private static PDP pdp;
 
@@ -26,7 +26,7 @@ namespace Core8
             Log.Logger = new LoggerConfiguration()
                 .WriteTo.Console(Serilog.Events.LogEventLevel.Debug)
                 .WriteTo.File(logFilename, Serilog.Events.LogEventLevel.Debug)
-                .MinimumLevel.ControlledBy(loggingLevel)
+                .MinimumLevel.ControlledBy(LoggingLevel)
                 .CreateLogger();
 
             Parser.Default.ParseArguments<Options>(args)
@@ -107,7 +107,7 @@ namespace Core8
 
         private static void FloppyTesting()
         {
-            loggingLevel.MinimumLevel = Serilog.Events.LogEventLevel.Information;
+            LoggingLevel.MinimumLevel = Serilog.Events.LogEventLevel.Information;
 
             using var httpClient = new HttpClient();
 
@@ -318,7 +318,7 @@ namespace Core8
 
             if (pdp.CPU.Registry.AC.Accumulator != 0)
             {
-                Log.Warning($"BIN format checksum error.");
+                Log.Warning("BIN format checksum error.");
                 Log.Information(pdp.CPU.Registry.AC.Accumulator.ToString());
             }
         }

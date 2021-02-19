@@ -6,7 +6,7 @@ namespace Core8.Peripherals
 {
     public static class Program
     {
-        private static readonly LoggingLevelSwitch loggingLevel = new LoggingLevelSwitch(Serilog.Events.LogEventLevel.Debug);
+        private static readonly LoggingLevelSwitch loggingLevel = new(Serilog.Events.LogEventLevel.Debug);
 
         public static void Main(string[] args)
         {

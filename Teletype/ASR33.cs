@@ -11,13 +11,13 @@ namespace Core8.Peripherals.Teletype
 {
     public class ASR33 : ITeletype
     {
-        private readonly List<char> paper = new List<char>();
+        private readonly List<char> paper = new();
 
         private int ticks;
 
-        private const int TickDelay = 100;
+        private const int TICK_DELAY = 100;
 
-        private readonly ConcurrentQueue<byte> reader = new ConcurrentQueue<byte>();
+        private readonly ConcurrentQueue<byte> reader = new();
 
         private readonly PublisherSocket publisherSocket;
         private readonly SubscriberSocket subscriberSocket;
@@ -108,7 +108,7 @@ namespace Core8.Peripherals.Teletype
             }
         }
 
-        public string Printout => new string(paper.ToArray());
+        public string Printout => new(paper.ToArray());
 
         public bool InterruptRequested => InputIRQ || OutputIRQ;
 
@@ -119,7 +119,7 @@ namespace Core8.Peripherals.Teletype
 
         public void Tick()
         {
-            if (ticks++ < TickDelay)
+            if (ticks++ < TICK_DELAY)
             {
                 return;
             }

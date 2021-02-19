@@ -71,7 +71,7 @@ namespace Core8.Tests.MAINDEC.Abstract
                 result &= timeout;
             }
 
-            PDP.Halt(true);
+            PDP.Halt();
 
             return result;
         }

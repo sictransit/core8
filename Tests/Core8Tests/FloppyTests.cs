@@ -102,7 +102,7 @@ namespace Core8.Tests
         {
             var rnd = new Random();
 
-            return Enumerable.Range(0, 64).Select(x => rnd.Next(0, 4096)).ToArray();
+            return Enumerable.Range(0, 64).Select(_ => rnd.Next(0, 4096)).ToArray();
         }
 
         private static void FillBuffer(IFloppyDrive floppy, int[] data)

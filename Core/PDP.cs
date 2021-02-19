@@ -185,8 +185,7 @@ namespace Core8.Core
                     {
                         zeroAddress = address;
                     }
-
-                    if (!zeroSet)
+                    else
                     {
                         sb.AppendLine(instruction.ToString());
 

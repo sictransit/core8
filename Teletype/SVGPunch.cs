@@ -29,11 +29,11 @@ namespace Core8.Peripherals.Teletype
 
             if (cutLeader)
             {
-                var trailer = data.Reverse().TakeWhile(x => IsLeaderTrailer(x)).ToArray();
+                var trailer = data.Reverse().TakeWhile(IsLeaderTrailer).ToArray();
 
                 if (trailer.Length != 0)
                 {
-                    data = trailer.Concat(data.SkipWhile(x => IsLeaderTrailer(x))).ToArray();
+                    data = trailer.Concat(data.SkipWhile(IsLeaderTrailer)).ToArray();
                 }
             }
 
@@ -90,32 +90,32 @@ namespace Core8.Peripherals.Teletype
 
         private static string ByteRowId(int b) => $"{SVGDeclarations.BYTE_ROW_PREFIX}{b}";
 
-        private static XElement LabelStyle => new XElement(
+        private static XElement LabelStyle => new(
             SVGDeclarations.svg + "style",
             ".label { font: 64px courier; fill: red; }"
-            );
+        );
 
-        private static XElement Label(string text) => new XElement(
+        private static XElement Label(string text) => new(
             SVGDeclarations.svg + "text",
             new XAttribute("x", SPACING + SPACING / 2),
             new XAttribute("y", SPACING + SPACING / 2),
             new XAttribute("class", "label"), text
             );
 
-        private static XElement CreateRowShape(int b) => new XElement(
+        private static XElement CreateRowShape(int b) => new(
             SVGDeclarations.svg + "g",
             new XAttribute("id", ByteRowId(b)),
             CreateRow(b)
             );
 
-        private static XElement UseRowShape(int x, int y, int offset, int b) => new XElement(
+        private static XElement UseRowShape(int x, int y, int offset, int b) => new(
             SVGDeclarations.svg + "use",
             new XAttribute(SVGDeclarations.xlink + "href", "#" + ByteRowId(b)),
             new XAttribute("x", (offset + 1) * SPACING + x),
             new XAttribute("y", y)
             );
 
-        private static XElement CreatePaper(int x, int y, int width, int height) => new XElement(
+        private static XElement CreatePaper(int x, int y, int width, int height) => new(
             SVGDeclarations.svg + "g",
             new XElement(
                 SVGDeclarations.svg + "rect",
@@ -129,7 +129,7 @@ namespace Core8.Peripherals.Teletype
 
         private static string HoleTypeID(bool isData) => isData ? "data" : "feeder";
 
-        private static XElement Hole(bool isData) => new XElement(
+        private static XElement Hole(bool isData) => new(
             SVGDeclarations.svg + "circle",
             new XAttribute("fill", "black"),
             new XAttribute("stroke-width", "0"),
@@ -138,7 +138,7 @@ namespace Core8.Peripherals.Teletype
             new XAttribute("id", HoleTypeID(isData))
             );
 
-        private static XElement UseHole(int bit, bool isData) => new XElement(
+        private static XElement UseHole(int bit, bool isData) => new(
             SVGDeclarations.svg + "use",
             new XAttribute(SVGDeclarations.xlink + "href", "#" + HoleTypeID(isData)),
             new XAttribute("y", (bit + 1) * SPACING)
