@@ -4,7 +4,7 @@ using System.Xml.Linq;
 
 namespace Core8.Peripherals.Teletype
 {
-    public static class SVGReader 
+    public static class SVGReader
     {
         public static IEnumerable<byte> Read(string tape)
         {

@@ -7,7 +7,7 @@ using System.Xml.Linq;
 
 namespace Core8.Peripherals.Teletype
 {
-    public static class SVGPunch 
+    public static class SVGPunch
     {
         private const int SPACING = 100; // 1/1000 inches
         private const int DATA_WIDTH = 72;
