@@ -18,7 +18,7 @@ namespace Core8.Tests.MAINDEC
 
             PDP.Toggle8(0000);
 
-            StartAndWaitForCompletion();
+            Assert.IsTrue(StartAndWaitForCompletion());
         }
     }
 }

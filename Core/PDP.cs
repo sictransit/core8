@@ -24,7 +24,7 @@ namespace Core8.Core
             ToggleRIMAndBinLoader();
         }
 
-        public bool Running => cpuThread != null && cpuThread.IsAlive;
+        public bool Running => cpuThread?.IsAlive ?? false;
 
         public ICPU CPU { get; }
 
@@ -289,7 +289,7 @@ namespace Core8.Core
 
             cpuThread.Start();
 
-            if (Running & waitForHalt)
+            if (Running && waitForHalt)
             {
                 cpuThread.Join();
             }

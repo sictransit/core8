@@ -111,7 +111,9 @@ namespace Core8
         {
             loggingLevel.MinimumLevel = Serilog.Events.LogEventLevel.Information;
 
-            pdp.LoadPaperTape(new HttpClient().GetByteArrayAsync(@"https://www.dropbox.com/s/mvm1mh47jybfl5t/dirxa-d-pb?dl=1").Result);
+            using var httpClient = new HttpClient();
+
+            pdp.LoadPaperTape(httpClient.GetByteArrayAsync(@"https://www.dropbox.com/s/mvm1mh47jybfl5t/dirxa-d-pb?dl=1").Result);
 
             //pdp.Load8(0020);
             //pdp.Deposit8(0000);

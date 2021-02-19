@@ -52,11 +52,11 @@ namespace Core8.Peripherals.Floppy
 
         public int[] Buffer { get; private set; }
 
-        public void SetState(StateBase newState)
+        public void SetState(StateBase state)
         {
-            Log.Debug($"Controller state transition: {currentState} -> {newState}");
+            Log.Debug($"Controller state transition: {currentState} -> {state}");
 
-            currentState = newState;
+            currentState = state;
         }
 
         public void SetTransferRequest(bool state) => transferRequestFlag = state;

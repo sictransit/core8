@@ -16,7 +16,7 @@ namespace Core8.Tests.MAINDEC
         {
             PDP.Load8(0200);
 
-            StartAndWaitForCompletion();
+            Assert.IsTrue(StartAndWaitForCompletion());
         }
     }
 }

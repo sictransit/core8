@@ -18,7 +18,7 @@ namespace Core8.Tests
         [ExpectedException(typeof(FormatException))]
         public void TestToDecimalThrows()
         {
-            var _ = 8.ToDecimal();
+            8.ToDecimal();
         }
 
         [TestMethod]

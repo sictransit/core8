@@ -20,8 +20,6 @@ namespace Core8.Tests.MAINDEC.Abstract
 
         protected virtual TimeSpan MaxRunningTime => TimeSpan.FromSeconds(60);
 
-        protected virtual bool ExpectHLT => false;
-
         [TestInitialize]
         public void LoadTape()
         {
@@ -34,8 +32,10 @@ namespace Core8.Tests.MAINDEC.Abstract
 
         public abstract void Start();
 
-        protected void StartAndWaitForCompletion()
+        protected bool StartAndWaitForCompletion()
         {
+            var result = true;
+
             PDP.Continue(false);
 
             var sw = new Stopwatch();
@@ -56,27 +56,24 @@ namespace Core8.Tests.MAINDEC.Abstract
                 Thread.Sleep(50);
             }
 
-            if (!ExpectHLT)
-            {
-                Assert.IsTrue(PDP.Running);
-            }
-
             PDP.Halt();
 
             Assert.IsFalse(failed);
 
-            if (!ExpectedOutput.Any())
+            if (ExpectedOutput.Any())
             {
-                Assert.IsFalse(done);
-                Assert.IsTrue(timeout);
+                result &= done;
+                result &= !timeout;
             }
             else
             {
-                Assert.IsTrue(done);
-                Assert.IsFalse(timeout);
+                result &= !done;
+                result &= timeout;
             }
 
-            PDP.Halt();
+            PDP.Halt(true);
+
+            return result;
         }
     }
 }
