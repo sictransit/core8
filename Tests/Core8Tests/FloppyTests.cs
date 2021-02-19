@@ -80,7 +80,7 @@ namespace Core8.Tests
             }
         }
 
-        private void AssertDoneFlagSet(IFloppyDrive floppy)
+        private static void AssertDoneFlagSet(IFloppyDrive floppy)
         {
             var sw = new Stopwatch();
             sw.Start();
@@ -98,14 +98,14 @@ namespace Core8.Tests
             Assert.IsTrue(done);
         }
 
-        private int[] GenerateRandomBlock()
+        private static int[] GenerateRandomBlock()
         {
             var rnd = new Random();
 
             return Enumerable.Range(0, 64).Select(x => rnd.Next(0, 4096)).ToArray();
         }
 
-        private void FillBuffer(IFloppyDrive floppy, int[] data)
+        private static void FillBuffer(IFloppyDrive floppy, int[] data)
         {
             floppy.LoadCommandRegister(Functions.FILL_BUFFER);
 
@@ -130,7 +130,7 @@ namespace Core8.Tests
             AssertDoneFlagSet(floppy);
         }
 
-        private int[] EmptyBuffer(IFloppyDrive floppy)
+        private static int[] EmptyBuffer(IFloppyDrive floppy)
         {
             var buffer = new int[64];
 
@@ -221,21 +221,21 @@ namespace Core8.Tests
             }
         }
 
-        private void WriteSector(IFloppyDrive floppy, int track, int sector)
+        private static void WriteSector(IFloppyDrive floppy, int track, int sector)
         {
             floppy.LoadCommandRegister(Functions.WRITE_SECTOR);
 
             SetSector(floppy, track, sector);
         }
 
-        private void ReadSector(IFloppyDrive floppy, int track, int sector)
+        private static void ReadSector(IFloppyDrive floppy, int track, int sector)
         {
             floppy.LoadCommandRegister(Functions.READ_SECTOR);
 
             SetSector(floppy, track, sector);
         }
 
-        private void SetSector(IFloppyDrive floppy, int track, int sector)
+        private static void SetSector(IFloppyDrive floppy, int track, int sector)
         {
             Assert.IsTrue(floppy.SkipTransferRequest());
 

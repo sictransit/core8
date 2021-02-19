@@ -8,16 +8,14 @@ namespace Core8.Tests
     [TestClass]
     public class PunchTests
     {
-        private const string Label = "Punched paper tape as Scalable Vector Graphics (SVG), a beautiful anachronism! Today, folded for your convenience.";
+        private const string LABEL = "Punched paper tape as Scalable Vector Graphics (SVG), a beautiful anachronism! Today, folded for your convenience.";
 
-        private byte[] TestData => Encoding.ASCII.GetBytes(Label).Concat(Enumerable.Range(0, 256).Select(x => (byte)x)).ToArray();
+        private static byte[] TestData => Encoding.ASCII.GetBytes(LABEL).Concat(Enumerable.Range(0, 256).Select(x => (byte)x)).ToArray();
 
         [TestMethod]
         public void TestPunch()
         {
-            var punch = new SVGPunch();
-
-            var svg = punch.Punch(TestData, Label);
+            var svg = SVGPunch.Punch(TestData, LABEL);
 
             Assert.IsTrue(!string.IsNullOrWhiteSpace(svg));
 
@@ -28,13 +26,9 @@ namespace Core8.Tests
         [TestMethod]
         public void TestReader()
         {
-            var punch = new SVGPunch();
+            var svg = SVGPunch.Punch(TestData, LABEL);
 
-            var svg = punch.Punch(TestData, Label);
-
-            var reader = new SVGReader();
-
-            var data = reader.Read(svg).ToArray();
+            var data = SVGReader.Read(svg).ToArray();
 
             Assert.IsNotNull(data);
             Assert.IsTrue(data.Any());

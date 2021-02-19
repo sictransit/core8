@@ -90,9 +90,7 @@ namespace Core8
 
             var data = File.ReadAllBytes(binFile);
 
-            var punch = new SVGPunch();
-
-            var tape = punch.Punch(data, file.Name);
+            var tape = SVGPunch.Punch(data, file.Name);
 
             var svgFile = Path.ChangeExtension(file.FullName, ".svg");
 

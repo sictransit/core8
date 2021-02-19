@@ -14,9 +14,9 @@ namespace Core8.Tests.MAINDEC.Abstract
     {
         protected abstract string TapeName { get; }
 
-        protected virtual IEnumerable<string> ExpectedOutput => new string[] { };
+        protected virtual IEnumerable<string> ExpectedOutput => Array.Empty<string>();
 
-        protected virtual IEnumerable<string> UnexpectedOutput => new string[] { };
+        protected virtual IEnumerable<string> UnexpectedOutput => Array.Empty<string>();
 
         protected virtual TimeSpan MaxRunningTime => TimeSpan.FromSeconds(60);
 

@@ -1,23 +1,22 @@
-﻿using Core8.Peripherals.Teletype.Abstract;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Xml.Linq;
 
 namespace Core8.Peripherals.Teletype
 {
-    public class SVGReader : SVGBase
+    public static class SVGReader 
     {
-        public IEnumerable<byte> Read(string tape)
+        public static IEnumerable<byte> Read(string tape)
         {
             var xml = XElement.Parse(tape);
 
-            foreach (var useElement in xml.Descendants().Where(x => x.Name == svg + "use"))
+            foreach (var useElement in xml.Descendants().Where(x => x.Name == SVGDeclarations.svg + "use"))
             {
-                var value = useElement.Attribute(xlink + "href")?.Value;
+                var value = useElement.Attribute(SVGDeclarations.xlink + "href")?.Value;
 
-                if (value != null && value.StartsWith($"#{ByteRowPrefix}"))
+                if (value != null && value.StartsWith($"#{SVGDeclarations.BYTE_ROW_PREFIX}"))
                 {
-                    yield return byte.Parse(value.Remove(0, ByteRowPrefix.Length + 1));
+                    yield return byte.Parse(value.Remove(0, SVGDeclarations.BYTE_ROW_PREFIX.Length + 1));
                 }
             }
         }
