@@ -25,7 +25,7 @@ namespace Core8.Peripherals.Floppy.States.Abstract
 
         protected virtual bool FinalizeState() => false;
 
-        protected virtual void SetIR() => Controller.IR.SetIR(Controller.ES.Content);
+        protected virtual void SetIR() => Controller.IR.Set(Controller.ES.Content);
 
         public void Tick()
         {

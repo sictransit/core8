@@ -6,8 +6,8 @@ namespace Core8.Model.Registers
     {
         protected override string ShortName => "UB";
 
-        protected override int Digits => 1;
+        public override void Set(int value) => Content = value & 0b_001;
 
-        public void SetUB(int value) => Content = value & 0b_001;
+        protected override int Digits => 1;
     }
 }

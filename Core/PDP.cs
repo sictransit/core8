@@ -213,7 +213,7 @@ namespace Core8.Core
 
         public void Deposit10(int data)
         {
-            CPU.Registry.SR.SetSR(data);
+            CPU.Registry.SR.Set(data);
 
             Deposit();
         }
@@ -236,7 +236,7 @@ namespace Core8.Core
 
         public void Load10(int address)
         {
-            CPU.Registry.SR.SetSR(address);
+            CPU.Registry.SR.Set(address);
 
             Load();
         }
@@ -255,7 +255,7 @@ namespace Core8.Core
 
         public void Toggle10(int word)
         {
-            CPU.Registry.SR.SetSR(word);
+            CPU.Registry.SR.Set(word);
         }
 
         public void SetBreakpoint8(int address)

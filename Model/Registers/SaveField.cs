@@ -12,6 +12,8 @@ namespace Core8.Model.Registers
 
         protected override string ShortName => "SF";
 
+        public override void Set(int value) => Content = value & 0b_001_111_111;
+
         protected override int Digits => 3;
 
         public void Save(int df, int @if, int uf)

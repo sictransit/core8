@@ -92,14 +92,14 @@ namespace Core8.Peripherals.Floppy
                     {
                         Log.Warning($"Bad sector address: {SA.Content}");
 
-                        EC.SetEC(ErrorCodes.SEEK_FAILED);
+                        EC.Set(ErrorCodes.SEEK_FAILED);
                     }
                 }
                 else
                 {
                     Log.Warning($"Bad track address: {TA.Content}");
 
-                    EC.SetEC(ErrorCodes.BAD_TRACK_ADDRESS);
+                    EC.Set(ErrorCodes.BAD_TRACK_ADDRESS);
                 }
             }
             else
@@ -158,9 +158,9 @@ namespace Core8.Peripherals.Floppy
 
         public int Ticks { get; private set; }
 
-        public void SetSectorAddress(int sector) => SA.SetSAR(sector);
+        public void SetSectorAddress(int sector) => SA.Set(sector);
 
-        public void SetTrackAddress(int track) => TA.SetTAR(track);
+        public void SetTrackAddress(int track) => TA.Set(track);
 
         public void Load(byte unit, byte[] data = null)
         {

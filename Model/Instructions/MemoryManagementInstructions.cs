@@ -82,12 +82,12 @@ namespace Core8.Model.Instructions
         {
             if ((Data & CDF_MASK) != 0)
             {
-                DF.SetDF(Data >> 3);
+                DF.Set(Data >> 3);
             }
 
             if ((Data & CIF_MASK) != 0)
             {
-                IB.SetIB(Data >> 3);
+                IB.Set(Data >> 3);
 
                 Interrupts.Inhibit();
             }
@@ -116,9 +116,9 @@ namespace Core8.Model.Instructions
 
         private void RMF()
         {
-            IB.SetIB(SF.IF);
-            DF.SetDF(SF.DF);
-            UB.SetUB(SF.UF);
+            IB.Set(SF.IF);
+            DF.Set(SF.DF);
+            UB.Set(SF.UF);
 
             Interrupts.Inhibit();
         }
@@ -140,7 +140,7 @@ namespace Core8.Model.Instructions
 
         private void SUF()
         {
-            UB.SetUB(1);
+            UB.Set(1);
 
             Interrupts.Inhibit();
         }

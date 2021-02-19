@@ -7,7 +7,7 @@ namespace Core8.Model.Registers
     {
         protected override string ShortName => "DF";
 
-        public void SetDF(int value) => Content = value & 0b_111;
+        public override void Set(int value) => Content = value & 0b_111;
 
         public override string ToString()
         {

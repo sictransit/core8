@@ -6,8 +6,8 @@ namespace Core8.Model.Registers
     {
         protected override string ShortName => "IB";
 
-        protected override int Digits => 1;
+        public override void Set(int value) => Content = value & 0b_111;
 
-        public void SetIB(int value) => Content = value & 0b_111;
+        protected override int Digits => 1;
     }
 }

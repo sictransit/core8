@@ -102,9 +102,9 @@ namespace Core8.Model.Instructions
 
             AC.SetLink((acc >> 11) & 0b_001);
 
-            IB.SetIB(acc >> 3);
-            DF.SetDF(acc);
-            UB.SetUB(acc >> 6);
+            IB.Set(acc >> 3);
+            DF.Set(acc);
+            UB.Set(acc >> 6);
 
             Interrupts.Enable(false);
             Interrupts.Inhibit();

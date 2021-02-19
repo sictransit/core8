@@ -10,6 +10,8 @@ namespace Core8.Model.Registers
 
         protected override string ShortName => "PC";
 
+        public override void Set(int value) => Content = value & 0b_111_111_111_111_111;
+
         protected override int Digits => 5;
 
         public void Increment() => Content = (Content & 0b_111_000_000_000_000) | ((Content + 1) & 0b_111_111_111_111);

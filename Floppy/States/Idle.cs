@@ -21,7 +21,7 @@ namespace Core8.Peripherals.Floppy.States
         {
             Controller.SetError(false);
 
-            Controller.CR.SetCR(acc);
+            Controller.CR.Set(acc);
 
             StateBase newState = Controller.CR.CurrentFunction switch
             {

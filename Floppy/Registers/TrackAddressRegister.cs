@@ -6,6 +6,6 @@ namespace Core8.Peripherals.Floppy.Registers
     {
         protected override string ShortName => "TA";
 
-        public void SetTAR(int value) => Content = value & 0b_000_011_111_111;
+        public override void Set(int value) => Content = value & 0b_000_011_111_111;
     }
 }

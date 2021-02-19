@@ -52,7 +52,7 @@ namespace Core8.Model.Instructions
                 Interrupts.Allow();
 
                 PC.SetIF(IB.Content);
-                UF.SetUF(UB.Content);
+                UF.Set(UB.Content);
             }
 
             var operand = Indirect ? Field | Memory.Read(Location, true) : Location;
