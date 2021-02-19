@@ -9,5 +9,7 @@ namespace Core8.Model.Registers
         protected override int Digits => 1;
 
         public void SetUF(int value) => Content = value & 0b_001;
+
+        public bool ExecutiveMode => Content == 0;
     }
 }
