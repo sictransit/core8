@@ -11,7 +11,7 @@ namespace Core8.Tests.Abstract
     {
         protected PDP PDP { get; private set; }
 
-        public LoggingLevelSwitch LoggingLevel { get; protected set; }
+        protected LoggingLevelSwitch LoggingLevel { get; set; }
 
         [TestInitialize]
         public void Initialize()

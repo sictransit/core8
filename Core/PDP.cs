@@ -168,9 +168,11 @@ namespace Core8.Core
 
             for (var address = 0; address < CPU.Memory.Size; address++)
             {
-                var instruction = CPU.Debug10(address);
+                var data = CPU.Memory.Read(address);
 
-                if (instruction.Data != 0)
+                var instruction = CPU.InstructionSet.Decode(data);
+
+                if (data != 0)
                 {
                     PrintZeroSpan();
 
