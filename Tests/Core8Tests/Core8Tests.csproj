@@ -25,9 +25,13 @@
     <ProjectReference Include="..\..\Core\Core.csproj" />
     <ProjectReference Include="..\..\Floppy\Floppy.csproj" />
     <ProjectReference Include="..\..\Teletype\Teletype.csproj" />
+    <ProjectReference Include="..\..\Utilities\Utilities.csproj" />
   </ItemGroup>
 
   <ItemGroup>
+    <None Update="Assembler\HelloWorld.asm">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Update="MAINDEC\Tapes\MAINDEC-8E-D0AB-PB.bin">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
