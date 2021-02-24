@@ -23,7 +23,7 @@ namespace Core8.Tests.MAINDEC
 
             Assert.AreEqual(0147.ToDecimal(), PDP.CPU.Registry.PC.Address);
 
-            StartAndWaitForCompletion();
+            Assert.IsTrue(StartAndWaitForCompletion());
         }
     }
 }

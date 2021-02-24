@@ -8,7 +8,7 @@ namespace Core8.Model.Instructions.Abstract
         private const int HLT_MASK = 1 << 1;
         private const int OSR_MASK = 1 << 2;
 
-        internal Group2InstructionsBase(ICPU cpu) : base(cpu)
+        protected Group2InstructionsBase(ICPU cpu) : base(cpu)
         {
         }
 

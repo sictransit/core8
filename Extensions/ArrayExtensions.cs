@@ -7,11 +7,6 @@ namespace Core8.Extensions
     {
         public static IEnumerable<int> Pack(this byte[] data, int length = 64)
         {
-            if (data is null)
-            {
-                throw new ArgumentNullException(nameof(data));
-            }
-
             for (var i = 0; i < length / 2 * 3; i += 3)
             {
                 yield return data[i] << 4 | data[i + 1] >> 4;
@@ -22,11 +17,6 @@ namespace Core8.Extensions
 
         public static IEnumerable<byte> Unpack(this int[] data, int length = 96, int pad = 128)
         {
-            if (data is null)
-            {
-                throw new ArgumentNullException(nameof(data));
-            }
-
             for (var i = 0; i < length / 3 * 2; i++)
             {
                 if (i % 2 == 0)

@@ -14,9 +14,18 @@ namespace Core8.Model
         private readonly KeyboardInstructions keyboardInstructions;
         private readonly TeleprinterInstructions teleprinterInstructions;
         private readonly InterruptInstructions interruptInstructions;
-        private readonly NoOperationInstruction noOperationInstruction;
         private readonly PrivilegedNoOperationInstruction privilegedNoOperationInstruction;
         private readonly FloppyDriveInstructions floppyDriveInstructions;
+
+        private const int IOT = 0b_110_000_000_000;
+        private const int MCI = 0b_111_000_000_000;
+        private const int IO = 0b_000_111_111_000;
+        private const int GROUP = 0b_000_100_000_000;
+        private const int GROUP_3 = 0b_111_100_000_001;
+        private const int GROUP_2_AND = 0b_111_100_001_000;
+        private const int FLOPPY = 0b_000_111_000_000;
+        private const int MEMORY_MANAGEMENT = 0b_110_010_000_000;
+        private const int INTERRUPT_MASK = 0b_000_111_111_000;
 
         public InstructionSet(ICPU cpu)
         {
@@ -29,24 +38,12 @@ namespace Core8.Model
             keyboardInstructions = new KeyboardInstructions(cpu);
             teleprinterInstructions = new TeleprinterInstructions(cpu);
             interruptInstructions = new InterruptInstructions(cpu);
-            noOperationInstruction = new NoOperationInstruction(cpu);
             privilegedNoOperationInstruction = new PrivilegedNoOperationInstruction(cpu);
             floppyDriveInstructions = new FloppyDriveInstructions(cpu);
         }
 
-        public IInstruction Decode(int data)
-        {
-            const int IOT = 0b_110_000_000_000;
-            const int MCI = 0b_111_000_000_000;
-            const int IO = 0b_000_111_111_000;
-            const int GROUP = 0b_000_100_000_000;
-            const int GROUP_3 = 0b_111_100_000_001;
-            const int GROUP_2_AND = 0b_111_100_001_000;
-            const int FLOPPY = 0b_000_111_000_000;
-            const int MEMORY_MANAGEMENT = 0b_110_010_000_000;
-            const int INTERRUPT_MASK = 0b_000_111_111_000;
-
-            return (data & 0b_111_000_000_000) switch
+        public IInstruction Decode(int data) =>
+            (data & 0b_111_000_000_000) switch
             {
                 MCI when (data & GROUP) == 0 => group1Instructions,
                 MCI when (data & GROUP_3) == GROUP_3 => group3Instructions,
@@ -60,6 +57,5 @@ namespace Core8.Model
                 IOT => privilegedNoOperationInstruction,
                 _ => memoryReferenceInstructions,
             };
-        }
     }
 }

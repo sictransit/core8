@@ -6,6 +6,6 @@ namespace Core8.Peripherals.Floppy.Registers
     {
         protected override string ShortName => "SA";
 
-        public void SetSAR(int value) => Content = value & 0b_000_001_111_111;
+        public override void Set(int value) => Content = value & 0b_000_001_111_111;
     }
 }

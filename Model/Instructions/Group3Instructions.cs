@@ -29,7 +29,7 @@ namespace Core8.Model.Instructions
             {
                 var mq = MQ.Content;
 
-                MQ.SetMQ(AC.Accumulator);
+                MQ.Set(AC.Accumulator);
                 AC.SetAccumulator(mq);
             }
             else
@@ -41,7 +41,7 @@ namespace Core8.Model.Instructions
 
                 if ((Data & MQL_MASK) != 0)
                 {
-                    MQ.SetMQ(AC.Accumulator);
+                    MQ.Set(AC.Accumulator);
 
                     AC.ClearAccumulator();
                 }

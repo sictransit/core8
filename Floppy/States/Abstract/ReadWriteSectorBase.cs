@@ -14,7 +14,7 @@ namespace Core8.Peripherals.Floppy.States.Abstract
 
         protected override int TransferData(int acc)
         {
-            Controller.IR.SetIR(acc);
+            Controller.IR.Set(acc);
 
             if (!SectorTransferred)
             {

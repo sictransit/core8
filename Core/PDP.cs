@@ -24,7 +24,7 @@ namespace Core8.Core
             ToggleRIMAndBinLoader();
         }
 
-        public bool Running => cpuThread != null && cpuThread.IsAlive;
+        public bool Running => cpuThread?.IsAlive ?? false;
 
         public ICPU CPU { get; }
 
@@ -168,9 +168,11 @@ namespace Core8.Core
 
             for (var address = 0; address < CPU.Memory.Size; address++)
             {
-                var instruction = CPU.Debug10(address);
+                var data = CPU.Memory.Read(address);
 
-                if (instruction.Data != 0)
+                var instruction = CPU.InstructionSet.Decode(data);
+
+                if (data != 0)
                 {
                     PrintZeroSpan();
 
@@ -185,8 +187,7 @@ namespace Core8.Core
                     {
                         zeroAddress = address;
                     }
-
-                    if (!zeroSet)
+                    else
                     {
                         sb.AppendLine(instruction.ToString());
 
@@ -212,7 +213,7 @@ namespace Core8.Core
 
         public void Deposit10(int data)
         {
-            CPU.Registry.SR.SetSR(data);
+            CPU.Registry.SR.Set(data);
 
             Deposit();
         }
@@ -235,7 +236,7 @@ namespace Core8.Core
 
         public void Load10(int address)
         {
-            CPU.Registry.SR.SetSR(address);
+            CPU.Registry.SR.Set(address);
 
             Load();
         }
@@ -254,7 +255,7 @@ namespace Core8.Core
 
         public void Toggle10(int word)
         {
-            CPU.Registry.SR.SetSR(word);
+            CPU.Registry.SR.Set(word);
         }
 
         public void SetBreakpoint8(int address)
@@ -289,7 +290,7 @@ namespace Core8.Core
 
             cpuThread.Start();
 
-            if (Running & waitForHalt)
+            if (Running && waitForHalt)
             {
                 cpuThread.Join();
             }

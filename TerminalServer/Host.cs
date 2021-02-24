@@ -10,7 +10,7 @@ namespace Core8.Peripherals
     public class Host : IDisposable
     {
         private readonly int port;
-        private readonly ManualResetEvent running = new ManualResetEvent(false);
+        private readonly ManualResetEvent running = new(false);
         private bool isDisposed;
 
         private Thread hostThread;
@@ -19,7 +19,7 @@ namespace Core8.Peripherals
         {
             this.port = port;
 
-            Console.CancelKeyPress += (sender, e) => running.Reset();
+            Console.CancelKeyPress += (_, _) => running.Reset();
         }
 
         public void Start()

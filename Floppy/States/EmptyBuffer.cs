@@ -12,7 +12,7 @@ namespace Core8.Peripherals.Floppy.States
 
         protected override int TransferData(int acc)
         {
-            Controller.IR.SetIR(Controller.Buffer[BufferPointer++]);
+            Controller.IR.Set(Controller.Buffer[BufferPointer++]);
 
             Controller.SetTransferRequest(BufferPointer < Controller.Buffer.Length);
 

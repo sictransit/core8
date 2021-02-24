@@ -29,9 +29,9 @@ namespace Core8.Tests
 
             PDP.Continue();
 
-            Assert.IsTrue(PDP.CPU.Registry.AC.Accumulator != 0);
+            var acc = PDP.CPU.Registry.AC.Accumulator;
 
-            var machine = PDP.CPU.Registry.AC.Accumulator switch
+            var machine = acc switch
             {
                 0 => "UNKNOWN (DCC112, MP-12?)",
                 1 => "PDP-5 (THE INCOMPATIBLE ONE!)",
@@ -49,6 +49,8 @@ namespace Core8.Tests
             };
 
             Trace.WriteLine(machine);
+
+            Assert.AreEqual(8, acc);
         }
     }
 }

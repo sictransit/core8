@@ -15,6 +15,8 @@ namespace Core8.Model.Registers.Abstract
             Content = 0;
         }
 
+        public abstract void Set(int value);
+
         public override string ToString()
         {
             return $"[{ShortName}] {Content.ToOctalString(Digits)}";

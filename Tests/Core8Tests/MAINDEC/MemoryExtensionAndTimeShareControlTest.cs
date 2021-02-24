@@ -23,7 +23,7 @@ namespace Core8.Tests.MAINDEC
 
             PDP.Clear();
 
-            StartAndWaitForCompletion();
+            Assert.IsTrue(StartAndWaitForCompletion());
         }
     }
 }

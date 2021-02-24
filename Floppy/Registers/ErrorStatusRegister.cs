@@ -23,6 +23,8 @@ namespace Core8.Peripherals.Floppy.Registers
 
         public void SetInitializationDone(bool state) => Content = Content & ~ID_MASK | (state ? ID_MASK : 0);
 
+        public override void Set(int value) => Content = value;
+
         public override string ToString()
         {
             var flags = new[] { InitializationDone ? "id" : null, Ready ? "rdy" : null, WriteProtect ? "wp" : null }.Where(x => x != null);

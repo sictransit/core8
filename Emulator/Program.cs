@@ -13,7 +13,7 @@ namespace Core8
 {
     public static class Program
     {
-        private static readonly LoggingLevelSwitch loggingLevel = new LoggingLevelSwitch(Serilog.Events.LogEventLevel.Information);
+        private static readonly LoggingLevelSwitch LoggingLevel = new();
 
         private static PDP pdp;
 
@@ -26,7 +26,7 @@ namespace Core8
             Log.Logger = new LoggerConfiguration()
                 .WriteTo.Console(Serilog.Events.LogEventLevel.Debug)
                 .WriteTo.File(logFilename, Serilog.Events.LogEventLevel.Debug)
-                .MinimumLevel.ControlledBy(loggingLevel)
+                .MinimumLevel.ControlledBy(LoggingLevel)
                 .CreateLogger();
 
             Parser.Default.ParseArguments<Options>(args)
@@ -90,9 +90,7 @@ namespace Core8
 
             var data = File.ReadAllBytes(binFile);
 
-            var punch = new SVGPunch();
-
-            var tape = punch.Punch(data, file.Name);
+            var tape = SVGPunch.Punch(data, file.Name);
 
             var svgFile = Path.ChangeExtension(file.FullName, ".svg");
 
@@ -109,9 +107,11 @@ namespace Core8
 
         private static void FloppyTesting()
         {
-            loggingLevel.MinimumLevel = Serilog.Events.LogEventLevel.Information;
+            LoggingLevel.MinimumLevel = Serilog.Events.LogEventLevel.Information;
 
-            pdp.LoadPaperTape(new HttpClient().GetByteArrayAsync(@"https://www.dropbox.com/s/mvm1mh47jybfl5t/dirxa-d-pb?dl=1").Result);
+            using var httpClient = new HttpClient();
+
+            pdp.LoadPaperTape(httpClient.GetByteArrayAsync(@"https://www.dropbox.com/s/mvm1mh47jybfl5t/dirxa-d-pb?dl=1").Result);
 
             //pdp.Load8(0020);
             //pdp.Deposit8(0000);
@@ -318,7 +318,7 @@ namespace Core8
 
             if (pdp.CPU.Registry.AC.Accumulator != 0)
             {
-                Log.Warning($"BIN format checksum error.");
+                Log.Warning("BIN format checksum error.");
                 Log.Information(pdp.CPU.Registry.AC.Accumulator.ToString());
             }
         }

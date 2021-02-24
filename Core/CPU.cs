@@ -16,7 +16,7 @@ namespace Core8.Core
 
         private bool debug;
 
-        private readonly HashSet<int> breakpoints = new HashSet<int>();
+        private readonly HashSet<int> breakpoints = new();
 
         public CPU(ITeletype teletype, IFloppyDrive floppy)
         {

@@ -14,7 +14,7 @@ namespace Core8.Peripherals.Floppy.Registers
 
         protected override string ShortName => "CR";
 
-        public void SetCR(int value) => Content = value & REGISTER_MASK;
+        public override void Set(int value) => Content = value & REGISTER_MASK;
 
         public ControllerFunction CurrentFunction => (ControllerFunction)(Content & FUNCTION_MASK);
 

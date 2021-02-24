@@ -12,7 +12,7 @@ namespace Core8.Model.Instructions.Abstract
 
         public override void Execute()
         {
-            if (UF.Content == 0)  // Executive mode
+            if (UF.ExecutiveMode)  // Executive mode
             {
                 PrivilegedExecute();
             }

@@ -11,9 +11,9 @@ namespace Core8.Model.Instructions.Abstract
             CPU = cpu;
         }
 
-        public int Address { get; private set; }
+        private int Address { get; set; }
 
-        public int Data { get; private set; }
+        protected int Data { get; private set; }
 
         public abstract void Execute();
 

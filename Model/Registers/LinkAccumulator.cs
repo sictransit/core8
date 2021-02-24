@@ -41,6 +41,8 @@ namespace Core8.Model.Registers
 
         public void AddWithCarry(int value) => Content = (Content + value) & 0b_1_111_111_111_111;
 
+        public override void Set(int value) => Content = value & 0b_1_111_111_111_111;
+
         public override string ToString() => $"[{ShortName}] {Link} {Accumulator.ToOctalString()}";
     }
 }
