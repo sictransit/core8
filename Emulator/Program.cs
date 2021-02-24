@@ -2,6 +2,7 @@
 using Core8.Core;
 using Core8.Extensions;
 using Core8.Peripherals.Teletype;
+using Core8.Utilities;
 using Serilog;
 using Serilog.Core;
 using System;
