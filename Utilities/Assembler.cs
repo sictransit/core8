@@ -2,7 +2,7 @@
 using System.Diagnostics;
 using System.IO;
 
-namespace Core8
+namespace Core8.Utilities
 {
     public class Assembler
     {
