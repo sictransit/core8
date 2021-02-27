@@ -37,7 +37,7 @@ namespace Core8
 
                         if (o.Debug)
                         {
-                            pdp.CPU.Debug(true);
+                            pdp.CPU.Debug(true);                           
                         }
 
                         if (!string.IsNullOrWhiteSpace(o.Convert))
@@ -63,6 +63,10 @@ namespace Core8
 
                             if (o.Run)
                             {
+                                if (o.Debug) { 
+                                    LoggingLevel.MinimumLevel = Serilog.Events.LogEventLevel.Debug; 
+                                }
+
                                 Run(o.StartingAddress, o.DumpMemory);
                             }
                         }
@@ -271,8 +275,6 @@ namespace Core8
 
             Run(200, false);
         }
-
-
 
         private static bool TryAssemble(string palbart, string file, out string binary)
         {

@@ -67,6 +67,7 @@ namespace Core8.Core
 
             string interrupts = null;
             string floppy = null;
+            string lac = null;
 
             try
             {
@@ -121,6 +122,13 @@ namespace Core8.Core
                         {
                             interrupts = i;
                             Log.Information(interrupts);
+                        }
+
+                        var a = Registry.AC.ToString();
+                        if (a != lac)
+                        {
+                            lac = a;
+                            Log.Debug(lac);
                         }
                     }
                 }

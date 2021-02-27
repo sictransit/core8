@@ -50,7 +50,9 @@ namespace Core8.Utilities
                 process.Kill(true);
             }
 
-            return File.Exists(binary);
+            var error = Path.ChangeExtension(source, ".err");
+
+            return File.Exists(binary) && !File.Exists(error);
         }
 
         private void Process_ErrorDataReceived(object sender, DataReceivedEventArgs e)

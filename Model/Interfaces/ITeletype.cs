@@ -20,8 +20,12 @@
 
         string Printout { get; }
 
+        string PunchedTape { get; }
+
         void SetDeviceControl(int data);
 
         void MountPaperTape(byte[] chars);
+
+        void RemovePaperTape();
     }
 }

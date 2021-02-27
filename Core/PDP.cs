@@ -311,7 +311,7 @@ namespace Core8.Core
             }
         }
 
-        private void MountPaperTape(byte[] tape)
+        public void LoadPaperTape(byte[] tape)
         {
             if (tape is null)
             {
@@ -321,15 +321,12 @@ namespace Core8.Core
             CPU.Teletype.MountPaperTape(tape);
 
             Log.Information($"TAPE: loaded {tape.Length} bytes");
-        }
-
-        public void LoadPaperTape(byte[] tape)
-        {
-            MountPaperTape(tape);
 
             Load8(7777);
 
             Continue();
+
+            CPU.Teletype.RemovePaperTape();
         }
 
         public void LoadFloppy(byte unit, byte[] disk = null)

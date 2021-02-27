@@ -59,7 +59,7 @@ namespace Core8.Model.Instructions
 
         private void TPC()
         {
-            var c = AC.Accumulator & 0b_000_001_111_111;
+            var c = AC.Accumulator & 0b_000_011_111_111;
 
             Teletype.Type((byte)c);
         }

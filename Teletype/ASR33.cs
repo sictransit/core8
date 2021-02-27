@@ -6,12 +6,13 @@ using Serilog;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Text;
 
 namespace Core8.Peripherals.Teletype
 {
     public class ASR33 : ITeletype
     {
-        private readonly List<char> paper = new();
+        private readonly List<byte> paper = new();
 
         private int ticks;
 
@@ -48,7 +49,7 @@ namespace Core8.Peripherals.Teletype
 
         public byte InputBuffer { get; private set; }
 
-        private char? OutputBuffer { get; set; }
+        private byte? OutputBuffer { get; set; }
 
         public void SetDeviceControl(int data)
         {
@@ -81,7 +82,7 @@ namespace Core8.Peripherals.Teletype
         {
             if (OutputBuffer == null)
             {
-                OutputBuffer = (char)c;
+                OutputBuffer = c;
 
                 ticks = 0;
 
@@ -108,7 +109,14 @@ namespace Core8.Peripherals.Teletype
             }
         }
 
-        public string Printout => new(paper.ToArray());
+        public void RemovePaperTape()
+        {
+            reader.Clear();
+        }
+
+        public string Printout => Encoding.ASCII.GetString(paper.ToArray());
+
+        public string PunchedTape => SVGPunch.Punch(paper.ToArray());
 
         public bool InterruptRequested => InputIRQ || OutputIRQ;
 

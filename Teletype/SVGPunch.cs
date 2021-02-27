@@ -13,7 +13,7 @@ namespace Core8.Peripherals.Teletype
         private const int DATA_WIDTH = 72;
         private const int FEEDER_WIDTH = 46;
 
-        public static string Punch(byte[] data, string label, int wrap = 80, bool cutLeader = true)
+        public static string Punch(byte[] data, string label = null, int wrap = 80, bool cutLeader = true)
         {
             if (data is null)
             {
