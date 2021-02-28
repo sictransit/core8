@@ -61,7 +61,7 @@ namespace Core8.Model.Instructions
         {
             var c = AC.Accumulator & 0b_000_011_111_111;
 
-            Teletype.Type((byte)c);
+            Teletype.Print((byte)c);
         }
 
         private void TSK()

@@ -2,6 +2,8 @@
 {
     public interface ITeletype : IIODevice
     {
+        void Print(byte c);
+
         void Type(byte c);
 
         void Clear();

@@ -78,7 +78,7 @@ namespace Core8.Peripherals.Teletype
 
         public void SetOutputFlag() => OutputFlag = true;
 
-        public void Type(byte c)
+        public void Print(byte c)
         {
             if (OutputBuffer == null)
             {
@@ -92,6 +92,11 @@ namespace Core8.Peripherals.Teletype
             {
                 Log.Warning($"Type with char in buffer: {c.ToPrintableAscii()}");
             }
+        }
+
+        public void Type(byte c)
+        {
+            reader.Enqueue(c);
         }
 
         public void MountPaperTape(byte[] chars)
