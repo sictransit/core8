@@ -1,31 +1,40 @@
 ﻿using Core8.Extensions;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Globalization;
 using System.Linq;
 using System.Xml.Linq;
 
 namespace Core8.Peripherals.Teletype
 {
-    public static class SVGPunch
+    public class SVGPunch
     {
         private const int SPACING = 100; // 1/1000 inches
         private const int DATA_WIDTH = 72;
         private const int FEEDER_WIDTH = 46;
+        
+        private readonly int wrap;
+        private readonly bool cutLeader;
+        private readonly string paperColor;
 
-        public static string Punch(byte[] data, string label = null, int wrap = 80, bool cutLeader = true)
+        public static string DefaultPaperColor = "#FFFFAA";
+
+        public SVGPunch(int wrap = 80, bool cutLeader = true, string paperColor = null)
         {
-            if (data is null)
-            {
-                throw new ArgumentNullException(nameof(data));
-            }
-
-            label ??= string.Empty;
-
             if (wrap < 0)
             {
                 throw new ArgumentOutOfRangeException(nameof(wrap));
             }
+
+            this.wrap = wrap;
+            this.cutLeader = cutLeader;
+            this.paperColor = paperColor ?? DefaultPaperColor;
+        }
+
+        public string Punch(byte[] data, string label = null)
+        {
+            label ??= string.Empty;
 
             if (cutLeader)
             {
@@ -37,9 +46,9 @@ namespace Core8.Peripherals.Teletype
                 }
             }
 
-            wrap = wrap == 0 ? data.Length : wrap;
+            var wrapping = wrap == 0 ? data.Length : wrap;
 
-            var paperWidth = wrap * SPACING;
+            var paperWidth = wrapping * SPACING;
             var paperHeight = SPACING * 10;
 
             var definition = new XElement(SVGDeclarations.svg + "defs", Hole(true), Hole(false), data.Distinct().OrderBy(x => x).Select(x => CreateRowShape(x)));
@@ -50,11 +59,11 @@ namespace Core8.Peripherals.Teletype
 
             var rows = new List<XElement>();
 
-            var padding = new byte[(wrap - data.Length % wrap) % wrap];
+            var padding = new byte[(wrapping - data.Length % wrapping) % wrapping];
 
             var content = data.Concat(padding);
 
-            foreach (var chunk in content.ChunkBy(wrap))
+            foreach (var chunk in content.ChunkBy(wrapping))
             {
                 var strip = CreatePaper(SPACING, totalHeight, paperWidth, paperHeight);
 
@@ -115,7 +124,7 @@ namespace Core8.Peripherals.Teletype
             new XAttribute("y", y)
             );
 
-        private static XElement CreatePaper(int x, int y, int width, int height) => new(
+        private XElement CreatePaper(int x, int y, int width, int height) => new(
             SVGDeclarations.svg + "g",
             new XElement(
                 SVGDeclarations.svg + "rect",
@@ -123,7 +132,7 @@ namespace Core8.Peripherals.Teletype
                 new XAttribute("y", y),
                 new XAttribute("width", width),
                 new XAttribute("height", height),
-                new XAttribute("fill", "#ffffaa")
+                new XAttribute("fill", paperColor)
                 )
             );
 

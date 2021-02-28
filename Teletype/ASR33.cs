@@ -121,7 +121,7 @@ namespace Core8.Peripherals.Teletype
 
         public string Printout => Encoding.ASCII.GetString(paper.ToArray());
 
-        public string PunchedTape => SVGPunch.Punch(paper.ToArray());
+        public string PunchedTape => (new SVGPunch()).Punch(paper.ToArray());
 
         public bool InterruptRequested => InputIRQ || OutputIRQ;
 
