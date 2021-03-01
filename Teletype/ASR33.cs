@@ -6,13 +6,14 @@ using Serilog;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Text;
 
 namespace Core8.Peripherals.Teletype
 {
     public class ASR33 : ITeletype
     {
-        private readonly List<byte> paper = new();
+        private readonly ConcurrentQueue<byte> output = new();
 
         private int ticks;
 
@@ -51,6 +52,8 @@ namespace Core8.Peripherals.Teletype
 
         private byte? OutputBuffer { get; set; }
 
+        public IReadOnlyCollection<byte> Output => output.ToArray();
+
         public void SetDeviceControl(int data)
         {
             deviceControl = data & INTERRUPT_ENABLE;
@@ -63,8 +66,10 @@ namespace Core8.Peripherals.Teletype
             ClearInputFlag();
             ClearOutputFlag();
 
+            //TODO: Clear InputBuffer as well?
             OutputBuffer = null;
 
+            //TODO: Clear Output as well?
             reader.Clear();
 
             ticks = 0;
@@ -86,7 +91,7 @@ namespace Core8.Peripherals.Teletype
 
                 ticks = 0;
 
-                Log.Debug($"Paper: {c.ToPrintableAscii()}");
+                Log.Debug($"Output: {c.ToPrintableAscii()}");
             }
             else
             {
@@ -119,9 +124,7 @@ namespace Core8.Peripherals.Teletype
             reader.Clear();
         }
 
-        public string Printout => Encoding.ASCII.GetString(paper.ToArray());
-
-        public string PunchedTape => (new SVGPunch()).Punch(paper.ToArray());
+        public string Printout => Encoding.ASCII.GetString(output.ToArray());
 
         public bool InterruptRequested => InputIRQ || OutputIRQ;
 
@@ -151,7 +154,7 @@ namespace Core8.Peripherals.Teletype
                 return;
             }
 
-            paper.Add(OutputBuffer.Value);
+            output.Enqueue(OutputBuffer.Value);
 
             if (!publisherSocket.TrySendFrame(new[] { (byte)OutputBuffer }))
             {
@@ -180,7 +183,7 @@ namespace Core8.Peripherals.Teletype
 
             if (reader.TryDequeue(out var b))
             {
-                Log.Debug($"Keyboard: {b.ToPrintableAscii()}");
+                Log.Debug($"Input: {b.ToPrintableAscii()}");
 
                 InputBuffer = b;
 

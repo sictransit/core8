@@ -1,6 +1,7 @@
 ﻿using Core8.Peripherals.Teletype;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
+using System.Drawing;
 using System.Linq;
 using System.Text;
 
@@ -29,7 +30,7 @@ namespace Core8.Tests
         [TestMethod]
         public void TestReader()
         {
-            var punch = new SVGPunch();
+            var punch = new SVGPunch(new PunchSettings(Color.WhiteSmoke, 0, false, 0));
 
             var svg = punch.Punch(TestData, LABEL);
 
@@ -49,19 +50,19 @@ namespace Core8.Tests
         {
             var data = Enumerable.Range(0, 255).Select(x => (byte)x).ToArray();
 
-            var defaultPunch = new SVGPunch(0, true);
-            var defaultPaper = defaultPunch.Punch(data);
-            Assert.IsTrue(defaultPaper.Contains(SVGPunch.DefaultPaperColor));
+            var defaultPunch = new SVGPunch();
+            var defaultPaper = defaultPunch.Punch(data, "default");
+            Assert.IsTrue(defaultPaper.Contains(ColorTranslator.ToHtml(Color.LightYellow)));
 
-            const string blue = "#CCE5FF";
-            var bluePunch = new SVGPunch(0, true, blue);
-            var bluePaper = bluePunch.Punch(data);
-            Assert.IsTrue(bluePaper.Contains(blue));
+            var blue = Color.LightBlue;
+            var bluePunch = new SVGPunch(new PunchSettings(blue));
+            var bluePaper = bluePunch.Punch(data, "blue");
+            Assert.IsTrue(bluePaper.Contains(ColorTranslator.ToHtml(blue)));
 
-            const string pink = "#FFCCCC";
-            var pinkPunch = new SVGPunch(0, true, pink);
-            var pinkPaper = pinkPunch.Punch(data);
-            Assert.IsTrue(pinkPaper.Contains(pink));
+            var pink = Color.LightPink;
+            var pinkPunch = new SVGPunch(new PunchSettings(pink));
+            var pinkPaper = pinkPunch.Punch(data, "pink");
+            Assert.IsTrue(pinkPaper.Contains(ColorTranslator.ToHtml(pink)));
         }
     }
 }

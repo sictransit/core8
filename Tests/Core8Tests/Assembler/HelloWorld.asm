@@ -1,7 +1,9 @@
-﻿/PDP-8 PAL ASSEMBLY LANGUAGE PROGRAM TO PRINT HELLO WORLD!
+/ PDP-8 PAL ASSEMBLY LANGUAGE PROGRAM TO PRINT HELLO WORLD!
+
+        
+        AIX1=10                 /SETUP AUTOINDEX REGISTER 1
 
         *200                    /LOCATE PROGRAM STARTING AT ADDR 200
-        AIX1=10                 /SETUP AUTOINDEX REGISTER 1
 
         CLA                     /CLEAR ACCUMULATOR
         CLL                     /CLEAR AC LINK
@@ -42,3 +44,5 @@ CHRSTR, .                       /1ST WORD IS ADDR OF STRING
         104                     /D
         041                     /!
         000                     /<EOT>
+
+        $

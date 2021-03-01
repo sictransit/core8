@@ -10,33 +10,22 @@ namespace Core8.Peripherals.Teletype
 {
     public class SVGPunch
     {
+        private readonly PunchSettings settings;
+
         private const int SPACING = 100; // 1/1000 inches
         private const int DATA_WIDTH = 72;
         private const int FEEDER_WIDTH = 46;
-        
-        private readonly int wrap;
-        private readonly bool cutLeader;
-        private readonly string paperColor;
 
-        public static string DefaultPaperColor = "#FFFFAA";
-
-        public SVGPunch(int wrap = 80, bool cutLeader = true, string paperColor = null)
+        public SVGPunch(PunchSettings settings = null)
         {
-            if (wrap < 0)
-            {
-                throw new ArgumentOutOfRangeException(nameof(wrap));
-            }
-
-            this.wrap = wrap;
-            this.cutLeader = cutLeader;
-            this.paperColor = paperColor ?? DefaultPaperColor;
+            this.settings = settings ?? new PunchSettings();
         }
 
         public string Punch(byte[] data, string label = null)
         {
             label ??= string.Empty;
 
-            if (cutLeader)
+            if (settings.TrimLeader)
             {
                 var trailer = data.Reverse().TakeWhile(IsLeaderTrailer).ToArray();
 
@@ -46,7 +35,14 @@ namespace Core8.Peripherals.Teletype
                 }
             }
 
-            var wrapping = wrap == 0 ? data.Length : wrap;
+            if (settings.NullPadding != 0)
+            {
+                var nulls = Enumerable.Repeat((byte) 0, settings.NullPadding).ToArray();
+                
+                data = nulls.Concat(data).Concat(nulls).ToArray();
+            }
+
+            var wrapping = settings.Wrap == 0 ? data.Length : settings.Wrap;
 
             var paperWidth = wrapping * SPACING;
             var paperHeight = SPACING * 10;
@@ -101,7 +97,7 @@ namespace Core8.Peripherals.Teletype
 
         private static XElement LabelStyle => new(
             SVGDeclarations.svg + "style",
-            ".label { font: 64px courier; fill: red; }"
+            ".label { font: 64px courier; fill: black; }"
         );
 
         private static XElement Label(string text) => new(
@@ -132,11 +128,11 @@ namespace Core8.Peripherals.Teletype
                 new XAttribute("y", y),
                 new XAttribute("width", width),
                 new XAttribute("height", height),
-                new XAttribute("fill", paperColor)
+                new XAttribute("fill", ColorTranslator.ToHtml(settings.PaperColor))
                 )
             );
 
-        private static string HoleTypeID(bool isData) => isData ? "data" : "feeder";
+        private static string HoleTypeId(bool isData) => isData ? "data" : "feeder";
 
         private static XElement Hole(bool isData) => new(
             SVGDeclarations.svg + "circle",
@@ -144,12 +140,12 @@ namespace Core8.Peripherals.Teletype
             new XAttribute("stroke-width", "0"),
             new XAttribute("stroke", "#fff"),
             new XAttribute("r", isData ? DATA_WIDTH / 2 : FEEDER_WIDTH / 2),
-            new XAttribute("id", HoleTypeID(isData))
+            new XAttribute("id", HoleTypeId(isData))
             );
 
         private static XElement UseHole(int bit, bool isData) => new(
             SVGDeclarations.svg + "use",
-            new XAttribute(SVGDeclarations.xlink + "href", "#" + HoleTypeID(isData)),
+            new XAttribute(SVGDeclarations.xlink + "href", "#" + HoleTypeId(isData)),
             new XAttribute("y", (bit + 1) * SPACING)
             );
 

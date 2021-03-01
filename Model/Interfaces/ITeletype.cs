@@ -1,4 +1,6 @@
-﻿namespace Core8.Model.Interfaces
+﻿using System.Collections.Generic;
+
+namespace Core8.Model.Interfaces
 {
     public interface ITeletype : IIODevice
     {
@@ -22,7 +24,7 @@
 
         string Printout { get; }
 
-        string PunchedTape { get; }
+        IReadOnlyCollection<byte> Output { get; }
 
         void SetDeviceControl(int data);
 

@@ -1,10 +1,12 @@
 ﻿using Core8.Tests.Abstract;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Diagnostics;
+using System.Drawing;
 using System.Linq;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
+using Core8.Peripherals.Teletype;
 
 namespace Core8.Tests
 {
@@ -22,32 +24,42 @@ namespace Core8.Tests
 
             PDP.Load8(0200);
 
-            var text = Enumerable.Range(32, 64).Select(x => (char)x);
+            //var text = Enumerable.Range(32, 64).Select(x => (char)x);
+
+            var text = "PAPER TAPE LABELER";
 
             PDP.Continue(false);
 
             var sw = new Stopwatch();
 
+            var teletype = PDP.CPU.Teletype;
+
             foreach (var c in text)
             {
-                while (PDP.CPU.Teletype.InputFlag)
+                while (teletype.InputFlag)
                 {
                     Thread.Sleep(100);
                 }
 
-                var length = PDP.CPU.Teletype.Printout.Length;
+                var length = teletype.Output.Count;
 
                 sw.Restart();
 
-                PDP.CPU.Teletype.Type((byte)c);
+                teletype.Type((byte)c);
 
-                while (sw.ElapsedMilliseconds < 1000 && length == PDP.CPU.Teletype.Printout.Length)
+                while (sw.ElapsedMilliseconds < 1000 && length == teletype.Output.Count)
                 {
                     Thread.Sleep(100);
                 }
 
-                Assert.AreNotEqual(length, PDP.CPU.Teletype.Printout.Length);
-            }            
+                Assert.AreNotEqual(length, teletype.Output.Count);
+            }
+
+            var punch = new SVGPunch(new PunchSettings(Color.LightPink, 0));
+
+            var label = punch.Punch(teletype.Output.ToArray(), text);
+
+            Assert.IsNotNull(label);
 
             PDP.Halt();
         }
