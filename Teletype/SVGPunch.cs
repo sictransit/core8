@@ -3,7 +3,10 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Globalization;
+using System.IO;
 using System.Linq;
+using System.Security.Cryptography.X509Certificates;
+using System.Xml;
 using System.Xml.Linq;
 
 namespace Core8.Peripherals.Teletype
@@ -21,7 +24,7 @@ namespace Core8.Peripherals.Teletype
             this.settings = settings ?? new PunchSettings();
         }
 
-        public string Punch(byte[] data, string label = null)
+        public string Punch(byte[] data, string label = null, string comment = null)
         {
             label ??= string.Empty;
 
@@ -38,8 +41,8 @@ namespace Core8.Peripherals.Teletype
             if (settings.NullPadding != 0)
             {
                 var nulls = Enumerable.Repeat((byte) 0, settings.NullPadding).ToArray();
-                
-                data = nulls.Concat(data).Concat(nulls).ToArray();
+
+                data = nulls.Concat(data.SkipWhile(x => x == 0).Reverse().SkipWhile(x => x == 0).Reverse()).Concat(nulls).ToArray();
             }
 
             var wrapping = settings.Wrap == 0 ? data.Length : settings.Wrap;
@@ -76,7 +79,9 @@ namespace Core8.Peripherals.Teletype
 
             var totalWidth = paperWidth + 2 * SPACING;
 
-            var tape = new XElement(
+
+
+            var tapeElement = new XElement(
                 SVGDeclarations.svg + "svg",
                 new XAttribute("width", $"{(totalWidth / 1000d).ToString(CultureInfo.InvariantCulture)}in"),
                 new XAttribute("height", $"{(totalHeight / 1000d).ToString(CultureInfo.InvariantCulture)}in"),
@@ -88,7 +93,17 @@ namespace Core8.Peripherals.Teletype
                 Label(label),
                 rows);
 
-            return tape.ToString();
+            using var writer = new UTF8StringWriter();
+
+            var commentElement = new XComment(comment ?? "SVGPunch");
+
+            var doc = new XDocument(commentElement, tapeElement);
+
+            doc.Declaration = new XDeclaration("1.0", "utf-8", null);
+
+            doc.Save(writer, SaveOptions.None);
+
+            return writer.ToString();
         }
 
         private static bool IsLeaderTrailer(byte x) => x == 1 << 7;
