@@ -23,7 +23,8 @@ namespace Core8.Tests
 
             Assert.IsTrue(!string.IsNullOrWhiteSpace(svg));
 
-            Assert.IsTrue(svg.StartsWith("<svg"));
+            Assert.IsTrue(svg.StartsWith("<?xml"));
+            Assert.IsTrue(svg.Contains("<svg"));
             Assert.IsTrue(svg.EndsWith("</svg>"));
         }
 
