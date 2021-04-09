@@ -7,6 +7,7 @@ using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Linq;
 using System.Text;
 
 namespace Core8.Peripherals.Teletype
@@ -124,7 +125,8 @@ namespace Core8.Peripherals.Teletype
             reader.Clear();
         }
 
-        public string Printout => Encoding.ASCII.GetString(output.ToArray());
+        public string Printout =>
+            Encoding.ASCII.GetString(output.Select(x => (byte) (x & 0b_000_001_111_111)).ToArray());
 
         public bool InterruptRequested => InputIRQ || OutputIRQ;
 
@@ -156,7 +158,7 @@ namespace Core8.Peripherals.Teletype
 
             output.Enqueue(OutputBuffer.Value);
 
-            if (!publisherSocket.TrySendFrame(new[] { (byte)(OutputBuffer & 0b_000_001_111_111) }))
+            if (!publisherSocket.TrySendFrame(new[] { (byte)(OutputBuffer.Value & 0b_000_001_111_111) }))
             {
                 Log.Warning("Failed to send 0MQ frame.");
             }
