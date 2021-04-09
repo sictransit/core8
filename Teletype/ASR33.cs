@@ -156,7 +156,7 @@ namespace Core8.Peripherals.Teletype
 
             output.Enqueue(OutputBuffer.Value);
 
-            if (!publisherSocket.TrySendFrame(new[] { (byte)OutputBuffer }))
+            if (!publisherSocket.TrySendFrame(new[] { (byte)(OutputBuffer & 0b_000_001_111_111) }))
             {
                 Log.Warning("Failed to send 0MQ frame.");
             }
