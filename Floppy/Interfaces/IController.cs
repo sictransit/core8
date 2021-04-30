@@ -19,7 +19,7 @@ namespace Core8.Peripherals.Floppy.Interfaces
 
         ErrorStatusRegister ES { get; }
 
-        ErrorCodeRegister EC { get; }
+        ErrorRegister ER { get; }
 
         bool Done { get; }
 

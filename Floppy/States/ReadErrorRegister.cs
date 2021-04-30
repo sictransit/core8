@@ -14,7 +14,7 @@ namespace Core8.Peripherals.Floppy.States
 
         protected override void SetIR()
         {
-            Controller.IR.Set(Controller.IR.Content << 8 | Controller.EC.Content);
+            Controller.IR.Set(Controller.IR.Content << 8 | Controller.ER.Content);
         }
     }
 }

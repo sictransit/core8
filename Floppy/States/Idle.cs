@@ -19,7 +19,7 @@ namespace Core8.Peripherals.Floppy.States
 
         protected override void LoadCommand(int acc)
         {
-            Controller.SetError(false);
+            //Controller.SetError(false);
 
             Controller.CR.Set(acc);
 

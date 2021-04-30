@@ -1,4 +1,5 @@
-﻿using Core8.Peripherals.Floppy.Interfaces;
+﻿using System;
+using Core8.Peripherals.Floppy.Interfaces;
 
 namespace Core8.Peripherals.Floppy.States.Abstract
 {
@@ -9,8 +10,13 @@ namespace Core8.Peripherals.Floppy.States.Abstract
 
         protected ReadWriteSectorBase(IController controller) : base(controller)
         {
+            Controller.ER.Clear();
+            Controller.ES.Clear();
+
             Controller.SetTransferRequest(true);
         }
+
+        protected override TimeSpan MinExecutionTime => TimeSpan.FromMilliseconds(262);
 
         protected override int TransferData(int acc)
         {

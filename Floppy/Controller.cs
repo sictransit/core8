@@ -22,7 +22,7 @@ namespace Core8.Peripherals.Floppy
 
         private SectorAddressRegister SA { get; }
 
-        public ErrorCodeRegister EC { get; }
+        public ErrorRegister ER { get; }
 
         public ErrorStatusRegister ES { get; }
 
@@ -47,7 +47,7 @@ namespace Core8.Peripherals.Floppy
             TA = new TrackAddressRegister();
             SA = new SectorAddressRegister();
             ES = new ErrorStatusRegister();
-            EC = new ErrorCodeRegister();
+            ER = new ErrorRegister();
         }
 
         public int[] Buffer { get; private set; }
@@ -92,14 +92,14 @@ namespace Core8.Peripherals.Floppy
                     {
                         Log.Warning($"Bad sector address: {SA.Content}");
 
-                        EC.Set(ErrorCodes.SEEK_FAILED);
+                        ER.Set(ErrorCodes.SEEK_FAILED);
                     }
                 }
                 else
                 {
                     Log.Warning($"Bad track address: {TA.Content}");
 
-                    EC.Set(ErrorCodes.BAD_TRACK_ADDRESS);
+                    ER.Set(ErrorCodes.BAD_TRACK_ADDRESS);
                 }
             }
             else
@@ -109,9 +109,9 @@ namespace Core8.Peripherals.Floppy
                 ES.SetWriteProtect(true);
             }
 
-            errorFlag = sector == null;
+            errorFlag |= sector == null;
 
-            return !errorFlag;
+            return sector != null;
         }
 
         public void ReadSector()

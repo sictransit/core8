@@ -1,4 +1,5 @@
-﻿using Core8.Peripherals.Floppy.Interfaces;
+﻿using System;
+using Core8.Peripherals.Floppy.Interfaces;
 using Core8.Peripherals.Floppy.States.Abstract;
 
 namespace Core8.Peripherals.Floppy.States
@@ -12,9 +13,11 @@ namespace Core8.Peripherals.Floppy.States
 
             Controller.CR.Clear();
             Controller.ES.Clear();
-            Controller.EC.Clear();
+            Controller.ER.Clear();
             Controller.IR.Clear();
         }
+
+        protected override TimeSpan MinExecutionTime => TimeSpan.FromMilliseconds(1800);
 
         protected override bool FinalizeState()
         {

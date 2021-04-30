@@ -9,6 +9,7 @@ using System;
 using System.IO;
 using System.Net.Http;
 using System.Threading;
+using Serilog.Events;
 
 namespace Core8
 {
@@ -25,7 +26,7 @@ namespace Core8
             File.Delete(logFilename);
 
             Log.Logger = new LoggerConfiguration()
-                .WriteTo.Console(Serilog.Events.LogEventLevel.Debug)
+                .WriteTo.Console(Serilog.Events.LogEventLevel.Information)
                 .WriteTo.File(logFilename, Serilog.Events.LogEventLevel.Debug)
                 .MinimumLevel.ControlledBy(LoggingLevel)
                 .CreateLogger();
@@ -35,9 +36,13 @@ namespace Core8
                     {
                         pdp = new PDP(true);
 
+                        pdp.Clear();
+
                         if (o.Debug)
                         {
-                            pdp.CPU.Debug(true);                           
+                            pdp.CPU.Debug(true);
+
+                            LoggingLevel.MinimumLevel = LogEventLevel.Debug;
                         }
 
                         if (!string.IsNullOrWhiteSpace(o.Convert))
@@ -73,8 +78,8 @@ namespace Core8
 
                         if (o.Floppy)
                         {
-                            FloppyTesting();
-                            //FloppyDevelopment();
+                            //FloppyTesting();
+                            FloppyDevelopment();
                         }
 
                         if (o.TTY)

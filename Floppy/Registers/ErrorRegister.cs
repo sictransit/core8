@@ -2,9 +2,9 @@
 
 namespace Core8.Peripherals.Floppy.Registers
 {
-    internal class ErrorCodeRegister : RegisterBase
+    internal class ErrorRegister : RegisterBase
     {
-        protected override string ShortName => "EC";
+        protected override string ShortName => "ER";
 
         public override void Set(int value) => Content = value & 0b_000_011_111_111;
     }
