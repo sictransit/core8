@@ -94,9 +94,10 @@ namespace Core8.Peripherals.Teletype
 
             var commentElement = new XComment(comment ?? "SVGPunch");
 
-            var doc = new XDocument(commentElement, tapeElement);
-
-            doc.Declaration = new XDeclaration("1.0", "utf-8", null);
+            var doc = new XDocument(commentElement, tapeElement)
+            {
+                Declaration = new XDeclaration("1.0", "utf-8", null)
+            };
 
             doc.Save(writer, SaveOptions.None);
 

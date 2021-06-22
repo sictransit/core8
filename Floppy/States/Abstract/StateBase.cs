@@ -8,7 +8,7 @@ namespace Core8.Peripherals.Floppy.States.Abstract
     {
         private readonly int initialTicks;
 
-        private readonly Stopwatch executionTime = new Stopwatch();
+        private readonly Stopwatch executionTime = new();
 
         protected StateBase(IController controller)
         {
