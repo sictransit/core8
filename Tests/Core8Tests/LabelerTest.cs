@@ -1,20 +1,17 @@
-﻿using Core8.Tests.Abstract;
+﻿using Core8.Peripherals.Teletype;
+using Core8.Tests.Abstract;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Net.Http;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using Core8.Extensions;
-using Core8.Peripherals.Teletype;
 
 namespace Core8.Tests
 {
     [TestClass]
     public class LabelerTest : PDPTestsBase
-    { 
+    {
         [TestMethod]
         public async Task TestLabeler()
         {
