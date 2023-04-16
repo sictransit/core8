@@ -6,7 +6,6 @@ using Serilog;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Drawing;
 using System.Linq;
 using System.Text;
 
@@ -126,7 +125,7 @@ namespace Core8.Peripherals.Teletype
         }
 
         public string Printout =>
-            Encoding.ASCII.GetString(output.Select(x => (byte) (x & 0b_000_001_111_111)).ToArray());
+            Encoding.ASCII.GetString(output.Select(x => (byte)(x & 0b_000_001_111_111)).ToArray());
 
         public bool InterruptRequested => InputIRQ || OutputIRQ;
 

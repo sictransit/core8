@@ -5,11 +5,11 @@ using Core8.Peripherals.Teletype;
 using Core8.Utilities;
 using Serilog;
 using Serilog.Core;
+using Serilog.Events;
 using System;
 using System.IO;
 using System.Net.Http;
 using System.Threading;
-using Serilog.Events;
 
 namespace Core8
 {
@@ -68,8 +68,9 @@ namespace Core8
 
                             if (o.Run)
                             {
-                                if (o.Debug) { 
-                                    LoggingLevel.MinimumLevel = Serilog.Events.LogEventLevel.Debug; 
+                                if (o.Debug)
+                                {
+                                    LoggingLevel.MinimumLevel = Serilog.Events.LogEventLevel.Debug;
                                 }
 
                                 Run(o.StartingAddress, o.DumpMemory);

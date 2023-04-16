@@ -1,9 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Core8.Peripherals.Teletype
 {
@@ -11,7 +7,7 @@ namespace Core8.Peripherals.Teletype
     {
         public PunchSettings() : this(Color.LightYellow)
         {
-            
+
         }
 
         public PunchSettings(Color paperColor, int wrap = 80, bool trimLeader = true, int nullPadding = 12)
