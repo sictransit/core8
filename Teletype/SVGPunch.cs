@@ -3,10 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Globalization;
-using System.IO;
 using System.Linq;
-using System.Security.Cryptography.X509Certificates;
-using System.Xml;
 using System.Xml.Linq;
 
 namespace Core8.Peripherals.Teletype
@@ -40,7 +37,7 @@ namespace Core8.Peripherals.Teletype
 
             if (settings.NullPadding != 0)
             {
-                var nulls = Enumerable.Repeat((byte) 0, settings.NullPadding).ToArray();
+                var nulls = Enumerable.Repeat((byte)0, settings.NullPadding).ToArray();
 
                 data = nulls.Concat(data.SkipWhile(x => x == 0).Reverse().SkipWhile(x => x == 0).Reverse()).Concat(nulls).ToArray();
             }

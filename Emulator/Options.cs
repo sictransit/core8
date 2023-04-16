@@ -7,7 +7,7 @@ namespace Core8
         [Option(Required = false, Default = false, HelpText = "play TINT")]
         public bool TINT { get; set; }
 
-        [Option(Required = false, Default = @"c:\bin\palbart\palbart.exe", HelpText = "PALBART executable, required for assemble")]
+        [Option(Required = false, Default = @"c:\bin\palbart.exe", HelpText = "PALBART executable, required for assemble")]
         public string PALBART { get; set; }
 
         [Option(Required = false, HelpText = "PAL assembly file")]
