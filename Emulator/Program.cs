@@ -261,7 +261,7 @@ namespace Core8
 
             LoggingLevel.MinimumLevel = Serilog.Events.LogEventLevel.Debug;
 
-            pdp.SetBreakpoint8(0050);
+            //pdp.SetBreakpoint8(0050); // store read data
 
             pdp.Continue(false);
 

@@ -24,7 +24,7 @@ namespace Core8.Core
                 return Write(address, ram[address] + 1);
             }
 
-            //Log.Debug($"[MR] {address.ToOctalString()}:{ram[address].ToOctalString()}");
+            Log.Debug($"[MR] {address.ToOctalString()}:{ram[address].ToOctalString()}");
 
             return ram[address];
         }
