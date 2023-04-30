@@ -248,18 +248,18 @@ namespace Core8
             pdp.Deposit8(05033);
             pdp.Deposit8(06752);
             pdp.Deposit8(05453);
-            pdp.Deposit8(07004);
+            pdp.Deposit8(07004); // pdp.Deposit8(07024); Unit select?
             pdp.Deposit8(06030);
 
             pdp.Load8(0022);
 
-            pdp.LoadFloppy(0, File.ReadAllBytes(@"C:\tmp\OS-8\os8.rx01"));
+            pdp.LoadFloppy(0, File.ReadAllBytes(@"C:\tmp\OS-8\os8_rx.rx01"));
 
             pdp.Clear();
 
-            //pdp.DumpMemory();
+            pdp.DumpMemory();
 
-            //loggingLevel.MinimumLevel = Serilog.Events.LogEventLevel.Debug;
+            LoggingLevel.MinimumLevel = Serilog.Events.LogEventLevel.Debug;
 
             pdp.Continue(false);
 

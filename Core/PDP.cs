@@ -172,6 +172,8 @@ namespace Core8.Core
 
                 var instruction = CPU.InstructionSet.Decode(data);
 
+                instruction.Load(address, data);
+
                 if (data != 0)
                 {
                     PrintZeroSpan();
