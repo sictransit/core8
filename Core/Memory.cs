@@ -1,4 +1,6 @@
-﻿using Core8.Model.Interfaces;
+﻿using Core8.Extensions;
+using Core8.Model.Interfaces;
+using Serilog;
 
 namespace Core8.Core
 {
@@ -33,7 +35,7 @@ namespace Core8.Core
 
             ram[address] = value;
 
-            //Log.Debug($"[MW] {address.ToOctalString()}:{value.ToOctalString()}");
+            Log.Debug($"[MW] {address.ToOctalString()}:{value.ToOctalString()}");
 
             return value;
         }
