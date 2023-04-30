@@ -11,7 +11,7 @@ namespace Core8.Tests
         [TestMethod]
         public void TestAssembler()
         {
-            var assembler = new Assembler(@"c:\bin\palbart\palbart.exe");
+            var assembler = new Assembler(@"c:\bin\palbart.exe");
 
             var result = assembler.TryAssemble(@"Assembler\HelloWorld.asm", out string binFilename);
 
