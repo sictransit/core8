@@ -24,7 +24,10 @@ namespace Core8.Core
                 return Write(address, ram[address] + 1);
             }
 
-            Log.Debug($"[MR] {address.ToOctalString()}:{ram[address].ToOctalString()}");
+            if (Log.IsEnabled(Serilog.Events.LogEventLevel.Debug))
+            {
+                Log.Debug($"[MR] {address.ToOctalString()}:{ram[address].ToOctalString()}");
+            }
 
             return ram[address];
         }
@@ -35,7 +38,10 @@ namespace Core8.Core
 
             ram[address] = value;
 
-            Log.Debug($"[MW] {address.ToOctalString()}:{value.ToOctalString()}");
+            if (Log.IsEnabled(Serilog.Events.LogEventLevel.Debug))
+            {
+                Log.Debug($"[MW] {address.ToOctalString()}:{value.ToOctalString()}");
+            }
 
             return value;
         }
