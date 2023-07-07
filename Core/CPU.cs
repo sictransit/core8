@@ -5,6 +5,7 @@ using Serilog;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 
 namespace Core8.Core
 {
@@ -16,7 +17,7 @@ namespace Core8.Core
 
         private bool debug;
 
-        private readonly HashSet<int> breakpoints = new();
+        private readonly List<Func<ICPU, bool>> breakpoints = new();
 
         public CPU(ITeletype teletype, IFloppyDrive floppy)
         {
@@ -75,21 +76,13 @@ namespace Core8.Core
                 {
                     if (debug)
                     {
-                        if (breakpoints.Contains(Registry.PC.Content))
+                        if (breakpoints.Any(b => b(this)))
                         {
                             Log.Information("Breakpoint hit!");
 
-                            if (Debugger.IsAttached)
-                            {
-                                Debugger.Break();
-                            }
-                            else
-                            {
-                                break;
-                            }
+                            break;
                         }
-
-                        if (singleStep)
+                        else if (singleStep)
                         {
                             break;
                         }
@@ -166,23 +159,11 @@ namespace Core8.Core
             return InstructionSet.Decode(data).Load(address, data);
         }
 
-        public void SetBreakpoint(int address)
+        public void SetBreakpoint(Func<ICPU, bool> breakpoint)
         {
-            Log.Information($"Breakpoint set @ {address.ToOctalString(5)}");
-
-            breakpoints.Add(address);
-
-            debug = true;
-        }
-
-        public void RemoveBreakpoint(int address)
-        {
-            breakpoints.Remove(address);
-        }
-
-        public void RemoveAllBreakpoints()
-        {
-            breakpoints.Clear();
+            breakpoints.Add(breakpoint);
+            
+            Debug(true);
         }
 
         public void Debug(bool state)

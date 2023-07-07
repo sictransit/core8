@@ -262,17 +262,7 @@ namespace Core8.Core
 
         public void SetBreakpoint8(int address)
         {
-            CPU.SetBreakpoint(address.ToDecimal());
-        }
-
-        public void RemoveBreakpoint8(int address)
-        {
-            CPU.RemoveBreakpoint(address.ToDecimal());
-        }
-
-        public void RemoveAllBreakpoints()
-        {
-            CPU.RemoveAllBreakpoints();
+            CPU.SetBreakpoint(cpu => cpu.Registry.PC.Address == address);
         }
 
         public void Exam()
