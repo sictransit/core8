@@ -76,15 +76,16 @@ namespace Core8.Core
                 {
                     if (debug)
                     {
-                        if (breakpoints.Any(b => b(this)))
+                        if (breakpoints.Any(b => b(this)) || singleStep)
                         {
-                            Log.Information("Breakpoint hit!");
-
-                            break;
-                        }
-                        else if (singleStep)
-                        {
-                            break;
+                            if (Debugger.IsAttached)
+                            {
+                                Debugger.Break();
+                            }
+                            else
+                            {
+                                break;
+                            }
                         }
                     }
 
@@ -101,7 +102,7 @@ namespace Core8.Core
 
                     if (debug)
                     {
-                        Log.Debug(instruction.ToString());
+                        Log.Information(instruction.ToString());
 
                         var f = FloppyDrive?.ToString();
                         if (f != floppy)
@@ -121,7 +122,7 @@ namespace Core8.Core
                         if (a != lac)
                         {
                             lac = a;
-                            Log.Debug(lac);
+                            Log.Information(lac);
                         }
                     }
                 }

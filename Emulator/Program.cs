@@ -253,15 +253,17 @@ namespace Core8
 
             pdp.Load8(0022);
 
-            pdp.LoadFloppy(0, File.ReadAllBytes(@"C:\tmp\OS-8\os8_rx.rx01"));
+            pdp.LoadFloppy(0, File.ReadAllBytes(@"disks\os8_rx.rx01"));
 
             pdp.Clear();
 
-            pdp.DumpMemory();
+            //pdp.DumpMemory();
 
             LoggingLevel.MinimumLevel = Serilog.Events.LogEventLevel.Debug;
 
-            //pdp.SetBreakpoint8(0050); // store read data
+            //pdp.CPU.SetBreakpoint(cpu => cpu.Registry.PC.Address < 22.ToDecimal() || cpu.Registry.PC.Address > 61.ToDecimal());
+            //pdp.CPU.SetBreakpoint(cpu => cpu.Registry.PC.Address == 15.ToDecimal());
+            pdp.CPU.SetBreakpoint(cpu => cpu.Memory.Read(7734.ToDecimal())==7777.ToDecimal());
 
             pdp.Continue(false);
 
