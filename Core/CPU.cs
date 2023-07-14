@@ -46,7 +46,7 @@ namespace Core8.Core
 
         public IMemory Memory { get; }
 
-        public int InstructionCount { get; private set; }
+        public int InstructionCounter { get; private set; }
 
         public void Clear()
         {
@@ -72,13 +72,13 @@ namespace Core8.Core
             string floppy = null;
             string lac = null;
 
-            InstructionCount = 0;
+            InstructionCounter = 0;
 
             try
             {
                 while (running)
                 {
-                    InstructionCount++;
+                    InstructionCounter++;
 
                     if (debug)
                     {

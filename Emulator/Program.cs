@@ -263,7 +263,7 @@ namespace Core8
 
             //pdp.CPU.SetBreakpoint(cpu => cpu.Registry.PC.Address < 22.ToDecimal() || cpu.Registry.PC.Address > 61.ToDecimal());
             //pdp.CPU.SetBreakpoint(cpu => cpu.Registry.PC.Address == 15.ToDecimal()); // INIT
-            pdp.CPU.SetBreakpoint(cpu => cpu.InstructionCount == 20000); // INIT
+            pdp.CPU.SetBreakpoint(cpu => cpu.InstructionCounter == 20000); // INIT
             //pdp.CPU.SetBreakpoint(cpu => cpu.Registry.PC.Address == 7740.ToDecimal()); // INIT
             //pdp.CPU.SetBreakpoint(cpu => cpu.Memory.Read(15.ToDecimal())==6757.ToDecimal());
 

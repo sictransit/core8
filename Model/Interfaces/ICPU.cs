@@ -32,6 +32,6 @@ namespace Core8.Model.Interfaces
 
         void Debug(bool state);
 
-        int InstructionCount { get; }
+        int InstructionCounter { get; }
     }
 }
