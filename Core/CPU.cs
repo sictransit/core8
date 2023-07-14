@@ -46,6 +46,8 @@ namespace Core8.Core
 
         public IMemory Memory { get; }
 
+        public int InstructionCount { get; private set; }
+
         public void Clear()
         {
             Teletype.Clear();
@@ -70,10 +72,14 @@ namespace Core8.Core
             string floppy = null;
             string lac = null;
 
+            InstructionCount = 0;
+
             try
             {
                 while (running)
                 {
+                    InstructionCount++;
+
                     if (debug)
                     {
                         if (breakpoints.Any(b => b(this)) || singleStep)
@@ -96,13 +102,9 @@ namespace Core8.Core
 
                     var instruction = Fetch(Registry.PC.Content);
 
-                    Registry.PC.Increment();
-
-                    instruction.Execute();
-
                     if (debug)
                     {
-                        Log.Information(instruction.ToString());
+                        Log.Debug($"{Registry.PC.IF} {Registry.PC.Address.ToOctalString(4)}  {Registry.AC.Link} {Registry.AC.Accumulator.ToOctalString()}  {instruction}");
 
                         var f = FloppyDrive?.ToString();
                         if (f != floppy)
@@ -117,14 +119,11 @@ namespace Core8.Core
                             interrupts = i;
                             Log.Information(interrupts);
                         }
-
-                        var a = Registry.AC.ToString();
-                        if (a != lac)
-                        {
-                            lac = a;
-                            Log.Information(lac);
-                        }
                     }
+
+                    Registry.PC.Increment();
+
+                    instruction.Execute();
                 }
             }
             catch (Exception ex)

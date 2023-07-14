@@ -31,5 +31,7 @@ namespace Core8.Model.Interfaces
         void SingleStep(bool state);
 
         void Debug(bool state);
+
+        int InstructionCount { get; }
     }
 }

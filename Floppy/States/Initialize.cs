@@ -17,7 +17,7 @@ namespace Core8.Peripherals.Floppy.States
             Controller.IR.Clear();
         }
 
-        protected override TimeSpan MinExecutionTime => TimeSpan.FromMilliseconds(1800);
+        //protected override TimeSpan MinExecutionTime => TimeSpan.FromMilliseconds(1800);
 
         protected override bool FinalizeState()
         {

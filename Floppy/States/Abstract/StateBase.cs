@@ -25,7 +25,7 @@ namespace Core8.Peripherals.Floppy.States.Abstract
 
         protected IController Controller { get; }
 
-        private const int STATE_TICKS = 30;
+        private const int STATE_TICKS = 3;
 
         protected virtual TimeSpan MinExecutionTime => TimeSpan.Zero;
 

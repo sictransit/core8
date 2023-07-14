@@ -178,7 +178,7 @@ namespace Core8.Core
                 {
                     PrintZeroSpan();
 
-                    sb.AppendLine(instruction.ToString());
+                    sb.AppendLine($"{address.ToOctalString(5)} {instruction}");
 
                     zeroAddress = 0;
                     zeroSet = false;
@@ -191,7 +191,7 @@ namespace Core8.Core
                     }
                     else
                     {
-                        sb.AppendLine(instruction.ToString());
+                        sb.AppendLine($"{address.ToOctalString(5)} {instruction}");
 
                         zeroSet = true;
                     }

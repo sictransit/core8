@@ -59,7 +59,7 @@ namespace Core8.Model.Instructions.Abstract
 
         public override string ToString()
         {
-            return $"{Address.ToOctalString(5)}:{Data.ToOctalString()} {OpCodeText}";
+            return $"{Data.ToOctalString()} {OpCodeText}";
         }
     }
 }

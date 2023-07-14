@@ -11,7 +11,7 @@ namespace Core8.Peripherals.Floppy.States
 
         }
 
-        protected override TimeSpan MinExecutionTime => TimeSpan.FromMilliseconds(250);
+        //protected override TimeSpan MinExecutionTime => TimeSpan.FromMilliseconds(250);
 
         protected override bool FinalizeState()
         {
