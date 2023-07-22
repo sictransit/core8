@@ -4,7 +4,7 @@ using System;
 
 namespace Core8.Model.Instructions
 {
-    internal class TeleprinterInstructions : TeletypeInstructionsBase
+    public class TeleprinterInstructions : TeletypeInstructionsBase
     {
         private const int TFL_MASK = 0;
         private const int TSF_MASK = 1 << 0;

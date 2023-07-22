@@ -4,7 +4,7 @@ using System;
 
 namespace Core8.Model.Instructions
 {
-    internal class Group2ANDInstructions : Group2InstructionsBase
+    public class Group2ANDInstructions : Group2InstructionsBase
     {
         private const int CLA_MASK = 1 << 7;
         private const int SPA_MASK = 1 << 6;

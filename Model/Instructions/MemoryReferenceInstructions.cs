@@ -6,7 +6,7 @@ using System.Linq;
 
 namespace Core8.Model.Instructions
 {
-    internal class MemoryReferenceInstructions : InstructionsBase
+    public class MemoryReferenceInstructions : InstructionsBase
     {
         private const int AND_MASK = 0b_000 << 9;
         private const int TAD_MASK = 0b_001 << 9;

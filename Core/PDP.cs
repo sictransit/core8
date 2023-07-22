@@ -170,7 +170,7 @@ namespace Core8.Core
             {
                 var data = CPU.Memory.Read(address);
 
-                var instruction = CPU.InstructionSet.Decode(data);
+                var instruction = CPU.Decode(data);
 
                 instruction.Load(address, data);
 

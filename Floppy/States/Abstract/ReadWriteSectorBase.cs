@@ -1,5 +1,4 @@
 ﻿using Core8.Peripherals.Floppy.Interfaces;
-using System;
 
 namespace Core8.Peripherals.Floppy.States.Abstract
 {

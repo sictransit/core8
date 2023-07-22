@@ -4,7 +4,7 @@ using System;
 
 namespace Core8.Model.Instructions
 {
-    internal class MemoryManagementInstructions : PrivilegedInstructionsBase
+    public class MemoryManagementInstructions : PrivilegedInstructionsBase
     {
         private const int MEM_MGMT_MASK = 0b_110_010_000_100;
 

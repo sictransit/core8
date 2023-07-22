@@ -4,7 +4,7 @@ using Core8.Model.Registers;
 
 namespace Core8.Model.Instructions.Abstract
 {
-    internal abstract class InstructionsBase : IInstruction
+    public abstract class InstructionsBase : IInstruction
     {
         protected InstructionsBase(ICPU cpu)
         {

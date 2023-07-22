@@ -4,8 +4,6 @@ namespace Core8.Model.Interfaces
 {
     public interface ICPU
     {
-        IInstructionSet InstructionSet { get; }
-
         IInterrupts Interrupts { get; }
 
         IMemory Memory { get; }
@@ -15,6 +13,8 @@ namespace Core8.Model.Interfaces
         IFloppyDrive FloppyDrive { get; }
 
         IRegistry Registry { get; }
+
+        IInstruction Decode(int data);
 
         void Run();
 

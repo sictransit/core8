@@ -58,7 +58,7 @@ namespace Core8.Tests
             Log.Information(PDP.CPU.Teletype.Printout);
         }
 
-        [TestMethod]        
+        [TestMethod]
         public void TestBreakpoint()
         {
             PDP.SetBreakpoint8(4);
@@ -68,5 +68,5 @@ namespace Core8.Tests
 
             Assert.AreEqual(4, PDP.CPU.Registry.PC.Address);
         }
-    }    
+    }
 }

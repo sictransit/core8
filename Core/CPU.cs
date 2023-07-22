@@ -1,5 +1,6 @@
 ﻿using Core8.Extensions;
 using Core8.Model;
+using Core8.Model.Instructions;
 using Core8.Model.Interfaces;
 using Serilog;
 using System;
@@ -11,6 +12,28 @@ namespace Core8.Core
 {
     public class CPU : ICPU
     {
+        private readonly Group1Instructions group1Instructions;
+        private readonly Group2ANDInstructions group2AndInstructions;
+        private readonly Group2ORInstructions group2OrInstructions;
+        private readonly Group3Instructions group3Instructions;
+        private readonly MemoryReferenceInstructions memoryReferenceInstructions;
+        private readonly MemoryManagementInstructions memoryManagementInstructions;
+        private readonly KeyboardInstructions keyboardInstructions;
+        private readonly TeleprinterInstructions teleprinterInstructions;
+        private readonly InterruptInstructions interruptInstructions;
+        private readonly PrivilegedNoOperationInstruction privilegedNoOperationInstruction;
+        private readonly FloppyDriveInstructions floppyDriveInstructions;
+
+        private const int IOT = 0b_110_000_000_000;
+        private const int MCI = 0b_111_000_000_000;
+        private const int IO = 0b_000_111_111_000;
+        private const int GROUP = 0b_000_100_000_000;
+        private const int GROUP_3 = 0b_111_100_000_001;
+        private const int GROUP_2_AND = 0b_111_100_001_000;
+        private const int FLOPPY = 0b_000_111_000_000;
+        private const int MEMORY_MANAGEMENT = 0b_110_010_000_000;
+        private const int INTERRUPT_MASK = 0b_000_111_111_000;
+
         private volatile bool running;
 
         private bool singleStep;
@@ -21,6 +44,18 @@ namespace Core8.Core
 
         public CPU(ITeletype teletype, IFloppyDrive floppy)
         {
+            group1Instructions = new Group1Instructions(this);
+            group2AndInstructions = new Group2ANDInstructions(this);
+            group2OrInstructions = new Group2ORInstructions(this);
+            group3Instructions = new Group3Instructions(this);
+            memoryReferenceInstructions = new MemoryReferenceInstructions(this);
+            memoryManagementInstructions = new MemoryManagementInstructions(this);
+            keyboardInstructions = new KeyboardInstructions(this);
+            teleprinterInstructions = new TeleprinterInstructions(this);
+            interruptInstructions = new InterruptInstructions(this);
+            privilegedNoOperationInstruction = new PrivilegedNoOperationInstruction(this);
+            floppyDriveInstructions = new FloppyDriveInstructions(this);
+
             Teletype = teletype ?? throw new ArgumentNullException(nameof(teletype));
 
             Memory = new Memory();
@@ -29,14 +64,10 @@ namespace Core8.Core
 
             Interrupts = new Interrupts(this);
 
-            InstructionSet = new InstructionSet(this);
-
             Registry = new Registry();
         }
 
         public IRegistry Registry { get; }
-
-        public IInstructionSet InstructionSet { get; }
 
         public IInterrupts Interrupts { get; }
 
@@ -156,13 +187,13 @@ namespace Core8.Core
         {
             var data = Memory.Read(address);
 
-            return InstructionSet.Decode(data).Load(address, data);
+            return Decode(data).Load(address, data);
         }
 
         public void SetBreakpoint(Func<ICPU, bool> breakpoint)
         {
             breakpoints.Add(breakpoint);
-            
+
             Debug(true);
         }
 
@@ -176,5 +207,21 @@ namespace Core8.Core
             singleStep = state;
             debug |= state;
         }
+
+        public IInstruction Decode(int data) =>
+    (data & 0b_111_000_000_000) switch
+    {
+        MCI when (data & GROUP) == 0 => group1Instructions,
+        MCI when (data & GROUP_3) == GROUP_3 => group3Instructions,
+        MCI when (data & GROUP_2_AND) == GROUP_2_AND => group2AndInstructions,
+        MCI => group2OrInstructions,
+        IOT when (data & FLOPPY) == FLOPPY => floppyDriveInstructions,
+        IOT when (data & MEMORY_MANAGEMENT) == MEMORY_MANAGEMENT => memoryManagementInstructions,
+        IOT when (data & INTERRUPT_MASK) == 0 => interruptInstructions,
+        IOT when (data & IO) >> 3 == 3 => keyboardInstructions,
+        IOT when (data & IO) >> 3 == 4 => teleprinterInstructions,
+        IOT => privilegedNoOperationInstruction,
+        _ => memoryReferenceInstructions,
+    };
     }
 }
