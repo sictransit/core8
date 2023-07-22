@@ -168,7 +168,7 @@ namespace Core8.Core
 
             for (var address = 0; address < CPU.Memory.Size; address++)
             {   
-                var instruction = CPU.Decode(address);
+                var instruction = CPU.Fetch(address);
 
                 if (instruction.Data != 0)
                 {

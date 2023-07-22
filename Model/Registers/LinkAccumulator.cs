@@ -13,15 +13,9 @@ namespace Core8.Model.Registers
 
         public void ByteSwap() => Content = (Content & 0b_1_000_000_000_000) | ((Content & 0b_0_111_111_000_000) >> 6) | ((Content & 0b_0_000_000_111_111) << 6);
 
-        public void RAR()
-        {
-            Content = ((Content >> 1) & 0b_0_111_111_111_111) | ((Content << 12) & 0b_1_000_000_000_000);
-        }
+        public void RAR() => Content = ((Content >> 1) & 0b_0_111_111_111_111) | ((Content << 12) & 0b_1_000_000_000_000);
 
-        public void RAL()
-        {
-            Content = ((Content << 1) & 0b_1_111_111_111_111) | ((Content >> 12) & 0b_001);
-        }
+        public void RAL() => Content = ((Content << 1) & 0b_1_111_111_111_111) | ((Content >> 12) & 0b_001);
 
         public void ComplementLink() => Content ^= 0b_1_000_000_000_000;
 

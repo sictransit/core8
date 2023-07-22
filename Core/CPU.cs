@@ -174,11 +174,6 @@ namespace Core8.Core
             }
         }
 
-        private IInstruction Fetch(int address)
-        {
-            return Decode(address);
-        }
-
         public void SetBreakpoint(Func<ICPU, bool> breakpoint)
         {
             breakpoints.Add(breakpoint);
@@ -197,7 +192,7 @@ namespace Core8.Core
             debug |= state;
         }
 
-        public IInstruction Decode(int address)
+        public IInstruction Fetch(int address)
         {
             var data = Memory.Read(address);
 

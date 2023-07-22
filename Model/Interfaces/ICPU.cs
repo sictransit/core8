@@ -14,7 +14,7 @@ namespace Core8.Model.Interfaces
 
         IRegistry Registry { get; }
 
-        IInstruction Decode(int data);
+        IInstruction Fetch(int address);
 
         void Run();
 
