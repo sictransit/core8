@@ -49,7 +49,7 @@ namespace Core8.Model.Instructions.Abstract
 
         protected SaveField SF => Registry.SF;
 
-        public IInstruction Load(int address, int data)
+        public virtual IInstruction Load(int address, int data)
         {
             Address = address;
             Data = data;

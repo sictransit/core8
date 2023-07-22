@@ -19,8 +19,6 @@ namespace Core8.Model.Instructions
 
         private const int CDF_MASK = 1 << 0;
         private const int CIF_MASK = 1 << 1;
-
-
         public MemoryManagementInstructions(ICPU cpu) : base(cpu)
         {
 

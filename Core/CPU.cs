@@ -7,7 +7,6 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Net;
 
 namespace Core8.Core
 {
@@ -102,7 +101,6 @@ namespace Core8.Core
 
             string interrupts = null;
             string floppy = null;
-            string lac = null;
 
             InstructionCounter = 0;
 
