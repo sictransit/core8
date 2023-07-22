@@ -173,16 +173,6 @@ namespace Core8.Core
             }
         }
 
-        public IInstruction Debug8(int address)
-        {
-            return Debug10(address.ToDecimal());
-        }
-
-        public IInstruction Debug10(int address)
-        {
-            return Fetch(address);
-        }
-
         private IInstruction Fetch(int address)
         {
             var data = Memory.Read(address);
@@ -209,19 +199,19 @@ namespace Core8.Core
         }
 
         public IInstruction Decode(int data) =>
-    (data & 0b_111_000_000_000) switch
-    {
-        MCI when (data & GROUP) == 0 => group1Instructions,
-        MCI when (data & GROUP_3) == GROUP_3 => group3Instructions,
-        MCI when (data & GROUP_2_AND) == GROUP_2_AND => group2AndInstructions,
-        MCI => group2OrInstructions,
-        IOT when (data & FLOPPY) == FLOPPY => floppyDriveInstructions,
-        IOT when (data & MEMORY_MANAGEMENT) == MEMORY_MANAGEMENT => memoryManagementInstructions,
-        IOT when (data & INTERRUPT_MASK) == 0 => interruptInstructions,
-        IOT when (data & IO) >> 3 == 3 => keyboardInstructions,
-        IOT when (data & IO) >> 3 == 4 => teleprinterInstructions,
-        IOT => privilegedNoOperationInstruction,
-        _ => memoryReferenceInstructions,
-    };
+            (data & 0b_111_000_000_000) switch
+            {
+                MCI when (data & GROUP) == 0 => group1Instructions,
+                MCI when (data & GROUP_3) == GROUP_3 => group3Instructions,
+                MCI when (data & GROUP_2_AND) == GROUP_2_AND => group2AndInstructions,
+                MCI => group2OrInstructions,
+                IOT when (data & FLOPPY) == FLOPPY => floppyDriveInstructions,
+                IOT when (data & MEMORY_MANAGEMENT) == MEMORY_MANAGEMENT => memoryManagementInstructions,
+                IOT when (data & INTERRUPT_MASK) == 0 => interruptInstructions,
+                IOT when (data & IO) >> 3 == 3 => keyboardInstructions,
+                IOT when (data & IO) >> 3 == 4 => teleprinterInstructions,
+                IOT => privilegedNoOperationInstruction,
+                _ => memoryReferenceInstructions,
+            };
     }
 }

@@ -167,7 +167,7 @@ namespace Core8.Core
             }
 
             for (var address = 0; address < CPU.Memory.Size; address++)
-            {
+            {                
                 var data = CPU.Memory.Read(address);
 
                 var instruction = CPU.Decode(data);

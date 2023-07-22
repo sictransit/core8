@@ -24,10 +24,6 @@ namespace Core8.Model.Interfaces
 
         void SetBreakpoint(Func<ICPU, bool> breakpoint);
 
-        IInstruction Debug8(int address);
-
-        IInstruction Debug10(int address);
-
         void SingleStep(bool state);
 
         void Debug(bool state);
