@@ -31,7 +31,7 @@ namespace Core8.Model.Registers
 
         public void ANDAccumulator(int value) => Content &= 0b_1_000_000_000_000 | (Content & value);
 
-        public void SetLink(int value) => Content = ((value & 0b_001) << 12) | (Content & 0b_0_111_111_111_111);
+        public void SetLink(int value) => Content = ((value & 0b_001) << 12) | Accumulator;
 
         public void AddWithCarry(int value) => Content = (Content + value) & 0b_1_111_111_111_111;
 
