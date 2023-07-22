@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Net;
 
 namespace Core8.Core
 {
@@ -175,9 +176,7 @@ namespace Core8.Core
 
         private IInstruction Fetch(int address)
         {
-            var data = Memory.Read(address);
-
-            return Decode(data).Load(address, data);
+            return Decode(address);
         }
 
         public void SetBreakpoint(Func<ICPU, bool> breakpoint)
@@ -198,8 +197,11 @@ namespace Core8.Core
             debug |= state;
         }
 
-        public IInstruction Decode(int data) =>
-            (data & 0b_111_000_000_000) switch
+        public IInstruction Decode(int address)
+        {
+            var data = Memory.Read(address);
+
+            IInstruction instruction = (data & 0b_111_000_000_000) switch
             {
                 MCI when (data & GROUP) == 0 => group1Instructions,
                 MCI when (data & GROUP_3) == GROUP_3 => group3Instructions,
@@ -213,5 +215,8 @@ namespace Core8.Core
                 IOT => privilegedNoOperationInstruction,
                 _ => memoryReferenceInstructions,
             };
+
+            return instruction.Load(address, data);
+        }
     }
 }

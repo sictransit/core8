@@ -167,14 +167,10 @@ namespace Core8.Core
             }
 
             for (var address = 0; address < CPU.Memory.Size; address++)
-            {                
-                var data = CPU.Memory.Read(address);
+            {   
+                var instruction = CPU.Decode(address);
 
-                var instruction = CPU.Decode(data);
-
-                instruction.Load(address, data);
-
-                if (data != 0)
+                if (instruction.Data != 0)
                 {
                     PrintZeroSpan();
 

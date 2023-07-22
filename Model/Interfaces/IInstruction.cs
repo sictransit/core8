@@ -4,6 +4,8 @@
     {
         IInstruction Load(int address, int data);
 
+        int Data { get; }
+
         void Execute();
     }
 }

@@ -13,7 +13,7 @@ namespace Core8.Model.Instructions.Abstract
 
         private int Address { get; set; }
 
-        protected int Data { get; private set; }
+        public int Data { get; private set; }
 
         public abstract void Execute();
 
