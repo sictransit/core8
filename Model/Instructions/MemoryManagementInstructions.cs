@@ -1,4 +1,5 @@
-﻿using Core8.Model.Instructions.Abstract;
+﻿using Core8.Extensions;
+using Core8.Model.Instructions.Abstract;
 using Core8.Model.Interfaces;
 using System;
 
@@ -19,15 +20,28 @@ namespace Core8.Model.Instructions
 
         private const int CDF_MASK = 1 << 0;
         private const int CIF_MASK = 1 << 1;
+
+        private string dataFieldDebug = string.Empty;
+
         public MemoryManagementInstructions(ICPU cpu) : base(cpu)
         {
 
         }
 
+        public override IInstruction Load(int address, int data)
+        {
+            var instruction = base.Load(address, data);
+
+            // TODO: Not a good idea to populate this all the time.
+            dataFieldDebug = !IsReadInstruction ? ((Data >> 3) & 0b_111).ToOctalString(0) : string.Empty;
+
+            return instruction;
+        }
+
         protected override string OpCodeText =>
             IsReadInstruction
             ? ((MemoryManagementReadOpCode)(Data & 0b_111_111_111_111)).ToString()
-            : ((MemoryManagementChangeOpCodes)(Data & 0b_000_000_000_011)).ToString();
+            : $"{(MemoryManagementChangeOpCodes)(Data & 0b_000_000_000_011)} {dataFieldDebug}";
 
         private bool IsReadInstruction => (Data & 0b_000_000_000_100) == 0b_000_000_000_100;
 

@@ -134,21 +134,21 @@ namespace Core8.Core
 
                     if (debug)
                     {
-                        Log.Debug($"{Registry.PC.IF} {Registry.PC.Address.ToOctalString(4)}  {Registry.AC.Link} {Registry.AC.Accumulator.ToOctalString()}  {instruction}");
+                        Log.Debug($"{Registry.PC.IF}{Registry.PC.Address.ToOctalString(4)}  {Registry.AC.Link} {Registry.AC.Accumulator.ToOctalString()}  {Registry.MQ.Content.ToOctalString()}  {instruction}");
 
-                        var f = FloppyDrive?.ToString();
-                        if (f != floppy)
-                        {
-                            floppy = f;
-                            Log.Information(floppy);
-                        }
+                        //var f = FloppyDrive?.ToString();
+                        //if (f != floppy)
+                        //{
+                        //    floppy = f;
+                        //    Log.Information(floppy);
+                        //}
 
-                        var i = Interrupts.ToString();
-                        if (i != interrupts)
-                        {
-                            interrupts = i;
-                            Log.Information(interrupts);
-                        }
+                        //var i = Interrupts.ToString();
+                        //if (i != interrupts)
+                        //{
+                        //    interrupts = i;
+                        //    Log.Information(interrupts);
+                        //}
                     }
 
                     Registry.PC.Increment();

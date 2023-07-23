@@ -17,6 +17,8 @@ namespace Core8.Model.Instructions.Abstract
 
         public abstract void Execute();
 
+        protected virtual string ExtendedAddress => "     ";
+
         protected abstract string OpCodeText { get; }
 
         protected int Word => Data & 0b_000_001_111_111;
@@ -59,7 +61,7 @@ namespace Core8.Model.Instructions.Abstract
 
         public override string ToString()
         {
-            return $"{Data.ToOctalString()} {OpCodeText}";
+            return $"{ExtendedAddress}  {OpCodeText}";
         }
     }
 }

@@ -19,6 +19,7 @@ namespace Core8.Model.Instructions
         private const int INDIRECT = 1 << 8;
 
         private int operand;
+        private string operandContent;
 
         public MemoryReferenceInstructions(ICPU cpu) : base(cpu)
         {
@@ -29,14 +30,25 @@ namespace Core8.Model.Instructions
         {
             var instruction = base.Load(address, data);
 
+            if (Branching && Interrupts.Inhibited)
+            {
+                Interrupts.Allow();
+
+                PC.SetIF(IB.Content);
+                UF.Set(UB.Content);
+            }
+
             operand = Branching
                 ? Indirect ? Field | Memory.Read(Location, true) : Location
                 : Indirect ? (DF.Content << 12) | Memory.Read(Location, true) : Location;
 
+            // TODO: Not a good idea to populate this all the time.
+            operandContent = Branching ? null : $" [{Memory.Read(operand).ToOctalString()}]";
+
             return instruction;
         }
 
-        protected override string OpCodeText => string.Join(" ", new[] { ((MemoryReferenceOpCode)(Data & 0b_111_000_000_000)).ToString(), Indirect ? "I" : null, Zero ? "Z" : null }.Where(x => !string.IsNullOrEmpty(x)));
+        protected override string OpCodeText => string.Join(" ", new[] { ((MemoryReferenceOpCode)(Data & 0b_111_000_000_000)).ToString(), Indirect ? "I" : null, Location.ToOctalString(0) , operandContent }.Where(x => !string.IsNullOrWhiteSpace(x)));
 
         private bool Indirect => (Data & INDIRECT) != 0;
 
@@ -48,19 +60,10 @@ namespace Core8.Model.Instructions
 
         private bool Branching => (Data & JMS_MASK) != 0;
 
+        protected override string ExtendedAddress => operand.ToOctalString(5);
+
         public override void Execute()
         {
-            if (Branching && Interrupts.Inhibited)
-            {
-                if (Interrupts.Inhibited)
-                {
-                    Interrupts.Allow();
-
-                    PC.SetIF(IB.Content);
-                    UF.Set(UB.Content);
-                }
-            }
-
             switch (Data & 0b_111_000_000_000)
             {
                 case JMS_MASK:
@@ -89,11 +92,6 @@ namespace Core8.Model.Instructions
                 default:
                     throw new NotImplementedException();
             }
-        }
-
-        public override string ToString()
-        {
-            return $"{base.ToString()} ({Location.ToOctalString()})";
         }
 
         private enum MemoryReferenceOpCode

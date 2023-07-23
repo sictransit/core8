@@ -54,7 +54,7 @@ namespace Core8.Peripherals.Floppy
 
         public void SetState(StateBase state)
         {
-            Log.Debug($"Controller state transition: {currentState} -> {state}");
+            //Log.Debug($"Controller state transition: {currentState} -> {state}");
 
             currentState = state;
         }
@@ -86,7 +86,7 @@ namespace Core8.Peripherals.Floppy
             {
                 if (disk.Tracks.TryGetValue(TA.Content, out var track))
                 {
-                    Log.Debug($"Found: {track}");
+                    //Log.Debug($"Found: {track}");
 
                     if (!track.Sectors.TryGetValue(SA.Content, out sector))
                     {
@@ -123,7 +123,7 @@ namespace Core8.Peripherals.Floppy
 
             if (TryRetrieveSector(out var sector))
             {
-                Log.Debug($"Found: {sector}");
+                //Log.Debug($"Found: {sector}");
 
                 Buffer = sector.Data.Pack(Buffer.Length).ToArray();
             }
@@ -142,7 +142,7 @@ namespace Core8.Peripherals.Floppy
 
             if (TryRetrieveSector(out var sector))
             {
-                Log.Debug($"Found: {sector}");
+                //Log.Debug($"Found: {sector}");
 
                 sector.Data = Buffer.Unpack(96, sector.Data.Length).ToArray();
             }

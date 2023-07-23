@@ -27,7 +27,7 @@ namespace Core8
 
             Log.Logger = new LoggerConfiguration()
                 .WriteTo.Console(Serilog.Events.LogEventLevel.Information)
-                .WriteTo.File(logFilename, Serilog.Events.LogEventLevel.Debug)
+                .WriteTo.File(logFilename, Serilog.Events.LogEventLevel.Debug, "{Message:lj}{NewLine}")
                 .MinimumLevel.ControlledBy(LoggingLevel)
                 .CreateLogger();
 

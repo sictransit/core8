@@ -23,7 +23,7 @@ namespace Core8.Model.Registers
 
         public void ClearAccumulator() => Content &= 0b_1_000_000_000_000;
 
-        public void ClearLink() => Content &= 0b_0_111_111_111_111;
+        public void ClearLink() => Content = Accumulator;
 
         public void SetAccumulator(int value) => Content = (Content & 0b_1_000_000_000_000) | (value & 0b_0_111_111_111_111);
 
