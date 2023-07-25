@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Threading;
 
 namespace Core8.Core
 {
@@ -41,6 +42,8 @@ namespace Core8.Core
         private bool debug;
 
         private readonly List<Func<ICPU, bool>> breakpoints = new();
+
+        private (int address,int data) waitingLoopCap;
 
         public CPU(ITeletype teletype, IFloppyDrive floppy)
         {
@@ -178,7 +181,8 @@ namespace Core8.Core
         {
             var data = Memory.Read(address);
 
-            return ((data & 0b_111_000_000_000) switch
+
+            var instruction =  ((data & 0b_111_000_000_000) switch
             {
                 MCI when (data & GROUP) == 0 => group1Instructions.LoadAddress(address),
                 MCI when (data & GROUP_3) == GROUP_3 => group3Instructions,
@@ -192,6 +196,21 @@ namespace Core8.Core
                 IOT => privilegedNoOperationInstruction,
                 _ => memoryReferenceInstructions.LoadAddress(address),
             }).LoadData(data);
+
+            if (debug && (address % 2 == 0)) // To avoid looping over e.g. SDN/JMS as fast as the host CPU can manage.
+            {
+                if (waitingLoopCap == (address, data))
+                {
+                    Thread.Sleep(10);
+                }
+                else
+                {
+                    waitingLoopCap = (address, data);                    
+                }
+            }
+
+            return instruction;
+
         }
     }
 }
