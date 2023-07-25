@@ -1,25 +1,61 @@
 ﻿using Core8.Extensions;
 using Core8.Model;
+using Core8.Model.Instructions;
 using Core8.Model.Interfaces;
 using Serilog;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 
 namespace Core8.Core
 {
     public class CPU : ICPU
     {
+        private readonly Group1Instructions group1Instructions;
+        private readonly Group2ANDInstructions group2AndInstructions;
+        private readonly Group2ORInstructions group2OrInstructions;
+        private readonly Group3Instructions group3Instructions;
+        private readonly MemoryReferenceInstructions memoryReferenceInstructions;
+        private readonly MemoryManagementInstructions memoryManagementInstructions;
+        private readonly KeyboardInstructions keyboardInstructions;
+        private readonly TeleprinterInstructions teleprinterInstructions;
+        private readonly InterruptInstructions interruptInstructions;
+        private readonly PrivilegedNoOperationInstruction privilegedNoOperationInstruction;
+        private readonly FloppyDriveInstructions floppyDriveInstructions;
+
+        private const int IOT = 0b_110_000_000_000;
+        private const int MCI = 0b_111_000_000_000;
+        private const int IO = 0b_000_111_111_000;
+        private const int GROUP = 0b_000_100_000_000;
+        private const int GROUP_3 = 0b_111_100_000_001;
+        private const int GROUP_2_AND = 0b_111_100_001_000;
+        private const int FLOPPY = 0b_000_111_000_000;
+        private const int MEMORY_MANAGEMENT = 0b_110_010_000_000;
+        private const int INTERRUPT_MASK = 0b_000_111_111_000;
+
         private volatile bool running;
 
         private bool singleStep;
 
         private bool debug;
 
-        private readonly HashSet<int> breakpoints = new();
+        private readonly List<Func<ICPU, bool>> breakpoints = new();
 
         public CPU(ITeletype teletype, IFloppyDrive floppy)
         {
+            group1Instructions = new Group1Instructions(this);
+            group2AndInstructions = new Group2ANDInstructions(this);
+            group2OrInstructions = new Group2ORInstructions(this);
+            group3Instructions = new Group3Instructions(this);
+            memoryReferenceInstructions = new MemoryReferenceInstructions(this);
+            memoryManagementInstructions = new MemoryManagementInstructions(this);
+            keyboardInstructions = new KeyboardInstructions(this);
+            teleprinterInstructions = new TeleprinterInstructions(this);
+            interruptInstructions = new InterruptInstructions(this);
+            privilegedNoOperationInstruction = new PrivilegedNoOperationInstruction(this);
+            floppyDriveInstructions = new FloppyDriveInstructions(this);
+
             Teletype = teletype ?? throw new ArgumentNullException(nameof(teletype));
 
             Memory = new Memory();
@@ -28,14 +64,10 @@ namespace Core8.Core
 
             Interrupts = new Interrupts(this);
 
-            InstructionSet = new InstructionSet(this);
-
             Registry = new Registry();
         }
 
         public IRegistry Registry { get; }
-
-        public IInstructionSet InstructionSet { get; }
 
         public IInterrupts Interrupts { get; }
 
@@ -44,6 +76,8 @@ namespace Core8.Core
         public IFloppyDrive FloppyDrive { get; }
 
         public IMemory Memory { get; }
+
+        public int InstructionCounter { get; private set; }
 
         public void Clear()
         {
@@ -65,20 +99,18 @@ namespace Core8.Core
 
             Log.Information($"CONT @ {Registry.PC} (dbg: {debug})");
 
-            string interrupts = null;
-            string floppy = null;
-            string lac = null;
+            InstructionCounter = 0;
 
             try
             {
                 while (running)
                 {
+                    InstructionCounter++;
+
                     if (debug)
                     {
-                        if (breakpoints.Contains(Registry.PC.Content))
+                        if (breakpoints.Any(b => b(this)) || singleStep)
                         {
-                            Log.Information("Breakpoint hit!");
-
                             if (Debugger.IsAttached)
                             {
                                 Debugger.Break();
@@ -87,11 +119,6 @@ namespace Core8.Core
                             {
                                 break;
                             }
-                        }
-
-                        if (singleStep)
-                        {
-                            break;
                         }
                     }
 
@@ -102,35 +129,14 @@ namespace Core8.Core
 
                     var instruction = Fetch(Registry.PC.Content);
 
+                    if (debug)
+                    {
+                        Log.Debug($"{Registry.PC.IF}{Registry.PC.Address.ToOctalString(4)}  {Registry.AC.Link} {Registry.AC.Accumulator.ToOctalString()}  {Registry.MQ.Content.ToOctalString()}  {instruction}");
+                    }
+
                     Registry.PC.Increment();
 
                     instruction.Execute();
-
-                    if (debug)
-                    {
-                        Log.Debug(instruction.ToString());
-
-                        var f = FloppyDrive?.ToString();
-                        if (f != floppy)
-                        {
-                            floppy = f;
-                            Log.Information(floppy);
-                        }
-
-                        var i = Interrupts.ToString();
-                        if (i != interrupts)
-                        {
-                            interrupts = i;
-                            Log.Information(interrupts);
-                        }
-
-                        var a = Registry.AC.ToString();
-                        if (a != lac)
-                        {
-                            lac = a;
-                            Log.Debug(lac);
-                        }
-                    }
                 }
             }
             catch (Exception ex)
@@ -149,40 +155,11 @@ namespace Core8.Core
             }
         }
 
-        public IInstruction Debug8(int address)
+        public void SetBreakpoint(Func<ICPU, bool> breakpoint)
         {
-            return Debug10(address.ToDecimal());
-        }
+            breakpoints.Add(breakpoint);
 
-        public IInstruction Debug10(int address)
-        {
-            return Fetch(address);
-        }
-
-        private IInstruction Fetch(int address)
-        {
-            var data = Memory.Read(address);
-
-            return InstructionSet.Decode(data).Load(address, data);
-        }
-
-        public void SetBreakpoint(int address)
-        {
-            Log.Information($"Breakpoint set @ {address.ToOctalString(5)}");
-
-            breakpoints.Add(address);
-
-            debug = true;
-        }
-
-        public void RemoveBreakpoint(int address)
-        {
-            breakpoints.Remove(address);
-        }
-
-        public void RemoveAllBreakpoints()
-        {
-            breakpoints.Clear();
+            Debug(true);
         }
 
         public void Debug(bool state)
@@ -193,7 +170,28 @@ namespace Core8.Core
         public void SingleStep(bool state)
         {
             singleStep = state;
-            debug |= state;
+
+            Debug(state || breakpoints.Any());
+        }
+
+        public IInstruction Fetch(int address)
+        {
+            var data = Memory.Read(address);
+
+            return ((data & 0b_111_000_000_000) switch
+            {
+                MCI when (data & GROUP) == 0 => group1Instructions.LoadAddress(address),
+                MCI when (data & GROUP_3) == GROUP_3 => group3Instructions,
+                MCI when (data & GROUP_2_AND) == GROUP_2_AND => group2AndInstructions,
+                MCI => group2OrInstructions,
+                IOT when (data & FLOPPY) == FLOPPY => floppyDriveInstructions,
+                IOT when (data & MEMORY_MANAGEMENT) == MEMORY_MANAGEMENT => memoryManagementInstructions,
+                IOT when (data & INTERRUPT_MASK) == 0 => interruptInstructions,
+                IOT when (data & IO) >> 3 == 3 => keyboardInstructions,
+                IOT when (data & IO) >> 3 == 4 => teleprinterInstructions,
+                IOT => privilegedNoOperationInstruction,
+                _ => memoryReferenceInstructions.LoadAddress(address),
+            }).LoadData(data);
         }
     }
 }

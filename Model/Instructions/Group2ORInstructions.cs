@@ -1,10 +1,11 @@
 ﻿using Core8.Model.Instructions.Abstract;
 using Core8.Model.Interfaces;
 using System;
+using System.Linq;
 
 namespace Core8.Model.Instructions
 {
-    internal class Group2ORInstructions : Group2InstructionsBase
+    public class Group2ORInstructions : Group2InstructionsBase
     {
         private const int CLA_MASK = 1 << 7;
         private const int SMA_MASK = 1 << 6;
@@ -18,7 +19,7 @@ namespace Core8.Model.Instructions
         protected override string OpCodeText =>
             (Data & 0b_000_011_111_000) == 0
             ? base.OpCodeText
-            : string.Join(' ', ((Group2OROpCodes)(Data & 0b_000_011_111_000)).ToString(), base.OpCodeText);
+            : string.Join(' ', new[] { ((Group2OROpCodes)(Data & 0b_000_011_111_000)).ToString(), base.OpCodeText }.Where(s => !string.IsNullOrEmpty(s)));
 
         public override void Execute()
         {

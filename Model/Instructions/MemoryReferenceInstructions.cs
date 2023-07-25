@@ -6,7 +6,7 @@ using System.Linq;
 
 namespace Core8.Model.Instructions
 {
-    internal class MemoryReferenceInstructions : InstructionsBase
+    public class MemoryReferenceInstructions : MemoryInstructionsBase
     {
         private const int AND_MASK = 0b_000 << 9;
         private const int TAD_MASK = 0b_001 << 9;
@@ -18,12 +18,50 @@ namespace Core8.Model.Instructions
         private const int ZERO = 1 << 7;
         private const int INDIRECT = 1 << 8;
 
+        private int operand;
+        private string operandContent;
+
         public MemoryReferenceInstructions(ICPU cpu) : base(cpu)
         {
 
         }
 
-        protected override string OpCodeText => string.Join(" ", new[] { ((MemoryReferenceOpCode)(Data & 0b_111_000_000_000)).ToString(), Indirect ? "I" : null, Zero ? "Z" : null }.Where(x => !string.IsNullOrEmpty(x)));
+        public override IInstruction LoadData(int data)
+        {
+            var instruction = base.LoadData(data);
+
+            if (Branching)
+            {
+                if (Interrupts.Inhibited)
+                {
+                    Interrupts.Allow();
+
+                    PC.SetIF(IB.Content);
+                    UF.Set(UB.Content);
+                }
+
+                operand = Indirect ? Field | Memory.Read(Location, true) : (PC.IF << 12) | (Location & 0b_111_111_111_111);
+            }
+            else
+            {
+                operand = Indirect ? (DF.Content << 12) | Memory.Read(Location, true) : Location;
+            }
+
+            return instruction;
+        }
+
+        protected override string OpCodeText
+        {
+            get
+            {
+                MemoryReferenceOpCode opCode = (MemoryReferenceOpCode)(Data & 0b_111_000_000_000);
+                var indirect = Indirect ? "I" : null;
+                var location = Location.ToOctalString(0);
+                var operandContent = Branching ? null : $" [{Memory.Read(operand).ToOctalString()}]";
+
+                return string.Join(" ", new[] { opCode.ToString(), indirect, location, operandContent }.Where(x => !string.IsNullOrWhiteSpace(x)));
+            }
+        }
 
         private bool Indirect => (Data & INDIRECT) != 0;
 
@@ -31,108 +69,40 @@ namespace Core8.Model.Instructions
 
         private int Location => Field | (Zero ? Word : Page | Word);
 
-        private IMemory Memory => CPU.Memory;
+        private bool Branching => (Data & JMS_MASK) != 0;
+
+        protected override string ExtendedAddress => operand.ToOctalString(5);
 
         public override void Execute()
         {
-            if ((Data & JMS_MASK) != 0)
-            {
-                ExecuteBranching();
-            }
-            else
-            {
-                ExecuteNonBranching();
-            }
-        }
-
-        private void ExecuteBranching()
-        {
-            if (Interrupts.Inhibited)
-            {
-                Interrupts.Allow();
-
-                PC.SetIF(IB.Content);
-                UF.Set(UB.Content);
-            }
-
-            var operand = Indirect ? Field | Memory.Read(Location, true) : Location;
-
             switch (Data & 0b_111_000_000_000)
             {
                 case JMS_MASK:
-                    JMS(operand);
+                    Memory.Write(operand, PC.Address);
+                    PC.Jump(operand + 1);
                     break;
                 case JMP_MASK:
-                    JMP(operand);
+                    PC.Jump(operand);
                     break;
-                default:
-                    throw new NotImplementedException();
-            }
-        }
-
-        private void ExecuteNonBranching()
-        {
-            var operand = Indirect ? (DF.Content << 12) | Memory.Read(Location, true) : Location;
-
-            switch (Data & 0b_111_000_000_000)
-            {
                 case AND_MASK:
-                    AND(operand);
+                    AC.ANDAccumulator(Memory.Read(operand));
                     break;
                 case TAD_MASK:
-                    TAD(operand);
+                    AC.AddWithCarry(Memory.Read(operand));
                     break;
                 case ISZ_MASK:
-                    ISZ(operand);
+                    if (Memory.Write(operand, Memory.Read(operand) + 1) == 0)
+                    {
+                        PC.Increment();
+                    }
                     break;
                 case DCA_MASK:
-                    DCA(operand);
+                    Memory.Write(operand, AC.Accumulator);
+                    AC.ClearAccumulator();
                     break;
                 default:
                     throw new NotImplementedException();
             }
-        }
-
-        private void AND(int operand)
-        {
-            AC.ANDAccumulator(Memory.Read(operand));
-        }
-
-        private void DCA(int operand)
-        {
-            Memory.Write(operand, AC.Accumulator);
-
-            AC.ClearAccumulator();
-        }
-
-        private void ISZ(int operand)
-        {
-            if (Memory.Write(operand, Memory.Read(operand) + 1) == 0)
-            {
-                PC.Increment();
-            }
-        }
-
-        private void JMP(int operand)
-        {
-            PC.Jump(operand);
-        }
-
-        private void JMS(int operand)
-        {
-            Memory.Write(operand, PC.Address);
-
-            PC.Jump(operand + 1);
-        }
-
-        private void TAD(int operand)
-        {
-            AC.AddWithCarry(Memory.Read(operand));
-        }
-
-        public override string ToString()
-        {
-            return $"{base.ToString()} ({Location.ToOctalString()})";
         }
 
         private enum MemoryReferenceOpCode

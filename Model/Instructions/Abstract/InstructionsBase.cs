@@ -1,29 +1,22 @@
-﻿using Core8.Extensions;
-using Core8.Model.Interfaces;
+﻿using Core8.Model.Interfaces;
 using Core8.Model.Registers;
 
 namespace Core8.Model.Instructions.Abstract
 {
-    internal abstract class InstructionsBase : IInstruction
+    public abstract class InstructionsBase : IInstruction
     {
         protected InstructionsBase(ICPU cpu)
         {
             CPU = cpu;
         }
 
-        private int Address { get; set; }
-
-        protected int Data { get; private set; }
+        public int Data { get; private set; }
 
         public abstract void Execute();
 
+        protected virtual string ExtendedAddress => "     ";
+
         protected abstract string OpCodeText { get; }
-
-        protected int Word => Data & 0b_000_001_111_111;
-
-        protected int Page => Address & 0b_111_110_000_000;
-
-        protected int Field => Address & 0b_111_000_000_000_000;
 
         protected ICPU CPU { get; }
 
@@ -49,9 +42,8 @@ namespace Core8.Model.Instructions.Abstract
 
         protected SaveField SF => Registry.SF;
 
-        public IInstruction Load(int address, int data)
+        public virtual IInstruction LoadData(int data)
         {
-            Address = address;
             Data = data;
 
             return this;
@@ -59,7 +51,7 @@ namespace Core8.Model.Instructions.Abstract
 
         public override string ToString()
         {
-            return $"{Address.ToOctalString(5)}:{Data.ToOctalString()} {OpCodeText}";
+            return $"{ExtendedAddress}  {OpCodeText}";
         }
     }
 }

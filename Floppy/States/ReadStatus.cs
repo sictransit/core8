@@ -1,6 +1,5 @@
 ﻿using Core8.Peripherals.Floppy.Interfaces;
 using Core8.Peripherals.Floppy.States.Abstract;
-using System;
 
 namespace Core8.Peripherals.Floppy.States
 {
@@ -11,7 +10,7 @@ namespace Core8.Peripherals.Floppy.States
 
         }
 
-        protected override TimeSpan MinExecutionTime => TimeSpan.FromMilliseconds(250);
+        //protected override TimeSpan MinExecutionTime => TimeSpan.FromMilliseconds(250);
 
         protected override bool FinalizeState()
         {

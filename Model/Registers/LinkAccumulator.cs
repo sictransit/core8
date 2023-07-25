@@ -13,15 +13,9 @@ namespace Core8.Model.Registers
 
         public void ByteSwap() => Content = (Content & 0b_1_000_000_000_000) | ((Content & 0b_0_111_111_000_000) >> 6) | ((Content & 0b_0_000_000_111_111) << 6);
 
-        public void RAR()
-        {
-            Content = ((Content >> 1) & 0b_0_111_111_111_111) | ((Content << 12) & 0b_1_000_000_000_000);
-        }
+        public void RAR() => Content = ((Content >> 1) & 0b_0_111_111_111_111) | ((Content << 12) & 0b_1_000_000_000_000);
 
-        public void RAL()
-        {
-            Content = ((Content << 1) & 0b_1_111_111_111_111) | ((Content >> 12) & 0b_001);
-        }
+        public void RAL() => Content = ((Content << 1) & 0b_1_111_111_111_111) | ((Content >> 12) & 0b_001);
 
         public void ComplementLink() => Content ^= 0b_1_000_000_000_000;
 
@@ -29,7 +23,7 @@ namespace Core8.Model.Registers
 
         public void ClearAccumulator() => Content &= 0b_1_000_000_000_000;
 
-        public void ClearLink() => Content &= 0b_0_111_111_111_111;
+        public void ClearLink() => Content = Accumulator;
 
         public void SetAccumulator(int value) => Content = (Content & 0b_1_000_000_000_000) | (value & 0b_0_111_111_111_111);
 
@@ -37,7 +31,7 @@ namespace Core8.Model.Registers
 
         public void ANDAccumulator(int value) => Content &= 0b_1_000_000_000_000 | (Content & value);
 
-        public void SetLink(int value) => Content = ((value & 0b_001) << 12) | (Content & 0b_0_111_111_111_111);
+        public void SetLink(int value) => Content = ((value & 0b_001) << 12) | Accumulator;
 
         public void AddWithCarry(int value) => Content = (Content + value) & 0b_1_111_111_111_111;
 

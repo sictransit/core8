@@ -168,15 +168,13 @@ namespace Core8.Core
 
             for (var address = 0; address < CPU.Memory.Size; address++)
             {
-                var data = CPU.Memory.Read(address);
+                var instruction = CPU.Fetch(address);
 
-                var instruction = CPU.InstructionSet.Decode(data);
-
-                if (data != 0)
+                if (instruction.Data != 0)
                 {
                     PrintZeroSpan();
 
-                    sb.AppendLine(instruction.ToString());
+                    sb.AppendLine($"{address.ToOctalString(5)} {instruction}");
 
                     zeroAddress = 0;
                     zeroSet = false;
@@ -189,7 +187,7 @@ namespace Core8.Core
                     }
                     else
                     {
-                        sb.AppendLine(instruction.ToString());
+                        sb.AppendLine($"{address.ToOctalString(5)} {instruction}");
 
                         zeroSet = true;
                     }
@@ -260,17 +258,7 @@ namespace Core8.Core
 
         public void SetBreakpoint8(int address)
         {
-            CPU.SetBreakpoint(address.ToDecimal());
-        }
-
-        public void RemoveBreakpoint8(int address)
-        {
-            CPU.RemoveBreakpoint(address.ToDecimal());
-        }
-
-        public void RemoveAllBreakpoints()
-        {
-            CPU.RemoveAllBreakpoints();
+            CPU.SetBreakpoint(cpu => cpu.Registry.PC.Address == address);
         }
 
         public void Exam()

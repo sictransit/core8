@@ -4,7 +4,7 @@ using Serilog;
 
 namespace Core8.Model.Instructions
 {
-    internal class PrivilegedNoOperationInstruction : PrivilegedInstructionsBase
+    public class PrivilegedNoOperationInstruction : PrivilegedInstructionsBase
     {
         public PrivilegedNoOperationInstruction(ICPU cpu) : base(cpu)
         {

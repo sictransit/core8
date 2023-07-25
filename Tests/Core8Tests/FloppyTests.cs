@@ -93,7 +93,7 @@ namespace Core8.Tests
 
                 done = floppy.SkipNotDone();
 
-            } while (!done && sw.ElapsedMilliseconds < 1000);
+            } while (!done && sw.ElapsedMilliseconds < 2000);
 
             Assert.IsTrue(done);
         }

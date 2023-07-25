@@ -2,7 +2,7 @@
 
 namespace Core8.Model.Instructions.Abstract
 {
-    internal abstract class PrivilegedInstructionsBase : InstructionsBase
+    public abstract class PrivilegedInstructionsBase : InstructionsBase
     {
         protected PrivilegedInstructionsBase(ICPU cpu) : base(cpu)
         {

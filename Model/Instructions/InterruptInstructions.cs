@@ -4,7 +4,7 @@ using System;
 
 namespace Core8.Model.Instructions
 {
-    internal class InterruptInstructions : PrivilegedInstructionsBase
+    public class InterruptInstructions : PrivilegedInstructionsBase
     {
         private const int SKON_MASK = 0b_000;
         private const int ION_MASK = 0b_001;

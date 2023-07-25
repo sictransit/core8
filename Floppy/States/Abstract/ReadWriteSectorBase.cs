@@ -1,5 +1,4 @@
 ﻿using Core8.Peripherals.Floppy.Interfaces;
-using System;
 
 namespace Core8.Peripherals.Floppy.States.Abstract
 {
@@ -16,7 +15,7 @@ namespace Core8.Peripherals.Floppy.States.Abstract
             Controller.SetTransferRequest(true);
         }
 
-        protected override TimeSpan MinExecutionTime => TimeSpan.FromMilliseconds(262);
+        //protected override TimeSpan MinExecutionTime => TimeSpan.FromMilliseconds(262);
 
         protected override int TransferData(int acc)
         {

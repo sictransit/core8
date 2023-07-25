@@ -4,16 +4,21 @@ namespace Core8.Core
 {
     public class Memory : IMemory
     {
-        private readonly int[] ram;
+        private int[] ram;
 
         public Memory(int fields = 8)
         {
             Size = fields * 4096;
 
-            ram = new int[Size];
+            Clear();
         }
 
         public int Size { get; }
+
+        public void Clear()
+        {
+            ram = new int[Size];
+        }
 
         public int Read(int address, bool indirect = false)
         {
@@ -22,7 +27,10 @@ namespace Core8.Core
                 return Write(address, ram[address] + 1);
             }
 
-            //Log.Debug($"[MR] {address.ToOctalString()}:{ram[address].ToOctalString()}");
+            //if (Log.IsEnabled(Serilog.Events.LogEventLevel.Debug))
+            //{
+            //    Log.Debug($"[MR] {address.ToOctalString()}:{ram[address].ToOctalString()}");
+            //}
 
             return ram[address];
         }
@@ -33,7 +41,10 @@ namespace Core8.Core
 
             ram[address] = value;
 
-            //Log.Debug($"[MW] {address.ToOctalString()}:{value.ToOctalString()}");
+            //if (Log.IsEnabled(Serilog.Events.LogEventLevel.Debug))
+            //{
+            //    Log.Debug($"[MW] {address.ToOctalString()}:{value.ToOctalString()}");
+            //}
 
             return value;
         }
