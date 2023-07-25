@@ -6,7 +6,7 @@ using System.Linq;
 
 namespace Core8.Model.Instructions
 {
-    public class MemoryReferenceInstructions : InstructionsBase
+    public class MemoryReferenceInstructions : MemoryInstructionsBase
     {
         private const int AND_MASK = 0b_000 << 9;
         private const int TAD_MASK = 0b_001 << 9;
@@ -26,37 +26,48 @@ namespace Core8.Model.Instructions
 
         }
 
-        public override IInstruction Load(int address, int data)
+        public override IInstruction LoadData(int data)
         {
-            var instruction = base.Load(address, data);
+            var instruction = base.LoadData(data);
 
-            if (Branching && Interrupts.Inhibited)
+            if (Branching)
             {
-                Interrupts.Allow();
+                if (Interrupts.Inhibited)
+                {
+                    Interrupts.Allow();
 
-                PC.SetIF(IB.Content);
-                UF.Set(UB.Content);
+                    PC.SetIF(IB.Content);
+                    UF.Set(UB.Content);
+                }
+
+                operand = Indirect ? Field | Memory.Read(Location, true) : (PC.IF << 12) | (Location & 0b_111_111_111_111);
             }
-
-            operand = Branching
-                ? Indirect ? Field | Memory.Read(Location, true) : (PC.IF << 12) | (Zero ? Word : Page | Word)
-                : Indirect ? (DF.Content << 12) | Memory.Read(Location, true) : Location;
-
-            // TODO: Not a good idea to populate this all the time.
-            operandContent = Branching ? null : $" [{Memory.Read(operand).ToOctalString()}]";
+            else
+            {
+                operand = Indirect ? (DF.Content << 12) | Memory.Read(Location, true) : Location;
+            }
 
             return instruction;
         }
 
-        protected override string OpCodeText => string.Join(" ", new[] { ((MemoryReferenceOpCode)(Data & 0b_111_000_000_000)).ToString(), Indirect ? "I" : null, Location.ToOctalString(0) , operandContent }.Where(x => !string.IsNullOrWhiteSpace(x)));
+        protected override string OpCodeText
+        {
+            get
+            {
+                MemoryReferenceOpCode opCode = (MemoryReferenceOpCode)(Data & 0b_111_000_000_000);
+                var indirect = Indirect ? "I" : null;
+                var location = Location.ToOctalString(0);
+                var operandContent = Branching ? null : $" [{Memory.Read(operand).ToOctalString()}]";
+
+                return string.Join(" ", new[] { opCode.ToString(), indirect, location, operandContent }.Where(x => !string.IsNullOrWhiteSpace(x)));
+            }
+        }
 
         private bool Indirect => (Data & INDIRECT) != 0;
 
         private bool Zero => (Data & ZERO) == 0;
 
         private int Location => Field | (Zero ? Word : Page | Word);
-
-        private IMemory Memory => CPU.Memory;
 
         private bool Branching => (Data & JMS_MASK) != 0;
 

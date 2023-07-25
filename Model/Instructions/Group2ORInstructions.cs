@@ -19,7 +19,7 @@ namespace Core8.Model.Instructions
         protected override string OpCodeText =>
             (Data & 0b_000_011_111_000) == 0
             ? base.OpCodeText
-            : string.Join(' ', new[] { ((Group2OROpCodes)(Data & 0b_000_011_111_000)).ToString(), base.OpCodeText }.Where(s=>!string.IsNullOrEmpty(s)));
+            : string.Join(' ', new[] { ((Group2OROpCodes)(Data & 0b_000_011_111_000)).ToString(), base.OpCodeText }.Where(s => !string.IsNullOrEmpty(s)));
 
         public override void Execute()
         {

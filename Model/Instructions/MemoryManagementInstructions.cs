@@ -28,9 +28,9 @@ namespace Core8.Model.Instructions
 
         }
 
-        public override IInstruction Load(int address, int data)
+        public override IInstruction LoadData(int data)
         {
-            var instruction = base.Load(address, data);
+            var instruction = base.LoadData(data);
 
             // TODO: Not a good idea to populate this all the time.
             dataFieldDebug = !IsReadInstruction ? ((Data >> 3) & 0b_111).ToOctalString(0) : string.Empty;

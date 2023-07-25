@@ -194,9 +194,9 @@ namespace Core8.Core
         {
             var data = Memory.Read(address);
 
-            IInstruction instruction = (data & 0b_111_000_000_000) switch
+            return ((data & 0b_111_000_000_000) switch
             {
-                MCI when (data & GROUP) == 0 => group1Instructions,
+                MCI when (data & GROUP) == 0 => group1Instructions.LoadAddress(address),
                 MCI when (data & GROUP_3) == GROUP_3 => group3Instructions,
                 MCI when (data & GROUP_2_AND) == GROUP_2_AND => group2AndInstructions,
                 MCI => group2OrInstructions,
@@ -206,10 +206,8 @@ namespace Core8.Core
                 IOT when (data & IO) >> 3 == 3 => keyboardInstructions,
                 IOT when (data & IO) >> 3 == 4 => teleprinterInstructions,
                 IOT => privilegedNoOperationInstruction,
-                _ => memoryReferenceInstructions,
-            };
-
-            return instruction.Load(address, data);
+                _ => memoryReferenceInstructions.LoadAddress(address),
+            }).LoadData(data);
         }
     }
 }

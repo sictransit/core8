@@ -4,7 +4,7 @@ using System;
 
 namespace Core8.Model.Instructions
 {
-    public class Group1Instructions : InstructionsBase
+    public class Group1Instructions : MemoryInstructionsBase
     {
         private const int IAC_MASK = 1 << 0;
         private const int BSW_MASK = 1 << 1;

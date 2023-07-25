@@ -1,5 +1,4 @@
-﻿using Core8.Extensions;
-using Core8.Model.Interfaces;
+﻿using Core8.Model.Interfaces;
 using Core8.Model.Registers;
 
 namespace Core8.Model.Instructions.Abstract
@@ -11,8 +10,6 @@ namespace Core8.Model.Instructions.Abstract
             CPU = cpu;
         }
 
-        private int Address { get; set; }
-
         public int Data { get; private set; }
 
         public abstract void Execute();
@@ -20,12 +17,6 @@ namespace Core8.Model.Instructions.Abstract
         protected virtual string ExtendedAddress => "     ";
 
         protected abstract string OpCodeText { get; }
-
-        protected int Word => Data & 0b_000_001_111_111;
-
-        protected int Page => Address & 0b_111_110_000_000;
-
-        protected int Field => Address & 0b_111_000_000_000_000;
 
         protected ICPU CPU { get; }
 
@@ -51,9 +42,8 @@ namespace Core8.Model.Instructions.Abstract
 
         protected SaveField SF => Registry.SF;
 
-        public virtual IInstruction Load(int address, int data)
+        public virtual IInstruction LoadData(int data)
         {
-            Address = address;
             Data = data;
 
             return this;
