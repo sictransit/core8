@@ -39,7 +39,7 @@ namespace Core8.Model.Instructions
             }
 
             operand = Branching
-                ? Indirect ? Field | Memory.Read(Location, true) : Location
+                ? Indirect ? Field | Memory.Read(Location, true) : (PC.IF << 12) | (Zero ? Word : Page | Word)
                 : Indirect ? (DF.Content << 12) | Memory.Read(Location, true) : Location;
 
             // TODO: Not a good idea to populate this all the time.

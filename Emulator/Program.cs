@@ -264,8 +264,8 @@ namespace Core8
             LoggingLevel.MinimumLevel = Serilog.Events.LogEventLevel.Debug;
 
             //pdp.CPU.SetBreakpoint(cpu => cpu.Registry.PC.Address == 07713.ToDecimal()); // CIF CDF 0
-            pdp.CPU.SetBreakpoint(cpu => cpu.Registry.PC.Address == 01207.ToDecimal()); // KSF
-            pdp.CPU.SetBreakpoint(cpu => cpu.InstructionCounter == 20000); 
+            //pdp.CPU.SetBreakpoint(cpu => cpu.Registry.PC.Address == 01207.ToDecimal()); // KSF
+            //pdp.CPU.SetBreakpoint(cpu => cpu.InstructionCounter == 20000); 
 
             pdp.Continue(false);
 
