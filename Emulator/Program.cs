@@ -201,6 +201,8 @@ namespace Core8
 
             pdp.Load8(0022);
 
+            pdp.DumpMemory();
+
             pdp.LoadFloppy(0, File.ReadAllBytes(@"disks\os8_rx.rx01"));
 
             pdp.Clear();

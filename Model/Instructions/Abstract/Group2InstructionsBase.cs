@@ -14,7 +14,7 @@ namespace Core8.Model.Instructions.Abstract
 
         protected override string OpCodeText =>
             (Data & 0b_000_000_000_110) != 0
-            ? ((Group2PrivilegedOpCodes)(Data & 0b_000_000_000_110)).ToString()
+            ? SplitOpCodes((Group2PrivilegedOpCodes)(Data & 0b_000_000_000_110))
             : string.Empty;
 
         public override void Execute()

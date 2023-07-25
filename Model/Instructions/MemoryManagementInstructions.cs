@@ -40,8 +40,8 @@ namespace Core8.Model.Instructions
 
         protected override string OpCodeText =>
             IsReadInstruction
-            ? ((MemoryManagementReadOpCode)(Data & 0b_111_111_111_111)).ToString()
-            : $"{(MemoryManagementChangeOpCodes)(Data & 0b_000_000_000_011)} {dataFieldDebug}";
+            ? SplitOpCodes((MemoryManagementReadOpCode)(Data & 0b_111_111_111_111))
+            : $"{SplitOpCodes((MemoryManagementChangeOpCodes)(Data & 0b_000_000_000_011))} {dataFieldDebug}";
 
         private bool IsReadInstruction => (Data & 0b_000_000_000_100) == 0b_000_000_000_100;
 

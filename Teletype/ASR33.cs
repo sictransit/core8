@@ -178,7 +178,9 @@ namespace Core8.Peripherals.Teletype
             {
                 foreach (var key in frame)
                 {
-                    reader.Enqueue(key);
+                    var uppercaseByte = Convert.ToByte(char.ToUpperInvariant(Convert.ToChar(key)));
+
+                    reader.Enqueue(uppercaseByte);
                 }
             }
 

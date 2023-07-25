@@ -1,6 +1,7 @@
 ﻿using Core8.Model.Instructions.Abstract;
 using Core8.Model.Interfaces;
 using System;
+using System.Linq;
 
 namespace Core8.Model.Instructions
 {
@@ -19,7 +20,7 @@ namespace Core8.Model.Instructions
         {
         }
 
-        protected override string OpCodeText => ((Group1OpCodes)(Data & 0b_000_011_111_111)).ToString();
+        protected override string OpCodeText => SplitOpCodes((Group1OpCodes)(Data & 0b_000_011_111_111));
 
         public override void Execute()
         {
@@ -83,11 +84,14 @@ namespace Core8.Model.Instructions
             IAC = IAC_MASK,
             BSW = BSW_MASK,
             RAL = RAL_MASK,
+            RTL = RAL_MASK | BSW_MASK,
             RAR = RAR_MASK,
+            RTR = RAR_MASK | BSW_MASK,
             CML = CML_MASK,
             CMA = CMA_MASK,
             CLL = CLL_MASK,
             CLA = CLA_MASK,
+            CIA = CMA_MASK | IAC_MASK
         }
     }
 }

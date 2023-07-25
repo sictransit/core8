@@ -19,7 +19,7 @@ namespace Core8.Model.Instructions
         protected override string OpCodeText =>
             (Data & 0b_000_011_111_000) == 0
             ? base.OpCodeText
-            : string.Join(' ', ((Group2ANDOpCodes)(Data & 0b_000_011_111_000)).ToString(), base.OpCodeText);
+            : string.Join(' ', SplitOpCodes((Group2ANDOpCodes)(Data & 0b_000_011_111_000)), base.OpCodeText);
 
         public override void Execute()
         {
@@ -58,7 +58,7 @@ namespace Core8.Model.Instructions
         {
             CLA = CLA_MASK,
             SPA = SPA_MASK,
-            SNA = SNA_MASK,
+            SNA = SNA_MASK | SKP_MASK,
             SZL = SZL_MASK,
             SKP = SKP_MASK,
         }
