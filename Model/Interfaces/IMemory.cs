@@ -7,5 +7,7 @@
         int Write(int address, int data);
 
         int Size { get; }
+
+        void Clear();
     }
 }

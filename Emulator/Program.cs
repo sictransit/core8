@@ -163,6 +163,8 @@ namespace Core8
 
         private static void FloppyDevelopment()
         {
+            pdp.CPU.Memory.Clear();
+
             //pdp.Load8(00032);
             //pdp.Deposit8(7305);
             //pdp.Deposit8(6755);
@@ -261,11 +263,9 @@ namespace Core8
 
             LoggingLevel.MinimumLevel = Serilog.Events.LogEventLevel.Debug;
 
-            //pdp.CPU.SetBreakpoint(cpu => cpu.Registry.PC.Address < 22.ToDecimal() || cpu.Registry.PC.Address > 61.ToDecimal());
-            //pdp.CPU.SetBreakpoint(cpu => cpu.Registry.PC.Address == 15.ToDecimal()); // INIT
-            pdp.CPU.SetBreakpoint(cpu => cpu.InstructionCounter == 20000); // INIT
-            //pdp.CPU.SetBreakpoint(cpu => cpu.Registry.PC.Address == 7740.ToDecimal()); // INIT
-            //pdp.CPU.SetBreakpoint(cpu => cpu.Memory.Read(15.ToDecimal())==6757.ToDecimal());
+            //pdp.CPU.SetBreakpoint(cpu => cpu.Registry.PC.Address == 07713.ToDecimal()); // CIF CDF 0
+            pdp.CPU.SetBreakpoint(cpu => cpu.Registry.PC.Address == 01207.ToDecimal()); // KSF
+            pdp.CPU.SetBreakpoint(cpu => cpu.InstructionCounter == 20000); 
 
             pdp.Continue(false);
 
