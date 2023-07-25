@@ -26,8 +26,8 @@ namespace Core8
             File.Delete(logFilename);
 
             Log.Logger = new LoggerConfiguration()
-                .WriteTo.Console(Serilog.Events.LogEventLevel.Information)
-                .WriteTo.File(logFilename, Serilog.Events.LogEventLevel.Debug, "{Message:lj}{NewLine}")
+                .WriteTo.Console(LogEventLevel.Information)
+                .WriteTo.File(logFilename, LogEventLevel.Debug, "{Message:lj}{NewLine}")
                 .MinimumLevel.ControlledBy(LoggingLevel)
                 .CreateLogger();
 
@@ -70,7 +70,7 @@ namespace Core8
                             {
                                 if (o.Debug)
                                 {
-                                    LoggingLevel.MinimumLevel = Serilog.Events.LogEventLevel.Debug;
+                                    LoggingLevel.MinimumLevel = LogEventLevel.Debug;
                                 }
 
                                 Run(o.StartingAddress, o.DumpMemory);
@@ -120,7 +120,7 @@ namespace Core8
 
         private static void FloppyTesting()
         {
-            LoggingLevel.MinimumLevel = Serilog.Events.LogEventLevel.Information;
+            LoggingLevel.MinimumLevel = LogEventLevel.Information;
 
             using var httpClient = new HttpClient();
 
@@ -165,60 +165,6 @@ namespace Core8
         {
             pdp.CPU.Memory.Clear();
 
-            //pdp.Load8(00032);
-            //pdp.Deposit8(7305);
-            //pdp.Deposit8(6755);
-            //pdp.Deposit8(5054);
-            //pdp.Deposit8(1061);
-            //pdp.Deposit8(6751);
-            //pdp.Deposit8(5047);
-            //pdp.Load8(00047);
-            //pdp.Deposit8(4053);
-            //pdp.Deposit8(3002);
-            //pdp.Deposit8(2050);
-            //pdp.Deposit8(5047);
-            //pdp.Deposit8(0000);
-            //pdp.Deposit8(6753);
-            //pdp.Deposit8(5033);
-            //pdp.Deposit8(6752);
-            //pdp.Deposit8(5453);
-            //pdp.Deposit8(7004);
-            //pdp.Deposit8(0000);
-            //pdp.Load8(00032);
-
-            //pdp.Load8(0024);
-            //pdp.Deposit8(7126);
-            //pdp.Deposit8(1060);
-            //pdp.Deposit8(6751);
-            //pdp.Deposit8(7201);
-            //pdp.Deposit8(4053);
-            //pdp.Deposit8(4053);
-            //pdp.Deposit8(7104);
-            //pdp.Deposit8(6755);
-            //pdp.Deposit8(5054);
-            //pdp.Deposit8(6754);
-            //pdp.Deposit8(7450);
-            //pdp.Deposit8(7610);
-            //pdp.Deposit8(5046);
-            //pdp.Deposit8(1060);
-            //pdp.Deposit8(7041);
-            //pdp.Deposit8(1061);
-            //pdp.Deposit8(3060);
-            //pdp.Deposit8(5024);
-            //pdp.Deposit8(6751);
-            //pdp.Deposit8(4053);
-            //pdp.Deposit8(3002);
-            //pdp.Deposit8(2050);
-            //pdp.Deposit8(5047);
-            //pdp.Deposit8(0000);
-            //pdp.Deposit8(6753);
-            //pdp.Deposit8(5033);
-            //pdp.Deposit8(6752);
-            //pdp.Deposit8(5453);
-            //pdp.Deposit8(7024);
-            //pdp.Deposit8(6030);
-            //pdp.Load8(0033);
-
             pdp.Load8(0022);
             pdp.Deposit8(06755);
             pdp.Deposit8(05022);
@@ -259,9 +205,7 @@ namespace Core8
 
             pdp.Clear();
 
-            //pdp.DumpMemory();
-
-            LoggingLevel.MinimumLevel = Serilog.Events.LogEventLevel.Debug;
+            LoggingLevel.MinimumLevel = LogEventLevel.Debug;
 
             //pdp.CPU.SetBreakpoint(cpu => cpu.Registry.PC.Address == 07713.ToDecimal()); // CIF CDF 0
             //pdp.CPU.SetBreakpoint(cpu => cpu.Registry.PC.Address == 01207.ToDecimal()); // KSF

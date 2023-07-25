@@ -99,9 +99,6 @@ namespace Core8.Core
 
             Log.Information($"CONT @ {Registry.PC} (dbg: {debug})");
 
-            string interrupts = null;
-            string floppy = null;
-
             InstructionCounter = 0;
 
             try
@@ -135,20 +132,6 @@ namespace Core8.Core
                     if (debug)
                     {
                         Log.Debug($"{Registry.PC.IF}{Registry.PC.Address.ToOctalString(4)}  {Registry.AC.Link} {Registry.AC.Accumulator.ToOctalString()}  {Registry.MQ.Content.ToOctalString()}  {instruction}");
-
-                        //var f = FloppyDrive?.ToString();
-                        //if (f != floppy)
-                        //{
-                        //    floppy = f;
-                        //    Log.Information(floppy);
-                        //}
-
-                        //var i = Interrupts.ToString();
-                        //if (i != interrupts)
-                        //{
-                        //    interrupts = i;
-                        //    Log.Information(interrupts);
-                        //}
                     }
 
                     Registry.PC.Increment();
@@ -187,7 +170,8 @@ namespace Core8.Core
         public void SingleStep(bool state)
         {
             singleStep = state;
-            debug |= state;
+
+            Debug(state || breakpoints.Any());
         }
 
         public IInstruction Fetch(int address)
