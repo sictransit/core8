@@ -41,6 +41,7 @@ namespace Core8.Core
 
         private bool debug;
 
+        // TODO: Create class, include hit count. How to break on instruction and then continue e.g. 1000 more?
         private readonly List<Func<ICPU, bool>> breakpoints = new();
 
         private (int address,int data) waitingLoopCap;
@@ -98,6 +99,9 @@ namespace Core8.Core
 
         public void Run()
         {
+            var debugPC = 0;
+            var debugIF = 0;            
+
             running = true;
 
             Log.Information($"CONT @ {Registry.PC} (dbg: {debug})");
@@ -130,11 +134,17 @@ namespace Core8.Core
 
                     Interrupts.Interrupt();
 
+                    if (debug)
+                    {
+                        debugPC = Registry.PC.Address;
+                        debugIF = Registry.PC.IF;
+                    }
+
                     var instruction = Fetch(Registry.PC.Content);
 
                     if (debug)
                     {
-                        Log.Debug($"{Registry.PC.IF}{Registry.PC.Address.ToOctalString(4)}  {Registry.AC.Link} {Registry.AC.Accumulator.ToOctalString()}  {Registry.MQ.Content.ToOctalString()}  {instruction}");
+                        Log.Debug($"{debugIF}{debugPC.ToOctalString(4)}  {Registry.AC.Link} {Registry.AC.Accumulator.ToOctalString()}  {Registry.MQ.Content.ToOctalString()}  {instruction}");
                     }
 
                     Registry.PC.Increment();
@@ -197,11 +207,11 @@ namespace Core8.Core
                 _ => memoryReferenceInstructions.LoadAddress(address),
             }).LoadData(data);
 
-            if (debug && (address % 2 == 0)) // To avoid looping over e.g. SDN/JMS as fast as the host CPU can manage.
+            if (debug && (address % 2 == 0)) // To avoid looping over e.g. SDN/JMP as fast as the host CPU can manage.
             {
                 if (waitingLoopCap == (address, data))
                 {
-                    Thread.Sleep(10);
+                    Thread.Sleep(40);
                 }
                 else
                 {

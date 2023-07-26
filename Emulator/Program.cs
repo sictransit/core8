@@ -26,7 +26,7 @@ namespace Core8
             File.Delete(logFilename);
 
             Log.Logger = new LoggerConfiguration()
-                .WriteTo.Console(LogEventLevel.Information)
+                .WriteTo.Console(LogEventLevel.Information, "{Message:lj}{NewLine}")
                 .WriteTo.File(logFilename, LogEventLevel.Debug, "{Message:lj}{NewLine}")
                 .MinimumLevel.ControlledBy(LoggingLevel)
                 .CreateLogger();
@@ -210,10 +210,12 @@ namespace Core8
             LoggingLevel.MinimumLevel = LogEventLevel.Debug;
 
             //pdp.CPU.SetBreakpoint(cpu => cpu.Registry.PC.Address == 07713.ToDecimal()); // CIF CDF 0
-            //pdp.CPU.SetBreakpoint(cpu => cpu.Registry.PC.Address == 01207.ToDecimal()); // KSF
-            //pdp.CPU.SetBreakpoint(cpu => cpu.InstructionCounter == 20000); 
-            pdp.CPU.SetBreakpoint(cpu => cpu.Registry.PC.Address == 01253.ToDecimal()); // VER input
+            //pdp.CPU.SetBreakpoint(cpu => cpu.Registry.PC.Address == 01207.ToDecimal()); // KSF            
+            //pdp.CPU.SetBreakpoint(cpu => cpu.InstructionCounter == 26000); 
+            //pdp.CPU.SetBreakpoint(cpu => cpu.Registry.PC.Address == 01253.ToDecimal()); // VER input
+            //pdp.CPU.SetBreakpoint(cpu => cpu.Registry.PC.Address == 00640.ToDecimal()); // CIF 1
 
+            //pdp.CPU.Debug(true);
             pdp.Continue(false);
 
             while (pdp.Running)
