@@ -77,10 +77,10 @@ namespace Core8
                             }
                         }
 
-                        if (o.Floppy)
+                        if (o.OS8)
                         {
                             //FloppyTesting();
-                            FloppyDevelopment();
+                            BootOS8();
                         }
 
                         if (o.TTY)
@@ -161,7 +161,7 @@ namespace Core8
             //pdp.Continue(waitForHalt: true);
         }
 
-        private static void FloppyDevelopment()
+        private static void BootOS8()
         {
             pdp.CPU.Memory.Clear();
 
@@ -203,7 +203,7 @@ namespace Core8
 
             //pdp.DumpMemory();
 
-            pdp.LoadFloppy(0, File.ReadAllBytes(@"disks\os8_rx.rx01"));
+            pdp.LoadFloppy(0, File.ReadAllBytes(@"disks\os8f4_rx.rx01"));
 
             pdp.Clear();
 

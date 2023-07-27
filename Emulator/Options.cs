@@ -28,8 +28,8 @@ namespace Core8
         [Option(Required = false, Default = false, HelpText = "dump memory")]
         public bool DumpMemory { get; set; }
 
-        [Option(Required = false, Default = false, HelpText = "floppy development and debugging")]
-        public bool Floppy { get; set; }
+        [Option(Required = false, Default = false, HelpText = "boot OS/8")]
+        public bool OS8 { get; set; }
 
         [Option(Required = false, Default = false, HelpText = "debug mode")]
         public bool Debug { get; set; }

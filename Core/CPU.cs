@@ -108,6 +108,8 @@ namespace Core8.Core
 
             InstructionCounter = 0;
 
+            IInstruction instruction = null;
+
             try
             {
                 while (running)
@@ -140,7 +142,7 @@ namespace Core8.Core
                         debugIF = Registry.PC.IF;
                     }
 
-                    var instruction = Fetch(Registry.PC.Content);
+                    instruction = Fetch(Registry.PC.Content);
 
                     if (debug)
                     {
@@ -154,7 +156,7 @@ namespace Core8.Core
             }
             catch (Exception ex)
             {
-                Log.Fatal($"Caught Exception in CPU: {ex}");
+                Log.Fatal(ex, $"Caught Exception when executing instruction: {instruction}");
 
                 throw;
             }
