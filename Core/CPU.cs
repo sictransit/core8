@@ -81,6 +81,8 @@ namespace Core8.Core
 
         public IMemory Memory { get; }
 
+        public IInstruction Instruction { get; private set; }
+
         public int InstructionCounter { get; private set; }
 
         public void Clear()
@@ -106,9 +108,7 @@ namespace Core8.Core
 
             Log.Information($"CONT @ {Registry.PC} (dbg: {debug})");
 
-            InstructionCounter = 0;
-
-            IInstruction instruction = null;
+            InstructionCounter = 0;            
 
             try
             {
@@ -142,21 +142,21 @@ namespace Core8.Core
                         debugIF = Registry.PC.IF;
                     }
 
-                    instruction = Fetch(Registry.PC.Content);
+                    Instruction = Fetch(Registry.PC.Content);
 
                     if (debug)
                     {
-                        Log.Debug($"{debugIF}{debugPC.ToOctalString(4)}  {Registry.AC.Link} {Registry.AC.Accumulator.ToOctalString()}  {Registry.MQ.Content.ToOctalString()}  {instruction}");
+                        Log.Debug($"{debugIF}{debugPC.ToOctalString(4)}  {Registry.AC.Link} {Registry.AC.Accumulator.ToOctalString()}  {Registry.MQ.Content.ToOctalString()}  {Instruction}");
                     }
 
                     Registry.PC.Increment();
 
-                    instruction.Execute();
+                    Instruction.Execute();
                 }
             }
             catch (Exception ex)
             {
-                Log.Fatal(ex, $"Caught Exception when executing instruction: {instruction}");
+                Log.Fatal(ex, $"Caught Exception when executing instruction: {Instruction}");
 
                 throw;
             }
@@ -193,7 +193,6 @@ namespace Core8.Core
         {
             var data = Memory.Read(address);
 
-
             var instruction =  ((data & 0b_111_000_000_000) switch
             {
                 MCI when (data & GROUP) == 0 => group1Instructions.LoadAddress(address),
@@ -213,7 +212,7 @@ namespace Core8.Core
             {
                 if (waitingLoopCap == (address, data))
                 {
-                    Thread.Sleep(40);
+                    Thread.Sleep(0);
                 }
                 else
                 {

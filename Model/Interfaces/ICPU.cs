@@ -16,6 +16,8 @@ namespace Core8.Model.Interfaces
 
         IInstruction Fetch(int address);
 
+        IInstruction Instruction { get; }
+
         void Run();
 
         void Halt();

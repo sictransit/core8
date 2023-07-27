@@ -203,7 +203,8 @@ namespace Core8
 
             //pdp.DumpMemory();
 
-            pdp.LoadFloppy(0, File.ReadAllBytes(@"disks\os8f4_rx.rx01"));
+            pdp.LoadFloppy(0, File.ReadAllBytes(@"disks\os8_rx.rx01"));
+            //pdp.LoadFloppy(0, File.ReadAllBytes(@"disks\os8f4_rx.rx01"));
 
             pdp.Clear();
 
@@ -215,7 +216,10 @@ namespace Core8
             //pdp.CPU.SetBreakpoint(cpu => cpu.Registry.PC.Address == 01253.ToDecimal()); // VER input
             //pdp.CPU.SetBreakpoint(cpu => cpu.Registry.PC.Address == 00640.ToDecimal()); // CIF 1
 
+            pdp.CPU.SetBreakpoint(cpu => cpu.Instruction?.Data == 3510.ToDecimal()); // 3510? Not implemented? DCA!
+
             //pdp.CPU.Debug(true);
+
             pdp.Continue(false);
 
             while (pdp.Running)
