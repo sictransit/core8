@@ -1,8 +1,10 @@
 # core8 - A PDP-8/E emulator in C#
 
-This is my first attempt to write an emulator. Ever! 
+This is my first attempt to write an emulator. Ever! It is work-in-progress and might even be finished eventually.
 
-It is work-in-progress and might even be finished eventually.
+The emulator is stable enough to boot OS/8 and run [TINT8](https://github.com/PontusPih/TINT8), the PDP-8 version of a popular tile-matching puzzle video game. 
+
+Have fun!
 
 # TDD - MAINDEC
 
@@ -20,8 +22,6 @@ The following MAINDEC diagnostics have been tested and run successfully. In fact
  * `MAINDEC-8E-D1EC-PB`: Memory Address Test 
  * `MAINDEC-8E-D1FB-PB`: Extended Memory Address Test
  * `MAINDEC-8E-D1HA-PB`: Memory Extension and Time Share Control Test
- 
-As a bonus, the emulator is stable enough to run [TINT8](https://github.com/PontusPih/TINT8), the PDP-8 version of a popular tile-matching puzzle video game.
 
 # Options
 
