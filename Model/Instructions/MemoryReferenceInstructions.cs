@@ -40,7 +40,7 @@ namespace Core8.Model.Instructions
                     UF.Set(UB.Content);
                 }
 
-                operand = Indirect ? Field | Memory.Read(Location, true) : (PC.IF << 12) | (Location & 0b_111_111_111_111);
+                operand = Indirect ? (PC.IF << 12) | Memory.Read(Location, true) : (PC.IF << 12) | (Location & 0b_111_111_111_111);
             }
             else
             {

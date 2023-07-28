@@ -19,7 +19,7 @@ namespace Core8.Model.Instructions
         protected override string OpCodeText =>
             (Data & 0b_000_011_111_000) == 0
             ? base.OpCodeText
-            : string.Join(' ', new[] { ((Group2OROpCodes)(Data & 0b_000_011_111_000)).ToString(), base.OpCodeText }.Where(s => !string.IsNullOrEmpty(s)));
+            : string.Join(' ', new[] { SplitOpCodes((Group2OROpCodes)(Data & 0b_000_011_111_000)), base.OpCodeText }.Where(s => !string.IsNullOrEmpty(s)));
 
         public override void Execute()
         {
@@ -56,10 +56,10 @@ namespace Core8.Model.Instructions
         [Flags]
         private enum Group2OROpCodes
         {
-            CLA = CLA_MASK,
             SMA = SMA_MASK,
             SZA = SZA_MASK,
             SNL = SNL_MASK,
+            CLA = CLA_MASK,
         }
 
     }

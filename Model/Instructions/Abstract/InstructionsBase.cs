@@ -1,5 +1,7 @@
 ﻿using Core8.Model.Interfaces;
 using Core8.Model.Registers;
+using System;
+using System.Linq;
 
 namespace Core8.Model.Instructions.Abstract
 {
@@ -49,9 +51,11 @@ namespace Core8.Model.Instructions.Abstract
             return this;
         }
 
+        protected static string SplitOpCodes(Enum opCodes) => string.Join(' ', opCodes.ToString().Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries).OrderBy(s => s));
+
         public override string ToString()
         {
-            return $"{ExtendedAddress}  {OpCodeText}";
+            return $"{ExtendedAddress}  {OpCodeText.Trim()}";
         }
     }
 }

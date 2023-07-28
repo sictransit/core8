@@ -26,7 +26,7 @@ namespace Core8
             File.Delete(logFilename);
 
             Log.Logger = new LoggerConfiguration()
-                .WriteTo.Console(LogEventLevel.Information)
+                .WriteTo.Console(LogEventLevel.Information, "{Message:lj}{NewLine}")
                 .WriteTo.File(logFilename, LogEventLevel.Debug, "{Message:lj}{NewLine}")
                 .MinimumLevel.ControlledBy(LoggingLevel)
                 .CreateLogger();
@@ -77,10 +77,10 @@ namespace Core8
                             }
                         }
 
-                        if (o.Floppy)
+                        if (o.OS8)
                         {
                             //FloppyTesting();
-                            FloppyDevelopment();
+                            BootOS8();
                         }
 
                         if (o.TTY)
@@ -161,7 +161,7 @@ namespace Core8
             //pdp.Continue(waitForHalt: true);
         }
 
-        private static void FloppyDevelopment()
+        private static void BootOS8()
         {
             pdp.CPU.Memory.Clear();
 
@@ -201,15 +201,24 @@ namespace Core8
 
             pdp.Load8(0022);
 
+            //pdp.DumpMemory();
+
             pdp.LoadFloppy(0, File.ReadAllBytes(@"disks\os8_rx.rx01"));
+            //pdp.LoadFloppy(0, File.ReadAllBytes(@"disks\os8f4_rx.rx01"));
 
             pdp.Clear();
 
             LoggingLevel.MinimumLevel = LogEventLevel.Debug;
 
             //pdp.CPU.SetBreakpoint(cpu => cpu.Registry.PC.Address == 07713.ToDecimal()); // CIF CDF 0
-            //pdp.CPU.SetBreakpoint(cpu => cpu.Registry.PC.Address == 01207.ToDecimal()); // KSF
-            //pdp.CPU.SetBreakpoint(cpu => cpu.InstructionCounter == 20000); 
+            //pdp.CPU.SetBreakpoint(cpu => cpu.Registry.PC.Address == 01207.ToDecimal()); // KSF            
+            //pdp.CPU.SetBreakpoint(cpu => cpu.InstructionCounter == 26000); 
+            //pdp.CPU.SetBreakpoint(cpu => cpu.Registry.PC.Address == 01253.ToDecimal()); // VER input
+            //pdp.CPU.SetBreakpoint(cpu => cpu.Registry.PC.Address == 00640.ToDecimal()); // CIF 1
+
+            //pdp.CPU.SetBreakpoint(cpu => cpu.Instruction?.Data == 6666.ToDecimal()); // 3510? Not implemented? DCA!
+
+            //pdp.CPU.Debug(true);
 
             pdp.Continue(false);
 

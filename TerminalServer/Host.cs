@@ -27,7 +27,7 @@ namespace Core8.Peripherals
             hostThread = new Thread(Run)
             {
                 IsBackground = true,
-                Priority = ThreadPriority.AboveNormal
+                Priority = ThreadPriority.Normal
             };
 
             hostThread.Start();

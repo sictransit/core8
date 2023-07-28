@@ -7,6 +7,8 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Runtime.CompilerServices;
+using System.Threading;
 
 namespace Core8.Core
 {
@@ -34,13 +36,20 @@ namespace Core8.Core
         private const int MEMORY_MANAGEMENT = 0b_110_010_000_000;
         private const int INTERRUPT_MASK = 0b_000_111_111_000;
 
+        private const int TTY_INPUT_DEVICE = 03;
+        private const int TTY_OUTPUT_DEVICE = 04;
+        private const int LINE_PRINTER_DEVICE = 54; // device 66: serial line printer
+
         private volatile bool running;
 
         private bool singleStep;
 
         private bool debug;
 
+        // TODO: Create class, include hit count. How to break on instruction and then continue e.g. 1000 more?
         private readonly List<Func<ICPU, bool>> breakpoints = new();
+
+        private (int address,int data) waitingLoopCap;
 
         public CPU(ITeletype teletype, IFloppyDrive floppy)
         {
@@ -77,6 +86,8 @@ namespace Core8.Core
 
         public IMemory Memory { get; }
 
+        public IInstruction Instruction { get; private set; }
+
         public int InstructionCounter { get; private set; }
 
         public void Clear()
@@ -95,11 +106,14 @@ namespace Core8.Core
 
         public void Run()
         {
+            var debugPC = 0;
+            var debugIF = 0;            
+
             running = true;
 
             Log.Information($"CONT @ {Registry.PC} (dbg: {debug})");
 
-            InstructionCounter = 0;
+            InstructionCounter = 0;            
 
             try
             {
@@ -107,8 +121,23 @@ namespace Core8.Core
                 {
                     InstructionCounter++;
 
+                    Teletype.Tick();
+                    FloppyDrive?.Tick();
+
+                    Interrupts.Interrupt();
+
                     if (debug)
                     {
+                        debugPC = Registry.PC.Address;
+                        debugIF = Registry.PC.IF;
+                    }
+
+                    Instruction = Fetch(Registry.PC.Content);
+
+                    if (debug)
+                    {
+                        Log.Debug($"{debugIF}{debugPC.ToOctalString(4)}  {Registry.AC.Link} {Registry.AC.Accumulator.ToOctalString()}  {Registry.MQ.Content.ToOctalString()}  {Instruction}");
+
                         if (breakpoints.Any(b => b(this)) || singleStep)
                         {
                             if (Debugger.IsAttached)
@@ -122,26 +151,14 @@ namespace Core8.Core
                         }
                     }
 
-                    Teletype.Tick();
-                    FloppyDrive?.Tick();
-
-                    Interrupts.Interrupt();
-
-                    var instruction = Fetch(Registry.PC.Content);
-
-                    if (debug)
-                    {
-                        Log.Debug($"{Registry.PC.IF}{Registry.PC.Address.ToOctalString(4)}  {Registry.AC.Link} {Registry.AC.Accumulator.ToOctalString()}  {Registry.MQ.Content.ToOctalString()}  {instruction}");
-                    }
-
                     Registry.PC.Increment();
 
-                    instruction.Execute();
+                    Instruction.Execute();
                 }
             }
             catch (Exception ex)
             {
-                Log.Fatal($"Caught Exception in CPU: {ex}");
+                Log.Fatal(ex, $"Caught Exception when executing instruction: {Instruction}");
 
                 throw;
             }
@@ -178,20 +195,36 @@ namespace Core8.Core
         {
             var data = Memory.Read(address);
 
-            return ((data & 0b_111_000_000_000) switch
+            var instruction =  ((data & 0b_111_000_000_000) switch
             {
                 MCI when (data & GROUP) == 0 => group1Instructions.LoadAddress(address),
                 MCI when (data & GROUP_3) == GROUP_3 => group3Instructions,
                 MCI when (data & GROUP_2_AND) == GROUP_2_AND => group2AndInstructions,
                 MCI => group2OrInstructions,
                 IOT when (data & FLOPPY) == FLOPPY => floppyDriveInstructions,
-                IOT when (data & MEMORY_MANAGEMENT) == MEMORY_MANAGEMENT => memoryManagementInstructions,
+                IOT when (data & 0b_111_111_000_000) == MEMORY_MANAGEMENT => memoryManagementInstructions,
                 IOT when (data & INTERRUPT_MASK) == 0 => interruptInstructions,
-                IOT when (data & IO) >> 3 == 3 => keyboardInstructions,
-                IOT when (data & IO) >> 3 == 4 => teleprinterInstructions,
+                IOT when (data & IO) >> 3 == TTY_INPUT_DEVICE => keyboardInstructions,
+                IOT when (data & IO) >> 3 == TTY_OUTPUT_DEVICE => teleprinterInstructions,
+                IOT when (data & IO) >> 3 == LINE_PRINTER_DEVICE => teleprinterInstructions, 
                 IOT => privilegedNoOperationInstruction,
                 _ => memoryReferenceInstructions.LoadAddress(address),
             }).LoadData(data);
+
+            if (debug && (address % 2 == 0)) // To avoid looping over e.g. SDN/JMP as fast as the host CPU can manage.
+            {
+                if (waitingLoopCap == (address, data))
+                {
+                    Thread.Sleep(0);
+                }
+                else
+                {
+                    waitingLoopCap = (address, data);                    
+                }
+            }
+
+            return instruction;
+
         }
     }
 }
