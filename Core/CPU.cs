@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Threading;
 
 namespace Core8.Core
@@ -34,6 +35,10 @@ namespace Core8.Core
         private const int FLOPPY = 0b_000_111_000_000;
         private const int MEMORY_MANAGEMENT = 0b_110_010_000_000;
         private const int INTERRUPT_MASK = 0b_000_111_111_000;
+
+        private const int TTY_INPUT_DEVICE = 03;
+        private const int TTY_OUTPUT_DEVICE = 04;
+        private const int LINE_PRINTER_DEVICE = 54; // device 66: serial line printer
 
         private volatile bool running;
 
@@ -116,21 +121,6 @@ namespace Core8.Core
                 {
                     InstructionCounter++;
 
-                    if (debug)
-                    {
-                        if (breakpoints.Any(b => b(this)) || singleStep)
-                        {
-                            if (Debugger.IsAttached)
-                            {
-                                Debugger.Break();
-                            }
-                            else
-                            {
-                                break;
-                            }
-                        }
-                    }
-
                     Teletype.Tick();
                     FloppyDrive?.Tick();
 
@@ -147,6 +137,18 @@ namespace Core8.Core
                     if (debug)
                     {
                         Log.Debug($"{debugIF}{debugPC.ToOctalString(4)}  {Registry.AC.Link} {Registry.AC.Accumulator.ToOctalString()}  {Registry.MQ.Content.ToOctalString()}  {Instruction}");
+
+                        if (breakpoints.Any(b => b(this)) || singleStep)
+                        {
+                            if (Debugger.IsAttached)
+                            {
+                                Debugger.Break();
+                            }
+                            else
+                            {
+                                break;
+                            }
+                        }
                     }
 
                     Registry.PC.Increment();
@@ -200,10 +202,11 @@ namespace Core8.Core
                 MCI when (data & GROUP_2_AND) == GROUP_2_AND => group2AndInstructions,
                 MCI => group2OrInstructions,
                 IOT when (data & FLOPPY) == FLOPPY => floppyDriveInstructions,
-                IOT when (data & MEMORY_MANAGEMENT) == MEMORY_MANAGEMENT => memoryManagementInstructions,
+                IOT when (data & 0b_111_111_000_000) == MEMORY_MANAGEMENT => memoryManagementInstructions,
                 IOT when (data & INTERRUPT_MASK) == 0 => interruptInstructions,
-                IOT when (data & IO) >> 3 == 3 => keyboardInstructions,
-                IOT when (data & IO) >> 3 == 4 => teleprinterInstructions,
+                IOT when (data & IO) >> 3 == TTY_INPUT_DEVICE => keyboardInstructions,
+                IOT when (data & IO) >> 3 == TTY_OUTPUT_DEVICE => teleprinterInstructions,
+                IOT when (data & IO) >> 3 == LINE_PRINTER_DEVICE => teleprinterInstructions, 
                 IOT => privilegedNoOperationInstruction,
                 _ => memoryReferenceInstructions.LoadAddress(address),
             }).LoadData(data);
