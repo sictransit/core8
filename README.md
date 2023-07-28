@@ -1,3 +1,5 @@
+# core8 - A PDP-8/E emulator in C#
+
 This is my first attempt to write an emulator. Ever! 
 
 It is work-in-progress and might even be finished eventually.
@@ -38,6 +40,8 @@ Of course, the SVG punch can also read SVG paper tapes.
 The implementation of a floppy controller + drive is very much work-in-progress. 8-bit mode is not implemented, nor is deleted sectors. Error register handling is probably also defunct. 
 
 It is at least able to boot OS/8 from a disk image. 
+
+<img width="331" alt="image" src="https://github.com/sictransit/core8/assets/4610247/4c1bb56b-1b49-4b16-b517-398859422e50">
 
 ## RK8E
 
