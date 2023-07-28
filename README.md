@@ -33,6 +33,8 @@ There is a working teletype (device 03/04) implementation, including an SVG pape
 
 Of course, the SVG punch can also read SVG paper tapes. 
 
+<img width="787" alt="image" src="https://github.com/sictransit/core8/assets/4610247/6fa1db81-ae80-4cee-94da-d3539c732fd1">
+
 # Work in Progress
 
 ## RX8E/RX01
