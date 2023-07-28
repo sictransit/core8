@@ -23,6 +23,47 @@ The following MAINDEC diagnostics have been tested and run successfully. In fact
  
 As a bonus, the emulator is stable enough to run [TINT8](https://github.com/PontusPih/TINT8), the PDP-8 version of a popular tile-matching puzzle video game.
 
+# Options
+
+	Emulator 1.0.0
+	Mikael Fredriksson <micke@sictransit.net>
+
+	  --tint               (Default: false) play TINT
+
+	  --palbart            (Default: c:\bin\palbart.exe) PALBART executable, required for assemble
+
+	  --assemble           PAL assembly file
+
+	  --load               load bin format paper tape
+
+	  --run                (Default: false) run the assembled file
+
+	  --tty                (Default: false) dump tty output to console
+
+	  --startingaddress    (Default: 200) starting address
+
+	  --dumpmemory         (Default: false) dump memory
+
+	  --os8                (Default: false) boot OS/8
+
+	  --debug              (Default: false) debug mode
+
+	  --convert            convert ASCII string to octal words
+
+	  --punch              punch paper tape, i.e. copy bin image
+
+	  --help               Display this help screen.
+
+	  --version            Display version information.
+
+# PALBART
+
+There is support for an assembler, provided you have the required PALBART binary. It can be found, or built, if you need it.
+
+# RIM/BIN loaders
+
+RIM and BIN loaders are already loaded into "core" memory for you convenience.
+
 # Terminal server
 
 In lack of a proper teletype, I implemented a terminal server of sorts. You can connect to it using e.g. [Putty](https://en.wikipedia.org/wiki/PuTTY).
