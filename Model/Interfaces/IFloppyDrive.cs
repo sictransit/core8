@@ -1,21 +1,20 @@
-﻿namespace Core8.Model.Interfaces
+﻿namespace Core8.Model.Interfaces;
+
+public interface IFloppyDrive : IIODevice
 {
-    public interface IFloppyDrive : IIODevice
-    {
-        void Load(byte unit, byte[] disk = null);
+    void Load(byte unit, byte[] disk = null);
 
-        void LoadCommandRegister(int accumulator);
+    void LoadCommandRegister(int accumulator);
 
-        int TransferDataRegister(int accumulator);
+    int TransferDataRegister(int accumulator);
 
-        void SetInterrupts(int accumulator);
+    void SetInterrupts(int accumulator);
 
-        bool SkipTransferRequest();
+    bool SkipTransferRequest();
 
-        bool SkipNotDone();
+    bool SkipNotDone();
 
-        bool SkipError();
+    bool SkipError();
 
-        void Initialize();
-    }
+    void Initialize();
 }

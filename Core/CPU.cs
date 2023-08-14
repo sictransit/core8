@@ -24,20 +24,22 @@ namespace Core8.Core
         private readonly InterruptInstructions interruptInstructions;
         private readonly PrivilegedNoOperationInstruction privilegedNoOperationInstruction;
         private readonly FloppyDriveInstructions floppyDriveInstructions;
+        private readonly FixedDiskInstructions fixedDiskInstructions;
 
         private const int IOT = 0b_110_000_000_000;
         private const int MCI = 0b_111_000_000_000;
         private const int IO = 0b_000_111_111_000;
         private const int GROUP = 0b_000_100_000_000;
         private const int GROUP_3 = 0b_111_100_000_001;
-        private const int GROUP_2_AND = 0b_111_100_001_000;
-        private const int FLOPPY = 0b_000_111_000_000;
+        private const int GROUP_2_AND = 0b_111_100_001_000;        
         private const int MEMORY_MANAGEMENT = 0b_110_010_000_000;
         private const int INTERRUPT_MASK = 0b_000_111_111_000;
 
         private const int TTY_INPUT_DEVICE = 03;
         private const int TTY_OUTPUT_DEVICE = 04;
         private const int LINE_PRINTER_DEVICE = 54; // device 66: serial line printer
+        private const int FLOPPY_DEVICE = 61; // device 75: RX8E (floppy)
+        private const int FIXED_DISK_DEVICE = 60; // device 74: RK8E (fixed disk)
 
         private volatile bool running;
 
@@ -50,7 +52,7 @@ namespace Core8.Core
 
         private (int address, int data) waitingLoopCap;
 
-        public CPU(ITeletype teletype, IFloppyDrive floppy)
+        public CPU(ITeletype teletype, IFloppyDrive floppy, IFixedDisk fixedDisk)
         {
             group1Instructions = new Group1Instructions(this);
             group2AndInstructions = new Group2ANDInstructions(this);
@@ -63,12 +65,14 @@ namespace Core8.Core
             interruptInstructions = new InterruptInstructions(this);
             privilegedNoOperationInstruction = new PrivilegedNoOperationInstruction(this);
             floppyDriveInstructions = new FloppyDriveInstructions(this);
+            fixedDiskInstructions = new FixedDiskInstructions(this);
 
             Teletype = teletype ?? throw new ArgumentNullException(nameof(teletype));
 
             Memory = new Memory();
 
             FloppyDrive = floppy;
+            FixedDisk = fixedDisk;
 
             Interrupts = new Interrupts(this);
 
@@ -82,6 +86,8 @@ namespace Core8.Core
         public ITeletype Teletype { get; }
 
         public IFloppyDrive FloppyDrive { get; }
+
+        public IFixedDisk FixedDisk { get; }
 
         public IMemory Memory { get; }
 
@@ -122,6 +128,7 @@ namespace Core8.Core
 
                     Teletype.Tick();
                     FloppyDrive?.Tick();
+                    FixedDisk?.Tick();
 
                     Interrupts.Interrupt();
 
@@ -199,13 +206,14 @@ namespace Core8.Core
                 MCI when (data & GROUP) == 0 => group1Instructions.LoadAddress(address),
                 MCI when (data & GROUP_3) == GROUP_3 => group3Instructions,
                 MCI when (data & GROUP_2_AND) == GROUP_2_AND => group2AndInstructions,
-                MCI => group2OrInstructions,
-                IOT when (data & FLOPPY) == FLOPPY => floppyDriveInstructions,
+                MCI => group2OrInstructions,                
                 IOT when (data & 0b_111_111_000_000) == MEMORY_MANAGEMENT => memoryManagementInstructions,
                 IOT when (data & INTERRUPT_MASK) == 0 => interruptInstructions,
                 IOT when (data & IO) >> 3 == TTY_INPUT_DEVICE => keyboardInstructions,
                 IOT when (data & IO) >> 3 == TTY_OUTPUT_DEVICE => teleprinterInstructions,
                 IOT when (data & IO) >> 3 == LINE_PRINTER_DEVICE => teleprinterInstructions,
+                IOT when (data & IO) >> 3 == FLOPPY_DEVICE => floppyDriveInstructions,
+                IOT when (data & IO) >> 3 == FIXED_DISK_DEVICE => fixedDiskInstructions,
                 IOT => privilegedNoOperationInstruction,
                 _ => memoryReferenceInstructions.LoadAddress(address),
             }).LoadData(data);
