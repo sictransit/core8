@@ -26,6 +26,8 @@ namespace Core8.Core
         private readonly FloppyDriveInstructions floppyDriveInstructions;
         private readonly FixedDiskInstructions fixedDiskInstructions;
 
+        private const int INSTRUCTION_TYPE_MASK = 0b_111_000_000_000;
+
         private const int IOT = 0b_110_000_000_000;
         private const int MCI = 0b_111_000_000_000;
         private const int IO = 0b_000_111_111_000;
@@ -33,6 +35,7 @@ namespace Core8.Core
         private const int GROUP_3 = 0b_111_100_000_001;
         private const int GROUP_2_AND = 0b_111_100_001_000;        
         private const int MEMORY_MANAGEMENT = 0b_110_010_000_000;
+        private const int MEMORY_MANAGEMENT_MASK = 0b_111_111_000_000;
         private const int INTERRUPT_MASK = 0b_000_111_111_000;
 
         private const int TTY_INPUT_DEVICE = 03;
@@ -201,13 +204,13 @@ namespace Core8.Core
         {
             var data = Memory.Read(address);
 
-            var instruction = ((data & 0b_111_000_000_000) switch
+            var instruction = ((data & INSTRUCTION_TYPE_MASK) switch
             {
                 MCI when (data & GROUP) == 0 => group1Instructions.LoadAddress(address),
                 MCI when (data & GROUP_3) == GROUP_3 => group3Instructions,
                 MCI when (data & GROUP_2_AND) == GROUP_2_AND => group2AndInstructions,
                 MCI => group2OrInstructions,                
-                IOT when (data & 0b_111_111_000_000) == MEMORY_MANAGEMENT => memoryManagementInstructions,
+                IOT when (data & MEMORY_MANAGEMENT_MASK) == MEMORY_MANAGEMENT => memoryManagementInstructions,
                 IOT when (data & INTERRUPT_MASK) == 0 => interruptInstructions,
                 IOT when (data & IO) >> 3 == TTY_INPUT_DEVICE => keyboardInstructions,
                 IOT when (data & IO) >> 3 == TTY_OUTPUT_DEVICE => teleprinterInstructions,
