@@ -1,7 +1,7 @@
 ﻿using Core8.Model.Registers.Abstract;
-using Core8.Peripherals.Floppy.Declarations;
+using Core8.Peripherals.RX8E.Declarations;
 
-namespace Core8.Peripherals.Floppy.Registers
+namespace Core8.Peripherals.RX8E.Registers
 {
     internal class CommandRegister : RegisterBase
     {

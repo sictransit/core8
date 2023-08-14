@@ -14,7 +14,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Floppy\Floppy.csproj" />
+    <ProjectReference Include="..\Floppy\RX8E.csproj" />
     <ProjectReference Include="..\Model\Model.csproj" />
     <ProjectReference Include="..\Teletype\Teletype.csproj" />
   </ItemGroup>

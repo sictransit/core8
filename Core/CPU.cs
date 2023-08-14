@@ -7,7 +7,6 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Runtime.CompilerServices;
 using System.Threading;
 
 namespace Core8.Core
@@ -49,7 +48,7 @@ namespace Core8.Core
         // TODO: Create class, include hit count. How to break on instruction and then continue e.g. 1000 more?
         private readonly List<Func<ICPU, bool>> breakpoints = new();
 
-        private (int address,int data) waitingLoopCap;
+        private (int address, int data) waitingLoopCap;
 
         public CPU(ITeletype teletype, IFloppyDrive floppy)
         {
@@ -107,13 +106,13 @@ namespace Core8.Core
         public void Run()
         {
             var debugPC = 0;
-            var debugIF = 0;            
+            var debugIF = 0;
 
             running = true;
 
             Log.Information($"CONT @ {Registry.PC} (dbg: {debug})");
 
-            InstructionCounter = 0;            
+            InstructionCounter = 0;
 
             try
             {
@@ -195,7 +194,7 @@ namespace Core8.Core
         {
             var data = Memory.Read(address);
 
-            var instruction =  ((data & 0b_111_000_000_000) switch
+            var instruction = ((data & 0b_111_000_000_000) switch
             {
                 MCI when (data & GROUP) == 0 => group1Instructions.LoadAddress(address),
                 MCI when (data & GROUP_3) == GROUP_3 => group3Instructions,
@@ -206,7 +205,7 @@ namespace Core8.Core
                 IOT when (data & INTERRUPT_MASK) == 0 => interruptInstructions,
                 IOT when (data & IO) >> 3 == TTY_INPUT_DEVICE => keyboardInstructions,
                 IOT when (data & IO) >> 3 == TTY_OUTPUT_DEVICE => teleprinterInstructions,
-                IOT when (data & IO) >> 3 == LINE_PRINTER_DEVICE => teleprinterInstructions, 
+                IOT when (data & IO) >> 3 == LINE_PRINTER_DEVICE => teleprinterInstructions,
                 IOT => privilegedNoOperationInstruction,
                 _ => memoryReferenceInstructions.LoadAddress(address),
             }).LoadData(data);
@@ -219,7 +218,7 @@ namespace Core8.Core
                 }
                 else
                 {
-                    waitingLoopCap = (address, data);                    
+                    waitingLoopCap = (address, data);
                 }
             }
 

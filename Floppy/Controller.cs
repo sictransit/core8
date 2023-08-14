@@ -1,14 +1,14 @@
 ﻿using Core8.Extensions;
-using Core8.Peripherals.Floppy.Declarations;
-using Core8.Peripherals.Floppy.Interfaces;
-using Core8.Peripherals.Floppy.Media;
-using Core8.Peripherals.Floppy.Registers;
-using Core8.Peripherals.Floppy.States.Abstract;
+using Core8.Peripherals.RX8E.Declarations;
+using Core8.Peripherals.RX8E.Interfaces;
+using Core8.Peripherals.RX8E.Media;
+using Core8.Peripherals.RX8E.Registers;
+using Core8.Peripherals.RX8E.States.Abstract;
 using Serilog;
 using System;
 using System.Linq;
 
-namespace Core8.Peripherals.Floppy
+namespace Core8.Peripherals.RX8E
 {
     internal class Controller : IController
     {

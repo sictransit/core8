@@ -1,8 +1,8 @@
-﻿using Core8.Peripherals.Floppy.Interfaces;
+﻿using Core8.Peripherals.RX8E.Interfaces;
 using System;
 using System.Diagnostics;
 
-namespace Core8.Peripherals.Floppy.States.Abstract
+namespace Core8.Peripherals.RX8E.States.Abstract
 {
     internal abstract class StateBase
     {

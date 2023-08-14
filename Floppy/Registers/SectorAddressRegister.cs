@@ -1,6 +1,6 @@
 ﻿using Core8.Model.Registers.Abstract;
 
-namespace Core8.Peripherals.Floppy.Registers
+namespace Core8.Peripherals.RX8E.Registers
 {
     internal class SectorAddressRegister : RegisterBase
     {

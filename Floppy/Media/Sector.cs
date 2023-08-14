@@ -1,7 +1,7 @@
-﻿using Core8.Peripherals.Floppy.Declarations;
-using Core8.Peripherals.Floppy.Media.Abstract;
+﻿using Core8.Peripherals.RX8E.Declarations;
+using Core8.Peripherals.RX8E.Media.Abstract;
 
-namespace Core8.Peripherals.Floppy.Media
+namespace Core8.Peripherals.RX8E.Media
 {
     internal class Sector : MediaBase
     {

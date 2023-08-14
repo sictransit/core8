@@ -1,6 +1,6 @@
 ﻿using Core8.Extensions;
 using Core8.Model.Interfaces;
-using Core8.Peripherals.Floppy;
+using Core8.Peripherals.RX8E;
 using Core8.Peripherals.Teletype;
 using Serilog;
 using System;

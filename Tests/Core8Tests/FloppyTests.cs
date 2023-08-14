@@ -1,6 +1,6 @@
 ﻿using Core8.Model.Interfaces;
-using Core8.Peripherals.Floppy;
-using Core8.Peripherals.Floppy.Declarations;
+using Core8.Peripherals.RX8E;
+using Core8.Peripherals.RX8E.Declarations;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Diagnostics;

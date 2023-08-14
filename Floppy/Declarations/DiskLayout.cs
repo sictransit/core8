@@ -1,4 +1,4 @@
-﻿namespace Core8.Peripherals.Floppy.Declarations
+﻿namespace Core8.Peripherals.RX8E.Declarations
 {
     public static class DiskLayout
     {
