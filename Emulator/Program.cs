@@ -34,7 +34,7 @@ namespace Core8
             Parser.Default.ParseArguments<Options>(args)
                     .WithParsed(o =>
                     {
-                        pdp = new PDP(true);
+                        pdp = new PDP(true, true);
 
                         pdp.Clear();
 

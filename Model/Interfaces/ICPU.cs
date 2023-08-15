@@ -12,6 +12,8 @@ namespace Core8.Model.Interfaces
 
         IFloppyDrive FloppyDrive { get; }
 
+        IFixedDisk FixedDisk { get; }
+
         IRegistry Registry { get; }
 
         IInstruction Fetch(int address);
