@@ -18,12 +18,47 @@ namespace Core8.Peripherals.RK8E
         private const int RKS_CYL = 1; // cyl address error 
         private const int RKS_ERR = RKS_BUSY + RKS_TMO + RKS_WLK + RKS_CRC + RKS_DLT + RKS_STAT + RKS_CYL;
 
-        public bool InterruptRequested => throw new NotImplementedException();
+        private const int RK_NUMSC = 16; // sectors/surface 
+        private const int RK_NUMSF = 2; // surfaces/cylinder
+        private const int RK_NUMCY = 203; // cylinders/drive
+        private const int RK_NUMWD = 256; // words/sector;
+        private const int RK_SIZE = RK_NUMCY * RK_NUMSF * RK_NUMSC * RK_NUMWD;
+
+        private const int RK_NUMDR = 4; // drives/controller 
+
+        private readonly List<byte[]> units = new();
 
         private int currentAddressRegister;
         private int diskAddressRegister;
         private int statusRegister;
         private int commandRegister;
+
+        public FixedDisk()
+        {
+            for (int i = 0; i < RK_NUMDR; i++)
+            {
+                Load(i);
+            }
+        }
+
+        public bool InterruptRequested => throw new NotImplementedException();
+
+        public void Load(int unit, byte[]? data = null)
+        {
+            if (unit < 0 || unit >= RK_NUMDR)
+            {
+                throw new ArgumentException($"invalid unit: {unit} (max: {RK_NUMDR})", nameof(unit));
+            }
+
+            data ??= new byte[RK_SIZE];
+
+            if (data.Length != RK_SIZE)
+            {
+                throw new ArgumentException($"invalid length: {data.Length} != {RK_SIZE}", nameof(data));
+            }
+
+            units[unit] = data;
+        }
 
         public void Tick()
         {

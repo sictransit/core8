@@ -5,14 +5,14 @@ using System;
 namespace Core8.Model.Instructions;
 
 public class FixedDiskInstructions : PrivilegedInstructionsBase
-{    
+{
     private const int DSKP_MASK = 0b_001;
     private const int DCLR_MASK = 0b_010;
     private const int DLAG_MASK = 0b_011;
     private const int DLCA_MASK = 0b_100;
     private const int DRST_MASK = 0b_101;
     private const int DLDC_MASK = 0b_110;
-    private const int DIOT_MASK = 0b_111;    
+    private const int DIOT_MASK = 0b_111;
 
     public FixedDiskInstructions(ICPU cpu) : base(cpu)
     {
@@ -72,7 +72,7 @@ public class FixedDiskInstructions : PrivilegedInstructionsBase
 
     private void DLCA()
     {
-        FixedDisk.LoadCurrentAddress(CPU.Registry.AC);        
+        FixedDisk.LoadCurrentAddress(CPU.Registry.AC);
     }
 
     private void DRST()

@@ -33,7 +33,7 @@ namespace Core8.Core
         private const int IO = 0b_000_111_111_000;
         private const int GROUP = 0b_000_100_000_000;
         private const int GROUP_3 = 0b_111_100_000_001;
-        private const int GROUP_2_AND = 0b_111_100_001_000;        
+        private const int GROUP_2_AND = 0b_111_100_001_000;
         private const int MEMORY_MANAGEMENT = 0b_110_010_000_000;
         private const int MEMORY_MANAGEMENT_MASK = 0b_111_111_000_000;
         private const int INTERRUPT_MASK = 0b_000_111_111_000;
@@ -209,7 +209,7 @@ namespace Core8.Core
                 MCI when (data & GROUP) == 0 => group1Instructions.LoadAddress(address),
                 MCI when (data & GROUP_3) == GROUP_3 => group3Instructions,
                 MCI when (data & GROUP_2_AND) == GROUP_2_AND => group2AndInstructions,
-                MCI => group2OrInstructions,                
+                MCI => group2OrInstructions,
                 IOT when (data & MEMORY_MANAGEMENT_MASK) == MEMORY_MANAGEMENT => memoryManagementInstructions,
                 IOT when (data & INTERRUPT_MASK) == 0 => interruptInstructions,
                 IOT when (data & IO) >> 3 == TTY_INPUT_DEVICE => keyboardInstructions,
