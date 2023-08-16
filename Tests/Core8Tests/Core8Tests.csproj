@@ -23,7 +23,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\Core\Core.csproj" />
-    <ProjectReference Include="..\..\Floppy\RX8E.csproj" />
+    <ProjectReference Include="..\..\RX8E\RX8E.csproj" />
     <ProjectReference Include="..\..\Teletype\Teletype.csproj" />
     <ProjectReference Include="..\..\Utilities\Utilities.csproj" />
   </ItemGroup>

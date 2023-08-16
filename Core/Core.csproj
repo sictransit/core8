@@ -14,9 +14,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Floppy\RX8E.csproj" />
     <ProjectReference Include="..\Model\Model.csproj" />
     <ProjectReference Include="..\RK8E\RK8E.csproj" />
+    <ProjectReference Include="..\RX8E\RX8E.csproj" />
     <ProjectReference Include="..\Teletype\Teletype.csproj" />
   </ItemGroup>
 

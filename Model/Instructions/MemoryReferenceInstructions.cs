@@ -18,8 +18,7 @@ namespace Core8.Model.Instructions
         private const int ZERO = 1 << 7;
         private const int INDIRECT = 1 << 8;
 
-        private int operand;
-        private string operandContent;
+        private int operand;        
 
         public MemoryReferenceInstructions(ICPU cpu) : base(cpu)
         {
