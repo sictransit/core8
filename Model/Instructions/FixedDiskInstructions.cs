@@ -54,17 +54,20 @@ public class FixedDiskInstructions : PrivilegedInstructionsBase
 
     private void DSKP()
     {
-        throw new NotImplementedException();
+        if (FixedDisk.SkipOnTransferDoneOrError())
+        {
+            PC.Increment();
+        }
     }
 
     private void DCLR()
     {
-        throw new NotImplementedException();
+        FixedDisk.ClearAll(CPU.Registry.AC);
     }
 
     private void DLAG()
     {
-        throw new NotImplementedException();
+        FixedDisk.LoadAddressAndGo(CPU.Registry.AC);
     }
 
     private void DLCA()
@@ -79,7 +82,7 @@ public class FixedDiskInstructions : PrivilegedInstructionsBase
 
     private void DLDC()
     {
-        throw new NotImplementedException();
+        FixedDisk.LoadCommandRegister(CPU.Registry.AC);
     }
 
     private void DIOT()
