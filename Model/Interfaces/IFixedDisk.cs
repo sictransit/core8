@@ -4,7 +4,7 @@ namespace Core8.Model.Interfaces
 {
     public interface IFixedDisk : IIODevice
     {
-        void Load(int unit, byte[] data = null);
+        void Load(int unit, byte[] image);
 
         void ClearAll(LinkAccumulator lac);
 

@@ -26,7 +26,7 @@ namespace Core8.Peripherals.RK8E
 
         private const int RK_NUMDR = 4; // drives/controller 
 
-        private readonly byte[][] units = new byte[RK_NUMDR][];
+        private readonly int[][] units = new int[RK_NUMDR][];
 
         private int currentAddressRegister;
         private int diskAddressRegister;
@@ -43,14 +43,17 @@ namespace Core8.Peripherals.RK8E
 
         public bool InterruptRequested => throw new NotImplementedException();
 
-        public void Load(int unit, byte[]? data = null)
+        private void Load(int unit)
+        {
+            Load(unit, new int[RK_SIZE]);
+        }
+
+        private void Load(int unit, int[] data)
         {
             if (unit < 0 || unit >= RK_NUMDR)
             {
                 throw new ArgumentException($"invalid unit: {unit} (max: {RK_NUMDR})", nameof(unit));
             }
-
-            data ??= new byte[RK_SIZE];
 
             if (data.Length != RK_SIZE)
             {
@@ -58,6 +61,34 @@ namespace Core8.Peripherals.RK8E
             }
 
             units[unit] = data;
+        }
+
+        public void Load(int unit, byte[] image)
+        {
+            if (image == null) throw new ArgumentNullException(nameof(image));
+
+            if (image.Length != RK_SIZE)
+            {
+                throw new ArgumentException($"invalid image: {image.Length} != 2*{RK_SIZE}", nameof(image));
+            }
+
+            var data = new int[RK_SIZE];
+
+            var word = 0;
+
+            for (var i = 0; i < RK_SIZE; i++)
+            {
+                if (i % 2 == 0)
+                {
+                    data[word] = image[i] << 4;
+                }
+                else
+                {
+                    data[word] |= image[i] & 0b_0000_1111;
+
+                    word++;
+                }
+            }
         }
 
         public void Tick()
