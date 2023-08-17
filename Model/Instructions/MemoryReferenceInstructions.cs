@@ -53,7 +53,7 @@ namespace Core8.Model.Instructions
         {
             get
             {
-                MemoryReferenceOpCode opCode = (MemoryReferenceOpCode)(Data & 0b_111_000_000_000);
+                var opCode = (MemoryReferenceOpCode)(Data & 0b_111_000_000_000);
                 var indirect = Indirect ? "I" : null;
                 var location = Location.ToOctalString(0);
                 var operandContent = Branching ? null : $" [{Memory.Read(operand).ToOctalString()}]";

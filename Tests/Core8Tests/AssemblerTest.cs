@@ -13,7 +13,7 @@ namespace Core8.Tests
         {
             var assembler = new Assembler(@"c:\bin\palbart.exe");
 
-            var result = assembler.TryAssemble(@"Assembler\HelloWorld.asm", out string binFilename);
+            var result = assembler.TryAssemble(@"Assembler\HelloWorld.asm", out var binFilename);
 
             Assert.IsTrue(result);
 

@@ -26,7 +26,7 @@ namespace Core8.Peripherals.RK8E
 
         private const int RK_NUMDR = 4; // drives/controller 
 
-        private readonly List<byte[]> units = new();
+        private readonly byte[][] units = new byte[RK_NUMDR][];
 
         private int currentAddressRegister;
         private int diskAddressRegister;
@@ -35,7 +35,7 @@ namespace Core8.Peripherals.RK8E
 
         public FixedDisk()
         {
-            for (int i = 0; i < RK_NUMDR; i++)
+            for (var i = 0; i < RK_NUMDR; i++)
             {
                 Load(i);
             }
