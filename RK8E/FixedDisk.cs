@@ -67,16 +67,11 @@ namespace Core8.Peripherals.RK8E
         {
             if (image == null) throw new ArgumentNullException(nameof(image));
 
-            if (image.Length != RK_SIZE)
-            {
-                throw new ArgumentException($"invalid image: {image.Length} != 2*{RK_SIZE}", nameof(image));
-            }
-
-            var data = new int[RK_SIZE];
+            var data = new int[image.Length/2];
 
             var word = 0;
 
-            for (var i = 0; i < RK_SIZE; i++)
+            for (var i = 0; i < image.Length; i++)
             {
                 if (i % 2 == 0)
                 {
@@ -89,6 +84,8 @@ namespace Core8.Peripherals.RK8E
                     word++;
                 }
             }
+
+            Load(unit, data);
         }
 
         public void Tick()

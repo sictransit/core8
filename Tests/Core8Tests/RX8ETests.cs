@@ -4,13 +4,14 @@ using Core8.Peripherals.RX8E.Declarations;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Net.Http;
 
 namespace Core8.Tests
 {
     [TestClass]
-    public class FloppyTests
+    public class RX8ETests
     {
         [TestMethod]
         public void TestInitialize()
@@ -198,7 +199,7 @@ namespace Core8.Tests
 
             AssertDoneFlagSet(floppy);
 
-            var image = new HttpClient().GetByteArrayAsync(@"https://www.dropbox.com/s/l4t8h28exvj7zsj/os8_rx.rx01?dl=1").Result;
+            var image = File.ReadAllBytes("disks/os8_rx.rx01");
 
             floppy.Load(0, image);
 
