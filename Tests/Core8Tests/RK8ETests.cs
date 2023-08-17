@@ -1,8 +1,7 @@
-﻿using System;
-using System.IO;
-using System.Net.Http;
-using Core8.Peripherals.RK8E;
+﻿using Core8.Peripherals.RK8E;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System;
+using System.IO;
 
 namespace Core8.Tests;
 

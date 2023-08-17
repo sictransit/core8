@@ -67,7 +67,7 @@ namespace Core8.Peripherals.RK8E
         {
             if (image == null) throw new ArgumentNullException(nameof(image));
 
-            var data = new int[image.Length/2];
+            var data = new int[image.Length / 2];
 
             var word = 0;
 

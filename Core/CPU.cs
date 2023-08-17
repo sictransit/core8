@@ -145,7 +145,7 @@ namespace Core8.Core
 
                     if (debug)
                     {
-                        Log.Debug($"{debugIF}{debugPC.ToOctalString(4)}  {Registry.AC.Link} {Registry.AC.Accumulator.ToOctalString()}  {Registry.MQ.Content.ToOctalString()}  {Instruction}");
+                        Log.Debug($"{debugIF}{debugPC.ToOctalString()}  {Registry.AC.Link} {Registry.AC.Accumulator.ToOctalString()}  {Registry.MQ.Content.ToOctalString()}  {Instruction}");
 
                         if (breakpoints.Any(b => b(this)) || singleStep)
                         {
@@ -221,7 +221,7 @@ namespace Core8.Core
                 _ => memoryReferenceInstructions.LoadAddress(address),
             }).LoadData(data);
 
-            if (debug && (address % 2 == 0)) // To avoid looping over e.g. SDN/JMP as fast as the host CPU can manage.
+            if (debug && address % 2 == 0) // To avoid looping over e.g. SDN/JMP as fast as the host CPU can manage.
             {
                 if (waitingLoopCap == (address, data))
                 {
