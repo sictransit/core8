@@ -16,12 +16,19 @@ namespace Core8.Core
 
         public PDP(bool attachFloppy = false, bool attachFixedDisk = false)
         {
-            var teletype = new ASR33(@"tcp://127.0.0.1:17232", @"tcp://127.0.0.1:17233");
+            CPU = new CPU();
 
-            IFloppyDrive floppy = attachFloppy ? new FloppyDrive() : null;
-            IFixedDisk fixedDisk = attachFixedDisk ? new FixedDisk() : null;
+            CPU.Attach(new ASR33(@"tcp://127.0.0.1:17232", @"tcp://127.0.0.1:17233"));
 
-            CPU = new CPU(teletype, floppy, fixedDisk);
+            if (attachFloppy)
+            {
+                CPU.Attach(new FloppyDrive());
+            }
+
+            if (attachFixedDisk)
+            {
+                CPU.Attach(new FixedDisk(CPU.Memory));
+            }
 
             ToggleRIMAndBinLoader();
         }

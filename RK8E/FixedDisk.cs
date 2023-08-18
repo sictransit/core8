@@ -5,6 +5,7 @@ namespace Core8.Peripherals.RK8E
 {
     public class FixedDisk : IFixedDisk
     {
+        private readonly IMemory dmaChannel;
         private const int RKS_DONE = 1 << 11; // transfer done 
         private const int RKS_HMOV = 1 << 10; // heads moving 
         private const int RKS_SKFL = 1 << 8; // drive seek fail 
@@ -26,6 +27,26 @@ namespace Core8.Peripherals.RK8E
 
         private const int RK_NUMDR = 4; // drives/controller 
 
+        private const int COMMAND_MASK = 0b_111_000_000_000;
+
+        private const int TICK_DELAY = 100;
+
+        private int ticks;
+
+        private bool go;
+
+        private enum Command
+        {
+            READ_DATA = 0 <<9,
+            READ_ALL = 1 << 9,
+            WRITE_PROTECT = 2 << 9,
+            SEEK = 3 << 9,
+            WRITE_DATA=4 << 9,
+            WRITE_ALL=5 << 9,
+        }
+
+        private Command CurrentCommand => (Command)(commandRegister & COMMAND_MASK);
+
         private readonly int[][] units = new int[RK_NUMDR][];
 
         private int currentAddressRegister;
@@ -33,15 +54,17 @@ namespace Core8.Peripherals.RK8E
         private int statusRegister;
         private int commandRegister;
 
-        public FixedDisk()
+        public FixedDisk(IMemory dmaChannel)
         {
+            this.dmaChannel = dmaChannel;
+
             for (var i = 0; i < RK_NUMDR; i++)
             {
                 Load(i);
             }
         }
 
-        public bool InterruptRequested => throw new NotImplementedException();
+        public bool InterruptRequested => false; // TODO: check config + flags
 
         private void Load(int unit)
         {
@@ -90,7 +113,17 @@ namespace Core8.Peripherals.RK8E
 
         public void Tick()
         {
-            //throw new NotImplementedException();
+            if (ticks++ > TICK_DELAY)
+            {
+                ticks = 0;
+
+                if (go)
+                {
+                    go = false;
+
+                    Go();
+                }
+            }
         }
 
         public void LoadCurrentAddress(LinkAccumulator lac)
@@ -131,11 +164,42 @@ namespace Core8.Peripherals.RK8E
             diskAddressRegister = lac.Accumulator;
 
             lac.Clear();
+
+            go = true;
         }
 
         public bool SkipOnTransferDoneOrError()
         {
             return (statusRegister & (RKS_DONE | RKS_ERR)) != 0;
+        }
+
+        private void Go()
+        {
+            switch (CurrentCommand)
+            {
+                case Command.READ_DATA:
+                    ReadData();
+                    break;
+                case Command.READ_ALL:
+                case Command.WRITE_PROTECT:
+                case Command.SEEK:
+                case Command.WRITE_DATA:
+                case Command.WRITE_ALL:
+                    throw new ArgumentOutOfRangeException(CurrentCommand.ToString());
+            }
+
+            statusRegister |= RKS_DONE;
+        }
+
+        private void ReadData()
+        {
+            var diskAddress = 0;
+            var memoryAddress = 0;
+
+            for (var word = 0; word < 256; word++)
+            {
+                dmaChannel.Write(memoryAddress + word, units[0][diskAddress + word]);
+            }
         }
     }
 }

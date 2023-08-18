@@ -55,7 +55,7 @@ namespace Core8.Core
 
         private (int address, int data) waitingLoopCap;
 
-        public CPU(ITeletype teletype, IFloppyDrive floppy, IFixedDisk fixedDisk)
+        public CPU()
         {
             group1Instructions = new Group1Instructions(this);
             group2AndInstructions = new Group2ANDInstructions(this);
@@ -70,15 +70,8 @@ namespace Core8.Core
             floppyDriveInstructions = new FloppyDriveInstructions(this);
             fixedDiskInstructions = new FixedDiskInstructions(this);
 
-            Teletype = teletype ?? throw new ArgumentNullException(nameof(teletype));
-
             Memory = new Memory();
-
-            FloppyDrive = floppy;
-            FixedDisk = fixedDisk;
-
             Interrupts = new Interrupts(this);
-
             Registry = new Registry();
         }
 
@@ -86,17 +79,31 @@ namespace Core8.Core
 
         public IInterrupts Interrupts { get; }
 
-        public ITeletype Teletype { get; }
+        public ITeletype Teletype { get; private set; }
 
-        public IFloppyDrive FloppyDrive { get; }
+        public IFloppyDrive FloppyDrive { get; private set; }
 
-        public IFixedDisk FixedDisk { get; }
+        public IFixedDisk FixedDisk { get; private set; }
 
         public IMemory Memory { get; }
 
         public IInstruction Instruction { get; private set; }
 
         public int InstructionCounter { get; private set; }
+        public void Attach(IFixedDisk peripheral)
+        {
+            FixedDisk = peripheral;
+        }
+
+        public void Attach(IFloppyDrive peripheral)
+        {
+            FloppyDrive = peripheral;
+        }
+
+        public void Attach(ITeletype peripheral)
+        {
+            Teletype = peripheral;
+        }
 
         public void Clear()
         {

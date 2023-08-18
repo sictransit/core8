@@ -2,17 +2,18 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.IO;
+using Core8.Tests.Abstract;
 
 namespace Core8.Tests;
 
 [TestClass]
-public class RK8ETests
+public class RK8ETests : PDPTestsBase
 {
     [TestMethod]
     [ExpectedException(typeof(ArgumentException))]
     public void TestLoadRXDiskImageWithFailure()
     {
-        var disk = new FixedDisk();
+        var disk = new FixedDisk(PDP.CPU.Memory);
 
         var image = File.ReadAllBytes("disks/os8_rx.rx01");
 
@@ -24,7 +25,7 @@ public class RK8ETests
     [TestMethod]
     public void TestLoadRKDiskImage()
     {
-        var disk = new FixedDisk();
+        var disk = new FixedDisk(PDP.CPU.Memory);
 
         var image = File.ReadAllBytes("disks/advent.rk05");
 

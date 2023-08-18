@@ -33,5 +33,11 @@ namespace Core8.Model.Interfaces
         void Debug(bool state);
 
         int InstructionCounter { get; }
+
+        void Attach(IFixedDisk peripheral);
+
+        void Attach(IFloppyDrive peripheral);
+
+        void Attach(ITeletype peripheral);
     }
 }
