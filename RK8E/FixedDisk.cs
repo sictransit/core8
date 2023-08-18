@@ -37,12 +37,12 @@ namespace Core8.Peripherals.RK8E
 
         private enum Command
         {
-            READ_DATA = 0 <<9,
+            READ_DATA = 0 << 9,
             READ_ALL = 1 << 9,
             WRITE_PROTECT = 2 << 9,
             SEEK = 3 << 9,
-            WRITE_DATA=4 << 9,
-            WRITE_ALL=5 << 9,
+            WRITE_DATA = 4 << 9,
+            WRITE_ALL = 5 << 9,
         }
 
         private Command CurrentCommand => (Command)(commandRegister & COMMAND_MASK);
