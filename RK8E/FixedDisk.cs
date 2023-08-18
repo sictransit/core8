@@ -25,6 +25,8 @@ namespace Core8.Peripherals.RK8E
         private const int RK_NUMWD = 256; // words/sector;
         private const int RK_SIZE = RK_NUMCY * RK_NUMSF * RK_NUMSC * RK_NUMWD;
 
+        private const int RKC_CYHI = 1; // high cylinder addr 
+
         private const int RK_NUMDR = 4; // drives/controller 
 
         private const int COMMAND_MASK = 0b_111_000_000_000;
@@ -46,6 +48,10 @@ namespace Core8.Peripherals.RK8E
         }
 
         private Command CurrentCommand => (Command)(commandRegister & COMMAND_MASK);
+
+        private int Sector => diskAddressRegister & 0b_001_111;
+        private int Surface => (diskAddressRegister  & 0b_010_000 )>> 4;
+        private int Cylinder => ((diskAddressRegister & 0b_111_111_100_000) >> 5) | ((commandRegister & RKC_CYHI) << 7);
 
         private readonly int[][] units = new int[RK_NUMDR][];
 
