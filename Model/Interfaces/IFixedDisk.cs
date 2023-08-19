@@ -12,6 +12,8 @@ namespace Core8.Model.Interfaces
 
         void LoadCommandRegister(LinkAccumulator lac);
 
+        void ReadStatusRegister(LinkAccumulator lac);
+
         void LoadAddressAndGo(LinkAccumulator lac);
 
         bool SkipOnTransferDoneOrError();

@@ -104,11 +104,11 @@ namespace Core8.Peripherals.RK8E
             {
                 if (i % 2 == 0)
                 {
-                    data[word] = image[i] << 4;
+                    data[word] = image[i];
                 }
                 else
                 {
-                    data[word] |= image[i] & 0b_0000_1111;
+                    data[word] |= (image[i] & 0b_0000_1111) << 8;
 
                     word++;
                 }
@@ -177,6 +177,11 @@ namespace Core8.Peripherals.RK8E
         public bool SkipOnTransferDoneOrError()
         {
             return (statusRegister & (RKS_DONE | RKS_ERR)) != 0;
+        }
+
+        public void ReadStatusRegister(LinkAccumulator lac)
+        {
+            lac.SetAccumulator(statusRegister);
         }
 
         private void Go()

@@ -77,7 +77,7 @@ public class FixedDiskInstructions : PrivilegedInstructionsBase
 
     private void DRST()
     {
-        throw new NotImplementedException();
+        FixedDisk.ReadStatusRegister(CPU.Registry.AC);
     }
 
     private void DLDC()
