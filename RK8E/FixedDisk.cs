@@ -29,9 +29,9 @@ namespace Core8.Peripherals.RK8E
 
         private const int RK_NUMDR = 4; // drives/controller 
 
-        private const int COMMAND_MASK = 0b_111_000_000_000;        
+        private const int COMMAND_MASK = 0b_111_000_000_000;
 
-        private const int TICK_DELAY = 100;
+        private const int TICK_DELAY = 10;
 
         private int ticks;
 
@@ -141,7 +141,7 @@ namespace Core8.Peripherals.RK8E
         {
             currentAddressRegister = lac.Accumulator;
 
-            lac.Clear();
+            lac.ClearAccumulator();
         }
 
         public void ClearAll(LinkAccumulator lac)
@@ -159,7 +159,7 @@ namespace Core8.Peripherals.RK8E
 
             }
 
-            lac.Clear();
+            lac.ClearAccumulator();
         }
 
         public void LoadCommandRegister(LinkAccumulator lac)
@@ -167,14 +167,14 @@ namespace Core8.Peripherals.RK8E
             statusRegister = 0;
             commandRegister = lac.Accumulator;
 
-            lac.Clear();
+            lac.ClearAccumulator();
         }
 
         public void LoadAddressAndGo(LinkAccumulator lac)
         {
             diskAddressRegister = lac.Accumulator;
 
-            lac.Clear();
+            lac.ClearAccumulator();
 
             go = true;
         }
@@ -216,19 +216,19 @@ namespace Core8.Peripherals.RK8E
                 dmaChannel.Write(MemoryAddress + word, units[Unit][DiskAddress + word]);
             }
 
-            currentAddressRegister = (currentAddressRegister + RK_NUMWD) & 0b_111_111_111_111; 
+            currentAddressRegister = (currentAddressRegister + RK_NUMWD) & 0b_111_111_111_111;
         }
 
         private void WriteData()
         {
             for (var word = 0; word < RK_NUMWD; word++)
             {
-                var data = word< BlockSize ? dmaChannel.Read(MemoryAddress+ word) : 0;
+                var data = word < BlockSize ? dmaChannel.Read(MemoryAddress + word) : 0;
 
                 units[Unit][DiskAddress + word] = data;
             }
 
-            currentAddressRegister = (currentAddressRegister + RK_NUMWD) & 0b_111_111_111_111; 
+            currentAddressRegister = (currentAddressRegister + RK_NUMWD) & 0b_111_111_111_111;
         }
     }
 }
