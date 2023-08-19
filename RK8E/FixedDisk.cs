@@ -29,7 +29,7 @@ namespace Core8.Peripherals.RK8E
 
         private const int RK_NUMDR = 4; // drives/controller 
 
-        private const int COMMAND_MASK = 0b_111_000_000_000;
+        private const int COMMAND_MASK = 0b_111_000_000_000;        
 
         private const int TICK_DELAY = 100;
 
@@ -48,10 +48,15 @@ namespace Core8.Peripherals.RK8E
         }
 
         private Command CurrentCommand => (Command)(commandRegister & COMMAND_MASK);
+        private int Field => (commandRegister & 0b_000_000_111_000) >> 3;
+        private int Unit => (commandRegister & 0b_000_000_000_110) >> 1;
+        private bool HalfSector => ((commandRegister >> 6) & 1) == 1;
 
-        private int Sector => diskAddressRegister & 0b_001_111;
-        private int Surface => (diskAddressRegister  & 0b_010_000 )>> 4;
-        private int Cylinder => ((diskAddressRegister & 0b_111_111_100_000) >> 5) | ((commandRegister & RKC_CYHI) << 7);
+        private int DiskAddress => (diskAddressRegister | ((commandRegister & RKC_CYHI) << 12)) * RK_NUMWD;
+
+        private int MemoryAddress => Field << 12 | currentAddressRegister;
+
+        private int BlockSize => HalfSector ? RK_NUMWD / 2 : RK_NUMWD;
 
         private readonly int[][] units = new int[RK_NUMDR][];
 
@@ -188,14 +193,16 @@ namespace Core8.Peripherals.RK8E
         {
             switch (CurrentCommand)
             {
+                case Command.READ_ALL:
                 case Command.READ_DATA:
                     ReadData();
                     break;
-                case Command.READ_ALL:
-                case Command.WRITE_PROTECT:
-                case Command.SEEK:
                 case Command.WRITE_DATA:
                 case Command.WRITE_ALL:
+                    WriteData();
+                    break;
+                case Command.WRITE_PROTECT:
+                case Command.SEEK:
                     throw new ArgumentOutOfRangeException(CurrentCommand.ToString());
             }
 
@@ -204,13 +211,24 @@ namespace Core8.Peripherals.RK8E
 
         private void ReadData()
         {
-            var diskAddress = 0;
-            var memoryAddress = 0;
-
-            for (var word = 0; word < 256; word++)
+            for (var word = 0; word < BlockSize; word++)
             {
-                dmaChannel.Write(memoryAddress + word, units[0][diskAddress + word]);
+                dmaChannel.Write(MemoryAddress + word, units[Unit][DiskAddress + word]);
             }
+
+            currentAddressRegister = (currentAddressRegister + RK_NUMWD) & 0b_111_111_111_111; 
+        }
+
+        private void WriteData()
+        {
+            for (var word = 0; word < RK_NUMWD; word++)
+            {
+                var data = word< BlockSize ? dmaChannel.Read(MemoryAddress+ word) : 0;
+
+                units[Unit][DiskAddress + word] = data;
+            }
+
+            currentAddressRegister = (currentAddressRegister + RK_NUMWD) & 0b_111_111_111_111; 
         }
     }
 }

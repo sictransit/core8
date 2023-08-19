@@ -143,7 +143,7 @@ namespace Core8
 
             LoggingLevel.MinimumLevel = LogEventLevel.Debug;
 
-            pdp.CPU.SetBreakpoint(cpu => cpu.InstructionCounter == 5000);
+            //pdp.CPU.SetBreakpoint(cpu => cpu.InstructionCounter == 5000);
 
             pdp.Continue(false);
 
