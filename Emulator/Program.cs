@@ -139,8 +139,8 @@ namespace Core8
 
             pdp.Load8(0023);
 
-            //pdp.CPU.FixedDisk.Load(0, File.ReadAllBytes("disks/advent.rk05"));
-            pdp.CPU.FixedDisk.Load(0, File.ReadAllBytes("disks/diag-games-kermit.rk05"));
+            pdp.CPU.FixedDisk.Load(0, File.ReadAllBytes("disks/advent.rk05"));
+            //pdp.CPU.FixedDisk.Load(0, File.ReadAllBytes("disks/diag-games-kermit.rk05"));
 
             LoggingLevel.MinimumLevel = LogEventLevel.Debug;
 
