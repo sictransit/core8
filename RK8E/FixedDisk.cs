@@ -26,6 +26,7 @@ namespace Core8.Peripherals.RK8E
         private const int RK_SIZE = RK_NUMCY * RK_NUMSF * RK_NUMSC * RK_NUMWD;
 
         private const int RKC_CYHI = 1; // high cylinder addr 
+        private const int RKC_IE = 1 << 8; // interrupt enable 
 
         private const int RK_NUMDR = 4; // drives/controller 
 
@@ -75,7 +76,7 @@ namespace Core8.Peripherals.RK8E
             }
         }
 
-        public bool InterruptRequested => false; // TODO: check config + flags
+        public bool InterruptRequested => ((commandRegister & RKC_IE) != 0) && SkipOnTransferDoneOrError();
 
         private void Load(int unit)
         {

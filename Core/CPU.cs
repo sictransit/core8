@@ -40,7 +40,7 @@ namespace Core8.Core
 
         private const int TTY_INPUT_DEVICE = 03;
         private const int TTY_OUTPUT_DEVICE = 04;
-        private const int LINE_PRINTER_DEVICE = 54; // device 66: serial line printer
+        //private const int LINE_PRINTER_DEVICE = 54; // device 66: serial line printer
         private const int FLOPPY_DEVICE = 61; // device 75: RX8E (floppy)
         private const int FIXED_DISK_DEVICE = 60; // device 74: RK8E (fixed disk)
 
@@ -221,7 +221,7 @@ namespace Core8.Core
                 IOT when (data & INTERRUPT_MASK) == 0 => interruptInstructions,
                 IOT when (data & IO) >> 3 == TTY_INPUT_DEVICE => keyboardInstructions,
                 IOT when (data & IO) >> 3 == TTY_OUTPUT_DEVICE => teleprinterInstructions,
-                IOT when (data & IO) >> 3 == LINE_PRINTER_DEVICE => teleprinterInstructions,
+          //      IOT when (data & IO) >> 3 == LINE_PRINTER_DEVICE => teleprinterInstructions,
                 IOT when (data & IO) >> 3 == FLOPPY_DEVICE => floppyDriveInstructions,
                 IOT when (data & IO) >> 3 == FIXED_DISK_DEVICE => fixedDiskInstructions,
                 IOT => privilegedNoOperationInstruction,

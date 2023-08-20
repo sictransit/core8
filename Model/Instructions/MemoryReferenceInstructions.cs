@@ -29,6 +29,8 @@ namespace Core8.Model.Instructions
         {
             var instruction = base.LoadData(data);
 
+            int location = Field | (Zero ? Word : Page | Word);
+
             if (Branching)
             {
                 if (Interrupts.Inhibited)
@@ -39,11 +41,11 @@ namespace Core8.Model.Instructions
                     UF.Set(UB.Content);
                 }
 
-                operand = Indirect ? (PC.IF << 12) | Memory.Read(Location, true) : (PC.IF << 12) | (Location & 0b_111_111_111_111);
+                operand = Indirect ? (PC.IF << 12) | Memory.Read(location, true) : (PC.IF << 12) | (location & 0b_111_111_111_111);
             }
             else
             {
-                operand = Indirect ? (DF.Content << 12) | Memory.Read(Location, true) : Location;
+                operand = Indirect ? (DF.Content << 12) | Memory.Read(location, true) : location;
             }
 
             return instruction;
@@ -55,18 +57,16 @@ namespace Core8.Model.Instructions
             {
                 var opCode = (MemoryReferenceOpCode)(Data & 0b_111_000_000_000);
                 var indirect = Indirect ? "I" : null;
-                var location = Location.ToOctalString(0);
+                var address = (Zero ? Word : Page | Word).ToOctalString(0);
                 var operandContent = Branching ? null : $" [{Memory.Read(operand).ToOctalString()}]";
 
-                return string.Join(" ", new[] { opCode.ToString(), indirect, location, operandContent }.Where(x => !string.IsNullOrWhiteSpace(x)));
+                return string.Join(" ", new[] { opCode.ToString(), indirect, address, operandContent }.Where(x => !string.IsNullOrWhiteSpace(x)));
             }
         }
 
         private bool Indirect => (Data & INDIRECT) != 0;
 
-        private bool Zero => (Data & ZERO) == 0;
-
-        private int Location => Field | (Zero ? Word : Page | Word);
+        private bool Zero => (Data & ZERO) == 0;        
 
         private bool Branching => (Data & JMS_MASK) != 0;
 

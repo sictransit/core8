@@ -90,7 +90,8 @@ namespace Core8.Model.Instructions
             CMA = CMA_MASK,
             CLL = CLL_MASK,
             CLA = CLA_MASK,
-            CIA = CMA_MASK | IAC_MASK
+            CIA = CMA_MASK | IAC_MASK,
+            STA = CMA_MASK | CLA_MASK
         }
     }
 }
