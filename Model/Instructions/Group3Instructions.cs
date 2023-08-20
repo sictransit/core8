@@ -1,4 +1,5 @@
-﻿using Core8.Model.Instructions.Abstract;
+﻿using Core8.Extensions;
+using Core8.Model.Instructions.Abstract;
 using Core8.Model.Interfaces;
 using Serilog;
 using System;
@@ -50,7 +51,7 @@ namespace Core8.Model.Instructions
             // TODO: Is this correct, or should we skip the entire instruction?
             if ((Data & 0b_000_000_101_110) != 0)
             {
-                Log.Warning($"{this} EAE micro-code ignored");
+                Log.Warning($"{CPU.Registry.PC.Content.ToOctalString(5)} {Data.ToOctalString()} {this} (EAE ignored!)");
             }
         }
 

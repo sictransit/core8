@@ -9,13 +9,14 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Serilog" Version="2.12.0" />
+    <PackageReference Include="Serilog" Version="3.0.1" />
     <PackageReference Include="Serilog.Sinks.Console" Version="4.1.0" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Floppy\Floppy.csproj" />
     <ProjectReference Include="..\Model\Model.csproj" />
+    <ProjectReference Include="..\RK8E\RK8E.csproj" />
+    <ProjectReference Include="..\RX8E\RX8E.csproj" />
     <ProjectReference Include="..\Teletype\Teletype.csproj" />
   </ItemGroup>
 

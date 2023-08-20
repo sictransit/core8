@@ -64,7 +64,7 @@ namespace Core8.Tests
             PDP.SetBreakpoint8(4);
 
             PDP.Load8(0);
-            PDP.Continue(true);
+            PDP.Continue();
 
             Assert.AreEqual(4, PDP.CPU.Registry.PC.Address);
         }

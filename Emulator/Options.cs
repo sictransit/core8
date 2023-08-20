@@ -31,6 +31,9 @@ namespace Core8
         [Option(Required = false, Default = false, HelpText = "boot OS/8")]
         public bool OS8 { get; set; }
 
+        [Option(Required = false, Default = false, HelpText = "run ADVENT")]
+        public bool Advent { get; set; }
+
         [Option(Required = false, Default = false, HelpText = "debug mode")]
         public bool Debug { get; set; }
 

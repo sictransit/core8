@@ -1,4 +1,5 @@
-﻿using Core8.Model.Instructions.Abstract;
+﻿using Core8.Extensions;
+using Core8.Model.Instructions.Abstract;
 using Core8.Model.Interfaces;
 using Serilog;
 
@@ -14,7 +15,7 @@ namespace Core8.Model.Instructions
 
         protected override void PrivilegedExecute()
         {
-            Log.Warning(this.ToString());
+            Log.Warning($"{CPU.Registry.PC.Content.ToOctalString(5)} {Data.ToOctalString()} {this}");
         }
     }
 }

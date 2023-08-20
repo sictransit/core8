@@ -1,7 +1,6 @@
 ﻿using Core8.Model.Instructions.Abstract;
 using Core8.Model.Interfaces;
 using System;
-using System.Linq;
 
 namespace Core8.Model.Instructions
 {
@@ -91,7 +90,8 @@ namespace Core8.Model.Instructions
             CMA = CMA_MASK,
             CLL = CLL_MASK,
             CLA = CLA_MASK,
-            CIA = CMA_MASK | IAC_MASK
+            CIA = CMA_MASK | IAC_MASK,
+            STA = CMA_MASK | CLA_MASK
         }
     }
 }

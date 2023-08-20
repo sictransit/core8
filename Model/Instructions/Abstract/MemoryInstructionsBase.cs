@@ -14,7 +14,7 @@ namespace Core8.Model.Instructions.Abstract
 
         protected IMemory Memory => CPU.Memory;
 
-        public MemoryInstructionsBase(ICPU cpu) : base(cpu)
+        protected MemoryInstructionsBase(ICPU cpu) : base(cpu)
         {
 
         }

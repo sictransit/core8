@@ -34,7 +34,7 @@ namespace Core8
             Parser.Default.ParseArguments<Options>(args)
                     .WithParsed(o =>
                     {
-                        pdp = new PDP(true);
+                        pdp = new PDP(true, true);
 
                         pdp.Clear();
 
@@ -79,8 +79,12 @@ namespace Core8
 
                         if (o.OS8)
                         {
-                            //FloppyTesting();
                             BootOS8();
+                        }
+
+                        if (o.Advent)
+                        {
+                            Advent();
                         }
 
                         if (o.TTY)
@@ -118,47 +122,39 @@ namespace Core8
             }
         }
 
-        private static void FloppyTesting()
+        private static void Advent()
         {
-            LoggingLevel.MinimumLevel = LogEventLevel.Information;
+            pdp.CPU.Memory.Clear();
 
-            using var httpClient = new HttpClient();
+            pdp.Load8(0023);
 
-            pdp.LoadPaperTape(httpClient.GetByteArrayAsync(@"https://www.dropbox.com/s/mvm1mh47jybfl5t/dirxa-d-pb?dl=1").Result);
+            pdp.Deposit8(06007); // 23, CAF 
+            pdp.Deposit8(06744); // 24, DLCA             ; addr = 0 
+            pdp.Deposit8(01032); // 25, TAD UNIT         ; unit no 
+            pdp.Deposit8(06746); // 26, DLDC             ; command, unit 
+            pdp.Deposit8(06743); // 27, DLAG             ; disk addr, go 
+            pdp.Deposit8(01032); // 30, TAD UNIT         ; unit no, for OS 
+            pdp.Deposit8(05031); // 31, JMP . 
+            pdp.Deposit8(00000); // UNIT, 0              ; in bits <9:10> 
 
-            //pdp.Load8(0020);
-            //pdp.Deposit8(0000);
-            //pdp.Deposit8(0000);
-            //pdp.Deposit8(0400);
+            pdp.Load8(0023);
 
-            //pdp.Load8(0020);
-            //pdp.Deposit8(0000);
-            //pdp.Deposit8(4000);
-            //pdp.Toggle8(0000);
+            pdp.CPU.FixedDisk.Load(0, File.ReadAllBytes("disks/advent.rk05"));
+            //pdp.CPU.FixedDisk.Load(0, File.ReadAllBytes("disks/diag-games-kermit.rk05"));
 
-            pdp.Clear();
+            LoggingLevel.MinimumLevel = LogEventLevel.Debug;
 
-            pdp.Load8(0200);
+            //pdp.CPU.SetBreakpoint(cpu => cpu.InstructionCounter == 5000);
 
-            pdp.Toggle8(0400);
+            //pdp.CPU.Debug(true); 
+            pdp.Continue(false);
 
-            //pdp.SetBreakpoint8(01723); // Error test?
-            //pdp.SetBreakpoint8(00406); // CAF
-            //pdp.SetBreakpoint8(01532); // CAF
-            //pdp.SetBreakpoint8(10473); // CAF
+            while (pdp.Running)
+            {
+                Thread.Sleep(200);
+            }
 
-            //pdp.SetBreakpoint8(03306); // LCD
-            //pdp.SetBreakpoint8(06206); // LCD
-
-            //pdp.DumpMemory();
-
-            pdp.Continue();
-
-            //loggingLevel.MinimumLevel = Serilog.Events.LogEventLevel.Debug;
-
-            //pdp.RemoveAllBreakpoints();
-
-            //pdp.Continue(waitForHalt: true);
+            pdp.DumpMemory();
         }
 
         private static void BootOS8()

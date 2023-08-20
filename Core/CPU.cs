@@ -7,7 +7,6 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Runtime.CompilerServices;
 using System.Threading;
 
 namespace Core8.Core
@@ -25,6 +24,9 @@ namespace Core8.Core
         private readonly InterruptInstructions interruptInstructions;
         private readonly PrivilegedNoOperationInstruction privilegedNoOperationInstruction;
         private readonly FloppyDriveInstructions floppyDriveInstructions;
+        private readonly FixedDiskInstructions fixedDiskInstructions;
+
+        private const int INSTRUCTION_TYPE_MASK = 0b_111_000_000_000;
 
         private const int IOT = 0b_110_000_000_000;
         private const int MCI = 0b_111_000_000_000;
@@ -32,13 +34,15 @@ namespace Core8.Core
         private const int GROUP = 0b_000_100_000_000;
         private const int GROUP_3 = 0b_111_100_000_001;
         private const int GROUP_2_AND = 0b_111_100_001_000;
-        private const int FLOPPY = 0b_000_111_000_000;
         private const int MEMORY_MANAGEMENT = 0b_110_010_000_000;
+        private const int MEMORY_MANAGEMENT_MASK = 0b_111_111_000_000;
         private const int INTERRUPT_MASK = 0b_000_111_111_000;
 
         private const int TTY_INPUT_DEVICE = 03;
         private const int TTY_OUTPUT_DEVICE = 04;
-        private const int LINE_PRINTER_DEVICE = 54; // device 66: serial line printer
+        //private const int LINE_PRINTER_DEVICE = 54; // device 66: serial line printer
+        private const int FLOPPY_DEVICE = 61; // device 75: RX8E (floppy)
+        private const int FIXED_DISK_DEVICE = 60; // device 74: RK8E (fixed disk)
 
         private volatile bool running;
 
@@ -49,9 +53,9 @@ namespace Core8.Core
         // TODO: Create class, include hit count. How to break on instruction and then continue e.g. 1000 more?
         private readonly List<Func<ICPU, bool>> breakpoints = new();
 
-        private (int address,int data) waitingLoopCap;
+        private (int address, int data) waitingLoopCap;
 
-        public CPU(ITeletype teletype, IFloppyDrive floppy)
+        public CPU()
         {
             group1Instructions = new Group1Instructions(this);
             group2AndInstructions = new Group2ANDInstructions(this);
@@ -64,15 +68,10 @@ namespace Core8.Core
             interruptInstructions = new InterruptInstructions(this);
             privilegedNoOperationInstruction = new PrivilegedNoOperationInstruction(this);
             floppyDriveInstructions = new FloppyDriveInstructions(this);
-
-            Teletype = teletype ?? throw new ArgumentNullException(nameof(teletype));
+            fixedDiskInstructions = new FixedDiskInstructions(this);
 
             Memory = new Memory();
-
-            FloppyDrive = floppy;
-
             Interrupts = new Interrupts(this);
-
             Registry = new Registry();
         }
 
@@ -80,15 +79,31 @@ namespace Core8.Core
 
         public IInterrupts Interrupts { get; }
 
-        public ITeletype Teletype { get; }
+        public ITeletype Teletype { get; private set; }
 
-        public IFloppyDrive FloppyDrive { get; }
+        public IFloppyDrive FloppyDrive { get; private set; }
+
+        public IFixedDisk FixedDisk { get; private set; }
 
         public IMemory Memory { get; }
 
         public IInstruction Instruction { get; private set; }
 
         public int InstructionCounter { get; private set; }
+        public void Attach(IFixedDisk peripheral)
+        {
+            FixedDisk = peripheral;
+        }
+
+        public void Attach(IFloppyDrive peripheral)
+        {
+            FloppyDrive = peripheral;
+        }
+
+        public void Attach(ITeletype peripheral)
+        {
+            Teletype = peripheral;
+        }
 
         public void Clear()
         {
@@ -107,13 +122,13 @@ namespace Core8.Core
         public void Run()
         {
             var debugPC = 0;
-            var debugIF = 0;            
+            var debugIF = 0;
 
             running = true;
 
             Log.Information($"CONT @ {Registry.PC} (dbg: {debug})");
 
-            InstructionCounter = 0;            
+            InstructionCounter = 0;
 
             try
             {
@@ -123,6 +138,7 @@ namespace Core8.Core
 
                     Teletype.Tick();
                     FloppyDrive?.Tick();
+                    FixedDisk?.Tick();
 
                     Interrupts.Interrupt();
 
@@ -136,7 +152,7 @@ namespace Core8.Core
 
                     if (debug)
                     {
-                        Log.Debug($"{debugIF}{debugPC.ToOctalString(4)}  {Registry.AC.Link} {Registry.AC.Accumulator.ToOctalString()}  {Registry.MQ.Content.ToOctalString()}  {Instruction}");
+                        Log.Debug($"{debugIF}{debugPC.ToOctalString()}  {Registry.AC.Link} {Registry.AC.Accumulator.ToOctalString()}  {Registry.MQ.Content.ToOctalString()}  {Instruction}");
 
                         if (breakpoints.Any(b => b(this)) || singleStep)
                         {
@@ -195,23 +211,24 @@ namespace Core8.Core
         {
             var data = Memory.Read(address);
 
-            var instruction =  ((data & 0b_111_000_000_000) switch
+            var instruction = ((data & INSTRUCTION_TYPE_MASK) switch
             {
                 MCI when (data & GROUP) == 0 => group1Instructions.LoadAddress(address),
                 MCI when (data & GROUP_3) == GROUP_3 => group3Instructions,
                 MCI when (data & GROUP_2_AND) == GROUP_2_AND => group2AndInstructions,
                 MCI => group2OrInstructions,
-                IOT when (data & FLOPPY) == FLOPPY => floppyDriveInstructions,
-                IOT when (data & 0b_111_111_000_000) == MEMORY_MANAGEMENT => memoryManagementInstructions,
+                IOT when (data & MEMORY_MANAGEMENT_MASK) == MEMORY_MANAGEMENT => memoryManagementInstructions,
                 IOT when (data & INTERRUPT_MASK) == 0 => interruptInstructions,
                 IOT when (data & IO) >> 3 == TTY_INPUT_DEVICE => keyboardInstructions,
                 IOT when (data & IO) >> 3 == TTY_OUTPUT_DEVICE => teleprinterInstructions,
-                IOT when (data & IO) >> 3 == LINE_PRINTER_DEVICE => teleprinterInstructions, 
+          //      IOT when (data & IO) >> 3 == LINE_PRINTER_DEVICE => teleprinterInstructions,
+                IOT when (data & IO) >> 3 == FLOPPY_DEVICE => floppyDriveInstructions,
+                IOT when (data & IO) >> 3 == FIXED_DISK_DEVICE => fixedDiskInstructions,
                 IOT => privilegedNoOperationInstruction,
                 _ => memoryReferenceInstructions.LoadAddress(address),
             }).LoadData(data);
 
-            if (debug && (address % 2 == 0)) // To avoid looping over e.g. SDN/JMP as fast as the host CPU can manage.
+            if (debug && address % 2 == 0) // To avoid looping over e.g. SDN/JMP as fast as the host CPU can manage.
             {
                 if (waitingLoopCap == (address, data))
                 {
@@ -219,7 +236,7 @@ namespace Core8.Core
                 }
                 else
                 {
-                    waitingLoopCap = (address, data);                    
+                    waitingLoopCap = (address, data);
                 }
             }
 
