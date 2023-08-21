@@ -37,6 +37,58 @@ namespace Core8.Core
 
         public ICPU CPU { get; }
 
+        public void ToggleRK8EBootstrap()
+        {
+            Load8(0023);
+
+            Deposit8(06007); // 23, CAF 
+            Deposit8(06744); // 24, DLCA             ; addr = 0 
+            Deposit8(01032); // 25, TAD UNIT         ; unit no 
+            Deposit8(06746); // 26, DLDC             ; command, unit 
+            Deposit8(06743); // 27, DLAG             ; disk addr, go 
+            Deposit8(01032); // 30, TAD UNIT         ; unit no, for OS 
+            Deposit8(05031); // 31, JMP . 
+            Deposit8(00000); // UNIT, 0              ; in bits <9:10> 
+        }
+
+        public void ToggleRX8EBootstrap()
+        {
+            Load8(0022);
+
+            Deposit8(06755);
+            Deposit8(05022);
+            Deposit8(07126);
+            Deposit8(01060);
+            Deposit8(06751);
+            Deposit8(07201);
+            Deposit8(04053);
+            Deposit8(04053);
+            Deposit8(07104);
+            Deposit8(06755);
+            Deposit8(05054);
+            Deposit8(06754);
+            Deposit8(07450);
+            Deposit8(07610);
+            Deposit8(05046);
+            Deposit8(07402);
+            Deposit8(07402);
+            Deposit8(07402);
+            Deposit8(07402);
+            Deposit8(07402);
+            Deposit8(06751);
+            Deposit8(04053);
+            Deposit8(03002);
+            Deposit8(02050);
+            Deposit8(05047);
+            Deposit8(00000);
+            Deposit8(06753);
+            Deposit8(05033);
+            Deposit8(06752);
+            Deposit8(05453);
+            Deposit8(07004); // pdp.Deposit8(07024); Unit select?
+            Deposit8(06030);
+        }
+
         private void ToggleRIMAndBinLoader()
         {
             Load8(7617);

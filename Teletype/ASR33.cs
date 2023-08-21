@@ -104,6 +104,15 @@ namespace Core8.Peripherals.Teletype
             reader.Enqueue(c);
         }
 
+        public void Type(byte[] buffer)
+        {
+            foreach (var b in buffer)
+            {
+                Type(b);
+            }
+        }
+
+
         public void MountPaperTape(byte[] chars)
         {
             if (chars is null)

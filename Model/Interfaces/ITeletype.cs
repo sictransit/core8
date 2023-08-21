@@ -8,6 +8,8 @@ namespace Core8.Model.Interfaces
 
         void Type(byte c);
 
+        void Type(byte[] buffer);
+
         void Clear();
 
         bool InputFlag { get; }

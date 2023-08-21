@@ -66,7 +66,7 @@ namespace Core8.Model.Instructions
 
         private bool Indirect => (Data & INDIRECT) != 0;
 
-        private bool Zero => (Data & ZERO) == 0;        
+        private bool Zero => (Data & ZERO) == 0;
 
         private bool Branching => (Data & JMS_MASK) != 0;
 

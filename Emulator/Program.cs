@@ -1,14 +1,18 @@
 ﻿using CommandLine;
 using Core8.Core;
 using Core8.Extensions;
+using Core8.Model.Interfaces;
 using Core8.Peripherals.Teletype;
 using Core8.Utilities;
 using Serilog;
 using Serilog.Core;
 using Serilog.Events;
 using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Net.Http;
+using System.Text;
 using System.Threading;
 
 namespace Core8
@@ -126,95 +130,49 @@ namespace Core8
         {
             pdp.CPU.Memory.Clear();
 
-            pdp.Load8(0023);
-
-            pdp.Deposit8(06007); // 23, CAF 
-            pdp.Deposit8(06744); // 24, DLCA             ; addr = 0 
-            pdp.Deposit8(01032); // 25, TAD UNIT         ; unit no 
-            pdp.Deposit8(06746); // 26, DLDC             ; command, unit 
-            pdp.Deposit8(06743); // 27, DLAG             ; disk addr, go 
-            pdp.Deposit8(01032); // 30, TAD UNIT         ; unit no, for OS 
-            pdp.Deposit8(05031); // 31, JMP . 
-            pdp.Deposit8(00000); // UNIT, 0              ; in bits <9:10> 
-
-            pdp.Load8(0023);
-
             pdp.CPU.FixedDisk.Load(0, File.ReadAllBytes("disks/advent.rk05"));
-            //pdp.CPU.FixedDisk.Load(0, File.ReadAllBytes("disks/diag-games-kermit.rk05"));
 
-            LoggingLevel.MinimumLevel = LogEventLevel.Debug;
+            pdp.ToggleRK8EBootstrap();
 
-            //pdp.CPU.SetBreakpoint(cpu => cpu.InstructionCounter == 5000);
+            pdp.Load8(0023);
 
-            //pdp.CPU.Debug(true); 
             pdp.Continue(false);
+
+            var steps = new List<(Func<ITeletype, bool>, byte[])>
+            {
+                (tty=>tty.Printout.Contains('.'), Encoding.ASCII.GetBytes("R FRTS\r")),
+                (tty=>tty.Printout.Contains('*'), Encoding.ASCII.GetBytes("ADVENT\r")),
+                (tty=>tty.Printout.Count(c=> c == '*') == 2, new byte[]{0x1b}),
+            };
 
             while (pdp.Running)
             {
+                foreach (var step in steps.ToArray())
+                {
+                    if (step.Item1(pdp.CPU.Teletype))
+                    {
+                        pdp.CPU.Teletype.Type(step.Item2);
+
+                        steps.Remove(step);
+                        break;
+                    }
+                }
+
                 Thread.Sleep(200);
             }
-
-            pdp.DumpMemory();
         }
 
         private static void BootOS8()
         {
             pdp.CPU.Memory.Clear();
 
-            pdp.Load8(0022);
-            pdp.Deposit8(06755);
-            pdp.Deposit8(05022);
-            pdp.Deposit8(07126);
-            pdp.Deposit8(01060);
-            pdp.Deposit8(06751);
-            pdp.Deposit8(07201);
-            pdp.Deposit8(04053);
-            pdp.Deposit8(04053);
-            pdp.Deposit8(07104);
-            pdp.Deposit8(06755);
-            pdp.Deposit8(05054);
-            pdp.Deposit8(06754);
-            pdp.Deposit8(07450);
-            pdp.Deposit8(07610);
-            pdp.Deposit8(05046);
-            pdp.Deposit8(07402);
-            pdp.Deposit8(07402);
-            pdp.Deposit8(07402);
-            pdp.Deposit8(07402);
-            pdp.Deposit8(07402);
-            pdp.Deposit8(06751);
-            pdp.Deposit8(04053);
-            pdp.Deposit8(03002);
-            pdp.Deposit8(02050);
-            pdp.Deposit8(05047);
-            pdp.Deposit8(00000);
-            pdp.Deposit8(06753);
-            pdp.Deposit8(05033);
-            pdp.Deposit8(06752);
-            pdp.Deposit8(05453);
-            pdp.Deposit8(07004); // pdp.Deposit8(07024); Unit select?
-            pdp.Deposit8(06030);
+            pdp.ToggleRX8EBootstrap();
 
             pdp.Load8(0022);
-
-            //pdp.DumpMemory();
 
             pdp.LoadFloppy(0, File.ReadAllBytes(@"disks\os8_rx.rx01"));
-            //pdp.LoadFloppy(0, File.ReadAllBytes(@"disks\os8f4_rx.rx01"));
 
             pdp.Clear();
-
-            LoggingLevel.MinimumLevel = LogEventLevel.Debug;
-
-            //pdp.CPU.SetBreakpoint(cpu => cpu.Registry.PC.Address == 07713.ToDecimal()); // CIF CDF 0
-            //pdp.CPU.SetBreakpoint(cpu => cpu.Registry.PC.Address == 01207.ToDecimal()); // KSF            
-            //pdp.CPU.SetBreakpoint(cpu => cpu.InstructionCounter == 26000); 
-            //pdp.CPU.SetBreakpoint(cpu => cpu.Registry.PC.Address == 01253.ToDecimal()); // VER input
-            //pdp.CPU.SetBreakpoint(cpu => cpu.Registry.PC.Address == 00640.ToDecimal()); // CIF 1
-
-            //pdp.CPU.SetBreakpoint(cpu => cpu.Instruction?.Data == 6666.ToDecimal()); // 3510? Not implemented? DCA!
-
-            //pdp.CPU.Debug(true);
 
             pdp.Continue(false);
 
@@ -222,8 +180,6 @@ namespace Core8
             {
                 Thread.Sleep(200);
             }
-
-            pdp.DumpMemory();
         }
 
         private static void TINT()

@@ -221,7 +221,7 @@ namespace Core8.Core
                 IOT when (data & INTERRUPT_MASK) == 0 => interruptInstructions,
                 IOT when (data & IO) >> 3 == TTY_INPUT_DEVICE => keyboardInstructions,
                 IOT when (data & IO) >> 3 == TTY_OUTPUT_DEVICE => teleprinterInstructions,
-          //      IOT when (data & IO) >> 3 == LINE_PRINTER_DEVICE => teleprinterInstructions,
+                //      IOT when (data & IO) >> 3 == LINE_PRINTER_DEVICE => teleprinterInstructions,
                 IOT when (data & IO) >> 3 == FLOPPY_DEVICE => floppyDriveInstructions,
                 IOT when (data & IO) >> 3 == FIXED_DISK_DEVICE => fixedDiskInstructions,
                 IOT => privilegedNoOperationInstruction,
