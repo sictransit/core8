@@ -13,26 +13,19 @@ namespace Core8.Peripherals.Teletype
 {
     public class ASR33 : ITeletype
     {
-        private readonly ConcurrentQueue<byte> output = new();
-
-        private int ticks;
-
         private const int TICK_DELAY = 100;
 
-        private readonly ConcurrentQueue<byte> reader = new();
+        private const int INTERRUPT_ENABLE = 1 << 0;
+        private readonly ConcurrentQueue<byte> output = new();
 
         private readonly PublisherSocket publisherSocket;
+
+        private readonly ConcurrentQueue<byte> reader = new();
         private readonly SubscriberSocket subscriberSocket;
 
         private int deviceControl;
 
-        private const int INTERRUPT_ENABLE = 1 << 0;
-
-        private bool InterruptEnable => (deviceControl & INTERRUPT_ENABLE) != 0;
-
-        private bool InputIRQ => InputFlag && InterruptEnable;
-
-        private bool OutputIRQ => OutputFlag && InterruptEnable;
+        private int ticks;
 
         public ASR33(string inputAddress, string outputAddress)
         {
@@ -44,13 +37,19 @@ namespace Core8.Peripherals.Teletype
             subscriberSocket.SubscribeToAnyTopic();
         }
 
+        private bool InterruptEnable => (deviceControl & INTERRUPT_ENABLE) != 0;
+
+        private bool InputIRQ => InputFlag && InterruptEnable;
+
+        private bool OutputIRQ => OutputFlag && InterruptEnable;
+
+        private byte? OutputBuffer { get; set; }
+
         public bool InputFlag { get; private set; }
 
         public bool OutputFlag { get; private set; }
 
         public byte InputBuffer { get; private set; }
-
-        private byte? OutputBuffer { get; set; }
 
         public IReadOnlyCollection<byte> Output => output.ToArray();
 
@@ -76,8 +75,6 @@ namespace Core8.Peripherals.Teletype
         }
 
         public void ClearInputFlag() => InputFlag = false;
-
-        private void SetInputFlag() => InputFlag = true;
 
         public void ClearOutputFlag() => OutputFlag = false;
 
@@ -138,11 +135,6 @@ namespace Core8.Peripherals.Teletype
 
         public bool InterruptRequested => InputIRQ || OutputIRQ;
 
-        public override string ToString()
-        {
-            return $"[TT] if={(InputFlag ? 1 : 0)} ib={InputBuffer} of={(OutputFlag ? 1 : 0)} ob={OutputBuffer} irq/in={(InputIRQ ? 1 : 0)} irq/out={(OutputIRQ ? 1 : 0)} (tq= {reader.Count})";
-        }
-
         public void Tick()
         {
             if (ticks++ < TICK_DELAY)
@@ -155,6 +147,13 @@ namespace Core8.Peripherals.Teletype
             HandleInput();
 
             HandleOutput();
+        }
+
+        private void SetInputFlag() => InputFlag = true;
+
+        public override string ToString()
+        {
+            return $"[TT] if={(InputFlag ? 1 : 0)} ib={InputBuffer} of={(OutputFlag ? 1 : 0)} ob={OutputBuffer} irq/in={(InputIRQ ? 1 : 0)} irq/out={(OutputIRQ ? 1 : 0)} (tq= {reader.Count})";
         }
 
         private void HandleOutput()

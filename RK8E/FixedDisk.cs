@@ -5,7 +5,6 @@ namespace Core8.Peripherals.RK8E
 {
     public class FixedDisk : IFixedDisk
     {
-        private readonly IMemory dmaChannel;
         private const int RKS_DONE = 1 << 11; // transfer done 
         private const int RKS_HMOV = 1 << 10; // heads moving 
         private const int RKS_SKFL = 1 << 8; // drive seek fail 
@@ -33,19 +32,27 @@ namespace Core8.Peripherals.RK8E
         private const int COMMAND_MASK = 0b_111_000_000_000;
 
         private const int TICK_DELAY = 10;
+        private readonly IMemory dmaChannel;
+
+        private readonly int[][] units = new int[RK_NUMDR][];
+        private int commandRegister;
+
+        private int currentAddressRegister;
+        private int diskAddressRegister;
+
+        private bool go;
+        private int statusRegister;
 
         private int ticks;
 
-        private bool go;
-
-        private enum Command
+        public FixedDisk(IMemory dmaChannel)
         {
-            READ_DATA = 0 << 9,
-            READ_ALL = 1 << 9,
-            WRITE_PROTECT = 2 << 9,
-            SEEK = 3 << 9,
-            WRITE_DATA = 4 << 9,
-            WRITE_ALL = 5 << 9,
+            this.dmaChannel = dmaChannel;
+
+            for (var i = 0; i < RK_NUMDR; i++)
+            {
+                Load(i);
+            }
         }
 
         private Command CurrentCommand => (Command)(commandRegister & COMMAND_MASK);
@@ -59,44 +66,7 @@ namespace Core8.Peripherals.RK8E
 
         private int BlockSize => HalfSector ? RK_NUMWD / 2 : RK_NUMWD;
 
-        private readonly int[][] units = new int[RK_NUMDR][];
-
-        private int currentAddressRegister;
-        private int diskAddressRegister;
-        private int statusRegister;
-        private int commandRegister;
-
-        public FixedDisk(IMemory dmaChannel)
-        {
-            this.dmaChannel = dmaChannel;
-
-            for (var i = 0; i < RK_NUMDR; i++)
-            {
-                Load(i);
-            }
-        }
-
         public bool InterruptRequested => ((commandRegister & RKC_IE) != 0) && SkipOnTransferDoneOrError();
-
-        private void Load(int unit)
-        {
-            Load(unit, new int[RK_SIZE]);
-        }
-
-        private void Load(int unit, int[] data)
-        {
-            if (unit < 0 || unit >= RK_NUMDR)
-            {
-                throw new ArgumentException($"invalid unit: {unit} (max: {RK_NUMDR})", nameof(unit));
-            }
-
-            if (data.Length != RK_SIZE)
-            {
-                throw new ArgumentException($"invalid length: {data.Length} != {RK_SIZE}", nameof(data));
-            }
-
-            units[unit] = data;
-        }
 
         public void Load(int unit, byte[] image)
         {
@@ -190,6 +160,26 @@ namespace Core8.Peripherals.RK8E
             lac.SetAccumulator(statusRegister);
         }
 
+        private void Load(int unit)
+        {
+            Load(unit, new int[RK_SIZE]);
+        }
+
+        private void Load(int unit, int[] data)
+        {
+            if (unit < 0 || unit >= RK_NUMDR)
+            {
+                throw new ArgumentException($"invalid unit: {unit} (max: {RK_NUMDR})", nameof(unit));
+            }
+
+            if (data.Length != RK_SIZE)
+            {
+                throw new ArgumentException($"invalid length: {data.Length} != {RK_SIZE}", nameof(data));
+            }
+
+            units[unit] = data;
+        }
+
         private void Go()
         {
             switch (CurrentCommand)
@@ -230,6 +220,16 @@ namespace Core8.Peripherals.RK8E
             }
 
             currentAddressRegister = (currentAddressRegister + RK_NUMWD) & 0b_111_111_111_111;
+        }
+
+        private enum Command
+        {
+            READ_DATA = 0 << 9,
+            READ_ALL = 1 << 9,
+            WRITE_PROTECT = 2 << 9,
+            SEEK = 3 << 9,
+            WRITE_DATA = 4 << 9,
+            WRITE_ALL = 5 << 9,
         }
     }
 }

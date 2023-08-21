@@ -25,6 +25,27 @@ namespace Core8.Model.Instructions
 
         }
 
+        protected override string OpCodeText
+        {
+            get
+            {
+                var opCode = (MemoryReferenceOpCode)(Data & 0b_111_000_000_000);
+                var indirect = Indirect ? "I" : null;
+                var address = (Zero ? Word : Page | Word).ToOctalString(0);
+                var operandContent = Branching ? null : $" [{Memory.Read(operand).ToOctalString()}]";
+
+                return string.Join(" ", new[] { opCode.ToString(), indirect, address, operandContent }.Where(x => !string.IsNullOrWhiteSpace(x)));
+            }
+        }
+
+        private bool Indirect => (Data & INDIRECT) != 0;
+
+        private bool Zero => (Data & ZERO) == 0;
+
+        private bool Branching => (Data & JMS_MASK) != 0;
+
+        protected override string ExtendedAddress => operand.ToOctalString(5);
+
         public override IInstruction LoadData(int data)
         {
             var instruction = base.LoadData(data);
@@ -50,27 +71,6 @@ namespace Core8.Model.Instructions
 
             return instruction;
         }
-
-        protected override string OpCodeText
-        {
-            get
-            {
-                var opCode = (MemoryReferenceOpCode)(Data & 0b_111_000_000_000);
-                var indirect = Indirect ? "I" : null;
-                var address = (Zero ? Word : Page | Word).ToOctalString(0);
-                var operandContent = Branching ? null : $" [{Memory.Read(operand).ToOctalString()}]";
-
-                return string.Join(" ", new[] { opCode.ToString(), indirect, address, operandContent }.Where(x => !string.IsNullOrWhiteSpace(x)));
-            }
-        }
-
-        private bool Indirect => (Data & INDIRECT) != 0;
-
-        private bool Zero => (Data & ZERO) == 0;
-
-        private bool Branching => (Data & JMS_MASK) != 0;
-
-        protected override string ExtendedAddress => operand.ToOctalString(5);
 
         public override void Execute()
         {

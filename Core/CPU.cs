@@ -13,19 +13,6 @@ namespace Core8.Core
 {
     public class CPU : ICPU
     {
-        private readonly Group1Instructions group1Instructions;
-        private readonly Group2ANDInstructions group2AndInstructions;
-        private readonly Group2ORInstructions group2OrInstructions;
-        private readonly Group3Instructions group3Instructions;
-        private readonly MemoryReferenceInstructions memoryReferenceInstructions;
-        private readonly MemoryManagementInstructions memoryManagementInstructions;
-        private readonly KeyboardInstructions keyboardInstructions;
-        private readonly TeleprinterInstructions teleprinterInstructions;
-        private readonly InterruptInstructions interruptInstructions;
-        private readonly PrivilegedNoOperationInstruction privilegedNoOperationInstruction;
-        private readonly FloppyDriveInstructions floppyDriveInstructions;
-        private readonly FixedDiskInstructions fixedDiskInstructions;
-
         private const int INSTRUCTION_TYPE_MASK = 0b_111_000_000_000;
 
         private const int IOT = 0b_110_000_000_000;
@@ -39,19 +26,33 @@ namespace Core8.Core
         private const int INTERRUPT_MASK = 0b_000_111_111_000;
 
         private const int TTY_INPUT_DEVICE = 03;
+
         private const int TTY_OUTPUT_DEVICE = 04;
+
         //private const int LINE_PRINTER_DEVICE = 54; // device 66: serial line printer
         private const int FLOPPY_DEVICE = 61; // device 75: RX8E (floppy)
         private const int FIXED_DISK_DEVICE = 60; // device 74: RK8E (fixed disk)
 
-        private volatile bool running;
-
-        private bool singleStep;
+        // TODO: Create class, include hit count. How to break on instruction and then continue e.g. 1000 more?
+        private readonly List<Func<ICPU, bool>> breakpoints = new();
+        private readonly FixedDiskInstructions fixedDiskInstructions;
+        private readonly FloppyDriveInstructions floppyDriveInstructions;
+        private readonly Group1Instructions group1Instructions;
+        private readonly Group2ANDInstructions group2AndInstructions;
+        private readonly Group2ORInstructions group2OrInstructions;
+        private readonly Group3Instructions group3Instructions;
+        private readonly InterruptInstructions interruptInstructions;
+        private readonly KeyboardInstructions keyboardInstructions;
+        private readonly MemoryManagementInstructions memoryManagementInstructions;
+        private readonly MemoryReferenceInstructions memoryReferenceInstructions;
+        private readonly PrivilegedNoOperationInstruction privilegedNoOperationInstruction;
+        private readonly TeleprinterInstructions teleprinterInstructions;
 
         private bool debug;
 
-        // TODO: Create class, include hit count. How to break on instruction and then continue e.g. 1000 more?
-        private readonly List<Func<ICPU, bool>> breakpoints = new();
+        private volatile bool running;
+
+        private bool singleStep;
 
         private (int address, int data) waitingLoopCap;
 
@@ -90,6 +91,7 @@ namespace Core8.Core
         public IInstruction Instruction { get; private set; }
 
         public int InstructionCounter { get; private set; }
+
         public void Attach(IFixedDisk peripheral)
         {
             FixedDisk = peripheral;
