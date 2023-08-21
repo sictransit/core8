@@ -84,7 +84,7 @@ public class Interrupts : IInterrupts
             Registry.UF.Clear();
             Registry.UB.Clear();
 
-            Registry.PC.SetInterruptAddress();
+            Registry.PC.Set(1);
 
             Disable();
         }

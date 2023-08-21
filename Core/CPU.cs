@@ -89,7 +89,6 @@ public class CPU : ICPU
 
     public IMemory Memory { get; }
 
-
     public IInstruction Instruction { get; private set; }
 
     public int InstructionCounter { get; private set; }

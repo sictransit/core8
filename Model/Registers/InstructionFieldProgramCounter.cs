@@ -14,13 +14,11 @@ public class InstructionFieldProgramCounter : RegisterBase
 
     protected override int Digits => 5;
 
-    public void Increment() => Content = (Content & 0b_111_000_000_000_000) | ((Content + 1) & 0b_111_111_111_111);
+    public void Increment() => SetPC(Content + 1);
 
     public void SetIF(int field) => Content = ((field << 12) & 0b_111_000_000_000_000) | (Content & 0b_111_111_111_111);
 
     public void SetPC(int address) => Content = (Content & 0b_111_000_000_000_000) | (address & 0b_111_111_111_111);
 
-    public void SetInterruptAddress() => Content = 1;
-
-    public void Jump(int address) => Content = (Content & 0b_111_000_000_000_000) | (address & 0b_111_111_111_111);
+    public void Jump(int address) => SetPC(address);
 }
