@@ -1,43 +1,46 @@
 ﻿using System;
 
-namespace Core8.Model.Interfaces
+namespace Core8.Model.Interfaces;
+
+public interface ICPU
 {
-    public interface ICPU
-    {
-        IInterrupts Interrupts { get; }
+    IInterrupts Interrupts { get; }
 
-        IMemory Memory { get; }
+    IMemory Memory { get; }
 
-        ITeletype Teletype { get; }
+    IKeyboardReader KeyboardReader { get; }
 
-        IFloppyDrive FloppyDrive { get; }
+    IPrinterPunch PrinterPunch { get; }
 
-        IFixedDisk FixedDisk { get; }
+    IFloppyDrive FloppyDrive { get; }
 
-        IRegistry Registry { get; }
+    IFixedDisk FixedDisk { get; }
 
-        IInstruction Fetch(int address);
+    IRegistry Registry { get; }
 
-        IInstruction Instruction { get; }
+    IInstruction Fetch(int address);
 
-        void Run();
+    IInstruction Instruction { get; }
 
-        void Halt();
+    void Run();
 
-        void Clear();
+    void Halt();
 
-        void SetBreakpoint(Func<ICPU, bool> breakpoint);
+    void Clear();
 
-        void SingleStep(bool state);
+    void SetBreakpoint(Func<ICPU, bool> breakpoint);
 
-        void Debug(bool state);
+    void SingleStep(bool state);
 
-        int InstructionCounter { get; }
+    void Debug(bool state);
 
-        void Attach(IFixedDisk peripheral);
+    int InstructionCounter { get; }
 
-        void Attach(IFloppyDrive peripheral);
+    void Attach(IFixedDisk peripheral);
 
-        void Attach(ITeletype peripheral);
-    }
+    void Attach(IFloppyDrive peripheral);
+
+    void Attach(IPrinterPunch peripheral);
+
+    void Attach(IKeyboardReader peripheral);
 }

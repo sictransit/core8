@@ -1,13 +1,12 @@
 ﻿using Core8.Model.Registers.Abstract;
 
-namespace Core8.Model.Registers
+namespace Core8.Model.Registers;
+
+public class InstructionBuffer : RegisterBase
 {
-    public class InstructionBuffer : RegisterBase
-    {
-        protected override string ShortName => "IB";
+    protected override string ShortName => "IB";
 
-        public override void Set(int value) => Content = value & 0b_111;
+    public override void Set(int value) => Content = value & 0b_111;
 
-        protected override int Digits => 1;
-    }
+    protected override int Digits => 1;
 }

@@ -2,67 +2,66 @@
 using System.Diagnostics;
 using System.IO;
 
-namespace Core8.Utilities
+namespace Core8.Utilities;
+
+public class Assembler
 {
-    public class Assembler
+    private readonly string palbart;
+
+    public Assembler(string palbart)
     {
-        private readonly string palbart;
-
-        public Assembler(string palbart)
+        if (!File.Exists(palbart))
         {
-            if (!File.Exists(palbart))
-            {
-                throw new FileNotFoundException(palbart);
-            }
-
-            this.palbart = palbart;
+            throw new FileNotFoundException(palbart);
         }
 
-        public bool TryAssemble(string source, out string binary)
+        this.palbart = palbart;
+    }
+
+    public bool TryAssemble(string source, out string binary)
+    {
+        if (!File.Exists(source))
         {
-            if (!File.Exists(source))
-            {
-                throw new FileNotFoundException(source);
-            }
-
-            binary = Path.ChangeExtension(source, ".bin");
-
-            File.Delete(binary);
-
-            using var process = new Process();
-
-            var info = new ProcessStartInfo
-            {
-                FileName = palbart,
-                UseShellExecute = false,
-                Arguments = $"\"{source}\"",
-                RedirectStandardError = true
-            };
-
-            process.StartInfo = info;
-            process.OutputDataReceived += Process_OutputDataReceived;
-            process.ErrorDataReceived += Process_ErrorDataReceived;
-
-            process.Start();
-
-            if (!process.WaitForExit(10000))
-            {
-                process.Kill(true);
-            }
-
-            var error = Path.ChangeExtension(source, ".err");
-
-            return File.Exists(binary) && !File.Exists(error);
+            throw new FileNotFoundException(source);
         }
 
-        private void Process_ErrorDataReceived(object sender, DataReceivedEventArgs e)
+        binary = Path.ChangeExtension(source, ".bin");
+
+        File.Delete(binary);
+
+        using Process process = new();
+
+        ProcessStartInfo info = new()
         {
-            Log.Error(e.Data);
+            FileName = palbart,
+            UseShellExecute = false,
+            Arguments = $"\"{source}\"",
+            RedirectStandardError = true
+        };
+
+        process.StartInfo = info;
+        process.OutputDataReceived += Process_OutputDataReceived;
+        process.ErrorDataReceived += Process_ErrorDataReceived;
+
+        process.Start();
+
+        if (!process.WaitForExit(10000))
+        {
+            process.Kill(true);
         }
 
-        private void Process_OutputDataReceived(object sender, DataReceivedEventArgs e)
-        {
-            Log.Information(e.Data);
-        }
+        string error = Path.ChangeExtension(source, ".err");
+
+        return File.Exists(binary) && !File.Exists(error);
+    }
+
+    private void Process_ErrorDataReceived(object sender, DataReceivedEventArgs e)
+    {
+        Log.Error(e.Data);
+    }
+
+    private void Process_OutputDataReceived(object sender, DataReceivedEventArgs e)
+    {
+        Log.Information(e.Data);
     }
 }

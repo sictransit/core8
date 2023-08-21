@@ -1,292 +1,247 @@
 ﻿using CommandLine;
 using Core8.Core;
 using Core8.Extensions;
+using Core8.Model.Interfaces;
 using Core8.Peripherals.Teletype;
 using Core8.Utilities;
 using Serilog;
 using Serilog.Core;
 using Serilog.Events;
 using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Net.Http;
+using System.Text;
 using System.Threading;
 
-namespace Core8
+namespace Core8;
+
+public static class Program
 {
-    public static class Program
+    private static readonly LoggingLevelSwitch LoggingLevel = new();
+
+    private static PDP pdp;
+
+    public static void Main(string[] args)
     {
-        private static readonly LoggingLevelSwitch LoggingLevel = new();
+        string logFilename = "emulator.log";
 
-        private static PDP pdp;
+        File.Delete(logFilename);
 
-        public static void Main(string[] args)
-        {
-            var logFilename = "emulator.log";
+        Log.Logger = new LoggerConfiguration()
+            .WriteTo.Console(LogEventLevel.Information, "{Message:lj}{NewLine}")
+            .WriteTo.File(logFilename, LogEventLevel.Debug, "{Message:lj}{NewLine}")
+            .MinimumLevel.ControlledBy(LoggingLevel)
+            .CreateLogger();
 
-            File.Delete(logFilename);
+        Parser.Default.ParseArguments<Options>(args)
+                .WithParsed(o =>
+                {
+                    pdp = new PDP(true, true);
 
-            Log.Logger = new LoggerConfiguration()
-                .WriteTo.Console(LogEventLevel.Information, "{Message:lj}{NewLine}")
-                .WriteTo.File(logFilename, LogEventLevel.Debug, "{Message:lj}{NewLine}")
-                .MinimumLevel.ControlledBy(LoggingLevel)
-                .CreateLogger();
+                    pdp.Clear();
 
-            Parser.Default.ParseArguments<Options>(args)
-                    .WithParsed(o =>
+                    if (o.Debug)
                     {
-                        pdp = new PDP(true, true);
+                        pdp.CPU.Debug(true);
 
-                        pdp.Clear();
+                        LoggingLevel.MinimumLevel = LogEventLevel.Debug;
+                    }
 
-                        if (o.Debug)
+                    if (!string.IsNullOrWhiteSpace(o.Convert))
+                    {
+                        Convert(o.Convert);
+                    }
+
+                    if (o.TINT)
+                    {
+                        TINT();
+                    }
+                    else if (!string.IsNullOrWhiteSpace(o.Assemble))
+                    {
+                        if (TryAssemble(o.PALBART, o.Assemble, out string binary))
                         {
-                            pdp.CPU.Debug(true);
-
-                            LoggingLevel.MinimumLevel = LogEventLevel.Debug;
+                            o.Load = binary;
                         }
+                    }
 
-                        if (!string.IsNullOrWhiteSpace(o.Convert))
-                        {
-                            Convert(o.Convert);
-                        }
+                    if (!string.IsNullOrWhiteSpace(o.Load))
+                    {
+                        Load(o.Load);
 
-                        if (o.TINT)
+                        if (o.Run)
                         {
-                            TINT();
-                        }
-                        else if (!string.IsNullOrWhiteSpace(o.Assemble))
-                        {
-                            if (TryAssemble(o.PALBART, o.Assemble, out var binary))
+                            if (o.Debug)
                             {
-                                o.Load = binary;
+                                LoggingLevel.MinimumLevel = LogEventLevel.Debug;
                             }
+
+                            Run(o.StartingAddress, o.DumpMemory);
                         }
+                    }
 
-                        if (!string.IsNullOrWhiteSpace(o.Load))
-                        {
-                            Load(o.Load);
+                    if (o.OS8)
+                    {
+                        BootOS8();
+                    }
 
-                            if (o.Run)
-                            {
-                                if (o.Debug)
-                                {
-                                    LoggingLevel.MinimumLevel = LogEventLevel.Debug;
-                                }
+                    if (o.Advent)
+                    {
+                        Advent();
+                    }
 
-                                Run(o.StartingAddress, o.DumpMemory);
-                            }
-                        }
+                    if (o.TTY)
+                    {
+                        Console.WriteLine(pdp.CPU.PrinterPunch.Printout);
+                    }
 
-                        if (o.OS8)
-                        {
-                            BootOS8();
-                        }
+                    if (!string.IsNullOrEmpty(o.Punch))
+                    {
+                        Punch(o.Punch);
+                    }
+                });
+    }
 
-                        if (o.Advent)
-                        {
-                            Advent();
-                        }
+    private static void Punch(string binFile)
+    {
+        FileInfo file = new(binFile);
 
-                        if (o.TTY)
-                        {
-                            Console.WriteLine(pdp.CPU.Teletype.Printout);
-                        }
+        byte[] data = File.ReadAllBytes(binFile);
 
-                        if (!string.IsNullOrEmpty(o.Punch))
-                        {
-                            Punch(o.Punch);
-                        }
-                    });
-        }
+        SVGPunch punch = new();
 
-        private static void Punch(string binFile)
+        string tape = punch.Punch(data, file.Name);
+
+        string svgFile = Path.ChangeExtension(file.FullName, ".svg");
+
+        File.WriteAllText(svgFile, tape);
+    }
+
+    private static void Convert(string s)
+    {
+        foreach (char c in s)
         {
-            var file = new FileInfo(binFile);
-
-            var data = File.ReadAllBytes(binFile);
-
-            var punch = new SVGPunch();
-
-            var tape = punch.Punch(data, file.Name);
-
-            var svgFile = Path.ChangeExtension(file.FullName, ".svg");
-
-            File.WriteAllText(svgFile, tape);
+            Console.WriteLine($"{c}: {((int)c).ToOctalString()}");
         }
+    }
 
-        private static void Convert(string s)
+    private static void Advent()
+    {
+        pdp.CPU.Memory.Clear();
+
+        pdp.CPU.FixedDisk.Load(0, File.ReadAllBytes("disks/advent.rk05"));
+
+        pdp.ToggleRK8EBootstrap();
+
+        pdp.Load8(0023);
+
+        pdp.Continue(false);
+
+        List<(Func<IPrinterPunch, bool>, byte[])> steps = new()
         {
-            foreach (var c in s)
+            (tty=>tty.Printout.Contains('.'), Encoding.ASCII.GetBytes("R FRTS\r")),
+            (tty=>tty.Printout.Contains('*'), Encoding.ASCII.GetBytes("ADVENT\r")),
+            (tty=>tty.Printout.Count(c=> c == '*') == 2, new byte[]{0x1b}),
+        };
+
+        while (pdp.Running)
+        {
+            foreach ((Func<IPrinterPunch, bool>, byte[]) step in steps.ToArray())
             {
-                Console.WriteLine($"{c}: {((int)c).ToOctalString()}");
-            }
-        }
+                if (step.Item1(pdp.CPU.PrinterPunch))
+                {
+                    pdp.CPU.KeyboardReader.Type(step.Item2);
 
-        private static void Advent()
-        {
-            pdp.CPU.Memory.Clear();
-
-            pdp.Load8(0023);
-
-            pdp.Deposit8(06007); // 23, CAF 
-            pdp.Deposit8(06744); // 24, DLCA             ; addr = 0 
-            pdp.Deposit8(01032); // 25, TAD UNIT         ; unit no 
-            pdp.Deposit8(06746); // 26, DLDC             ; command, unit 
-            pdp.Deposit8(06743); // 27, DLAG             ; disk addr, go 
-            pdp.Deposit8(01032); // 30, TAD UNIT         ; unit no, for OS 
-            pdp.Deposit8(05031); // 31, JMP . 
-            pdp.Deposit8(00000); // UNIT, 0              ; in bits <9:10> 
-
-            pdp.Load8(0023);
-
-            pdp.CPU.FixedDisk.Load(0, File.ReadAllBytes("disks/advent.rk05"));
-            //pdp.CPU.FixedDisk.Load(0, File.ReadAllBytes("disks/diag-games-kermit.rk05"));
-
-            LoggingLevel.MinimumLevel = LogEventLevel.Debug;
-
-            //pdp.CPU.SetBreakpoint(cpu => cpu.InstructionCounter == 5000);
-
-            //pdp.CPU.Debug(true); 
-            pdp.Continue(false);
-
-            while (pdp.Running)
-            {
-                Thread.Sleep(200);
+                    steps.Remove(step);
+                    break;
+                }
             }
 
+            Thread.Sleep(200);
+        }
+    }
+
+    private static void BootOS8()
+    {
+        pdp.CPU.Memory.Clear();
+
+        pdp.ToggleRX8EBootstrap();
+
+        pdp.Load8(0022);
+
+        pdp.LoadFloppy(0, File.ReadAllBytes(@"disks\os8_rx.rx01"));
+
+        pdp.Clear();
+
+        pdp.Continue(false);
+
+        while (pdp.Running)
+        {
+            Thread.Sleep(200);
+        }
+    }
+
+    private static void TINT()
+    {
+        pdp.Clear();
+
+        using HttpClient httpClient = new();
+
+        pdp.LoadPaperTape(httpClient.GetByteArrayAsync(@"https://github.com/PontusPih/TINT8/releases/download/v0.1.0-alpha/tint.bin").Result);
+
+        pdp.Clear();
+
+        Run(200, false);
+    }
+
+    private static bool TryAssemble(string palbart, string file, out string binary)
+    {
+        Assembler assembler = new(palbart);
+
+        bool assembled = assembler.TryAssemble(file, out binary);
+
+        if (!assembled)
+        {
+            Log.Error($"Assembly failed: {file}");
+        }
+        else
+        {
+            Log.Information($"Assembled: {file} -> {binary}");
+        }
+
+        return assembled;
+    }
+
+    private static void Run(int startingAddress, bool dumpMemory)
+    {
+        pdp.Load8(startingAddress);
+
+        if (dumpMemory)
+        {
             pdp.DumpMemory();
         }
 
-        private static void BootOS8()
+        //pdp.CPU.Debug(true);
+
+        pdp.Continue();
+
+        Thread.Sleep(1000);
+
+        if (dumpMemory)
         {
-            pdp.CPU.Memory.Clear();
-
-            pdp.Load8(0022);
-            pdp.Deposit8(06755);
-            pdp.Deposit8(05022);
-            pdp.Deposit8(07126);
-            pdp.Deposit8(01060);
-            pdp.Deposit8(06751);
-            pdp.Deposit8(07201);
-            pdp.Deposit8(04053);
-            pdp.Deposit8(04053);
-            pdp.Deposit8(07104);
-            pdp.Deposit8(06755);
-            pdp.Deposit8(05054);
-            pdp.Deposit8(06754);
-            pdp.Deposit8(07450);
-            pdp.Deposit8(07610);
-            pdp.Deposit8(05046);
-            pdp.Deposit8(07402);
-            pdp.Deposit8(07402);
-            pdp.Deposit8(07402);
-            pdp.Deposit8(07402);
-            pdp.Deposit8(07402);
-            pdp.Deposit8(06751);
-            pdp.Deposit8(04053);
-            pdp.Deposit8(03002);
-            pdp.Deposit8(02050);
-            pdp.Deposit8(05047);
-            pdp.Deposit8(00000);
-            pdp.Deposit8(06753);
-            pdp.Deposit8(05033);
-            pdp.Deposit8(06752);
-            pdp.Deposit8(05453);
-            pdp.Deposit8(07004); // pdp.Deposit8(07024); Unit select?
-            pdp.Deposit8(06030);
-
-            pdp.Load8(0022);
-
-            //pdp.DumpMemory();
-
-            pdp.LoadFloppy(0, File.ReadAllBytes(@"disks\os8_rx.rx01"));
-            //pdp.LoadFloppy(0, File.ReadAllBytes(@"disks\os8f4_rx.rx01"));
-
-            pdp.Clear();
-
-            LoggingLevel.MinimumLevel = LogEventLevel.Debug;
-
-            //pdp.CPU.SetBreakpoint(cpu => cpu.Registry.PC.Address == 07713.ToDecimal()); // CIF CDF 0
-            //pdp.CPU.SetBreakpoint(cpu => cpu.Registry.PC.Address == 01207.ToDecimal()); // KSF            
-            //pdp.CPU.SetBreakpoint(cpu => cpu.InstructionCounter == 26000); 
-            //pdp.CPU.SetBreakpoint(cpu => cpu.Registry.PC.Address == 01253.ToDecimal()); // VER input
-            //pdp.CPU.SetBreakpoint(cpu => cpu.Registry.PC.Address == 00640.ToDecimal()); // CIF 1
-
-            //pdp.CPU.SetBreakpoint(cpu => cpu.Instruction?.Data == 6666.ToDecimal()); // 3510? Not implemented? DCA!
-
-            //pdp.CPU.Debug(true);
-
-            pdp.Continue(false);
-
-            while (pdp.Running)
-            {
-                Thread.Sleep(200);
-            }
-
             pdp.DumpMemory();
         }
+    }
 
-        private static void TINT()
+    private static void Load(string binFile)
+    {
+        pdp.LoadPaperTape(File.ReadAllBytes(binFile));
+
+        if (pdp.CPU.Registry.AC.Accumulator != 0)
         {
-            pdp.Clear();
-
-            using var httpClient = new HttpClient();
-
-            pdp.LoadPaperTape(httpClient.GetByteArrayAsync(@"https://github.com/PontusPih/TINT8/releases/download/v0.1.0-alpha/tint.bin").Result);
-
-            pdp.Clear();
-
-            Run(200, false);
-        }
-
-        private static bool TryAssemble(string palbart, string file, out string binary)
-        {
-            var assembler = new Assembler(palbart);
-
-            var assembled = assembler.TryAssemble(file, out binary);
-
-            if (!assembled)
-            {
-                Log.Error($"Assembly failed: {file}");
-            }
-            else
-            {
-                Log.Information($"Assembled: {file} -> {binary}");
-            }
-
-            return assembled;
-        }
-
-        private static void Run(int startingAddress, bool dumpMemory)
-        {
-            pdp.Load8(startingAddress);
-
-            if (dumpMemory)
-            {
-                pdp.DumpMemory();
-            }
-
-            //pdp.CPU.Debug(true);
-
-            pdp.Continue();
-
-            Thread.Sleep(1000);
-
-            if (dumpMemory)
-            {
-                pdp.DumpMemory();
-            }
-        }
-
-        private static void Load(string binFile)
-        {
-            pdp.LoadPaperTape(File.ReadAllBytes(binFile));
-
-            if (pdp.CPU.Registry.AC.Accumulator != 0)
-            {
-                Log.Warning("BIN format checksum error.");
-                Log.Information(pdp.CPU.Registry.AC.Accumulator.ToString());
-            }
+            Log.Warning("BIN format checksum error.");
+            Log.Information(pdp.CPU.Registry.AC.Accumulator.ToString());
         }
     }
 }

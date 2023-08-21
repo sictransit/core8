@@ -3,29 +3,28 @@ using Core8.Utilities;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.IO;
 
-namespace Core8.Tests
+namespace Core8.Tests;
+
+[TestClass]
+public class AssemblerTest : PDPTestsBase
 {
-    [TestClass]
-    public class AssemblerTest : PDPTestsBase
+    [TestMethod]
+    public void TestAssembler()
     {
-        [TestMethod]
-        public void TestAssembler()
-        {
-            var assembler = new Assembler(@"c:\bin\palbart.exe");
+        Assembler assembler = new(@"c:\bin\palbart.exe");
 
-            var result = assembler.TryAssemble(@"Assembler\HelloWorld.asm", out var binFilename);
+        bool result = assembler.TryAssemble(@"Assembler\HelloWorld.asm", out string binFilename);
 
-            Assert.IsTrue(result);
+        Assert.IsTrue(result);
 
-            PDP.Clear();
+        PDP.Clear();
 
-            PDP.LoadPaperTape(File.ReadAllBytes(binFilename));
+        PDP.LoadPaperTape(File.ReadAllBytes(binFilename));
 
-            PDP.Load8(0200);
+        PDP.Load8(0200);
 
-            PDP.Continue(waitForHalt: true);
+        PDP.Continue(waitForHalt: true);
 
-            Assert.AreEqual("HELLO WORLD!", PDP.CPU.Teletype.Printout);
-        }
+        Assert.AreEqual("HELLO WORLD!", PDP.CPU.PrinterPunch.Printout);
     }
 }

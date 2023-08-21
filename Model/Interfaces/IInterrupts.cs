@@ -1,29 +1,28 @@
-﻿namespace Core8.Model.Interfaces
+﻿namespace Core8.Model.Interfaces;
+
+public interface IInterrupts
 {
-    public interface IInterrupts
-    {
-        void Interrupt();
+    void Interrupt();
 
-        void SetUser();
+    void SetUser();
 
-        void ClearUser();
+    void ClearUser();
 
-        void Enable(bool withDelay = true);
+    void Enable(bool withDelay = true);
 
-        void Disable();
+    void Disable();
 
-        void Inhibit();
+    void Inhibit();
 
-        void Allow();
+    void Allow();
 
-        bool Enabled { get; }
+    bool Enabled { get; }
 
-        bool Pending { get; }
+    bool Pending { get; }
 
-        bool Inhibited { get; }
+    bool Inhibited { get; }
 
-        bool Requested { get; }
+    bool Requested { get; }
 
-        bool UserRequested { get; }
-    }
+    bool UserRequested { get; }
 }

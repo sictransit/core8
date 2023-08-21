@@ -1,34 +1,33 @@
 ﻿using Core8.Peripherals.RX8E.Interfaces;
 using Core8.Peripherals.RX8E.States.Abstract;
 
-namespace Core8.Peripherals.RX8E.States
+namespace Core8.Peripherals.RX8E.States;
+
+internal class Initialize : StateBase
 {
-    internal class Initialize : StateBase
+    public Initialize(IController controller) : base(controller)
     {
-        public Initialize(IController controller) : base(controller)
-        {
-            Controller.SetError(false);
-            Controller.SetInterrupts(0);
+        Controller.SetError(false);
+        Controller.SetInterrupts(0);
 
-            Controller.CR.Clear();
-            Controller.ES.Clear();
-            Controller.ER.Clear();
-            Controller.IR.Clear();
-        }
+        Controller.CR.Clear();
+        Controller.ES.Clear();
+        Controller.ER.Clear();
+        Controller.IR.Clear();
+    }
 
-        //protected override TimeSpan MinExecutionTime => TimeSpan.FromMilliseconds(1800);
+    //protected override TimeSpan MinExecutionTime => TimeSpan.FromMilliseconds(1800);
 
-        protected override bool FinalizeState()
-        {
-            Controller.SetSectorAddress(1);
-            Controller.SetTrackAddress(1);
+    protected override bool FinalizeState()
+    {
+        Controller.SetSectorAddress(1);
+        Controller.SetTrackAddress(1);
 
-            Controller.ReadSector();
+        Controller.ReadSector();
 
-            Controller.ES.SetInitializationDone(true);
-            Controller.ES.SetReady(true);
+        Controller.ES.SetInitializationDone(true);
+        Controller.ES.SetReady(true);
 
-            return true;
-        }
+        return true;
     }
 }

@@ -7,73 +7,72 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 
-namespace Core8.Tests.MAINDEC.Abstract
+namespace Core8.Tests.MAINDEC.Abstract;
+
+[TestClass]
+public abstract class MAINDECTestsBase : PDPTestsBase
 {
-    [TestClass]
-    public abstract class MAINDECTestsBase : PDPTestsBase
+    protected abstract string TapeName { get; }
+
+    protected virtual IEnumerable<string> ExpectedOutput => Array.Empty<string>();
+
+    protected virtual IEnumerable<string> UnexpectedOutput => Array.Empty<string>();
+
+    protected virtual TimeSpan MaxRunningTime => TimeSpan.FromSeconds(60);
+
+    [TestInitialize]
+    public void LoadTape()
     {
-        protected abstract string TapeName { get; }
+        PDP.Clear();
 
-        protected virtual IEnumerable<string> ExpectedOutput => Array.Empty<string>();
+        PDP.LoadPaperTape(File.ReadAllBytes(TapeName));
 
-        protected virtual IEnumerable<string> UnexpectedOutput => Array.Empty<string>();
+        PDP.Clear();
+    }
 
-        protected virtual TimeSpan MaxRunningTime => TimeSpan.FromSeconds(60);
+    public abstract void Start();
 
-        [TestInitialize]
-        public void LoadTape()
+    protected bool StartAndWaitForCompletion()
+    {
+        bool result = true;
+
+        PDP.Continue(false);
+
+        Stopwatch sw = new();
+        sw.Start();
+
+        bool done = false;
+        bool failed = false;
+        bool timeout = false;
+
+        while (!timeout && !done && !failed && PDP.Running)
         {
-            PDP.Clear();
+            done = ExpectedOutput.Any() && ExpectedOutput.All(x => PDP.CPU.PrinterPunch.Printout.Contains(x));
 
-            PDP.LoadPaperTape(File.ReadAllBytes(TapeName));
+            failed = UnexpectedOutput.Any(x => PDP.CPU.PrinterPunch.Printout.Contains(x));
 
-            PDP.Clear();
+            timeout = !Debugger.IsAttached && sw.Elapsed > MaxRunningTime;
+
+            Thread.Sleep(50);
         }
 
-        public abstract void Start();
+        PDP.Halt();
 
-        protected bool StartAndWaitForCompletion()
+        Assert.IsFalse(failed);
+
+        if (ExpectedOutput.Any())
         {
-            var result = true;
-
-            PDP.Continue(false);
-
-            var sw = new Stopwatch();
-            sw.Start();
-
-            var done = false;
-            var failed = false;
-            var timeout = false;
-
-            while (!timeout && !done && !failed && PDP.Running)
-            {
-                done = ExpectedOutput.Any() && ExpectedOutput.All(x => PDP.CPU.Teletype.Printout.Contains(x));
-
-                failed = UnexpectedOutput.Any(x => PDP.CPU.Teletype.Printout.Contains(x));
-
-                timeout = !Debugger.IsAttached && sw.Elapsed > MaxRunningTime;
-
-                Thread.Sleep(50);
-            }
-
-            PDP.Halt();
-
-            Assert.IsFalse(failed);
-
-            if (ExpectedOutput.Any())
-            {
-                result &= done;
-                result &= !timeout;
-            }
-            else
-            {
-                result &= !done;
-                result &= timeout;
-            }
-
-            PDP.Halt();
-
-            return result;
+            result &= done;
+            result &= !timeout;
         }
+        else
+        {
+            result &= !done;
+            result &= timeout;
+        }
+
+        PDP.Halt();
+
+        return result;
     }
 }

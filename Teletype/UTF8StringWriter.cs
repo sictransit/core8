@@ -1,10 +1,9 @@
 ﻿using System.IO;
 using System.Text;
 
-namespace Core8.Peripherals.Teletype
+namespace Core8.Peripherals.Teletype;
+
+internal class UTF8StringWriter : StringWriter
 {
-    internal class UTF8StringWriter : StringWriter
-    {
-        public override Encoding Encoding => Encoding.UTF8;
-    }
+    public override Encoding Encoding => Encoding.UTF8;
 }

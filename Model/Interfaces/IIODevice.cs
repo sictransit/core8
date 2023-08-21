@@ -1,9 +1,8 @@
-﻿namespace Core8.Model.Interfaces
-{
-    public interface IIODevice
-    {
-        bool InterruptRequested { get; }
+﻿namespace Core8.Model.Interfaces;
 
-        void Tick();
-    }
+public interface IIODevice
+{
+    bool InterruptRequested { get; }
+
+    void Tick();
 }
