@@ -39,15 +39,12 @@ public class KeyboardReader : IODevice, IKeyboardReader
 
     public void ClearInputFlag() => InputFlag = false;
 
-
-
     protected override int TickDelay => 100;
 
     public void SetDeviceControl(int data)
     {
         deviceControl = data & INTERRUPT_ENABLE;
     }
-
 
     public void Clear()
     {

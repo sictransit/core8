@@ -70,6 +70,8 @@ namespace Core8.Model.Instructions
         private void KIE()
         {
             Device.SetDeviceControl(AC.Accumulator);
+
+            CPU.PrinterPunch.SetDeviceControl(AC.Accumulator); // the ASR33 is one single device with respect to IRQ's
         }
 
         private void KSF()
