@@ -13,13 +13,24 @@ namespace Core8.Peripherals.Teletype;
 
 public class PrinterPunch : IODevice, IPrinterPunch
 {
+    private const int INTERRUPT_ENABLE = 1 << 0;
+
+    private readonly ConcurrentQueue<byte> output = new();
     private readonly PublisherSocket publisherSocket;
 
-    private const int INTERRUPT_ENABLE = 1 << 0;
+    private int deviceControl;
+
+    public PrinterPunch(string outputAddress)
+    {
+        publisherSocket = new PublisherSocket();
+        publisherSocket.Connect(outputAddress);
+    }
 
     protected override bool InterruptEnable => (deviceControl & INTERRUPT_ENABLE) != 0;
 
     private byte? OutputBuffer { get; set; }
+
+    protected override int TickDelay => 100;
 
     public IReadOnlyCollection<byte> Output => output.ToArray();
 
@@ -30,32 +41,14 @@ public class PrinterPunch : IODevice, IPrinterPunch
 
     public void SetOutputFlag() => OutputFlag = true;
 
-    private readonly ConcurrentQueue<byte> output = new();
-
     public override bool InterruptRequested => OutputFlag && InterruptEnable;
 
     public string Printout =>
         Encoding.ASCII.GetString(output.Select(x => (byte)(x & 0b_000_001_111_111)).ToArray());
 
-
-    private int deviceControl;
-
-    public PrinterPunch(string outputAddress)
-    {
-        publisherSocket = new PublisherSocket();
-        publisherSocket.Connect(outputAddress);
-    }
-
-    protected override int TickDelay => 100;
-
     public void SetDeviceControl(int data)
     {
         deviceControl = data & INTERRUPT_ENABLE;
-    }
-
-    protected override void HandleTick()
-    {
-        HandleOutput();
     }
 
     public void Print(byte c)
@@ -80,10 +73,14 @@ public class PrinterPunch : IODevice, IPrinterPunch
 
         ClearOutputFlag();
 
-        //TODO: Clear InputBuffer as well?
         OutputBuffer = null;
 
         Ticks = 0;
+    }
+
+    protected override void HandleTick()
+    {
+        HandleOutput();
     }
 
     private void HandleOutput()
@@ -104,6 +101,4 @@ public class PrinterPunch : IODevice, IPrinterPunch
 
         SetOutputFlag();
     }
-
-
 }

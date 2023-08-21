@@ -64,9 +64,9 @@ namespace Core8.Peripherals.RK8E
 
         private int BlockSize => HalfSector ? RK_NUMWD / 2 : RK_NUMWD;
 
-        public override bool InterruptRequested => InterruptEnable && SkipOnTransferDoneOrError();
-
         protected override bool InterruptEnable => (commandRegister & RKC_IE) != 0;
+
+        public override bool InterruptRequested => InterruptEnable && SkipOnTransferDoneOrError();
 
         public void Load(int unit, byte[] image)
         {
@@ -91,18 +91,6 @@ namespace Core8.Peripherals.RK8E
             }
 
             Load(unit, data);
-        }
-
-        protected override int TickDelay { get; }
-
-        protected override void HandleTick()
-        {
-            if (go)
-            {
-                go = false;
-
-                Go();
-            }
         }
 
         public void LoadCurrentAddress(LinkAccumulator lac)
@@ -155,6 +143,16 @@ namespace Core8.Peripherals.RK8E
         public void ReadStatusRegister(LinkAccumulator lac)
         {
             lac.SetAccumulator(statusRegister);
+        }
+
+        protected override void HandleTick()
+        {
+            if (go)
+            {
+                go = false;
+
+                Go();
+            }
         }
 
         private void Load(int unit)

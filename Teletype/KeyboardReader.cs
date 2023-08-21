@@ -11,16 +11,24 @@ namespace Core8.Peripherals.Teletype;
 
 public class KeyboardReader : IODevice, IKeyboardReader
 {
-    private readonly SubscriberSocket subscriberSocket;
-
     private const int INTERRUPT_ENABLE = 1 << 0;
+
+    private readonly ConcurrentQueue<byte> reader = new();
+    private readonly SubscriberSocket subscriberSocket;
 
     private int deviceControl;
 
-    private readonly ConcurrentQueue<byte> reader = new();
+    public KeyboardReader(string inputAddress)
+    {
+        subscriberSocket = new SubscriberSocket();
+        subscriberSocket.Connect(inputAddress);
+        subscriberSocket.SubscribeToAnyTopic();
+    }
 
 
     protected override bool InterruptEnable => (deviceControl & INTERRUPT_ENABLE) != 0;
+
+    protected override int TickDelay => 100;
 
 
     public byte InputBuffer { get; private set; }
@@ -30,16 +38,7 @@ public class KeyboardReader : IODevice, IKeyboardReader
 
     public override bool InterruptRequested => InputFlag && InterruptEnable;
 
-    public KeyboardReader(string inputAddress)
-    {
-        subscriberSocket = new SubscriberSocket();
-        subscriberSocket.Connect(inputAddress);
-        subscriberSocket.SubscribeToAnyTopic();
-    }
-
     public void ClearInputFlag() => InputFlag = false;
-
-    protected override int TickDelay => 100;
 
     public void SetDeviceControl(int data)
     {
@@ -50,7 +49,6 @@ public class KeyboardReader : IODevice, IKeyboardReader
     {
         SetDeviceControl(0b_000_000_000_011);
 
-        //TODO: Clear Output as well?
         reader.Clear();
 
         Ticks = 0;
@@ -67,11 +65,6 @@ public class KeyboardReader : IODevice, IKeyboardReader
         {
             Type(b);
         }
-    }
-
-    protected override void HandleTick()
-    {
-        HandleInput();
     }
 
     public void MountPaperTape(byte[] chars)
@@ -92,6 +85,11 @@ public class KeyboardReader : IODevice, IKeyboardReader
     public void RemovePaperTape()
     {
         reader.Clear();
+    }
+
+    protected override void HandleTick()
+    {
+        HandleInput();
     }
 
     private void SetInputFlag() => InputFlag = true;
@@ -123,5 +121,4 @@ public class KeyboardReader : IODevice, IKeyboardReader
             SetInputFlag();
         }
     }
-
 }
