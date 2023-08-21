@@ -3,42 +3,41 @@ using Core8.Model;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Diagnostics;
 
-namespace Core8.Tests
+namespace Core8.Tests;
+
+[TestClass]
+public class RegistryTests
 {
-    [TestClass]
-    public class RegistryTests
+    [TestMethod]
+    public void TestAC()
     {
-        [TestMethod]
-        public void TestAC()
+        Registry registry = new();
+
+        for (int i = 0; i <= 7777.ToDecimal(); i++)
         {
-            var registry = new Registry();
+            registry.AC.SetAccumulator(i);
 
-            for (var i = 0; i <= 7777.ToDecimal(); i++)
-            {
-                registry.AC.SetAccumulator(i);
-
-                Assert.AreEqual(i, registry.AC.Accumulator);
-            }
-
-            registry.AC.SetAccumulator(10000.ToDecimal());
-
-            Assert.AreEqual(0, registry.AC.Accumulator);
-            Assert.AreEqual(0, registry.AC.Link);
-
-            registry.AC.SetLink(1);
-            Assert.AreEqual(1, registry.AC.Link);
+            Assert.AreEqual(i, registry.AC.Accumulator);
         }
 
-        [TestMethod]
-        public void TestToString()
-        {
-            var registry = new Registry();
+        registry.AC.SetAccumulator(10000.ToDecimal());
 
-            var s = registry.ToString();
+        Assert.AreEqual(0, registry.AC.Accumulator);
+        Assert.AreEqual(0, registry.AC.Link);
 
-            Assert.IsFalse(string.IsNullOrWhiteSpace(s));
+        registry.AC.SetLink(1);
+        Assert.AreEqual(1, registry.AC.Link);
+    }
 
-            Trace.WriteLine(s);
-        }
+    [TestMethod]
+    public void TestToString()
+    {
+        Registry registry = new();
+
+        string s = registry.ToString();
+
+        Assert.IsFalse(string.IsNullOrWhiteSpace(s));
+
+        Trace.WriteLine(s);
     }
 }

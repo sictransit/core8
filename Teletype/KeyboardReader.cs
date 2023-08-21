@@ -61,7 +61,7 @@ public class KeyboardReader : IODevice, IKeyboardReader
 
     public void Type(byte[] buffer)
     {
-        foreach (var b in buffer)
+        foreach (byte b in buffer)
         {
             Type(b);
         }
@@ -76,7 +76,7 @@ public class KeyboardReader : IODevice, IKeyboardReader
 
         reader.Clear();
 
-        foreach (var c in chars)
+        foreach (byte c in chars)
         {
             reader.Enqueue(c);
         }
@@ -102,17 +102,17 @@ public class KeyboardReader : IODevice, IKeyboardReader
             return;
         }
 
-        while (subscriberSocket.TryReceiveFrameBytes(TimeSpan.Zero, out var frame))
+        while (subscriberSocket.TryReceiveFrameBytes(TimeSpan.Zero, out byte[] frame))
         {
-            foreach (var key in frame)
+            foreach (byte key in frame)
             {
-                var uppercaseByte = Convert.ToByte(char.ToUpperInvariant(Convert.ToChar(key)));
+                byte uppercaseByte = Convert.ToByte(char.ToUpperInvariant(Convert.ToChar(key)));
 
                 reader.Enqueue(uppercaseByte);
             }
         }
 
-        if (reader.TryDequeue(out var b))
+        if (reader.TryDequeue(out byte b))
         {
             Log.Debug($"Input: {b.ToPrintableAscii()}");
 

@@ -1,60 +1,59 @@
 ﻿using Core8.Peripherals.RX8E.Registers;
 using Core8.Peripherals.RX8E.States.Abstract;
 
-namespace Core8.Peripherals.RX8E.Interfaces
+namespace Core8.Peripherals.RX8E.Interfaces;
+
+internal interface IController
 {
-    internal interface IController
-    {
-        void SetState(StateBase state);
+    void SetState(StateBase state);
 
-        void Load(byte unit, byte[] data = null);
+    void Load(byte unit, byte[] data = null);
 
-        void WriteSector();
+    void WriteSector();
 
-        void ReadSector();
+    void ReadSector();
 
-        CommandRegister CR { get; }
+    CommandRegister CR { get; }
 
-        InterfaceRegister IR { get; }
+    InterfaceRegister IR { get; }
 
-        ErrorStatusRegister ES { get; }
+    ErrorStatusRegister ES { get; }
 
-        ErrorRegister ER { get; }
+    ErrorRegister ER { get; }
 
-        bool Done { get; }
+    bool Done { get; }
 
-        bool Error { get; }
+    bool Error { get; }
 
-        bool TransferRequest { get; }
+    bool TransferRequest { get; }
 
-        void SetTransferRequest(bool state);
+    void SetTransferRequest(bool state);
 
-        void SetDone(bool state);
+    void SetDone(bool state);
 
-        void SetError(bool state);
+    void SetError(bool state);
 
-        void SetInterrupts(int acc);
+    void SetInterrupts(int acc);
 
-        bool IRQ { get; }
+    bool IRQ { get; }
 
-        void LCD(int acc);
+    void LCD(int acc);
 
-        int XDR(int acc);
+    int XDR(int acc);
 
-        bool SND();
+    bool SND();
 
-        bool STR();
+    bool STR();
 
-        bool SER();
+    bool SER();
 
-        int[] Buffer { get; }
+    int[] Buffer { get; }
 
-        int Ticks { get; }
+    int Ticks { get; }
 
-        void Tick();
+    void Tick();
 
-        void SetSectorAddress(int sector);
+    void SetSectorAddress(int sector);
 
-        void SetTrackAddress(int track);
-    }
+    void SetTrackAddress(int track);
 }

@@ -1,25 +1,24 @@
 ﻿using Core8.Extensions;
 
-namespace Core8.Model.Registers.Abstract
+namespace Core8.Model.Registers.Abstract;
+
+public abstract class RegisterBase
 {
-    public abstract class RegisterBase
+    public int Content { get; protected set; }
+
+    protected virtual int Digits => 4;
+
+    protected abstract string ShortName { get; }
+
+    public void Clear()
     {
-        public int Content { get; protected set; }
+        Content = 0;
+    }
 
-        protected virtual int Digits => 4;
+    public abstract void Set(int value);
 
-        protected abstract string ShortName { get; }
-
-        public void Clear()
-        {
-            Content = 0;
-        }
-
-        public abstract void Set(int value);
-
-        public override string ToString()
-        {
-            return $"[{ShortName}] {Content.ToOctalString(Digits)}";
-        }
+    public override string ToString()
+    {
+        return $"[{ShortName}] {Content.ToOctalString(Digits)}";
     }
 }

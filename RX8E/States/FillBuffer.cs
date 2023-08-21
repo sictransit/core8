@@ -1,24 +1,23 @@
 ﻿using Core8.Peripherals.RX8E.Interfaces;
 using Core8.Peripherals.RX8E.States.Abstract;
 
-namespace Core8.Peripherals.RX8E.States
+namespace Core8.Peripherals.RX8E.States;
+
+internal class FillBuffer : FillEmptyBufferBase
 {
-    internal class FillBuffer : FillEmptyBufferBase
+    public FillBuffer(IController controller) : base(controller)
     {
-        public FillBuffer(IController controller) : base(controller)
-        {
 
-        }
+    }
 
-        protected override int TransferData(int acc)
-        {
-            Controller.IR.Set(acc);
+    protected override int TransferData(int acc)
+    {
+        Controller.IR.Set(acc);
 
-            Controller.Buffer[BufferPointer++] = Controller.IR.Content;
+        Controller.Buffer[BufferPointer++] = Controller.IR.Content;
 
-            Controller.SetTransferRequest(BufferPointer < Controller.Buffer.Length);
+        Controller.SetTransferRequest(BufferPointer < Controller.Buffer.Length);
 
-            return Controller.IR.Content;
-        }
+        return Controller.IR.Content;
     }
 }

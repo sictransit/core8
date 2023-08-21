@@ -1,13 +1,12 @@
-﻿namespace Core8.Model.Interfaces
+﻿namespace Core8.Model.Interfaces;
+
+public interface IMemory
 {
-    public interface IMemory
-    {
-        int Read(int address, bool indirect = false);
+    int Read(int address, bool indirect = false);
 
-        int Write(int address, int data);
+    int Write(int address, int data);
 
-        int Size { get; }
+    int Size { get; }
 
-        void Clear();
-    }
+    void Clear();
 }

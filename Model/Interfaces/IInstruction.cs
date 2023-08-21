@@ -1,11 +1,10 @@
-﻿namespace Core8.Model.Interfaces
+﻿namespace Core8.Model.Interfaces;
+
+public interface IInstruction
 {
-    public interface IInstruction
-    {
-        IInstruction LoadData(int data);
+    IInstruction LoadData(int data);
 
-        int Data { get; }
+    int Data { get; }
 
-        void Execute();
-    }
+    void Execute();
 }

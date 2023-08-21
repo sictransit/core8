@@ -2,35 +2,34 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 
-namespace Core8.Tests
+namespace Core8.Tests;
+
+[TestClass]
+public class ExtensionsTests
 {
-    [TestClass]
-    public class ExtensionsTests
+    [TestMethod]
+    public void TestToDecimal()
     {
-        [TestMethod]
-        public void TestToDecimal()
-        {
-            Assert.AreEqual(0, 0.ToDecimal());
-            Assert.AreEqual(4095, 7777.ToDecimal());
-        }
+        Assert.AreEqual(0, 0.ToDecimal());
+        Assert.AreEqual(4095, 7777.ToDecimal());
+    }
 
-        [TestMethod]
-        [ExpectedException(typeof(FormatException))]
-        public void TestToDecimalThrows()
-        {
-            8.ToDecimal();
-        }
+    [TestMethod]
+    [ExpectedException(typeof(FormatException))]
+    public void TestToDecimalThrows()
+    {
+        8.ToDecimal();
+    }
 
-        [TestMethod]
-        public void TestToOctal()
-        {
-            Assert.AreEqual(7777, 4095.ToOctal());
-        }
+    [TestMethod]
+    public void TestToOctal()
+    {
+        Assert.AreEqual(7777, 4095.ToOctal());
+    }
 
-        [TestMethod]
-        public void TestToOctalString()
-        {
-            Assert.AreEqual("7777", 4095.ToOctalString());
-        }
+    [TestMethod]
+    public void TestToOctalString()
+    {
+        Assert.AreEqual("7777", 4095.ToOctalString());
     }
 }

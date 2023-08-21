@@ -15,234 +15,233 @@ using System.Net.Http;
 using System.Text;
 using System.Threading;
 
-namespace Core8
+namespace Core8;
+
+public static class Program
 {
-    public static class Program
+    private static readonly LoggingLevelSwitch LoggingLevel = new();
+
+    private static PDP pdp;
+
+    public static void Main(string[] args)
     {
-        private static readonly LoggingLevelSwitch LoggingLevel = new();
+        string logFilename = "emulator.log";
 
-        private static PDP pdp;
+        File.Delete(logFilename);
 
-        public static void Main(string[] args)
-        {
-            var logFilename = "emulator.log";
+        Log.Logger = new LoggerConfiguration()
+            .WriteTo.Console(LogEventLevel.Information, "{Message:lj}{NewLine}")
+            .WriteTo.File(logFilename, LogEventLevel.Debug, "{Message:lj}{NewLine}")
+            .MinimumLevel.ControlledBy(LoggingLevel)
+            .CreateLogger();
 
-            File.Delete(logFilename);
-
-            Log.Logger = new LoggerConfiguration()
-                .WriteTo.Console(LogEventLevel.Information, "{Message:lj}{NewLine}")
-                .WriteTo.File(logFilename, LogEventLevel.Debug, "{Message:lj}{NewLine}")
-                .MinimumLevel.ControlledBy(LoggingLevel)
-                .CreateLogger();
-
-            Parser.Default.ParseArguments<Options>(args)
-                    .WithParsed(o =>
-                    {
-                        pdp = new PDP(true, true);
-
-                        pdp.Clear();
-
-                        if (o.Debug)
-                        {
-                            pdp.CPU.Debug(true);
-
-                            LoggingLevel.MinimumLevel = LogEventLevel.Debug;
-                        }
-
-                        if (!string.IsNullOrWhiteSpace(o.Convert))
-                        {
-                            Convert(o.Convert);
-                        }
-
-                        if (o.TINT)
-                        {
-                            TINT();
-                        }
-                        else if (!string.IsNullOrWhiteSpace(o.Assemble))
-                        {
-                            if (TryAssemble(o.PALBART, o.Assemble, out var binary))
-                            {
-                                o.Load = binary;
-                            }
-                        }
-
-                        if (!string.IsNullOrWhiteSpace(o.Load))
-                        {
-                            Load(o.Load);
-
-                            if (o.Run)
-                            {
-                                if (o.Debug)
-                                {
-                                    LoggingLevel.MinimumLevel = LogEventLevel.Debug;
-                                }
-
-                                Run(o.StartingAddress, o.DumpMemory);
-                            }
-                        }
-
-                        if (o.OS8)
-                        {
-                            BootOS8();
-                        }
-
-                        if (o.Advent)
-                        {
-                            Advent();
-                        }
-
-                        if (o.TTY)
-                        {
-                            Console.WriteLine(pdp.CPU.PrinterPunch.Printout);
-                        }
-
-                        if (!string.IsNullOrEmpty(o.Punch))
-                        {
-                            Punch(o.Punch);
-                        }
-                    });
-        }
-
-        private static void Punch(string binFile)
-        {
-            var file = new FileInfo(binFile);
-
-            var data = File.ReadAllBytes(binFile);
-
-            var punch = new SVGPunch();
-
-            var tape = punch.Punch(data, file.Name);
-
-            var svgFile = Path.ChangeExtension(file.FullName, ".svg");
-
-            File.WriteAllText(svgFile, tape);
-        }
-
-        private static void Convert(string s)
-        {
-            foreach (var c in s)
-            {
-                Console.WriteLine($"{c}: {((int)c).ToOctalString()}");
-            }
-        }
-
-        private static void Advent()
-        {
-            pdp.CPU.Memory.Clear();
-
-            pdp.CPU.FixedDisk.Load(0, File.ReadAllBytes("disks/advent.rk05"));
-
-            pdp.ToggleRK8EBootstrap();
-
-            pdp.Load8(0023);
-
-            pdp.Continue(false);
-
-            var steps = new List<(Func<IPrinterPunch, bool>, byte[])>
-            {
-                (tty=>tty.Printout.Contains('.'), Encoding.ASCII.GetBytes("R FRTS\r")),
-                (tty=>tty.Printout.Contains('*'), Encoding.ASCII.GetBytes("ADVENT\r")),
-                (tty=>tty.Printout.Count(c=> c == '*') == 2, new byte[]{0x1b}),
-            };
-
-            while (pdp.Running)
-            {
-                foreach (var step in steps.ToArray())
+        Parser.Default.ParseArguments<Options>(args)
+                .WithParsed(o =>
                 {
-                    if (step.Item1(pdp.CPU.PrinterPunch))
+                    pdp = new PDP(true, true);
+
+                    pdp.Clear();
+
+                    if (o.Debug)
                     {
-                        pdp.CPU.KeyboardReader.Type(step.Item2);
+                        pdp.CPU.Debug(true);
 
-                        steps.Remove(step);
-                        break;
+                        LoggingLevel.MinimumLevel = LogEventLevel.Debug;
                     }
+
+                    if (!string.IsNullOrWhiteSpace(o.Convert))
+                    {
+                        Convert(o.Convert);
+                    }
+
+                    if (o.TINT)
+                    {
+                        TINT();
+                    }
+                    else if (!string.IsNullOrWhiteSpace(o.Assemble))
+                    {
+                        if (TryAssemble(o.PALBART, o.Assemble, out string binary))
+                        {
+                            o.Load = binary;
+                        }
+                    }
+
+                    if (!string.IsNullOrWhiteSpace(o.Load))
+                    {
+                        Load(o.Load);
+
+                        if (o.Run)
+                        {
+                            if (o.Debug)
+                            {
+                                LoggingLevel.MinimumLevel = LogEventLevel.Debug;
+                            }
+
+                            Run(o.StartingAddress, o.DumpMemory);
+                        }
+                    }
+
+                    if (o.OS8)
+                    {
+                        BootOS8();
+                    }
+
+                    if (o.Advent)
+                    {
+                        Advent();
+                    }
+
+                    if (o.TTY)
+                    {
+                        Console.WriteLine(pdp.CPU.PrinterPunch.Printout);
+                    }
+
+                    if (!string.IsNullOrEmpty(o.Punch))
+                    {
+                        Punch(o.Punch);
+                    }
+                });
+    }
+
+    private static void Punch(string binFile)
+    {
+        FileInfo file = new(binFile);
+
+        byte[] data = File.ReadAllBytes(binFile);
+
+        SVGPunch punch = new();
+
+        string tape = punch.Punch(data, file.Name);
+
+        string svgFile = Path.ChangeExtension(file.FullName, ".svg");
+
+        File.WriteAllText(svgFile, tape);
+    }
+
+    private static void Convert(string s)
+    {
+        foreach (char c in s)
+        {
+            Console.WriteLine($"{c}: {((int)c).ToOctalString()}");
+        }
+    }
+
+    private static void Advent()
+    {
+        pdp.CPU.Memory.Clear();
+
+        pdp.CPU.FixedDisk.Load(0, File.ReadAllBytes("disks/advent.rk05"));
+
+        pdp.ToggleRK8EBootstrap();
+
+        pdp.Load8(0023);
+
+        pdp.Continue(false);
+
+        List<(Func<IPrinterPunch, bool>, byte[])> steps = new()
+        {
+            (tty=>tty.Printout.Contains('.'), Encoding.ASCII.GetBytes("R FRTS\r")),
+            (tty=>tty.Printout.Contains('*'), Encoding.ASCII.GetBytes("ADVENT\r")),
+            (tty=>tty.Printout.Count(c=> c == '*') == 2, new byte[]{0x1b}),
+        };
+
+        while (pdp.Running)
+        {
+            foreach ((Func<IPrinterPunch, bool>, byte[]) step in steps.ToArray())
+            {
+                if (step.Item1(pdp.CPU.PrinterPunch))
+                {
+                    pdp.CPU.KeyboardReader.Type(step.Item2);
+
+                    steps.Remove(step);
+                    break;
                 }
-
-                Thread.Sleep(200);
             }
+
+            Thread.Sleep(200);
+        }
+    }
+
+    private static void BootOS8()
+    {
+        pdp.CPU.Memory.Clear();
+
+        pdp.ToggleRX8EBootstrap();
+
+        pdp.Load8(0022);
+
+        pdp.LoadFloppy(0, File.ReadAllBytes(@"disks\os8_rx.rx01"));
+
+        pdp.Clear();
+
+        pdp.Continue(false);
+
+        while (pdp.Running)
+        {
+            Thread.Sleep(200);
+        }
+    }
+
+    private static void TINT()
+    {
+        pdp.Clear();
+
+        using HttpClient httpClient = new();
+
+        pdp.LoadPaperTape(httpClient.GetByteArrayAsync(@"https://github.com/PontusPih/TINT8/releases/download/v0.1.0-alpha/tint.bin").Result);
+
+        pdp.Clear();
+
+        Run(200, false);
+    }
+
+    private static bool TryAssemble(string palbart, string file, out string binary)
+    {
+        Assembler assembler = new(palbart);
+
+        bool assembled = assembler.TryAssemble(file, out binary);
+
+        if (!assembled)
+        {
+            Log.Error($"Assembly failed: {file}");
+        }
+        else
+        {
+            Log.Information($"Assembled: {file} -> {binary}");
         }
 
-        private static void BootOS8()
+        return assembled;
+    }
+
+    private static void Run(int startingAddress, bool dumpMemory)
+    {
+        pdp.Load8(startingAddress);
+
+        if (dumpMemory)
         {
-            pdp.CPU.Memory.Clear();
-
-            pdp.ToggleRX8EBootstrap();
-
-            pdp.Load8(0022);
-
-            pdp.LoadFloppy(0, File.ReadAllBytes(@"disks\os8_rx.rx01"));
-
-            pdp.Clear();
-
-            pdp.Continue(false);
-
-            while (pdp.Running)
-            {
-                Thread.Sleep(200);
-            }
+            pdp.DumpMemory();
         }
 
-        private static void TINT()
+        //pdp.CPU.Debug(true);
+
+        pdp.Continue();
+
+        Thread.Sleep(1000);
+
+        if (dumpMemory)
         {
-            pdp.Clear();
-
-            using var httpClient = new HttpClient();
-
-            pdp.LoadPaperTape(httpClient.GetByteArrayAsync(@"https://github.com/PontusPih/TINT8/releases/download/v0.1.0-alpha/tint.bin").Result);
-
-            pdp.Clear();
-
-            Run(200, false);
+            pdp.DumpMemory();
         }
+    }
 
-        private static bool TryAssemble(string palbart, string file, out string binary)
+    private static void Load(string binFile)
+    {
+        pdp.LoadPaperTape(File.ReadAllBytes(binFile));
+
+        if (pdp.CPU.Registry.AC.Accumulator != 0)
         {
-            var assembler = new Assembler(palbart);
-
-            var assembled = assembler.TryAssemble(file, out binary);
-
-            if (!assembled)
-            {
-                Log.Error($"Assembly failed: {file}");
-            }
-            else
-            {
-                Log.Information($"Assembled: {file} -> {binary}");
-            }
-
-            return assembled;
-        }
-
-        private static void Run(int startingAddress, bool dumpMemory)
-        {
-            pdp.Load8(startingAddress);
-
-            if (dumpMemory)
-            {
-                pdp.DumpMemory();
-            }
-
-            //pdp.CPU.Debug(true);
-
-            pdp.Continue();
-
-            Thread.Sleep(1000);
-
-            if (dumpMemory)
-            {
-                pdp.DumpMemory();
-            }
-        }
-
-        private static void Load(string binFile)
-        {
-            pdp.LoadPaperTape(File.ReadAllBytes(binFile));
-
-            if (pdp.CPU.Registry.AC.Accumulator != 0)
-            {
-                Log.Warning("BIN format checksum error.");
-                Log.Information(pdp.CPU.Registry.AC.Accumulator.ToString());
-            }
+            Log.Warning("BIN format checksum error.");
+            Log.Information(pdp.CPU.Registry.AC.Accumulator.ToString());
         }
     }
 }

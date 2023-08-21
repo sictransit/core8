@@ -5,98 +5,97 @@ using System;
 using System.Net;
 using System.Threading;
 
-namespace Core8.Peripherals
+namespace Core8.Peripherals;
+
+public class Host : IDisposable
 {
-    public class Host : IDisposable
+    private readonly int port;
+    private readonly ManualResetEvent running = new(false);
+    private bool isDisposed;
+
+    private Thread hostThread;
+
+    public Host(int port = 23)
     {
-        private readonly int port;
-        private readonly ManualResetEvent running = new(false);
-        private bool isDisposed;
+        this.port = port;
 
-        private Thread hostThread;
+        Console.CancelKeyPress += (_, _) => running.Reset();
+    }
 
-        public Host(int port = 23)
+    public void Start()
+    {
+        hostThread = new Thread(Run)
         {
-            this.port = port;
+            IsBackground = true,
+            Priority = ThreadPriority.Normal
+        };
 
-            Console.CancelKeyPress += (_, _) => running.Reset();
-        }
+        hostThread.Start();
+    }
 
-        public void Start()
+    private void Run()
+    {
+        using PublisherSocket publisher = new();
+
+        publisher.Bind(@"tcp://127.0.0.1:17232");
+
+        using SubscriberSocket subscriber = new();
+        subscriber.Bind(@"tcp://127.0.0.1:17233");
+        subscriber.SubscribeToAnyTopic();
+
+        running.Set();
+
+        using TelnetServer server = new(IPAddress.Any, port, publisher)
         {
-            hostThread = new Thread(Run)
+            OptionReuseAddress = true
+        };
+
+        Log.Information("Server starting ...");
+
+        server.Start();
+
+        while (running.WaitOne(TimeSpan.Zero))
+        {
+            if (subscriber.TryReceiveFrameBytes(TimeSpan.FromMilliseconds(100), out byte[] frame))
             {
-                IsBackground = true,
-                Priority = ThreadPriority.Normal
-            };
-
-            hostThread.Start();
-        }
-
-        private void Run()
-        {
-            using var publisher = new PublisherSocket();
-
-            publisher.Bind(@"tcp://127.0.0.1:17232");
-
-            using var subscriber = new SubscriberSocket();
-            subscriber.Bind(@"tcp://127.0.0.1:17233");
-            subscriber.SubscribeToAnyTopic();
-
-            running.Set();
-
-            using var server = new TelnetServer(IPAddress.Any, port, publisher)
-            {
-                OptionReuseAddress = true
-            };
-
-            Log.Information("Server starting ...");
-
-            server.Start();
-
-            while (running.WaitOne(TimeSpan.Zero))
-            {
-                if (subscriber.TryReceiveFrameBytes(TimeSpan.FromMilliseconds(100), out var frame))
-                {
-                    server.Multicast(frame);
-                }
-            }
-
-            server.Stop();
-
-            Log.Information("Server stopped.");
-        }
-
-        public void Stop()
-        {
-            running.Reset();
-
-            hostThread.Join();
-        }
-
-        protected virtual void Dispose(bool disposing)
-        {
-            if (!isDisposed)
-            {
-                if (disposing)
-                {
-                    running?.Dispose();
-                }
-
-                isDisposed = true;
+                server.Multicast(frame);
             }
         }
 
-        ~Host()
-        {
-            Dispose(false);
-        }
+        server.Stop();
 
-        public void Dispose()
-        {
-            Dispose(true);
+        Log.Information("Server stopped.");
+    }
 
-            GC.SuppressFinalize(this);
+    public void Stop()
+    {
+        running.Reset();
+
+        hostThread.Join();
+    }
+
+    protected virtual void Dispose(bool disposing)
+    {
+        if (!isDisposed)
+        {
+            if (disposing)
+            {
+                running?.Dispose();
+            }
+
+            isDisposed = true;
         }
+    }
+
+    ~Host()
+    {
+        Dispose(false);
+    }
+
+    public void Dispose()
+    {
+        Dispose(true);
+
+        GC.SuppressFinalize(this);
     }
 }

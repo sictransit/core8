@@ -4,31 +4,30 @@ using Serilog;
 using Serilog.Core;
 using System.Diagnostics;
 
-namespace Core8.Tests.Abstract
+namespace Core8.Tests.Abstract;
+
+[TestClass]
+public abstract class PDPTestsBase
 {
-    [TestClass]
-    public abstract class PDPTestsBase
+    protected PDP PDP { get; private set; }
+
+    protected LoggingLevelSwitch LoggingLevel { get; set; }
+
+    [TestInitialize]
+    public void Initialize()
     {
-        protected PDP PDP { get; private set; }
+        LoggingLevel = new LoggingLevelSwitch();
 
-        protected LoggingLevelSwitch LoggingLevel { get; set; }
+        //File.Delete("test.log");
 
-        [TestInitialize]
-        public void Initialize()
-        {
-            LoggingLevel = new LoggingLevelSwitch();
+        Log.Logger = new LoggerConfiguration()
+            .WriteTo.Console(Serilog.Events.LogEventLevel.Information, "[{Level:u3}] {Message:lj}{NewLine}{Exception}")
+            .WriteTo.File("test.log", outputTemplate: "[{Level:u3}] {Message:lj}{NewLine}{Exception}")
+            .MinimumLevel.ControlledBy(LoggingLevel)
+            .CreateLogger();
 
-            //File.Delete("test.log");
+        PDP = new PDP();
 
-            Log.Logger = new LoggerConfiguration()
-                .WriteTo.Console(Serilog.Events.LogEventLevel.Information, "[{Level:u3}] {Message:lj}{NewLine}{Exception}")
-                .WriteTo.File("test.log", outputTemplate: "[{Level:u3}] {Message:lj}{NewLine}{Exception}")
-                .MinimumLevel.ControlledBy(LoggingLevel)
-                .CreateLogger();
-
-            PDP = new PDP();
-
-            PDP.CPU.Debug(Debugger.IsAttached);
-        }
+        PDP.CPU.Debug(Debugger.IsAttached);
     }
 }

@@ -1,25 +1,24 @@
 ﻿using Core8.Model.Registers;
 
-namespace Core8.Model.Interfaces
+namespace Core8.Model.Interfaces;
+
+public interface IRegistry
 {
-    public interface IRegistry
-    {
-        LinkAccumulator AC { get; }
+    LinkAccumulator AC { get; }
 
-        InstructionFieldProgramCounter PC { get; }
+    InstructionFieldProgramCounter PC { get; }
 
-        SwitchRegister SR { get; }
+    SwitchRegister SR { get; }
 
-        MultiplierQuotient MQ { get; }
+    MultiplierQuotient MQ { get; }
 
-        DataField DF { get; }
+    DataField DF { get; }
 
-        InstructionBuffer IB { get; }
+    InstructionBuffer IB { get; }
 
-        UserBuffer UB { get; }
+    UserBuffer UB { get; }
 
-        UserFlag UF { get; }
+    UserFlag UF { get; }
 
-        SaveField SF { get; }
-    }
+    SaveField SF { get; }
 }

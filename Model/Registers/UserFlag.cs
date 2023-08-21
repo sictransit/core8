@@ -1,15 +1,14 @@
 ﻿using Core8.Model.Registers.Abstract;
 
-namespace Core8.Model.Registers
+namespace Core8.Model.Registers;
+
+public class UserFlag : RegisterBase
 {
-    public class UserFlag : RegisterBase
-    {
-        protected override string ShortName => "UF";
+    protected override string ShortName => "UF";
 
-        public override void Set(int value) => Content = value & 0b_001;
+    public override void Set(int value) => Content = value & 0b_001;
 
-        protected override int Digits => 1;
+    protected override int Digits => 1;
 
-        public bool ExecutiveMode => Content == 0;
-    }
+    public bool ExecutiveMode => Content == 0;
 }

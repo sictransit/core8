@@ -1,47 +1,46 @@
 ﻿using System;
 
-namespace Core8.Model.Interfaces
+namespace Core8.Model.Interfaces;
+
+public interface ICPU
 {
-    public interface ICPU
-    {
-        IInterrupts Interrupts { get; }
+    IInterrupts Interrupts { get; }
 
-        IMemory Memory { get; }
+    IMemory Memory { get; }
 
-        IKeyboardReader KeyboardReader { get; }
+    IKeyboardReader KeyboardReader { get; }
 
-        IPrinterPunch PrinterPunch { get; }
+    IPrinterPunch PrinterPunch { get; }
 
-        IFloppyDrive FloppyDrive { get; }
+    IFloppyDrive FloppyDrive { get; }
 
-        IFixedDisk FixedDisk { get; }
+    IFixedDisk FixedDisk { get; }
 
-        IRegistry Registry { get; }
+    IRegistry Registry { get; }
 
-        IInstruction Fetch(int address);
+    IInstruction Fetch(int address);
 
-        IInstruction Instruction { get; }
+    IInstruction Instruction { get; }
 
-        void Run();
+    void Run();
 
-        void Halt();
+    void Halt();
 
-        void Clear();
+    void Clear();
 
-        void SetBreakpoint(Func<ICPU, bool> breakpoint);
+    void SetBreakpoint(Func<ICPU, bool> breakpoint);
 
-        void SingleStep(bool state);
+    void SingleStep(bool state);
 
-        void Debug(bool state);
+    void Debug(bool state);
 
-        int InstructionCounter { get; }
+    int InstructionCounter { get; }
 
-        void Attach(IFixedDisk peripheral);
+    void Attach(IFixedDisk peripheral);
 
-        void Attach(IFloppyDrive peripheral);
+    void Attach(IFloppyDrive peripheral);
 
-        void Attach(IPrinterPunch peripheral);
+    void Attach(IPrinterPunch peripheral);
 
-        void Attach(IKeyboardReader peripheral);
-    }
+    void Attach(IKeyboardReader peripheral);
 }
