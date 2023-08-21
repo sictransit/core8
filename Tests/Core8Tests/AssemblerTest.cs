@@ -25,7 +25,7 @@ namespace Core8.Tests
 
             PDP.Continue(waitForHalt: true);
 
-            Assert.AreEqual("HELLO WORLD!", PDP.CPU.Teletype.Printout);
+            Assert.AreEqual("HELLO WORLD!", PDP.CPU.PrinterPunch.Printout);
         }
     }
 }

@@ -4,7 +4,7 @@ using System;
 
 namespace Core8.Model.Instructions
 {
-    public class KeyboardInstructions : TeletypeInstructionsBase
+    public class KeyboardReaderInstructions : PrivilegedInstructionsBase
     {
         private const int KCF_MASK = 0 << 0;
         private const int KSF_MASK = 1 << 0;
@@ -13,12 +13,14 @@ namespace Core8.Model.Instructions
         private const int KIE_MASK = KSF_MASK | KRS_MASK;
         private const int KRB_MASK = KCC_MASK | KRS_MASK;
 
-        public KeyboardInstructions(ICPU cpu) : base(cpu)
+        public KeyboardReaderInstructions(ICPU cpu) : base(cpu)
         {
 
         }
 
         protected override string OpCodeText => ((KeyboardOpCode)(Data & 0b_111)).ToString();
+
+        private IKeyboardReader Device => CPU.KeyboardReader;
 
         protected override void PrivilegedExecute()
         {
@@ -52,27 +54,27 @@ namespace Core8.Model.Instructions
         {
             AC.ClearAccumulator();
 
-            Teletype.ClearInputFlag();
+            Device.ClearInputFlag();
         }
 
         private void KCF()
         {
-            Teletype.ClearInputFlag();
+            Device.ClearInputFlag();
         }
 
         private void KRS()
         {
-            AC.ORAccumulator(Teletype.InputBuffer);
+            AC.ORAccumulator(Device.InputBuffer);
         }
 
         private void KIE()
         {
-            Teletype.SetDeviceControl(AC.Accumulator);
+            Device.SetDeviceControl(AC.Accumulator);
         }
 
         private void KSF()
         {
-            if (Teletype.InputFlag)
+            if (Device.InputFlag)
             {
                 PC.Increment();
             }

@@ -4,7 +4,7 @@ using System;
 
 namespace Core8.Model.Instructions
 {
-    public class TeleprinterInstructions : TeletypeInstructionsBase
+    public class PrinterPunchInstructions : PrivilegedInstructionsBase
     {
         private const int TFL_MASK = 0;
         private const int TSF_MASK = 1 << 0;
@@ -13,11 +13,13 @@ namespace Core8.Model.Instructions
         private const int TSK_MASK = TPC_MASK | TSF_MASK;
         private const int TLS_MASK = TCF_MASK | TPC_MASK;
 
-        public TeleprinterInstructions(ICPU cpu) : base(cpu)
+        public PrinterPunchInstructions(ICPU cpu) : base(cpu)
         {
         }
 
         protected override string OpCodeText => ((TeleprinterOpCode)(Data & 0b_111)).ToString();
+
+        private IPrinterPunch Device => CPU.PrinterPunch;
 
         protected override void PrivilegedExecute()
         {
@@ -49,24 +51,24 @@ namespace Core8.Model.Instructions
 
         private void TFL()
         {
-            Teletype.SetOutputFlag();
+            Device.SetOutputFlag();
         }
 
         private void TCF()
         {
-            Teletype.ClearOutputFlag();
+            Device.ClearOutputFlag();
         }
 
         private void TPC()
         {
             var c = AC.Accumulator & 0b_000_011_111_111;
 
-            Teletype.Print((byte)c);
+            Device.Print((byte)c);
         }
 
         private void TSK()
         {
-            if (Teletype.OutputFlag || Teletype.InputFlag)
+            if (Device.OutputFlag)
             {
                 PC.Increment();
             }
@@ -74,7 +76,7 @@ namespace Core8.Model.Instructions
 
         private void TSF()
         {
-            if (Teletype.OutputFlag)
+            if (Device.OutputFlag)
             {
                 PC.Increment();
             }

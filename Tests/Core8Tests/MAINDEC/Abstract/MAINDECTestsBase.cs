@@ -47,9 +47,9 @@ namespace Core8.Tests.MAINDEC.Abstract
 
             while (!timeout && !done && !failed && PDP.Running)
             {
-                done = ExpectedOutput.Any() && ExpectedOutput.All(x => PDP.CPU.Teletype.Printout.Contains(x));
+                done = ExpectedOutput.Any() && ExpectedOutput.All(x => PDP.CPU.PrinterPunch.Printout.Contains(x));
 
-                failed = UnexpectedOutput.Any(x => PDP.CPU.Teletype.Printout.Contains(x));
+                failed = UnexpectedOutput.Any(x => PDP.CPU.PrinterPunch.Printout.Contains(x));
 
                 timeout = !Debugger.IsAttached && sw.Elapsed > MaxRunningTime;
 

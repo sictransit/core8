@@ -26,27 +26,26 @@ namespace Core8.Core
         private const int INTERRUPT_MASK = 0b_000_111_111_000;
 
         private const int TTY_INPUT_DEVICE = 03;
-
         private const int TTY_OUTPUT_DEVICE = 04;
-
         //private const int LINE_PRINTER_DEVICE = 54; // device 66: serial line printer
         private const int FLOPPY_DEVICE = 61; // device 75: RX8E (floppy)
         private const int FIXED_DISK_DEVICE = 60; // device 74: RK8E (fixed disk)
 
         // TODO: Create class, include hit count. How to break on instruction and then continue e.g. 1000 more?
         private readonly List<Func<ICPU, bool>> breakpoints = new();
-        private readonly FixedDiskInstructions fixedDiskInstructions;
-        private readonly FloppyDriveInstructions floppyDriveInstructions;
+
         private readonly Group1Instructions group1Instructions;
         private readonly Group2ANDInstructions group2AndInstructions;
         private readonly Group2ORInstructions group2OrInstructions;
         private readonly Group3Instructions group3Instructions;
         private readonly InterruptInstructions interruptInstructions;
-        private readonly KeyboardInstructions keyboardInstructions;
+        private readonly KeyboardReaderInstructions keyboardReaderInstructions;
+        private readonly PrinterPunchInstructions printerPunchInstructions;
+        private readonly FixedDiskInstructions fixedDiskInstructions;
+        private readonly FloppyDriveInstructions floppyDriveInstructions;
         private readonly MemoryManagementInstructions memoryManagementInstructions;
         private readonly MemoryReferenceInstructions memoryReferenceInstructions;
         private readonly PrivilegedNoOperationInstruction privilegedNoOperationInstruction;
-        private readonly TeleprinterInstructions teleprinterInstructions;
 
         private bool debug;
 
@@ -64,8 +63,8 @@ namespace Core8.Core
             group3Instructions = new Group3Instructions(this);
             memoryReferenceInstructions = new MemoryReferenceInstructions(this);
             memoryManagementInstructions = new MemoryManagementInstructions(this);
-            keyboardInstructions = new KeyboardInstructions(this);
-            teleprinterInstructions = new TeleprinterInstructions(this);
+            keyboardReaderInstructions = new KeyboardReaderInstructions(this);
+            printerPunchInstructions = new PrinterPunchInstructions(this);
             interruptInstructions = new InterruptInstructions(this);
             privilegedNoOperationInstruction = new PrivilegedNoOperationInstruction(this);
             floppyDriveInstructions = new FloppyDriveInstructions(this);
@@ -80,13 +79,14 @@ namespace Core8.Core
 
         public IInterrupts Interrupts { get; }
 
-        public ITeletype Teletype { get; private set; }
-
+        public IKeyboardReader KeyboardReader { get; set; }
+        public IPrinterPunch PrinterPunch { get; private set; }
         public IFloppyDrive FloppyDrive { get; private set; }
 
         public IFixedDisk FixedDisk { get; private set; }
 
         public IMemory Memory { get; }
+
 
         public IInstruction Instruction { get; private set; }
 
@@ -102,14 +102,20 @@ namespace Core8.Core
             FloppyDrive = peripheral;
         }
 
-        public void Attach(ITeletype peripheral)
+        public void Attach(IPrinterPunch peripheral)
         {
-            Teletype = peripheral;
+            PrinterPunch = peripheral;
+        }
+
+        public void Attach(IKeyboardReader peripheral)
+        {
+            KeyboardReader = peripheral;
         }
 
         public void Clear()
         {
-            Teletype.Clear();
+            KeyboardReader.Clear();
+            PrinterPunch.Clear();
             Registry.AC.Clear();
             Interrupts.ClearUser();
             Interrupts.Disable();
@@ -138,7 +144,8 @@ namespace Core8.Core
                 {
                     InstructionCounter++;
 
-                    Teletype.Tick();
+                    KeyboardReader.Tick();
+                    PrinterPunch.Tick();
                     FloppyDrive?.Tick();
                     FixedDisk?.Tick();
 
@@ -221,8 +228,8 @@ namespace Core8.Core
                 MCI => group2OrInstructions,
                 IOT when (data & MEMORY_MANAGEMENT_MASK) == MEMORY_MANAGEMENT => memoryManagementInstructions,
                 IOT when (data & INTERRUPT_MASK) == 0 => interruptInstructions,
-                IOT when (data & IO) >> 3 == TTY_INPUT_DEVICE => keyboardInstructions,
-                IOT when (data & IO) >> 3 == TTY_OUTPUT_DEVICE => teleprinterInstructions,
+                IOT when (data & IO) >> 3 == TTY_INPUT_DEVICE => keyboardReaderInstructions,
+                IOT when (data & IO) >> 3 == TTY_OUTPUT_DEVICE => printerPunchInstructions,
                 //      IOT when (data & IO) >> 3 == LINE_PRINTER_DEVICE => teleprinterInstructions,
                 IOT when (data & IO) >> 3 == FLOPPY_DEVICE => floppyDriveInstructions,
                 IOT when (data & IO) >> 3 == FIXED_DISK_DEVICE => fixedDiskInstructions,

@@ -18,9 +18,11 @@ namespace Core8.Core
 
         public bool Pending => Enabled || delay;
 
-        public bool Requested => TeletypeRequested || FloppyRequested || FixedDiskRequested || UserRequested;
+        public bool Requested => PrinterPunchRequested || KeyboardReaderRequested || FloppyRequested || FixedDiskRequested || UserRequested;
 
-        private bool TeletypeRequested => cpu.Teletype.InterruptRequested;
+        private bool PrinterPunchRequested => cpu.PrinterPunch.InterruptRequested;
+
+        private bool KeyboardReaderRequested => cpu.KeyboardReader.InterruptRequested;
 
         private bool FloppyRequested => cpu.FloppyDrive?.InterruptRequested ?? false;
 
@@ -97,7 +99,7 @@ namespace Core8.Core
 
         public override string ToString()
         {
-            return $"[INT] enabled={(Enabled ? 1 : 0)} delay={(delay ? 1 : 0)} inhib={(Inhibited ? 1 : 0)} irq={(Requested ? 1 : 0)} (tt={(TeletypeRequested ? 1 : 0)} u={(UserRequested ? 1 : 0)} fl={(FloppyRequested ? 1 : 0)} fd={(FixedDiskRequested ? 1 : 0)})";
+            return $"[INT] enabled={(Enabled ? 1 : 0)} delay={(delay ? 1 : 0)} inhib={(Inhibited ? 1 : 0)} irq={(Requested ? 1 : 0)} (tt={(PrinterPunchRequested ? 1 : 0)} u={(UserRequested ? 1 : 0)} fl={(FloppyRequested ? 1 : 0)} fd={(FixedDiskRequested ? 1 : 0)})";
         }
     }
 }

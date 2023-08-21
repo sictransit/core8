@@ -8,7 +8,9 @@ namespace Core8.Model.Interfaces
 
         IMemory Memory { get; }
 
-        ITeletype Teletype { get; }
+        IKeyboardReader KeyboardReader { get; }
+
+        IPrinterPunch PrinterPunch { get; }
 
         IFloppyDrive FloppyDrive { get; }
 
@@ -38,6 +40,8 @@ namespace Core8.Model.Interfaces
 
         void Attach(IFloppyDrive peripheral);
 
-        void Attach(ITeletype peripheral);
+        void Attach(IPrinterPunch peripheral);
+
+        void Attach(IKeyboardReader peripheral);
     }
 }

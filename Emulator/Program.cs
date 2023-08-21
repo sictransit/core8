@@ -93,7 +93,7 @@ namespace Core8
 
                         if (o.TTY)
                         {
-                            Console.WriteLine(pdp.CPU.Teletype.Printout);
+                            Console.WriteLine(pdp.CPU.PrinterPunch.Printout);
                         }
 
                         if (!string.IsNullOrEmpty(o.Punch))
@@ -138,7 +138,7 @@ namespace Core8
 
             pdp.Continue(false);
 
-            var steps = new List<(Func<ITeletype, bool>, byte[])>
+            var steps = new List<(Func<IPrinterPunch, bool>, byte[])>
             {
                 (tty=>tty.Printout.Contains('.'), Encoding.ASCII.GetBytes("R FRTS\r")),
                 (tty=>tty.Printout.Contains('*'), Encoding.ASCII.GetBytes("ADVENT\r")),
@@ -149,9 +149,9 @@ namespace Core8
             {
                 foreach (var step in steps.ToArray())
                 {
-                    if (step.Item1(pdp.CPU.Teletype))
+                    if (step.Item1(pdp.CPU.PrinterPunch))
                     {
-                        pdp.CPU.Teletype.Type(step.Item2);
+                        pdp.CPU.KeyboardReader.Type(step.Item2);
 
                         steps.Remove(step);
                         break;

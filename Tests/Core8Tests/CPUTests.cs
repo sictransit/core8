@@ -53,9 +53,9 @@ namespace Core8.Tests
             PDP.Load8(0200);
             PDP.Continue();
 
-            Assert.AreEqual("HELLO WORLD!", PDP.CPU.Teletype.Printout);
+            Assert.AreEqual("HELLO WORLD!", PDP.CPU.PrinterPunch.Printout);
 
-            Log.Information(PDP.CPU.Teletype.Printout);
+            Log.Information(PDP.CPU.PrinterPunch.Printout);
         }
 
         [TestMethod]

@@ -18,7 +18,8 @@ namespace Core8.Core
         {
             CPU = new CPU();
 
-            CPU.Attach(new ASR33(@"tcp://127.0.0.1:17232", @"tcp://127.0.0.1:17233"));
+            CPU.Attach(new KeyboardReader(@"tcp://127.0.0.1:17232"));
+            CPU.Attach(new PrinterPunch(@"tcp://127.0.0.1:17233"));
 
             if (attachFloppy)
             {
@@ -367,7 +368,7 @@ namespace Core8.Core
                 throw new ArgumentNullException(nameof(tape));
             }
 
-            CPU.Teletype.MountPaperTape(tape);
+            CPU.KeyboardReader.MountPaperTape(tape);
 
             Log.Information($"TAPE: loaded {tape.Length} bytes");
 
@@ -375,7 +376,7 @@ namespace Core8.Core
 
             Continue();
 
-            CPU.Teletype.RemovePaperTape();
+            CPU.KeyboardReader.RemovePaperTape();
         }
 
         public void LoadFloppy(byte unit, byte[] disk = null)

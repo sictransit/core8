@@ -1,9 +1,10 @@
-﻿using Core8.Model.Interfaces;
+﻿using Core8.Model;
+using Core8.Model.Interfaces;
 using Core8.Model.Registers;
 
 namespace Core8.Peripherals.RK8E
 {
-    public class FixedDisk : IFixedDisk
+    public class FixedDisk : IODevice, IFixedDisk
     {
         private const int RKS_DONE = 1 << 11; // transfer done 
         private const int RKS_HMOV = 1 << 10; // heads moving 
@@ -31,7 +32,6 @@ namespace Core8.Peripherals.RK8E
 
         private const int COMMAND_MASK = 0b_111_000_000_000;
 
-        private const int TICK_DELAY = 10;
         private readonly IMemory dmaChannel;
 
         private readonly int[][] units = new int[RK_NUMDR][];
@@ -42,8 +42,6 @@ namespace Core8.Peripherals.RK8E
 
         private bool go;
         private int statusRegister;
-
-        private int ticks;
 
         public FixedDisk(IMemory dmaChannel)
         {
@@ -66,7 +64,9 @@ namespace Core8.Peripherals.RK8E
 
         private int BlockSize => HalfSector ? RK_NUMWD / 2 : RK_NUMWD;
 
-        public bool InterruptRequested => ((commandRegister & RKC_IE) != 0) && SkipOnTransferDoneOrError();
+        public override bool InterruptRequested => InterruptEnable && SkipOnTransferDoneOrError();
+
+        protected override bool InterruptEnable => (commandRegister & RKC_IE) != 0;
 
         public void Load(int unit, byte[] image)
         {
@@ -93,18 +93,15 @@ namespace Core8.Peripherals.RK8E
             Load(unit, data);
         }
 
-        public void Tick()
+        protected override int TickDelay { get; }
+
+        protected override void HandleTick()
         {
-            if (ticks++ > TICK_DELAY)
+            if (go)
             {
-                ticks = 0;
+                go = false;
 
-                if (go)
-                {
-                    go = false;
-
-                    Go();
-                }
+                Go();
             }
         }
 
