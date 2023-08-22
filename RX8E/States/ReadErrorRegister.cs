@@ -1,11 +1,10 @@
-﻿using Core8.Peripherals.RX8E.Interfaces;
-using Core8.Peripherals.RX8E.States.Abstract;
+﻿using Core8.Peripherals.RX8E.States.Abstract;
 
 namespace Core8.Peripherals.RX8E.States;
 
 internal class ReadErrorRegister : StateBase
 {
-    public ReadErrorRegister(IController controller) : base(controller)
+    public ReadErrorRegister(FloppyDrive controller) : base(controller)
     {
 
     }

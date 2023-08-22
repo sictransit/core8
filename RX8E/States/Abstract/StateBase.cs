@@ -1,11 +1,10 @@
-﻿using Core8.Peripherals.RX8E.Interfaces;
-using System;
+﻿using System;
 
 namespace Core8.Peripherals.RX8E.States.Abstract;
 
-public abstract class StateBase
+internal abstract class StateBase
 {
-    protected StateBase(IController controller)
+    protected StateBase(FloppyDrive controller)
     {
         Controller = controller ?? throw new ArgumentNullException(nameof(controller));
 
@@ -14,7 +13,7 @@ public abstract class StateBase
         Controller.ER.Clear();
     }
 
-    protected IController Controller { get; }
+    protected FloppyDrive Controller { get; }
 
     protected virtual bool FinalizeState() => false;
 

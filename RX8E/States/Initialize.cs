@@ -1,11 +1,10 @@
-﻿using Core8.Peripherals.RX8E.Interfaces;
-using Core8.Peripherals.RX8E.States.Abstract;
+﻿using Core8.Peripherals.RX8E.States.Abstract;
 
 namespace Core8.Peripherals.RX8E.States;
 
 internal class Initialize : StateBase
 {
-    public Initialize(IController controller) : base(controller)
+    public Initialize(FloppyDrive controller) : base(controller)
     {
         Controller.SetError(false);
         Controller.SetInterrupts(0);

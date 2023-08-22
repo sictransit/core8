@@ -1,11 +1,10 @@
-﻿using Core8.Peripherals.RX8E.Interfaces;
-using Core8.Peripherals.RX8E.States.Abstract;
+﻿using Core8.Peripherals.RX8E.States.Abstract;
 
 namespace Core8.Peripherals.RX8E.States;
 
 internal class FillBuffer : FillEmptyBufferBase
 {
-    public FillBuffer(IController controller) : base(controller)
+    public FillBuffer(FloppyDrive controller) : base(controller)
     {
 
     }
