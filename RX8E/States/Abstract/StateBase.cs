@@ -4,32 +4,18 @@ using System.Diagnostics;
 
 namespace Core8.Peripherals.RX8E.States.Abstract;
 
-internal abstract class StateBase
+public abstract class StateBase
 {
-    private readonly int initialTicks;
-
-    private readonly Stopwatch executionTime = new();
-
-    protected StateBase(IController controller)
+    public StateBase(IController controller)
     {
         Controller = controller ?? throw new ArgumentNullException(nameof(controller));
 
         Controller.SetDone(false);
         Controller.SetTransferRequest(false);
         Controller.ER.Clear();
-
-        initialTicks = controller.Ticks;
-
-        executionTime.Start();
     }
 
     protected IController Controller { get; }
-
-    private const int STATE_TICKS = 3;
-
-    protected virtual TimeSpan MinExecutionTime => TimeSpan.Zero;
-
-    private bool IsStateChangeDue => Controller.Ticks > initialTicks + STATE_TICKS && executionTime.Elapsed > MinExecutionTime;
 
     protected virtual bool FinalizeState() => false;
 
@@ -37,7 +23,7 @@ internal abstract class StateBase
 
     public void Tick()
     {
-        if (IsStateChangeDue && FinalizeState())
+        if (FinalizeState())
         {
             SetIR();
 

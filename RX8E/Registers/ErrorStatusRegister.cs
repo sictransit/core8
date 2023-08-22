@@ -3,7 +3,7 @@ using System.Linq;
 
 namespace Core8.Peripherals.RX8E.Registers;
 
-internal class ErrorStatusRegister : RegisterBase
+public class ErrorStatusRegister : RegisterBase
 {
     private const int RDY_MASK = 1 << 7;
     private const int WP_MASK = 1 << 3;

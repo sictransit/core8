@@ -3,7 +3,7 @@ using Core8.Peripherals.RX8E.Declarations;
 
 namespace Core8.Peripherals.RX8E.Registers;
 
-internal class CommandRegister : RegisterBase
+public class CommandRegister : RegisterBase
 {
     private const int FUNCTION_MASK = 7 << 1;
     private const int UNIT_SELECT_MASK = 1 << 4;
