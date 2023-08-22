@@ -1,8 +1,6 @@
-﻿using System.Collections.Generic;
+﻿namespace Core8.Model.Interfaces;
 
-namespace Core8.Model.Interfaces;
-
-public interface IPrinterPunch : IIODevice
+public interface ILinePrinter : IIODevice
 {
     void Print(byte c);
 

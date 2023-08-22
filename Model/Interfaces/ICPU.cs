@@ -12,6 +12,8 @@ public interface ICPU
 
     IPrinterPunch PrinterPunch { get; }
 
+    ILinePrinter LinePrinter { get; }
+
     IRX8E RX8E { get; }
 
     IRK8E RK8E { get; }
@@ -43,4 +45,6 @@ public interface ICPU
     void Attach(IPrinterPunch peripheral);
 
     void Attach(IKeyboardReader peripheral);
+
+    void Attach(ILinePrinter peripheral);
 }

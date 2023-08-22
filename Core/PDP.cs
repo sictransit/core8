@@ -21,14 +21,17 @@ public class PDP
         CPU.Attach(new KeyboardReader(@"tcp://127.0.0.1:17232"));
         CPU.Attach(new PrinterPunch(@"tcp://127.0.0.1:17233"));
 
+        ILinePrinter linePrinter = new LinePrinter(@"tcp://127.0.0.1:17233"); // HACK: LinePrinter shouldn't be a subclass of PrinterPunch.
+        CPU.Attach(linePrinter);
+
         if (attachRX8E)
         {
-            CPU.Attach(new Peripherals.RX8E.RX8EController());
+            CPU.Attach(new RX8EController());
         }
 
         if (attachRK8E)
         {
-            CPU.Attach(new Peripherals.RK8E.RK8EController(CPU.Memory));
+            CPU.Attach(new RK8EController(CPU.Memory));
         }
 
         ToggleRIMAndBinLoader();

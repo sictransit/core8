@@ -25,8 +25,6 @@ public class CPU : ICPU
     private const int MEMORY_MANAGEMENT_MASK = 0b_111_111_000_000;
     private const int INTERRUPT_MASK = 0b_000_111_111_000;
 
-    //private const int LINE_PRINTER_DEVICE = 54; // device 66: serial line printer
-
     // TODO: Create class, include hit count. How to break on instruction and then continue e.g. 1000 more?
     private readonly List<Func<ICPU, bool>> breakpoints = new();
 
@@ -41,6 +39,7 @@ public class CPU : ICPU
     private readonly MemoryManagementInstructions memoryManagementInstructions;
     private readonly MemoryReferenceInstructions memoryReferenceInstructions;
     private readonly PrinterPunchInstructions printerPunchInstructions;
+    private readonly LinePrinterInstructions linePrinterInstructions;
     private readonly PrivilegedNoOperationInstruction privilegedNoOperationInstruction;
 
     private bool debug;
@@ -52,6 +51,8 @@ public class CPU : ICPU
     private int keyboardReaderDeviceId = -1;
 
     private int printerPunchDeviceId = -1;
+
+    private int linePrinterDeviceId = -1;
 
     private volatile bool running;
 
@@ -69,6 +70,7 @@ public class CPU : ICPU
         memoryManagementInstructions = new MemoryManagementInstructions(this);
         keyboardReaderInstructions = new KeyboardReaderInstructions(this);
         printerPunchInstructions = new PrinterPunchInstructions(this);
+        linePrinterInstructions = new LinePrinterInstructions(this);
         interruptInstructions = new InterruptInstructions(this);
         privilegedNoOperationInstruction = new PrivilegedNoOperationInstruction(this);
         rx8eInstructions = new RX8EInstructions(this);
@@ -86,6 +88,8 @@ public class CPU : ICPU
     public IKeyboardReader KeyboardReader { get; private set; }
 
     public IPrinterPunch PrinterPunch { get; private set; }
+
+    public ILinePrinter LinePrinter { get; private set; }
 
     public IRX8E RX8E { get; private set; }
 
@@ -109,6 +113,13 @@ public class CPU : ICPU
         RX8E = peripheral;
 
         rx8eDeviceId = peripheral.DeviceId;
+    }
+
+    public void Attach(ILinePrinter peripheral)
+    { 
+        LinePrinter = peripheral;
+
+        linePrinterDeviceId = peripheral.DeviceId;
     }
 
     public void Attach(IPrinterPunch peripheral)
@@ -237,7 +248,7 @@ public class CPU : ICPU
             IOT when (data & INTERRUPT_MASK) == 0 => interruptInstructions,
             IOT when (data & IO) >> 3 == keyboardReaderDeviceId => keyboardReaderInstructions,
             IOT when (data & IO) >> 3 == printerPunchDeviceId => printerPunchInstructions,
-            //      IOT when (data & IO) >> 3 == LINE_PRINTER_DEVICE => teleprinterInstructions,
+            IOT when (data & IO) >> 3 == linePrinterDeviceId => linePrinterInstructions,
             IOT when (data & IO) >> 3 == rx8eDeviceId => rx8eInstructions,
             IOT when (data & IO) >> 3 == rk8eDeviceId => rk8eInstructions,
             IOT => privilegedNoOperationInstruction,
