@@ -50,7 +50,7 @@ internal abstract class StateBase
         throw new InvalidOperationException($"LCD in state {GetType().Name}!");
     }
 
-    public void LCD(int acc)
+    public void LoadCommandRegister(int acc)
     {
         LoadCommand(acc);
     }
@@ -60,7 +60,7 @@ internal abstract class StateBase
         throw new InvalidOperationException($"XDR in state {GetType().Name}!");
     }
 
-    public int XDR(int acc)
+    public int TransferDataRegister(int acc)
     {
         return TransferData(acc);
     }

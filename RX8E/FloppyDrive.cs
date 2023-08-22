@@ -24,17 +24,17 @@ public class FloppyDrive : IFloppyDrive
 
     public void Load(byte unit, byte[] disk = null) => controller.Load(unit, disk);
 
-    public void LoadCommandRegister(int accumulator) => controller.LCD(accumulator);
+    public void LoadCommandRegister(int accumulator) => controller.LoadCommandRegister(accumulator);
 
-    public int TransferDataRegister(int accumulator) => controller.XDR(accumulator);
+    public int TransferDataRegister(int accumulator) => controller.TransferDataRegister(accumulator);
 
     public void Initialize() => controller.SetState(new Initialize(controller));
 
-    public bool SkipTransferRequest() => controller.STR();
+    public bool SkipTransferRequest() => controller.SkipTransferRequest();
 
-    public bool SkipError() => controller.SER();
+    public bool SkipError() => controller.SkipError();
 
-    public bool SkipNotDone() => controller.SND();
+    public bool SkipNotDone() => controller.SkipNotDone();
 
     public void SetInterrupts(int accumulator) => controller.SetInterrupts(accumulator);
 

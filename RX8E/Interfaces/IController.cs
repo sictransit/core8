@@ -37,15 +37,15 @@ internal interface IController
 
     bool IRQ { get; }
 
-    void LCD(int acc);
+    void LoadCommandRegister(int acc);
 
-    int XDR(int acc);
+    int TransferDataRegister(int acc);
 
-    bool SND();
+    bool SkipNotDone();
 
-    bool STR();
+    bool SkipTransferRequest();
 
-    bool SER();
+    bool SkipError();
 
     int[] Buffer { get; }
 

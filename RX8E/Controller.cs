@@ -65,9 +65,9 @@ internal class Controller : IController
 
     public void SetError(bool state) => errorFlag = state;
 
-    public void LCD(int acc) => currentState.LCD(acc);
+    public void LoadCommandRegister(int acc) => currentState.LoadCommandRegister(acc);
 
-    public int XDR(int acc) => currentState.XDR(acc);
+    public int TransferDataRegister(int acc) => currentState.TransferDataRegister(acc);
 
     public void Tick()
     {
@@ -178,7 +178,7 @@ internal class Controller : IController
 
     public void SetInterrupts(int acc) => interruptsEnabled = (acc & 1) == 1;
 
-    public bool SER()
+    public bool SkipError()
     {
         if (Error)
         {
@@ -190,7 +190,7 @@ internal class Controller : IController
         return false;
     }
 
-    public bool SND()
+    public bool SkipNotDone()
     {
         if (Done)
         {
@@ -203,7 +203,7 @@ internal class Controller : IController
     }
 
 
-    public bool STR()
+    public bool SkipTransferRequest()
     {
         if (TransferRequest)
         {
