@@ -34,16 +34,16 @@ public abstract class MAINDECTestsBase : PDPTestsBase
 
     protected bool StartAndWaitForCompletion()
     {
-        bool result = true;
+        var result = true;
 
         PDP.Continue(false);
 
         Stopwatch sw = new();
         sw.Start();
 
-        bool done = false;
-        bool failed = false;
-        bool timeout = false;
+        var done = false;
+        var failed = false;
+        var timeout = false;
 
         while (!timeout && !done && !failed && PDP.Running)
         {

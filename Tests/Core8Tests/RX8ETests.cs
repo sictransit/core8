@@ -54,7 +54,7 @@ public class RX8ETests
 
         AssertDoneFlagSet(floppy);
 
-        int[] buffer = EmptyBuffer(floppy);
+        var buffer = EmptyBuffer(floppy);
 
         Assert.IsNotNull(buffer);
 
@@ -68,13 +68,13 @@ public class RX8ETests
 
         AssertDoneFlagSet(floppy);
 
-        int[] inData = GenerateRandomBlock();
+        var inData = GenerateRandomBlock();
 
         FillBuffer(floppy, inData);
 
-        int[] outData = EmptyBuffer(floppy);
+        var outData = EmptyBuffer(floppy);
 
-        for (int i = 0; i < inData.Length; i++)
+        for (var i = 0; i < inData.Length; i++)
         {
             Assert.AreEqual(inData[i], outData[i]);
         }
@@ -111,7 +111,7 @@ public class RX8ETests
 
         Assert.IsTrue(floppy.SkipTransferRequest());
 
-        for (int i = 0; i < data.Length; i++)
+        for (var i = 0; i < data.Length; i++)
         {
             floppy.TransferDataRegister(data[i]);
 
@@ -132,13 +132,13 @@ public class RX8ETests
 
     private static int[] EmptyBuffer(IFloppyDrive floppy)
     {
-        int[] buffer = new int[64];
+        var buffer = new int[64];
 
         floppy.LoadCommandRegister(Functions.EMPTY_BUFFER);
 
         Assert.IsTrue(floppy.SkipTransferRequest());
 
-        for (int i = 0; i < buffer.Length; i++)
+        for (var i = 0; i < buffer.Length; i++)
         {
             buffer[i] = floppy.TransferDataRegister(0);
 
@@ -172,20 +172,20 @@ public class RX8ETests
 
         AssertDoneFlagSet(floppy);
 
-        int[] written = GenerateRandomBlock();
+        var written = GenerateRandomBlock();
 
         FillBuffer(floppy, written);
 
-        int track = 47;
-        int sector = 11;
+        var track = 47;
+        var sector = 11;
 
         WriteSector(floppy, track, sector);
 
         ReadSector(floppy, track, sector);
 
-        int[] read = EmptyBuffer(floppy);
+        var read = EmptyBuffer(floppy);
 
-        for (int i = 0; i < written.Length; i++)
+        for (var i = 0; i < written.Length; i++)
         {
             Assert.AreEqual(written[i], read[i]);
         }
@@ -198,7 +198,7 @@ public class RX8ETests
 
         AssertDoneFlagSet(floppy);
 
-        byte[] image = File.ReadAllBytes("disks/os8_rx.rx01");
+        var image = File.ReadAllBytes("disks/os8_rx.rx01");
 
         floppy.Load(0, image);
 
@@ -206,13 +206,13 @@ public class RX8ETests
 
         AssertDoneFlagSet(floppy);
 
-        for (int track = DiskLayout.FIRST_TRACK; track <= DiskLayout.LAST_TRACK; track++)
+        for (var track = DiskLayout.FIRST_TRACK; track <= DiskLayout.LAST_TRACK; track++)
         {
-            for (int sector = DiskLayout.FIRST_SECTOR; sector <= DiskLayout.LAST_SECTOR; sector++)
+            for (var sector = DiskLayout.FIRST_SECTOR; sector <= DiskLayout.LAST_SECTOR; sector++)
             {
                 ReadSector(floppy, track, sector);
 
-                int[] buffer = EmptyBuffer(floppy);
+                var buffer = EmptyBuffer(floppy);
 
                 Assert.IsNotNull(buffer);
 

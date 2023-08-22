@@ -16,13 +16,13 @@ internal class Disk : MediaBase
 
     public void LoadFromArray(byte[] data)
     {
-        IEnumerable<byte>[] blocks = data.ChunkBy(DiskLayout.BLOCK_SIZE).ToArray();
+        var blocks = data.ChunkBy(DiskLayout.BLOCK_SIZE).ToArray();
 
-        int cnt = 0;
+        var cnt = 0;
 
-        foreach (Track track in Tracks.Values.OrderBy(x => x.Number))
+        foreach (var track in Tracks.Values.OrderBy(x => x.Number))
         {
-            foreach (Sector sector in track.Sectors.Values.OrderBy(x => x.Number))
+            foreach (var sector in track.Sectors.Values.OrderBy(x => x.Number))
             {
                 sector.Data = blocks[cnt++].Select(x => x).ToArray();
             }
@@ -40,7 +40,7 @@ internal class Disk : MediaBase
     {
         Tracks = new Dictionary<int, Track>();
 
-        for (int i = DiskLayout.FIRST_TRACK; i <= DiskLayout.LAST_TRACK; i++)
+        for (var i = DiskLayout.FIRST_TRACK; i <= DiskLayout.LAST_TRACK; i++)
         {
             Track track = new(i);
             track.Format();

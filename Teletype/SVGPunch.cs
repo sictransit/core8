@@ -26,7 +26,7 @@ public class SVGPunch
 
         if (settings.TrimLeader)
         {
-            byte[] trailer = data.Reverse().TakeWhile(IsLeaderTrailer).ToArray();
+            var trailer = data.Reverse().TakeWhile(IsLeaderTrailer).ToArray();
 
             if (trailer.Length != 0)
             {
@@ -36,35 +36,35 @@ public class SVGPunch
 
         if (settings.NullPadding != 0)
         {
-            byte[] nulls = Enumerable.Repeat((byte)0, settings.NullPadding).ToArray();
+            var nulls = Enumerable.Repeat((byte)0, settings.NullPadding).ToArray();
 
             data = nulls.Concat(data.SkipWhile(x => x == 0).Reverse().SkipWhile(x => x == 0).Reverse()).Concat(nulls).ToArray();
         }
 
-        int wrapping = settings.Wrap == 0 ? data.Length : settings.Wrap;
+        var wrapping = settings.Wrap == 0 ? data.Length : settings.Wrap;
 
-        int paperWidth = wrapping * SPACING;
-        int paperHeight = SPACING * 10;
+        var paperWidth = wrapping * SPACING;
+        var paperHeight = SPACING * 10;
 
         XElement definition = new(SVGDeclarations.svg + "defs", Hole(true), Hole(false), data.Distinct().OrderBy(x => x).Select(x => CreateRowShape(x)));
 
-        int totalHeight = SPACING;
+        var totalHeight = SPACING;
 
         List<XElement> strips = new();
 
         List<XElement> rows = new();
 
-        byte[] padding = new byte[(wrapping - data.Length % wrapping) % wrapping];
+        var padding = new byte[(wrapping - data.Length % wrapping) % wrapping];
 
-        IEnumerable<byte> content = data.Concat(padding);
+        var content = data.Concat(padding);
 
-        foreach (IEnumerable<byte> chunk in content.ChunkBy(wrapping))
+        foreach (var chunk in content.ChunkBy(wrapping))
         {
-            XElement strip = CreatePaper(SPACING, totalHeight, paperWidth, paperHeight);
+            var strip = CreatePaper(SPACING, totalHeight, paperWidth, paperHeight);
 
             strips.Add(strip);
 
-            int height = totalHeight;
+            var height = totalHeight;
 
             XElement row = new(SVGDeclarations.svg + "g", chunk.Select((x, i) => UseRowShape(SPACING / 2, height, i, x)));
 
@@ -73,7 +73,7 @@ public class SVGPunch
             totalHeight += paperHeight + SPACING;
         }
 
-        int totalWidth = paperWidth + 2 * SPACING;
+        var totalWidth = paperWidth + 2 * SPACING;
 
 
 

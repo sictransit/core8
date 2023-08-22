@@ -28,7 +28,7 @@ public class Group3Instructions : InstructionsBase
 
         if ((Data & SWP_MASK) == SWP_MASK)
         {
-            int mq = MQ.Content;
+            var mq = MQ.Content;
 
             MQ.Set(AC.Accumulator);
             AC.SetAccumulator(mq);

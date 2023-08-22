@@ -8,11 +8,11 @@ public static class SVGReader
 {
     public static IEnumerable<byte> Read(string tape)
     {
-        XElement xml = XElement.Parse(tape);
+        var xml = XElement.Parse(tape);
 
-        foreach (XElement useElement in xml.Descendants().Where(x => x.Name == SVGDeclarations.svg + "use"))
+        foreach (var useElement in xml.Descendants().Where(x => x.Name == SVGDeclarations.svg + "use"))
         {
-            string value = useElement.Attribute(SVGDeclarations.xlink + "href")?.Value;
+            var value = useElement.Attribute(SVGDeclarations.xlink + "href")?.Value;
 
             if (value != null && value.StartsWith($"#{SVGDeclarations.BYTE_ROW_PREFIX}"))
             {

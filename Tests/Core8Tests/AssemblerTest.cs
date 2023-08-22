@@ -13,7 +13,7 @@ public class AssemblerTest : PDPTestsBase
     {
         Assembler assembler = new(@"c:\bin\palbart.exe");
 
-        bool result = assembler.TryAssemble(@"Assembler\HelloWorld.asm", out string binFilename);
+        var result = assembler.TryAssemble(@"Assembler\HelloWorld.asm", out var binFilename);
 
         Assert.IsTrue(result);
 

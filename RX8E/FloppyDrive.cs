@@ -98,7 +98,7 @@ public class FloppyDrive : IODevice, IController, IFloppyDrive
 
         if (disk != null)
         {
-            if (disk.Tracks.TryGetValue(TA.Content, out Track track))
+            if (disk.Tracks.TryGetValue(TA.Content, out var track))
             {
                 //Log.Debug($"Found: {track}");
 
@@ -224,7 +224,7 @@ public class FloppyDrive : IODevice, IController, IFloppyDrive
 
     public override string ToString()
     {
-        System.Collections.Generic.IEnumerable<string> flags = new[] { Done ? "dne" : null, Error ? "err" : null, TransferRequest ? "tr" : null, CR.MaintenanceMode ? "mm" : null, CR.EightBitMode ? "8" : "12" }.Where(x => x != null);
+        var flags = new[] { Done ? "dne" : null, Error ? "err" : null, TransferRequest ? "tr" : null, CR.MaintenanceMode ? "mm" : null, CR.EightBitMode ? "8" : "12" }.Where(x => x != null);
 
         return $"[{GetType().Name}] {currentState} {string.Join(',', flags)} dsk={CR.UnitSelect}:{TA.Content}:{SA.Content} es={ES}";
     }

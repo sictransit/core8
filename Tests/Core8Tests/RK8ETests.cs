@@ -15,7 +15,7 @@ public class RK8ETests : PDPTestsBase
     {
         FixedDisk disk = new(PDP.CPU.Memory);
 
-        byte[] image = File.ReadAllBytes("disks/os8_rx.rx01");
+        var image = File.ReadAllBytes("disks/os8_rx.rx01");
 
         disk.Load(0, image);
 
@@ -27,9 +27,9 @@ public class RK8ETests : PDPTestsBase
     {
         FixedDisk disk = new(PDP.CPU.Memory);
 
-        byte[] image = File.ReadAllBytes("disks/advent.rk05");
+        var image = File.ReadAllBytes("disks/advent.rk05");
 
-        for (int unit = 0; unit < 4; unit++)
+        for (var unit = 0; unit < 4; unit++)
         {
             disk.Load(unit, image);
         }

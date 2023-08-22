@@ -27,7 +27,7 @@ public class ErrorStatusRegister : RegisterBase
 
     public override string ToString()
     {
-        System.Collections.Generic.IEnumerable<string> flags = new[] { InitializationDone ? "id" : null, Ready ? "rdy" : null, WriteProtect ? "wp" : null }.Where(x => x != null);
+        var flags = new[] { InitializationDone ? "id" : null, Ready ? "rdy" : null, WriteProtect ? "wp" : null }.Where(x => x != null);
 
         return string.Join(',', flags);
     }

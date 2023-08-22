@@ -37,7 +37,7 @@ public class Memory : IMemory
 
     public int Write(int address, int data)
     {
-        int value = data & 0b_111_111_111_111;
+        var value = data & 0b_111_111_111_111;
 
         ram[address] = value;
 

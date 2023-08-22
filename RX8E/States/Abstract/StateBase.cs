@@ -5,7 +5,7 @@ namespace Core8.Peripherals.RX8E.States.Abstract;
 
 public abstract class StateBase
 {
-    public StateBase(IController controller)
+    protected StateBase(IController controller)
     {
         Controller = controller ?? throw new ArgumentNullException(nameof(controller));
 

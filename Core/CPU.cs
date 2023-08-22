@@ -83,7 +83,7 @@ public class CPU : ICPU
 
     public IInterrupts Interrupts { get; }
 
-    public IKeyboardReader KeyboardReader { get; set; }
+    public IKeyboardReader KeyboardReader { get; private set; }
 
     public IPrinterPunch PrinterPunch { get; private set; }
 
@@ -140,8 +140,8 @@ public class CPU : ICPU
 
     public void Run()
     {
-        int debugPC = 0;
-        int debugIF = 0;
+        var debugPC = 0;
+        var debugIF = 0;
 
         running = true;
 
@@ -226,9 +226,9 @@ public class CPU : ICPU
 
     public IInstruction Fetch(int address)
     {
-        int data = Memory.Read(address);
+        var data = Memory.Read(address);
 
-        IInstruction instruction = ((data & INSTRUCTION_TYPE_MASK) switch
+        var instruction = ((data & INSTRUCTION_TYPE_MASK) switch
         {
             MCI when (data & GROUP) == 0 => group1Instructions.LoadAddress(address),
             MCI when (data & GROUP_3) == GROUP_3 => group3Instructions,

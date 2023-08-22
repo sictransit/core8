@@ -56,7 +56,7 @@ public class Host : IDisposable
 
         while (running.WaitOne(TimeSpan.Zero))
         {
-            if (subscriber.TryReceiveFrameBytes(TimeSpan.FromMilliseconds(100), out byte[] frame))
+            if (subscriber.TryReceiveFrameBytes(TimeSpan.FromMilliseconds(100), out var frame))
             {
                 server.Multicast(frame);
             }

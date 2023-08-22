@@ -47,7 +47,7 @@ public class FixedDisk : IODevice, IFixedDisk
     {
         this.dmaChannel = dmaChannel;
 
-        for (int i = 0; i < RK_NUMDR; i++)
+        for (var i = 0; i < RK_NUMDR; i++)
         {
             Load(i);
         }
@@ -72,11 +72,11 @@ public class FixedDisk : IODevice, IFixedDisk
     {
         if (image == null) throw new ArgumentNullException(nameof(image));
 
-        int[] data = new int[image.Length / 2];
+        var data = new int[image.Length / 2];
 
-        int word = 0;
+        var word = 0;
 
-        for (int i = 0; i < image.Length; i++)
+        for (var i = 0; i < image.Length; i++)
         {
             if (i % 2 == 0)
             {
@@ -197,7 +197,7 @@ public class FixedDisk : IODevice, IFixedDisk
 
     private void ReadData()
     {
-        for (int word = 0; word < BlockSize; word++)
+        for (var word = 0; word < BlockSize; word++)
         {
             dmaChannel.Write(MemoryAddress + word, units[Unit][DiskAddress + word]);
         }
@@ -207,9 +207,9 @@ public class FixedDisk : IODevice, IFixedDisk
 
     private void WriteData()
     {
-        for (int word = 0; word < RK_NUMWD; word++)
+        for (var word = 0; word < RK_NUMWD; word++)
         {
-            int data = word < BlockSize ? dmaChannel.Read(MemoryAddress + word) : 0;
+            var data = word < BlockSize ? dmaChannel.Read(MemoryAddress + word) : 0;
 
             units[Unit][DiskAddress + word] = data;
         }

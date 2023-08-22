@@ -29,9 +29,9 @@ public class IdentityTest : PDPTestsBase
 
         PDP.Continue();
 
-        int acc = PDP.CPU.Registry.AC.Accumulator;
+        var acc = PDP.CPU.Registry.AC.Accumulator;
 
-        string machine = acc switch
+        var machine = acc switch
         {
             0 => "UNKNOWN (DCC112, MP-12?)",
             1 => "PDP-5 (THE INCOMPATIBLE ONE!)",

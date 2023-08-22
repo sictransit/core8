@@ -217,8 +217,8 @@ public class PDP
     {
         StringBuilder sb = new();
 
-        int zeroAddress = 0;
-        bool zeroSet = false;
+        var zeroAddress = 0;
+        var zeroSet = false;
 
         void PrintZeroSpan()
         {
@@ -228,9 +228,9 @@ public class PDP
             }
         }
 
-        for (int address = 0; address < CPU.Memory.Size; address++)
+        for (var address = 0; address < CPU.Memory.Size; address++)
         {
-            IInstruction instruction = CPU.Fetch(address);
+            var instruction = CPU.Fetch(address);
 
             if (instruction.Data != 0)
             {
@@ -280,7 +280,7 @@ public class PDP
 
     private void Deposit()
     {
-        int data = CPU.Registry.SR.Content;
+        var data = CPU.Registry.SR.Content;
 
         CPU.Memory.Write(CPU.Registry.PC.Address, data);
 
