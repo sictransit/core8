@@ -16,7 +16,5 @@ public interface IPrinterPunch : IIODevice
 
     string Printout { get; }
 
-    IReadOnlyCollection<byte> Output { get; }
-
     void SetDeviceControl(int data);
 }
