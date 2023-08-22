@@ -4,7 +4,7 @@ namespace Core8.Peripherals.RX8E.States.Abstract;
 
 internal abstract class StateBase
 {
-    protected StateBase(FloppyDrive controller)
+    protected StateBase(RX8EController controller)
     {
         Controller = controller ?? throw new ArgumentNullException(nameof(controller));
 
@@ -13,7 +13,7 @@ internal abstract class StateBase
         Controller.ER.Clear();
     }
 
-    protected FloppyDrive Controller { get; }
+    protected RX8EController Controller { get; }
 
     protected virtual bool FinalizeState() => false;
 

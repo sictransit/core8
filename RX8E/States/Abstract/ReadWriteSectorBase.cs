@@ -5,7 +5,7 @@ internal abstract class ReadWriteSectorBase : StateBase
     protected bool SectorTransferred;
     protected bool TrackTransferred;
 
-    protected ReadWriteSectorBase(FloppyDrive controller) : base(controller)
+    protected ReadWriteSectorBase(RX8EController controller) : base(controller)
     {
         Controller.ER.Clear();
         Controller.ES.Clear();

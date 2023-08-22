@@ -15,46 +15,46 @@ public class RX8ETests
     [TestMethod]
     public void TestInitialize()
     {
-        FloppyDrive floppy = new();
+        RX8EController controller = new();
 
-        AssertDoneFlagSet(floppy);
+        AssertDoneFlagSet(controller);
 
-        floppy.Initialize();
+        controller.Initialize();
 
-        AssertDoneFlagSet(floppy);
+        AssertDoneFlagSet(controller);
     }
 
     [TestMethod]
     public void TestNOP()
     {
-        FloppyDrive floppy = new();
+        RX8EController controller = new();
 
-        AssertDoneFlagSet(floppy);
+        AssertDoneFlagSet(controller);
 
-        floppy.LoadCommandRegister(Functions.NO_OPERATION);
+        controller.LoadCommandRegister(Functions.NO_OPERATION);
 
-        AssertDoneFlagSet(floppy);
+        AssertDoneFlagSet(controller);
     }
 
 
     [TestMethod]
     public void TestFillBuffer()
     {
-        FloppyDrive floppy = new();
+        RX8EController controller = new();
 
-        AssertDoneFlagSet(floppy);
+        AssertDoneFlagSet(controller);
 
-        FillBuffer(floppy, new int[64]);
+        FillBuffer(controller, new int[64]);
     }
 
     [TestMethod]
     public void TestEmptyBuffer()
     {
-        FloppyDrive floppy = new();
+        RX8EController controller = new();
 
-        AssertDoneFlagSet(floppy);
+        AssertDoneFlagSet(controller);
 
-        var buffer = EmptyBuffer(floppy);
+        var buffer = EmptyBuffer(controller);
 
         Assert.IsNotNull(buffer);
 
@@ -64,15 +64,15 @@ public class RX8ETests
     [TestMethod]
     public void TestBufferIntegrity()
     {
-        FloppyDrive floppy = new();
+        RX8EController controller = new();
 
-        AssertDoneFlagSet(floppy);
+        AssertDoneFlagSet(controller);
 
         var inData = GenerateRandomBlock();
 
-        FillBuffer(floppy, inData);
+        FillBuffer(controller, inData);
 
-        var outData = EmptyBuffer(floppy);
+        var outData = EmptyBuffer(controller);
 
         for (var i = 0; i < inData.Length; i++)
         {
@@ -80,7 +80,7 @@ public class RX8ETests
         }
     }
 
-    private static void AssertDoneFlagSet(IFloppyDrive floppy)
+    private static void AssertDoneFlagSet(IRX8E controller)
     {
         Stopwatch sw = new();
         sw.Start();
@@ -89,9 +89,9 @@ public class RX8ETests
 
         do
         {
-            floppy.Tick();
+            controller.Tick();
 
-            done = floppy.SkipNotDone();
+            done = controller.SkipNotDone();
 
         } while (!done && sw.ElapsedMilliseconds < 2000);
 
@@ -105,56 +105,56 @@ public class RX8ETests
         return Enumerable.Range(0, 64).Select(_ => rnd.Next(0, 4096)).ToArray();
     }
 
-    private static void FillBuffer(IFloppyDrive floppy, int[] data)
+    private static void FillBuffer(IRX8E controller, int[] data)
     {
-        floppy.LoadCommandRegister(Functions.FILL_BUFFER);
+        controller.LoadCommandRegister(Functions.FILL_BUFFER);
 
-        Assert.IsTrue(floppy.SkipTransferRequest());
+        Assert.IsTrue(controller.SkipTransferRequest());
 
         for (var i = 0; i < data.Length; i++)
         {
-            floppy.TransferDataRegister(data[i]);
+            controller.TransferDataRegister(data[i]);
 
-            floppy.Tick();
+            controller.Tick();
 
             if (i < data.Length - 1)
             {
-                Assert.IsTrue(floppy.SkipTransferRequest());
+                Assert.IsTrue(controller.SkipTransferRequest());
             }
             else
             {
-                Assert.IsFalse(floppy.SkipTransferRequest());
+                Assert.IsFalse(controller.SkipTransferRequest());
             }
         }
 
-        AssertDoneFlagSet(floppy);
+        AssertDoneFlagSet(controller);
     }
 
-    private static int[] EmptyBuffer(IFloppyDrive floppy)
+    private static int[] EmptyBuffer(IRX8E controller)
     {
         var buffer = new int[64];
 
-        floppy.LoadCommandRegister(Functions.EMPTY_BUFFER);
+        controller.LoadCommandRegister(Functions.EMPTY_BUFFER);
 
-        Assert.IsTrue(floppy.SkipTransferRequest());
+        Assert.IsTrue(controller.SkipTransferRequest());
 
         for (var i = 0; i < buffer.Length; i++)
         {
-            buffer[i] = floppy.TransferDataRegister(0);
+            buffer[i] = controller.TransferDataRegister(0);
 
-            floppy.Tick();
+            controller.Tick();
 
             if (i < 63)
             {
-                Assert.IsTrue(floppy.SkipTransferRequest());
+                Assert.IsTrue(controller.SkipTransferRequest());
             }
             else
             {
-                Assert.IsFalse(floppy.SkipTransferRequest());
+                Assert.IsFalse(controller.SkipTransferRequest());
             }
         }
 
-        AssertDoneFlagSet(floppy);
+        AssertDoneFlagSet(controller);
 
         return buffer;
     }
@@ -162,28 +162,28 @@ public class RX8ETests
     [TestMethod]
     public void TestReadWriteSector()
     {
-        FloppyDrive floppy = new();
+        RX8EController controller = new();
 
-        AssertDoneFlagSet(floppy);
+        AssertDoneFlagSet(controller);
 
-        floppy.Load(0);
+        controller.Load(0);
 
-        floppy.Initialize();
+        controller.Initialize();
 
-        AssertDoneFlagSet(floppy);
+        AssertDoneFlagSet(controller);
 
         var written = GenerateRandomBlock();
 
-        FillBuffer(floppy, written);
+        FillBuffer(controller, written);
 
         var track = 47;
         var sector = 11;
 
-        WriteSector(floppy, track, sector);
+        WriteSector(controller, track, sector);
 
-        ReadSector(floppy, track, sector);
+        ReadSector(controller, track, sector);
 
-        var read = EmptyBuffer(floppy);
+        var read = EmptyBuffer(controller);
 
         for (var i = 0; i < written.Length; i++)
         {
@@ -194,25 +194,25 @@ public class RX8ETests
     [TestMethod]
     public void TestLoadDiskImage()
     {
-        FloppyDrive floppy = new();
+        RX8EController controller = new();
 
-        AssertDoneFlagSet(floppy);
+        AssertDoneFlagSet(controller);
 
         var image = File.ReadAllBytes("disks/os8_rx.rx01");
 
-        floppy.Load(0, image);
+        controller.Load(0, image);
 
-        floppy.Initialize();
+        controller.Initialize();
 
-        AssertDoneFlagSet(floppy);
+        AssertDoneFlagSet(controller);
 
         for (var track = DiskLayout.FIRST_TRACK; track <= DiskLayout.LAST_TRACK; track++)
         {
             for (var sector = DiskLayout.FIRST_SECTOR; sector <= DiskLayout.LAST_SECTOR; sector++)
             {
-                ReadSector(floppy, track, sector);
+                ReadSector(controller, track, sector);
 
-                var buffer = EmptyBuffer(floppy);
+                var buffer = EmptyBuffer(controller);
 
                 Assert.IsNotNull(buffer);
 
@@ -221,30 +221,30 @@ public class RX8ETests
         }
     }
 
-    private static void WriteSector(IFloppyDrive floppy, int track, int sector)
+    private static void WriteSector(IRX8E controller, int track, int sector)
     {
-        floppy.LoadCommandRegister(Functions.WRITE_SECTOR);
+        controller.LoadCommandRegister(Functions.WRITE_SECTOR);
 
-        SetSector(floppy, track, sector);
+        SetSector(controller, track, sector);
     }
 
-    private static void ReadSector(IFloppyDrive floppy, int track, int sector)
+    private static void ReadSector(IRX8E controller, int track, int sector)
     {
-        floppy.LoadCommandRegister(Functions.READ_SECTOR);
+        controller.LoadCommandRegister(Functions.READ_SECTOR);
 
-        SetSector(floppy, track, sector);
+        SetSector(controller, track, sector);
     }
 
-    private static void SetSector(IFloppyDrive floppy, int track, int sector)
+    private static void SetSector(IRX8E controller, int track, int sector)
     {
-        Assert.IsTrue(floppy.SkipTransferRequest());
+        Assert.IsTrue(controller.SkipTransferRequest());
 
-        floppy.TransferDataRegister(sector);
+        controller.TransferDataRegister(sector);
 
-        Assert.IsTrue(floppy.SkipTransferRequest());
+        Assert.IsTrue(controller.SkipTransferRequest());
 
-        floppy.TransferDataRegister(track);
+        controller.TransferDataRegister(track);
 
-        AssertDoneFlagSet(floppy);
+        AssertDoneFlagSet(controller);
     }
 }

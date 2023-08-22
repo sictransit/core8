@@ -14,21 +14,21 @@ public class PDP
 {
     private Thread cpuThread;
 
-    public PDP(bool attachFloppy = false, bool attachFixedDisk = false)
+    public PDP(bool attachRX8E = false, bool attachRK8E = false)
     {
         CPU = new CPU();
 
         CPU.Attach(new KeyboardReader(@"tcp://127.0.0.1:17232"));
         CPU.Attach(new PrinterPunch(@"tcp://127.0.0.1:17233"));
 
-        if (attachFloppy)
+        if (attachRX8E)
         {
-            CPU.Attach(new FloppyDrive());
+            CPU.Attach(new Peripherals.RX8E.RX8EController());
         }
 
-        if (attachFixedDisk)
+        if (attachRK8E)
         {
-            CPU.Attach(new FixedDisk(CPU.Memory));
+            CPU.Attach(new Peripherals.RK8E.RK8EController(CPU.Memory));
         }
 
         ToggleRIMAndBinLoader();
@@ -379,8 +379,8 @@ public class PDP
         CPU.KeyboardReader.RemovePaperTape();
     }
 
-    public void LoadFloppy(byte unit, byte[] disk = null)
+    public void LoadRX01(byte unit, byte[] disk = null)
     {
-        CPU.FloppyDrive.Load(unit, disk);
+        CPU.RX8E.Load(unit, disk);
     }
 }

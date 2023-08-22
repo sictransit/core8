@@ -4,7 +4,7 @@ namespace Core8.Peripherals.RX8E.States;
 
 internal class NoOperation : StateBase
 {
-    public NoOperation(FloppyDrive controller) : base(controller)
+    public NoOperation(RX8EController controller) : base(controller)
     {
 
     }

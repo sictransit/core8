@@ -4,7 +4,7 @@ using System;
 
 namespace Core8.Model.Instructions;
 
-public class FixedDiskInstructions : PrivilegedInstructionsBase
+public class RK8EInstructions : PrivilegedInstructionsBase
 {
     private const int DSKP_MASK = 0b_001;
     private const int DCLR_MASK = 0b_010;
@@ -14,13 +14,11 @@ public class FixedDiskInstructions : PrivilegedInstructionsBase
     private const int DLDC_MASK = 0b_110;
     private const int DIOT_MASK = 0b_111;
 
-    public FixedDiskInstructions(ICPU cpu) : base(cpu)
+    public RK8EInstructions(ICPU cpu) : base(cpu)
     {
     }
 
-    private IFixedDisk FixedDisk => CPU.FixedDisk;
-
-    protected override string OpCodeText => ((FixedDiskOpCode)(Data & 0b_111)).ToString();
+    protected override string OpCodeText => ((RK8EOpCode)(Data & 0b_111)).ToString();
 
     protected override void PrivilegedExecute()
     {
@@ -54,7 +52,7 @@ public class FixedDiskInstructions : PrivilegedInstructionsBase
 
     private void DSKP()
     {
-        if (FixedDisk.SkipOnTransferDoneOrError())
+        if (CPU.RK8E.SkipOnTransferDoneOrError())
         {
             PC.Increment();
         }
@@ -62,27 +60,27 @@ public class FixedDiskInstructions : PrivilegedInstructionsBase
 
     private void DCLR()
     {
-        FixedDisk.ClearAll(CPU.Registry.AC);
+        CPU.RK8E.ClearAll(CPU.Registry.AC);
     }
 
     private void DLAG()
     {
-        FixedDisk.LoadAddressAndGo(CPU.Registry.AC);
+        CPU.RK8E.LoadAddressAndGo(CPU.Registry.AC);
     }
 
     private void DLCA()
     {
-        FixedDisk.LoadCurrentAddress(CPU.Registry.AC);
+        CPU.RK8E.LoadCurrentAddress(CPU.Registry.AC);
     }
 
     private void DRST()
     {
-        FixedDisk.ReadStatusRegister(CPU.Registry.AC);
+        CPU.RK8E.ReadStatusRegister(CPU.Registry.AC);
     }
 
     private void DLDC()
     {
-        FixedDisk.LoadCommandRegister(CPU.Registry.AC);
+        CPU.RK8E.LoadCommandRegister(CPU.Registry.AC);
     }
 
     private void DIOT()
@@ -90,7 +88,7 @@ public class FixedDiskInstructions : PrivilegedInstructionsBase
         throw new NotImplementedException();
     }
 
-    private enum FixedDiskOpCode
+    private enum RK8EOpCode
     {
         DSKP = DSKP_MASK,
         DCLR = DCLR_MASK,

@@ -18,15 +18,15 @@ public class Interrupts : IInterrupts
 
     public bool Pending => Enabled || delay;
 
-    public bool Requested => PrinterPunchRequested || KeyboardReaderRequested || FloppyRequested || FixedDiskRequested || UserRequested;
+    public bool Requested => PrinterPunchRequested || KeyboardReaderRequested || RX8ERequested || RK8ERequested || UserRequested;
 
     private bool PrinterPunchRequested => cpu.PrinterPunch.InterruptRequested;
 
     private bool KeyboardReaderRequested => cpu.KeyboardReader.InterruptRequested;
 
-    private bool FloppyRequested => cpu.FloppyDrive?.InterruptRequested ?? false;
+    private bool RX8ERequested => cpu.RX8E?.InterruptRequested ?? false;
 
-    private bool FixedDiskRequested => cpu.FixedDisk?.InterruptRequested ?? false;
+    private bool RK8ERequested => cpu.RK8E?.InterruptRequested ?? false;
 
     public bool Inhibited { get; private set; }
 
@@ -99,6 +99,6 @@ public class Interrupts : IInterrupts
 
     public override string ToString()
     {
-        return $"[INT] enabled={(Enabled ? 1 : 0)} delay={(delay ? 1 : 0)} inhib={(Inhibited ? 1 : 0)} irq={(Requested ? 1 : 0)} (tt={(PrinterPunchRequested ? 1 : 0)} u={(UserRequested ? 1 : 0)} fl={(FloppyRequested ? 1 : 0)} fd={(FixedDiskRequested ? 1 : 0)})";
+        return $"[INT] enabled={(Enabled ? 1 : 0)} delay={(delay ? 1 : 0)} inhib={(Inhibited ? 1 : 0)} irq={(Requested ? 1 : 0)} (tt={(PrinterPunchRequested ? 1 : 0)} u={(UserRequested ? 1 : 0)} fl={(RX8ERequested ? 1 : 0)} fd={(RK8ERequested ? 1 : 0)})";
     }
 }

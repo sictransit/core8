@@ -4,7 +4,7 @@ internal abstract class FillEmptyBufferBase : StateBase
 {
     protected int BufferPointer;
 
-    protected FillEmptyBufferBase(FloppyDrive controller) : base(controller)
+    protected FillEmptyBufferBase(RX8EController controller) : base(controller)
     {
         Controller.SetTransferRequest(true);
     }

@@ -4,7 +4,7 @@ namespace Core8.Peripherals.RX8E.States;
 
 internal class ReadStatus : StateBase
 {
-    public ReadStatus(FloppyDrive controller) : base(controller)
+    public ReadStatus(RX8EController controller) : base(controller)
     {
 
     }

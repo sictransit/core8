@@ -6,7 +6,7 @@ namespace Core8.Peripherals.RX8E.States;
 
 internal class Idle : StateBase
 {
-    public Idle(FloppyDrive controller) : base(controller)
+    public Idle(RX8EController controller) : base(controller)
     {
         Controller.SetDone(true);
     }

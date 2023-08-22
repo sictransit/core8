@@ -12,9 +12,9 @@ public interface ICPU
 
     IPrinterPunch PrinterPunch { get; }
 
-    IFloppyDrive FloppyDrive { get; }
+    IRX8E RX8E { get; }
 
-    IFixedDisk FixedDisk { get; }
+    IRK8E RK8E { get; }
 
     IRegistry Registry { get; }
 
@@ -36,9 +36,9 @@ public interface ICPU
 
     int InstructionCounter { get; }
 
-    void Attach(IFixedDisk peripheral);
+    void Attach(IRK8E peripheral);
 
-    void Attach(IFloppyDrive peripheral);
+    void Attach(IRX8E peripheral);
 
     void Attach(IPrinterPunch peripheral);
 

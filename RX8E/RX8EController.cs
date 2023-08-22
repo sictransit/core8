@@ -12,7 +12,7 @@ using System.Linq;
 
 namespace Core8.Peripherals.RX8E;
 
-public class FloppyDrive : IODevice, IFloppyDrive
+public class RX8EController : IODevice, IRX8E
 {
     private StateBase currentState;
 
@@ -42,7 +42,7 @@ public class FloppyDrive : IODevice, IFloppyDrive
 
     protected override int TickDelay => 3;
 
-    public FloppyDrive(int deviceId = 61) : base(deviceId) // device 75: RX8E (floppy)
+    public RX8EController(int deviceId = 61) : base(deviceId) // device 75: RX8E (floppy)
     {
         Buffer = new int[64];
 

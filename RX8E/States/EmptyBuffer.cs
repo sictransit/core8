@@ -4,7 +4,7 @@ namespace Core8.Peripherals.RX8E.States;
 
 internal class EmptyBuffer : FillEmptyBufferBase
 {
-    public EmptyBuffer(FloppyDrive controller) : base(controller)
+    public EmptyBuffer(RX8EController controller) : base(controller)
     {
 
     }

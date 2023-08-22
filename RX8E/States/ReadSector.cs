@@ -4,7 +4,7 @@ namespace Core8.Peripherals.RX8E.States;
 
 internal class ReadSector : ReadWriteSectorBase
 {
-    public ReadSector(FloppyDrive controller) : base(controller)
+    public ReadSector(RX8EController controller) : base(controller)
     {
 
     }

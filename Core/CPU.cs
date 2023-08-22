@@ -30,8 +30,8 @@ public class CPU : ICPU
     // TODO: Create class, include hit count. How to break on instruction and then continue e.g. 1000 more?
     private readonly List<Func<ICPU, bool>> breakpoints = new();
 
-    private readonly FixedDiskInstructions fixedDiskInstructions;
-    private readonly FloppyDriveInstructions floppyDriveInstructions;
+    private readonly RK8EInstructions rk8eInstructions;
+    private readonly RX8EInstructions rx8eInstructions;
     private readonly Group1Instructions group1Instructions;
     private readonly Group2ANDInstructions group2AndInstructions;
     private readonly Group2ORInstructions group2OrInstructions;
@@ -45,9 +45,9 @@ public class CPU : ICPU
 
     private bool debug;
 
-    private int fixedDiskDeviceId = -1;
+    private int rk8eDeviceId = -1;
 
-    private int floppyDriveDeviceId = -1;
+    private int rx8eDeviceId = -1;
 
     private int keyboardReaderDeviceId = -1;
 
@@ -71,8 +71,8 @@ public class CPU : ICPU
         printerPunchInstructions = new PrinterPunchInstructions(this);
         interruptInstructions = new InterruptInstructions(this);
         privilegedNoOperationInstruction = new PrivilegedNoOperationInstruction(this);
-        floppyDriveInstructions = new FloppyDriveInstructions(this);
-        fixedDiskInstructions = new FixedDiskInstructions(this);
+        rx8eInstructions = new RX8EInstructions(this);
+        rk8eInstructions = new RK8EInstructions(this);
 
         Memory = new Memory();
         Interrupts = new Interrupts(this);
@@ -87,9 +87,9 @@ public class CPU : ICPU
 
     public IPrinterPunch PrinterPunch { get; private set; }
 
-    public IFloppyDrive FloppyDrive { get; private set; }
+    public IRX8E RX8E { get; private set; }
 
-    public IFixedDisk FixedDisk { get; private set; }
+    public IRK8E RK8E { get; private set; }
 
     public IMemory Memory { get; }
 
@@ -97,18 +97,18 @@ public class CPU : ICPU
 
     public int InstructionCounter { get; private set; }
 
-    public void Attach(IFixedDisk peripheral)
+    public void Attach(IRK8E peripheral)
     {
-        FixedDisk = peripheral;
+        RK8E = peripheral;
 
-        fixedDiskDeviceId = peripheral.DeviceId;
+        rk8eDeviceId = peripheral.DeviceId;
     }
 
-    public void Attach(IFloppyDrive peripheral)
+    public void Attach(IRX8E peripheral)
     {
-        FloppyDrive = peripheral;
+        RX8E = peripheral;
 
-        floppyDriveDeviceId = peripheral.DeviceId;
+        rx8eDeviceId = peripheral.DeviceId;
     }
 
     public void Attach(IPrinterPunch peripheral)
@@ -125,7 +125,6 @@ public class CPU : ICPU
         keyboardReaderDeviceId = peripheral.DeviceId;
     }
 
-
     public void Clear()
     {
         KeyboardReader.Clear();
@@ -133,7 +132,7 @@ public class CPU : ICPU
         Registry.AC.Clear();
         Interrupts.ClearUser();
         Interrupts.Disable();
-        FloppyDrive?.Initialize();
+        RX8E?.Initialize();
     }
 
     public void Halt() => running = false;
@@ -157,8 +156,8 @@ public class CPU : ICPU
 
                 KeyboardReader.Tick();
                 PrinterPunch.Tick();
-                FloppyDrive?.Tick();
-                FixedDisk?.Tick();
+                RX8E?.Tick();
+                RK8E?.Tick();
 
                 Interrupts.Interrupt();
 
@@ -239,8 +238,8 @@ public class CPU : ICPU
             IOT when (data & IO) >> 3 == keyboardReaderDeviceId => keyboardReaderInstructions,
             IOT when (data & IO) >> 3 == printerPunchDeviceId => printerPunchInstructions,
             //      IOT when (data & IO) >> 3 == LINE_PRINTER_DEVICE => teleprinterInstructions,
-            IOT when (data & IO) >> 3 == floppyDriveDeviceId => floppyDriveInstructions,
-            IOT when (data & IO) >> 3 == fixedDiskDeviceId => fixedDiskInstructions,
+            IOT when (data & IO) >> 3 == rx8eDeviceId => rx8eInstructions,
+            IOT when (data & IO) >> 3 == rk8eDeviceId => rk8eInstructions,
             IOT => privilegedNoOperationInstruction,
             _ => memoryReferenceInstructions.LoadAddress(address),
         }).LoadData(data);

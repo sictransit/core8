@@ -4,7 +4,7 @@ namespace Core8.Peripherals.RX8E.States;
 
 internal class Initialize : StateBase
 {
-    public Initialize(FloppyDrive controller) : base(controller)
+    public Initialize(RX8EController controller) : base(controller)
     {
         Controller.SetError(false);
         Controller.SetInterrupts(0);

@@ -4,7 +4,7 @@ namespace Core8.Peripherals.RX8E.States;
 
 internal class ReadErrorRegister : StateBase
 {
-    public ReadErrorRegister(FloppyDrive controller) : base(controller)
+    public ReadErrorRegister(RX8EController controller) : base(controller)
     {
 
     }
