@@ -84,7 +84,7 @@ public class InterruptInstructions : PrivilegedInstructionsBase
 
     private void GTF()
     {
-        int acc = (AC.Link << 11) | ((Interrupts.Requested ? 1 : 0) << 9) | ((Interrupts.Pending ? 1 : 0) << 7) | SF.Content;
+        var acc = (AC.Link << 11) | ((Interrupts.Requested ? 1 : 0) << 9) | ((Interrupts.Pending ? 1 : 0) << 7) | SF.Content;
 
         AC.SetAccumulator(acc);
     }
@@ -98,7 +98,7 @@ public class InterruptInstructions : PrivilegedInstructionsBase
 
     private void RTF()
     {
-        int acc = AC.Accumulator;
+        var acc = AC.Accumulator;
 
         AC.SetLink((acc >> 11) & 0b_001);
 

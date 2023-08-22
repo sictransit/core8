@@ -1,15 +1,10 @@
 ﻿using Core8.Peripherals.RX8E.Interfaces;
 using System;
-using System.Diagnostics;
 
 namespace Core8.Peripherals.RX8E.States.Abstract;
 
-internal abstract class StateBase
+public abstract class StateBase
 {
-    private readonly int initialTicks;
-
-    private readonly Stopwatch executionTime = new();
-
     protected StateBase(IController controller)
     {
         Controller = controller ?? throw new ArgumentNullException(nameof(controller));
@@ -17,19 +12,9 @@ internal abstract class StateBase
         Controller.SetDone(false);
         Controller.SetTransferRequest(false);
         Controller.ER.Clear();
-
-        initialTicks = controller.Ticks;
-
-        executionTime.Start();
     }
 
     protected IController Controller { get; }
-
-    private const int STATE_TICKS = 3;
-
-    protected virtual TimeSpan MinExecutionTime => TimeSpan.Zero;
-
-    private bool IsStateChangeDue => Controller.Ticks > initialTicks + STATE_TICKS && executionTime.Elapsed > MinExecutionTime;
 
     protected virtual bool FinalizeState() => false;
 
@@ -37,7 +22,7 @@ internal abstract class StateBase
 
     public void Tick()
     {
-        if (IsStateChangeDue && FinalizeState())
+        if (FinalizeState())
         {
             SetIR();
 
@@ -50,7 +35,7 @@ internal abstract class StateBase
         throw new InvalidOperationException($"LCD in state {GetType().Name}!");
     }
 
-    public void LCD(int acc)
+    public void LoadCommandRegister(int acc)
     {
         LoadCommand(acc);
     }
@@ -60,7 +45,7 @@ internal abstract class StateBase
         throw new InvalidOperationException($"XDR in state {GetType().Name}!");
     }
 
-    public int XDR(int acc)
+    public int TransferDataRegister(int acc)
     {
         return TransferData(acc);
     }

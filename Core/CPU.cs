@@ -25,29 +25,33 @@ public class CPU : ICPU
     private const int MEMORY_MANAGEMENT_MASK = 0b_111_111_000_000;
     private const int INTERRUPT_MASK = 0b_000_111_111_000;
 
-    private const int TTY_INPUT_DEVICE = 03;
-    private const int TTY_OUTPUT_DEVICE = 04;
     //private const int LINE_PRINTER_DEVICE = 54; // device 66: serial line printer
-    private const int FLOPPY_DEVICE = 61; // device 75: RX8E (floppy)
-    private const int FIXED_DISK_DEVICE = 60; // device 74: RK8E (fixed disk)
 
     // TODO: Create class, include hit count. How to break on instruction and then continue e.g. 1000 more?
     private readonly List<Func<ICPU, bool>> breakpoints = new();
 
+    private readonly FixedDiskInstructions fixedDiskInstructions;
+    private readonly FloppyDriveInstructions floppyDriveInstructions;
     private readonly Group1Instructions group1Instructions;
     private readonly Group2ANDInstructions group2AndInstructions;
     private readonly Group2ORInstructions group2OrInstructions;
     private readonly Group3Instructions group3Instructions;
     private readonly InterruptInstructions interruptInstructions;
     private readonly KeyboardReaderInstructions keyboardReaderInstructions;
-    private readonly PrinterPunchInstructions printerPunchInstructions;
-    private readonly FixedDiskInstructions fixedDiskInstructions;
-    private readonly FloppyDriveInstructions floppyDriveInstructions;
     private readonly MemoryManagementInstructions memoryManagementInstructions;
     private readonly MemoryReferenceInstructions memoryReferenceInstructions;
+    private readonly PrinterPunchInstructions printerPunchInstructions;
     private readonly PrivilegedNoOperationInstruction privilegedNoOperationInstruction;
 
     private bool debug;
+
+    private int fixedDiskDeviceId = -1;
+
+    private int floppyDriveDeviceId = -1;
+
+    private int keyboardReaderDeviceId = -1;
+
+    private int printerPunchDeviceId = -1;
 
     private volatile bool running;
 
@@ -79,7 +83,7 @@ public class CPU : ICPU
 
     public IInterrupts Interrupts { get; }
 
-    public IKeyboardReader KeyboardReader { get; set; }
+    public IKeyboardReader KeyboardReader { get; private set; }
 
     public IPrinterPunch PrinterPunch { get; private set; }
 
@@ -93,13 +97,34 @@ public class CPU : ICPU
 
     public int InstructionCounter { get; private set; }
 
-    public void Attach(IFixedDisk peripheral) => FixedDisk = peripheral;
+    public void Attach(IFixedDisk peripheral)
+    {
+        FixedDisk = peripheral;
 
-    public void Attach(IFloppyDrive peripheral) => FloppyDrive = peripheral;
+        fixedDiskDeviceId = peripheral.DeviceId;
+    }
 
-    public void Attach(IPrinterPunch peripheral) => PrinterPunch = peripheral;
+    public void Attach(IFloppyDrive peripheral)
+    {
+        FloppyDrive = peripheral;
 
-    public void Attach(IKeyboardReader peripheral) => KeyboardReader = peripheral;
+        floppyDriveDeviceId = peripheral.DeviceId;
+    }
+
+    public void Attach(IPrinterPunch peripheral)
+    {
+        PrinterPunch = peripheral;
+
+        printerPunchDeviceId = peripheral.DeviceId;
+    }
+
+    public void Attach(IKeyboardReader peripheral)
+    {
+        KeyboardReader = peripheral;
+
+        keyboardReaderDeviceId = peripheral.DeviceId;
+    }
+
 
     public void Clear()
     {
@@ -115,8 +140,8 @@ public class CPU : ICPU
 
     public void Run()
     {
-        int debugPC = 0;
-        int debugIF = 0;
+        var debugPC = 0;
+        var debugIF = 0;
 
         running = true;
 
@@ -201,9 +226,9 @@ public class CPU : ICPU
 
     public IInstruction Fetch(int address)
     {
-        int data = Memory.Read(address);
+        var data = Memory.Read(address);
 
-        IInstruction instruction = ((data & INSTRUCTION_TYPE_MASK) switch
+        var instruction = ((data & INSTRUCTION_TYPE_MASK) switch
         {
             MCI when (data & GROUP) == 0 => group1Instructions.LoadAddress(address),
             MCI when (data & GROUP_3) == GROUP_3 => group3Instructions,
@@ -211,11 +236,11 @@ public class CPU : ICPU
             MCI => group2OrInstructions,
             IOT when (data & MEMORY_MANAGEMENT_MASK) == MEMORY_MANAGEMENT => memoryManagementInstructions,
             IOT when (data & INTERRUPT_MASK) == 0 => interruptInstructions,
-            IOT when (data & IO) >> 3 == TTY_INPUT_DEVICE => keyboardReaderInstructions,
-            IOT when (data & IO) >> 3 == TTY_OUTPUT_DEVICE => printerPunchInstructions,
+            IOT when (data & IO) >> 3 == keyboardReaderDeviceId => keyboardReaderInstructions,
+            IOT when (data & IO) >> 3 == printerPunchDeviceId => printerPunchInstructions,
             //      IOT when (data & IO) >> 3 == LINE_PRINTER_DEVICE => teleprinterInstructions,
-            IOT when (data & IO) >> 3 == FLOPPY_DEVICE => floppyDriveInstructions,
-            IOT when (data & IO) >> 3 == FIXED_DISK_DEVICE => fixedDiskInstructions,
+            IOT when (data & IO) >> 3 == floppyDriveDeviceId => floppyDriveInstructions,
+            IOT when (data & IO) >> 3 == fixedDiskDeviceId => fixedDiskInstructions,
             IOT => privilegedNoOperationInstruction,
             _ => memoryReferenceInstructions.LoadAddress(address),
         }).LoadData(data);

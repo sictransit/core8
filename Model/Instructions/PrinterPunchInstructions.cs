@@ -61,7 +61,7 @@ public class PrinterPunchInstructions : PrivilegedInstructionsBase
 
     private void TPC()
     {
-        int c = AC.Accumulator & 0b_000_011_111_111;
+        var c = AC.Accumulator & 0b_000_011_111_111;
 
         Device.Print((byte)c);
     }

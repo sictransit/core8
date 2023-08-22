@@ -23,7 +23,7 @@ public class Group2ORInstructions : Group2InstructionsBase
 
     public override void Execute()
     {
-        bool skip = false;
+        var skip = false;
 
         if ((Data & SMA_MASK) != 0)
         {

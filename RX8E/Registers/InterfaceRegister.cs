@@ -2,7 +2,7 @@
 
 namespace Core8.Peripherals.RX8E.Registers;
 
-internal class InterfaceRegister : RegisterBase
+public class InterfaceRegister : RegisterBase
 {
     protected override string ShortName => "IR";
 

@@ -50,7 +50,7 @@ public class Assembler
             process.Kill(true);
         }
 
-        string error = Path.ChangeExtension(source, ".err");
+        var error = Path.ChangeExtension(source, ".err");
 
         return File.Exists(binary) && !File.Exists(error);
     }

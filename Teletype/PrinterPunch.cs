@@ -20,7 +20,7 @@ public class PrinterPunch : IODevice, IPrinterPunch
 
     private int deviceControl;
 
-    public PrinterPunch(string outputAddress)
+    public PrinterPunch(string outputAddress, int deviceId = 4) : base(deviceId)
     {
         publisherSocket = new PublisherSocket();
         publisherSocket.Connect(outputAddress);
@@ -41,7 +41,7 @@ public class PrinterPunch : IODevice, IPrinterPunch
 
     public void SetOutputFlag() => OutputFlag = true;
 
-    public override bool InterruptRequested => OutputFlag && InterruptEnable;
+    protected override bool RequestInterrupt => OutputFlag;
 
     public string Printout =>
         Encoding.ASCII.GetString(output.Select(x => (byte)(x & 0b_000_001_111_111)).ToArray());

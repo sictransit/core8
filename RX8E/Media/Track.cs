@@ -17,7 +17,7 @@ internal class Track : MediaBase
     {
         Sectors = new Dictionary<int, Sector>();
 
-        for (int i = DiskLayout.FIRST_SECTOR; i <= DiskLayout.LAST_SECTOR; i++)
+        for (var i = DiskLayout.FIRST_SECTOR; i <= DiskLayout.LAST_SECTOR; i++)
         {
             Sector sector = new(i);
             sector.Format();

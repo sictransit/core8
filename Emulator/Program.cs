@@ -25,7 +25,7 @@ public static class Program
 
     public static void Main(string[] args)
     {
-        string logFilename = "emulator.log";
+        var logFilename = "emulator.log";
 
         File.Delete(logFilename);
 
@@ -60,7 +60,7 @@ public static class Program
                     }
                     else if (!string.IsNullOrWhiteSpace(o.Assemble))
                     {
-                        if (TryAssemble(o.PALBART, o.Assemble, out string binary))
+                        if (TryAssemble(o.PALBART, o.Assemble, out var binary))
                         {
                             o.Load = binary;
                         }
@@ -107,20 +107,20 @@ public static class Program
     {
         FileInfo file = new(binFile);
 
-        byte[] data = File.ReadAllBytes(binFile);
+        var data = File.ReadAllBytes(binFile);
 
         SVGPunch punch = new();
 
-        string tape = punch.Punch(data, file.Name);
+        var tape = punch.Punch(data, file.Name);
 
-        string svgFile = Path.ChangeExtension(file.FullName, ".svg");
+        var svgFile = Path.ChangeExtension(file.FullName, ".svg");
 
         File.WriteAllText(svgFile, tape);
     }
 
     private static void Convert(string s)
     {
-        foreach (char c in s)
+        foreach (var c in s)
         {
             Console.WriteLine($"{c}: {((int)c).ToOctalString()}");
         }
@@ -147,7 +147,7 @@ public static class Program
 
         while (pdp.Running)
         {
-            foreach ((Func<IPrinterPunch, bool>, byte[]) step in steps.ToArray())
+            foreach (var step in steps.ToArray())
             {
                 if (step.Item1(pdp.CPU.PrinterPunch))
                 {
@@ -199,7 +199,7 @@ public static class Program
     {
         Assembler assembler = new(palbart);
 
-        bool assembled = assembler.TryAssemble(file, out binary);
+        var assembled = assembler.TryAssemble(file, out binary);
 
         if (!assembled)
         {

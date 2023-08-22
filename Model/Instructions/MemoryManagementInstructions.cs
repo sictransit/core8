@@ -30,7 +30,7 @@ public class MemoryManagementInstructions : PrivilegedInstructionsBase
 
     public override IInstruction LoadData(int data)
     {
-        IInstruction instruction = base.LoadData(data);
+        var instruction = base.LoadData(data);
 
         // TODO: Not a good idea to populate this all the time.
         dataFieldDebug = !IsReadInstruction ? ((Data >> 3) & 0b_111).ToOctalString(0) : string.Empty;

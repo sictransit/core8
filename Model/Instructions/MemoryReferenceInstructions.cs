@@ -29,10 +29,10 @@ public class MemoryReferenceInstructions : MemoryInstructionsBase
     {
         get
         {
-            MemoryReferenceOpCode opCode = (MemoryReferenceOpCode)(Data & 0b_111_000_000_000);
-            string indirect = Indirect ? "I" : null;
-            string address = (Zero ? Word : Page | Word).ToOctalString(0);
-            string operandContent = Branching ? null : $" [{Memory.Read(operand).ToOctalString()}]";
+            var opCode = (MemoryReferenceOpCode)(Data & 0b_111_000_000_000);
+            var indirect = Indirect ? "I" : null;
+            var address = (Zero ? Word : Page | Word).ToOctalString(0);
+            var operandContent = Branching ? null : $" [{Memory.Read(operand).ToOctalString()}]";
 
             return string.Join(" ", new[] { opCode.ToString(), indirect, address, operandContent }.Where(x => !string.IsNullOrWhiteSpace(x)));
         }
@@ -48,9 +48,9 @@ public class MemoryReferenceInstructions : MemoryInstructionsBase
 
     public override IInstruction LoadData(int data)
     {
-        IInstruction instruction = base.LoadData(data);
+        var instruction = base.LoadData(data);
 
-        int location = Field | (Zero ? Word : Page | Word);
+        var location = Field | (Zero ? Word : Page | Word);
 
         if (Branching)
         {

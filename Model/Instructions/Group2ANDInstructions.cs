@@ -23,7 +23,7 @@ public class Group2ANDInstructions : Group2InstructionsBase
 
     public override void Execute()
     {
-        bool skip = true;
+        var skip = true;
 
         if ((Data & SPA_MASK) != 0)
         {

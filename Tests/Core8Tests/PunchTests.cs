@@ -18,7 +18,7 @@ public class PunchTests
     {
         SVGPunch punch = new();
 
-        string svg = punch.Punch(TestData, LABEL);
+        var svg = punch.Punch(TestData, LABEL);
 
         Assert.IsTrue(!string.IsNullOrWhiteSpace(svg));
 
@@ -32,14 +32,14 @@ public class PunchTests
     {
         SVGPunch punch = new(new PunchSettings(Color.WhiteSmoke, 0, false, 0));
 
-        string svg = punch.Punch(TestData, LABEL);
+        var svg = punch.Punch(TestData, LABEL);
 
-        byte[] data = SVGReader.Read(svg).ToArray();
+        var data = SVGReader.Read(svg).ToArray();
 
         Assert.IsNotNull(data);
         Assert.IsTrue(data.Any());
 
-        for (int i = 0; i < TestData.Length; i++)
+        for (var i = 0; i < TestData.Length; i++)
         {
             Assert.AreEqual(TestData[i], data[i]);
         }
@@ -48,20 +48,20 @@ public class PunchTests
     [TestMethod]
     public void TestColor()
     {
-        byte[] data = Enumerable.Range(0, 255).Select(x => (byte)x).ToArray();
+        var data = Enumerable.Range(0, 255).Select(x => (byte)x).ToArray();
 
         SVGPunch defaultPunch = new();
-        string defaultPaper = defaultPunch.Punch(data, "default");
+        var defaultPaper = defaultPunch.Punch(data, "default");
         Assert.IsTrue(defaultPaper.Contains(ColorTranslator.ToHtml(Color.LightYellow)));
 
-        Color blue = Color.LightBlue;
+        var blue = Color.LightBlue;
         SVGPunch bluePunch = new(new PunchSettings(blue));
-        string bluePaper = bluePunch.Punch(data, "blue");
+        var bluePaper = bluePunch.Punch(data, "blue");
         Assert.IsTrue(bluePaper.Contains(ColorTranslator.ToHtml(blue)));
 
-        Color pink = Color.LightPink;
+        var pink = Color.LightPink;
         SVGPunch pinkPunch = new(new PunchSettings(pink));
-        string pinkPaper = pinkPunch.Punch(data, "pink");
+        var pinkPaper = pinkPunch.Punch(data, "pink");
         Assert.IsTrue(pinkPaper.Contains(ColorTranslator.ToHtml(pink)));
     }
 }

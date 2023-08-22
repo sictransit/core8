@@ -2,7 +2,7 @@
 
 namespace Core8.Peripherals.RX8E.Registers;
 
-internal class ErrorRegister : RegisterBase
+public class ErrorRegister : RegisterBase
 {
     protected override string ShortName => "ER";
 

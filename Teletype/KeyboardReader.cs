@@ -18,7 +18,7 @@ public class KeyboardReader : IODevice, IKeyboardReader
 
     private int deviceControl;
 
-    public KeyboardReader(string inputAddress)
+    public KeyboardReader(string inputAddress, int deviceId = 03) : base(deviceId)
     {
         subscriberSocket = new SubscriberSocket();
         subscriberSocket.Connect(inputAddress);
@@ -36,7 +36,7 @@ public class KeyboardReader : IODevice, IKeyboardReader
 
     public bool InputFlag { get; private set; }
 
-    public override bool InterruptRequested => InputFlag && InterruptEnable;
+    protected override bool RequestInterrupt => InputFlag;
 
     public void ClearInputFlag() => InputFlag = false;
 
@@ -61,7 +61,7 @@ public class KeyboardReader : IODevice, IKeyboardReader
 
     public void Type(byte[] buffer)
     {
-        foreach (byte b in buffer)
+        foreach (var b in buffer)
         {
             Type(b);
         }
@@ -76,7 +76,7 @@ public class KeyboardReader : IODevice, IKeyboardReader
 
         reader.Clear();
 
-        foreach (byte c in chars)
+        foreach (var c in chars)
         {
             reader.Enqueue(c);
         }
@@ -102,17 +102,17 @@ public class KeyboardReader : IODevice, IKeyboardReader
             return;
         }
 
-        while (subscriberSocket.TryReceiveFrameBytes(TimeSpan.Zero, out byte[] frame))
+        while (subscriberSocket.TryReceiveFrameBytes(TimeSpan.Zero, out var frame))
         {
-            foreach (byte key in frame)
+            foreach (var key in frame)
             {
-                byte uppercaseByte = Convert.ToByte(char.ToUpperInvariant(Convert.ToChar(key)));
+                var uppercaseByte = Convert.ToByte(char.ToUpperInvariant(Convert.ToChar(key)));
 
                 reader.Enqueue(uppercaseByte);
             }
         }
 
-        if (reader.TryDequeue(out byte b))
+        if (reader.TryDequeue(out var b))
         {
             Log.Debug($"Input: {b.ToPrintableAscii()}");
 

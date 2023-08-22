@@ -6,7 +6,7 @@ public static class ArrayExtensions
 {
     public static IEnumerable<int> Pack(this byte[] data, int length = 64)
     {
-        for (int i = 0; i < length / 2 * 3; i += 3)
+        for (var i = 0; i < length / 2 * 3; i += 3)
         {
             yield return data[i] << 4 | data[i + 1] >> 4;
 
@@ -16,7 +16,7 @@ public static class ArrayExtensions
 
     public static IEnumerable<byte> Unpack(this int[] data, int length = 96, int pad = 128)
     {
-        for (int i = 0; i < length / 3 * 2; i++)
+        for (var i = 0; i < length / 3 * 2; i++)
         {
             if (i % 2 == 0)
             {
@@ -29,7 +29,7 @@ public static class ArrayExtensions
             }
         }
 
-        for (int i = length; i < pad; i++)
+        for (var i = length; i < pad; i++)
         {
             yield return 0;
         }

@@ -13,7 +13,7 @@ public class RegistryTests
     {
         Registry registry = new();
 
-        for (int i = 0; i <= 7777.ToDecimal(); i++)
+        for (var i = 0; i <= 7777.ToDecimal(); i++)
         {
             registry.AC.SetAccumulator(i);
 
@@ -34,7 +34,7 @@ public class RegistryTests
     {
         Registry registry = new();
 
-        string s = registry.ToString();
+        var s = registry.ToString();
 
         Assert.IsFalse(string.IsNullOrWhiteSpace(s));
 

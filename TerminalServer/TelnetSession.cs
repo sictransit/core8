@@ -25,7 +25,7 @@ internal class TelnetSession : TcpSession
 
     protected override void OnReceived(byte[] buffer, long offset, long size)
     {
-        byte[] frame = new byte[size];
+        var frame = new byte[size];
 
         Array.Copy(buffer, offset, frame, 0, size);
 
