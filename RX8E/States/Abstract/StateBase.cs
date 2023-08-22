@@ -1,6 +1,5 @@
 ﻿using Core8.Peripherals.RX8E.Interfaces;
 using System;
-using System.Diagnostics;
 
 namespace Core8.Peripherals.RX8E.States.Abstract;
 

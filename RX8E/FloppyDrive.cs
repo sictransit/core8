@@ -1,15 +1,15 @@
 ﻿using Core8.Extensions;
+using Core8.Model;
+using Core8.Model.Interfaces;
 using Core8.Peripherals.RX8E.Declarations;
 using Core8.Peripherals.RX8E.Interfaces;
 using Core8.Peripherals.RX8E.Media;
 using Core8.Peripherals.RX8E.Registers;
+using Core8.Peripherals.RX8E.States;
 using Core8.Peripherals.RX8E.States.Abstract;
 using Serilog;
 using System;
 using System.Linq;
-using Core8.Model;
-using Core8.Model.Interfaces;
-using Core8.Peripherals.RX8E.States;
 
 namespace Core8.Peripherals.RX8E;
 
@@ -43,7 +43,7 @@ public class FloppyDrive : IODevice, IController, IFloppyDrive
 
     protected override int TickDelay => 3;
 
-    public FloppyDrive()
+    public FloppyDrive(int deviceId = 61) : base(deviceId) // device 75: RX8E (floppy)
     {
         Buffer = new int[64];
 
@@ -81,7 +81,7 @@ public class FloppyDrive : IODevice, IController, IFloppyDrive
 
     public int TransferDataRegister(int acc) => currentState.TransferDataRegister(acc);
 
-    public override bool InterruptRequested => InterruptEnable && (Done || Error);
+    protected override bool RequestInterrupt => Done || Error;
 
     protected override bool InterruptEnable => interruptsEnabled;
 
@@ -94,7 +94,7 @@ public class FloppyDrive : IODevice, IController, IFloppyDrive
     {
         sector = null;
 
-        Disk disk = disks[CR.UnitSelect];
+        var disk = disks[CR.UnitSelect];
 
         if (disk != null)
         {
@@ -135,10 +135,8 @@ public class FloppyDrive : IODevice, IController, IFloppyDrive
             throw new NotImplementedException();
         }
 
-        if (TryRetrieveSector(out Sector sector))
+        if (TryRetrieveSector(out var sector))
         {
-            //Log.Debug($"Found: {sector}");
-
             Buffer = sector.Data.Pack(Buffer.Length).ToArray();
         }
         else
@@ -154,10 +152,8 @@ public class FloppyDrive : IODevice, IController, IFloppyDrive
             throw new NotImplementedException();
         }
 
-        if (TryRetrieveSector(out Sector sector))
+        if (TryRetrieveSector(out var sector))
         {
-            //Log.Debug($"Found: {sector}");
-
             sector.Data = Buffer.Unpack(96, sector.Data.Length).ToArray();
         }
         else
@@ -168,7 +164,7 @@ public class FloppyDrive : IODevice, IController, IFloppyDrive
 
     private readonly Disk[] disks = new Disk[2];
 
-    
+
     public void SetSectorAddress(int sector) => SA.Set(sector);
 
     public void SetTrackAddress(int track) => TA.Set(track);

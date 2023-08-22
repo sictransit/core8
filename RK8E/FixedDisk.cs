@@ -43,7 +43,7 @@ public class FixedDisk : IODevice, IFixedDisk
     private bool go;
     private int statusRegister;
 
-    public FixedDisk(IMemory dmaChannel)
+    public FixedDisk(IMemory dmaChannel, int deviceId = 60) : base(deviceId) // device 74: RK8E (cartridge disk)
     {
         this.dmaChannel = dmaChannel;
 
@@ -66,7 +66,7 @@ public class FixedDisk : IODevice, IFixedDisk
 
     protected override bool InterruptEnable => (commandRegister & RKC_IE) != 0;
 
-    public override bool InterruptRequested => InterruptEnable && SkipOnTransferDoneOrError();
+    protected override bool RequestInterrupt => SkipOnTransferDoneOrError();
 
     public void Load(int unit, byte[] image)
     {

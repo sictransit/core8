@@ -18,7 +18,7 @@ public class KeyboardReader : IODevice, IKeyboardReader
 
     private int deviceControl;
 
-    public KeyboardReader(string inputAddress)
+    public KeyboardReader(string inputAddress, int deviceId = 03) : base(deviceId)
     {
         subscriberSocket = new SubscriberSocket();
         subscriberSocket.Connect(inputAddress);
@@ -36,7 +36,7 @@ public class KeyboardReader : IODevice, IKeyboardReader
 
     public bool InputFlag { get; private set; }
 
-    public override bool InterruptRequested => InputFlag && InterruptEnable;
+    protected override bool RequestInterrupt => InputFlag;
 
     public void ClearInputFlag() => InputFlag = false;
 
