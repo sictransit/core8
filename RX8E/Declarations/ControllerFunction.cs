@@ -1,6 +1,6 @@
 ﻿namespace Core8.Peripherals.RX8E.Declarations;
 
-public enum ControllerFunction
+internal enum ControllerFunction
 {
     FILL_BUFFER = Functions.FILL_BUFFER,
     EMPTY_BUFFER = Functions.EMPTY_BUFFER,

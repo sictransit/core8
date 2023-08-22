@@ -130,7 +130,7 @@ public static class Program
     {
         pdp.CPU.Memory.Clear();
 
-        pdp.CPU.FixedDisk.Load(0, File.ReadAllBytes("disks/advent.rk05"));
+        pdp.CPU.RK8E.Load(0, File.ReadAllBytes("disks/advent.rk05"));
 
         pdp.ToggleRK8EBootstrap();
 
@@ -170,7 +170,7 @@ public static class Program
 
         pdp.Load8(0022);
 
-        pdp.LoadFloppy(0, File.ReadAllBytes(@"disks\os8_rx.rx01"));
+        pdp.LoadRX01(0, File.ReadAllBytes(@"disks\os8_rx.rx01"));
 
         pdp.Clear();
 

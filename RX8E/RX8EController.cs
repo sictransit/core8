@@ -2,7 +2,6 @@
 using Core8.Model;
 using Core8.Model.Interfaces;
 using Core8.Peripherals.RX8E.Declarations;
-using Core8.Peripherals.RX8E.Interfaces;
 using Core8.Peripherals.RX8E.Media;
 using Core8.Peripherals.RX8E.Registers;
 using Core8.Peripherals.RX8E.States;
@@ -13,21 +12,21 @@ using System.Linq;
 
 namespace Core8.Peripherals.RX8E;
 
-public class FloppyDrive : IODevice, IController, IFloppyDrive
+public class RX8EController : IODevice, IRX8E
 {
     private StateBase currentState;
 
-    public CommandRegister CR { get; }
+    internal CommandRegister CR { get; }
 
-    public InterfaceRegister IR { get; }
+    internal InterfaceRegister IR { get; }
 
-    private TrackAddressRegister TA { get; }
+    internal TrackAddressRegister TA { get; }
 
-    private SectorAddressRegister SA { get; }
+    internal SectorAddressRegister SA { get; }
 
-    public ErrorRegister ER { get; }
+    internal ErrorRegister ER { get; }
 
-    public ErrorStatusRegister ES { get; }
+    internal ErrorStatusRegister ES { get; }
 
     private bool interruptsEnabled;
 
@@ -35,15 +34,15 @@ public class FloppyDrive : IODevice, IController, IFloppyDrive
     private bool transferRequestFlag;
     private bool errorFlag;
 
-    public bool Done => doneFlag || CR.MaintenanceMode;
+    private bool Done => doneFlag || CR.MaintenanceMode;
 
-    public bool TransferRequest => transferRequestFlag || CR.MaintenanceMode;
+    private bool TransferRequest => transferRequestFlag || CR.MaintenanceMode;
 
-    public bool Error => errorFlag || CR.MaintenanceMode;
+    private bool Error => errorFlag || CR.MaintenanceMode;
 
     protected override int TickDelay => 3;
 
-    public FloppyDrive(int deviceId = 61) : base(deviceId) // device 75: RX8E (floppy)
+    public RX8EController(int deviceId = 61) : base(deviceId) // device 75: RX8E (floppy)
     {
         Buffer = new int[64];
 
@@ -60,9 +59,9 @@ public class FloppyDrive : IODevice, IController, IFloppyDrive
         Initialize();
     }
 
-    public int[] Buffer { get; private set; }
+    internal int[] Buffer { get; private set; }
 
-    public void SetState(StateBase state)
+    internal void SetState(StateBase state)
     {
         Ticks = 0;
 
@@ -71,11 +70,11 @@ public class FloppyDrive : IODevice, IController, IFloppyDrive
 
     public void Initialize() => SetState(new Initialize(this));
 
-    public void SetTransferRequest(bool state) => transferRequestFlag = state;
+    internal void SetTransferRequest(bool state) => transferRequestFlag = state;
 
-    public void SetDone(bool state) => doneFlag = state;
+    internal void SetDone(bool state) => doneFlag = state;
 
-    public void SetError(bool state) => errorFlag = state;
+    internal void SetError(bool state) => errorFlag = state;
 
     public void LoadCommandRegister(int acc) => currentState.LoadCommandRegister(acc);
 
@@ -128,7 +127,7 @@ public class FloppyDrive : IODevice, IController, IFloppyDrive
         return sector != null;
     }
 
-    public void ReadSector()
+    internal void ReadSector()
     {
         if (CR.EightBitMode)
         {
@@ -145,7 +144,7 @@ public class FloppyDrive : IODevice, IController, IFloppyDrive
         }
     }
 
-    public void WriteSector()
+    internal void WriteSector()
     {
         if (CR.EightBitMode)
         {
@@ -165,9 +164,9 @@ public class FloppyDrive : IODevice, IController, IFloppyDrive
     private readonly Disk[] disks = new Disk[2];
 
 
-    public void SetSectorAddress(int sector) => SA.Set(sector);
+    internal void SetSectorAddress(int sector) => SA.Set(sector);
 
-    public void SetTrackAddress(int track) => TA.Set(track);
+    internal void SetTrackAddress(int track) => TA.Set(track);
 
     public void Load(byte unit, byte[] data = null)
     {

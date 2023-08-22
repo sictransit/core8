@@ -1,12 +1,10 @@
-﻿using Core8.Peripherals.RX8E.Interfaces;
-
-namespace Core8.Peripherals.RX8E.States.Abstract;
+﻿namespace Core8.Peripherals.RX8E.States.Abstract;
 
 internal abstract class FillEmptyBufferBase : StateBase
 {
     protected int BufferPointer;
 
-    protected FillEmptyBufferBase(IController controller) : base(controller)
+    protected FillEmptyBufferBase(RX8EController controller) : base(controller)
     {
         Controller.SetTransferRequest(true);
     }

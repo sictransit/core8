@@ -2,7 +2,7 @@
 
 namespace Core8.Model.Interfaces;
 
-public interface IFixedDisk : IIODevice
+public interface IRK8E : IIODevice
 {
     void Load(int unit, byte[] image);
 

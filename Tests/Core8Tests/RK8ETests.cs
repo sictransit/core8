@@ -13,7 +13,7 @@ public class RK8ETests : PDPTestsBase
     [ExpectedException(typeof(ArgumentException))]
     public void TestLoadRXDiskImageWithFailure()
     {
-        FixedDisk disk = new(PDP.CPU.Memory);
+        RK8EController disk = new(PDP.CPU.Memory);
 
         var image = File.ReadAllBytes("disks/os8_rx.rx01");
 
@@ -25,7 +25,7 @@ public class RK8ETests : PDPTestsBase
     [TestMethod]
     public void TestLoadRKDiskImage()
     {
-        FixedDisk disk = new(PDP.CPU.Memory);
+        RK8EController disk = new(PDP.CPU.Memory);
 
         var image = File.ReadAllBytes("disks/advent.rk05");
 

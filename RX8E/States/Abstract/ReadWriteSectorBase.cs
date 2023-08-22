@@ -1,13 +1,11 @@
-﻿using Core8.Peripherals.RX8E.Interfaces;
-
-namespace Core8.Peripherals.RX8E.States.Abstract;
+﻿namespace Core8.Peripherals.RX8E.States.Abstract;
 
 internal abstract class ReadWriteSectorBase : StateBase
 {
     protected bool SectorTransferred;
     protected bool TrackTransferred;
 
-    protected ReadWriteSectorBase(IController controller) : base(controller)
+    protected ReadWriteSectorBase(RX8EController controller) : base(controller)
     {
         Controller.ER.Clear();
         Controller.ES.Clear();

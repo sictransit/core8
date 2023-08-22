@@ -32,9 +32,6 @@ public class PrinterPunch : IODevice, IPrinterPunch
 
     protected override int TickDelay => 100;
 
-    public IReadOnlyCollection<byte> Output => output.ToArray();
-
-
     public bool OutputFlag { get; private set; }
 
     public void ClearOutputFlag() => OutputFlag = false;

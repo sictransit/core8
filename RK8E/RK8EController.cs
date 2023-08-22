@@ -4,7 +4,7 @@ using Core8.Model.Registers;
 
 namespace Core8.Peripherals.RK8E;
 
-public class FixedDisk : IODevice, IFixedDisk
+public class RK8EController : IODevice, IRK8E
 {
     private const int RKS_DONE = 1 << 11; // transfer done 
     private const int RKS_HMOV = 1 << 10; // heads moving 
@@ -43,7 +43,7 @@ public class FixedDisk : IODevice, IFixedDisk
     private bool go;
     private int statusRegister;
 
-    public FixedDisk(IMemory dmaChannel, int deviceId = 60) : base(deviceId) // device 74: RK8E (cartridge disk)
+    public RK8EController(IMemory dmaChannel, int deviceId = 60) : base(deviceId) // device 74: RK8E (cartridge disk)
     {
         this.dmaChannel = dmaChannel;
 

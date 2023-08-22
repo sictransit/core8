@@ -1,6 +1,6 @@
 ﻿namespace Core8.Model.Interfaces;
 
-public interface IFloppyDrive : IIODevice
+public interface IRX8E : IIODevice
 {
     void Load(byte unit, byte[] disk = null);
 

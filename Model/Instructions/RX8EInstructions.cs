@@ -5,7 +5,7 @@ using System;
 
 namespace Core8.Model.Instructions;
 
-public class FloppyDriveInstructions : PrivilegedInstructionsBase
+public class RX8EInstructions : PrivilegedInstructionsBase
 {
     private const int SEL_MASK = 0b_000;
     private const int LCD_MASK = 0b_001;
@@ -16,14 +16,12 @@ public class FloppyDriveInstructions : PrivilegedInstructionsBase
     private const int INTR_MASK = 0b_110;
     private const int INIT_MASK = 0b_111;
 
-    public FloppyDriveInstructions(ICPU cpu) : base(cpu)
+    public RX8EInstructions(ICPU cpu) : base(cpu)
     {
 
     }
 
-    private IFloppyDrive FloppyDrive => CPU.FloppyDrive;
-
-    protected override string OpCodeText => ((FloppyDriveOpCode)(Data & 0b_111)).ToString();
+    protected override string OpCodeText => ((RX8EOpCode)(Data & 0b_111)).ToString();
 
     protected override void PrivilegedExecute()
     {
@@ -60,17 +58,17 @@ public class FloppyDriveInstructions : PrivilegedInstructionsBase
 
     private void INIT()
     {
-        FloppyDrive.Initialize();
+        CPU.RX8E.Initialize();
     }
 
     private void INTR()
     {
-        FloppyDrive.SetInterrupts(AC.Accumulator);
+        CPU.RX8E.SetInterrupts(AC.Accumulator);
     }
 
     private void SDN()
     {
-        if (FloppyDrive.SkipNotDone())
+        if (CPU.RX8E.SkipNotDone())
         {
             PC.Increment();
         }
@@ -78,7 +76,7 @@ public class FloppyDriveInstructions : PrivilegedInstructionsBase
 
     private void SER()
     {
-        if (FloppyDrive.SkipError())
+        if (CPU.RX8E.SkipError())
         {
             PC.Increment();
         }
@@ -86,7 +84,7 @@ public class FloppyDriveInstructions : PrivilegedInstructionsBase
 
     private void STR()
     {
-        if (FloppyDrive.SkipTransferRequest())
+        if (CPU.RX8E.SkipTransferRequest())
         {
             PC.Increment();
         }
@@ -94,12 +92,12 @@ public class FloppyDriveInstructions : PrivilegedInstructionsBase
 
     private void XDR()
     {
-        AC.SetAccumulator(FloppyDrive.TransferDataRegister(AC.Accumulator));
+        AC.SetAccumulator(CPU.RX8E.TransferDataRegister(AC.Accumulator));
     }
 
     private void LCD()
     {
-        FloppyDrive.LoadCommandRegister(AC.Accumulator);
+        CPU.RX8E.LoadCommandRegister(AC.Accumulator);
 
         AC.ClearAccumulator();
     }
@@ -110,7 +108,7 @@ public class FloppyDriveInstructions : PrivilegedInstructionsBase
         Log.Warning(AC.ToString());
     }
 
-    private enum FloppyDriveOpCode
+    private enum RX8EOpCode
     {
         SEL = SEL_MASK,
         LCD = LCD_MASK,

@@ -17,7 +17,7 @@ public class PrinterPunchInstructions : PrivilegedInstructionsBase
     {
     }
 
-    protected override string OpCodeText => ((TeleprinterOpCode)(Data & 0b_111)).ToString();
+    protected override string OpCodeText => ((PrinterPunchOpCode)(Data & 0b_111)).ToString();
 
     private IPrinterPunch Device => CPU.PrinterPunch;
 
@@ -82,7 +82,7 @@ public class PrinterPunchInstructions : PrivilegedInstructionsBase
         }
     }
 
-    private enum TeleprinterOpCode
+    private enum PrinterPunchOpCode
     {
         TFL = TFL_MASK,
         TSF = TSF_MASK,
