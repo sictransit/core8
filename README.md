@@ -2,13 +2,16 @@
 
 This is my first attempt to write an emulator. Ever! It is work-in-progress and might even be finished eventually.
 
-The emulator is stable enough to boot OS/8 and run [TINT8](https://github.com/PontusPih/TINT8), the PDP-8 version of a popular tile-matching puzzle video game. 
+The emulator is stable enough to boot OS/8 and run [TINT8](https://github.com/PontusPih/TINT8), the PDP-8 version of a popular tile-matching puzzle video game. You can even play ADVENT (Colossal Cave) on it.
 
 Have fun!
 
-# TDD - MAINDEC
+# Test-driven development - MAINDEC
 
-The following MAINDEC diagnostics have been tested and run successfully. In fact that's how I implemented the emulator. Run the tests, fix the code, ... Loop until the emulator passes for a real machine.
+The following MAINDEC diagnostics have been tested and run successfully. 
+
+In fact that's how I implemented the emulator. Run the tests, fix the code, ... Loop until the emulator passes for a real machine.
+
  * `MAINDEC-8E-D0AB-PB`: Instruction Test Part 1 
  * `MAINDEC-8E-D0BB-PB`: Instruction Test Part 2 
  * `MAINDEC-8E-D0CC-PB`: Adder Test 
@@ -28,33 +31,35 @@ The following MAINDEC diagnostics have been tested and run successfully. In fact
 	Emulator 1.0.0
 	Mikael Fredriksson <micke@sictransit.net>
 
-	  --tint               (Default: false) play TINT
-
-	  --palbart            (Default: c:\bin\palbart.exe) PALBART executable, required for assemble
-
-	  --assemble           PAL assembly file
-
-	  --load               load bin format paper tape
-
-	  --run                (Default: false) run the assembled file
-
-	  --tty                (Default: false) dump tty output to console
-
-	  --startingaddress    (Default: 200) starting address
-
-	  --dumpmemory         (Default: false) dump memory
-
-	  --os8                (Default: false) boot OS/8
-
-	  --debug              (Default: false) debug mode
-
-	  --convert            convert ASCII string to octal words
-
-	  --punch              punch paper tape, i.e. copy bin image
-
-	  --help               Display this help screen.
-
-	  --version            Display version information.
+	--tint               (Default: false) play TINT
+	
+	--palbart            (Default: c:\bin\palbart.exe) PALBART executable, required for assemble
+	
+	--assemble           PAL assembly file
+	
+	--load               load bin format paper tape
+	
+	--run                (Default: false) run the assembled file
+	
+	--tty                (Default: false) dump tty output to console
+	
+	--startingaddress    (Default: 200) starting address
+	
+	--dumpmemory         (Default: false) dump memory
+	
+	--os8                (Default: false) boot OS/8
+	
+	--advent             (Default: false) run ADVENT
+	
+	--debug              (Default: false) debug mode
+	
+	--convert            convert ASCII string to octal words
+	
+	--punch              punch paper tape, i.e. copy bin image
+	
+	--help               Display this help screen.
+	
+	--version            Display version information.
 
 # PALBART
 
@@ -76,6 +81,10 @@ Of course, the SVG punch can also read SVG paper tapes.
 
 <img width="787" alt="image" src="https://github.com/sictransit/core8/assets/4610247/6fa1db81-ae80-4cee-94da-d3539c732fd1">
 
+# Line Printer
+
+I've cloned the printer part of the teletype to implement a line printer. It was necessary to boot some RK05 disks.
+
 # Work in Progress
 
 ## RX8E/RX01
@@ -86,11 +95,14 @@ It is at least able to boot OS/8 from a disk image.
 
 <img width="331" alt="image" src="https://github.com/sictransit/core8/assets/4610247/4c1bb56b-1b49-4b16-b517-398859422e50">
 
-## RK8E
+## RK8E/RK05
 
-Not started, but when the RX floppies started working, I realized I'll need support for the fixed platters as well. Probably a top TODO.
+I realized I'll need support for the cartridge disks as well, at least to be able to load and boot some of the more interesing images out there. Now you can play [ADVENT](https://en.wikipedia.org/wiki/Colossal_Cave_Adventure) on the emulator, which was actually my goal from the beginning and why I started coding the emulator.
+
+<img width="331" alt="image" src="https://github.com/sictransit/core8/assets/4610247/cdec18cb-15a1-4347-a2c4-318c20e09f96">
+
 
 # TODO
 
-When I haven't refactored everything in a while, I might fix issues like `	Type 'MQRelay' owns disposable field(s) 'publisherSocket, subscriberSocket' but is not disposable.` For now, it is not a priority! I know how and when to use the `using {}` pattern.
+When I haven't refactored everything in a while, I might fix issues like `Type 'MQRelay' owns disposable field(s) 'publisherSocket, subscriberSocket' but is not disposable.` For now, it is not a priority! I know how and when to use the `using {}` pattern.
 
