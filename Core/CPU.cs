@@ -116,7 +116,7 @@ public class CPU : ICPU
     }
 
     public void Attach(ILinePrinter peripheral)
-    { 
+    {
         LinePrinter = peripheral;
 
         linePrinterDeviceId = peripheral.DeviceId;
@@ -140,10 +140,11 @@ public class CPU : ICPU
     {
         KeyboardReader.Clear();
         PrinterPunch.Clear();
+        LinePrinter.Clear();
         Registry.AC.Clear();
         Interrupts.ClearUser();
         Interrupts.Disable();
-        RX8E?.Initialize();
+        RX8E?.Initialize();        
     }
 
     public void Halt() => running = false;
@@ -167,6 +168,7 @@ public class CPU : ICPU
 
                 KeyboardReader.Tick();
                 PrinterPunch.Tick();
+                LinePrinter.Tick();
                 RX8E?.Tick();
                 RK8E?.Tick();
 

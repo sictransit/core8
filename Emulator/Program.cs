@@ -168,18 +168,11 @@ public static class Program
 
         pdp.ToggleRX8EBootstrap();
 
-        pdp.Load8(0022);
-
         pdp.LoadRX01(0, File.ReadAllBytes(@"disks\os8_rx.rx01"));
 
         pdp.Clear();
 
-        pdp.Continue(false);
-
-        while (pdp.Running)
-        {
-            Thread.Sleep(200);
-        }
+        Run(0022, false);
     }
 
     private static void TINT()
@@ -221,8 +214,6 @@ public static class Program
         {
             pdp.DumpMemory();
         }
-
-        //pdp.CPU.Debug(true);
 
         pdp.Continue();
 
