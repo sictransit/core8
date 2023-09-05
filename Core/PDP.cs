@@ -344,11 +344,6 @@ public class PDP
         }
     }
 
-    public void SingleStep(bool state)
-    {
-        CPU.SingleStep(state);
-    }
-
     public void Halt(bool waitForHalt = true)
     {
         CPU.Halt();

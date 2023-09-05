@@ -44,8 +44,6 @@ public static class Program
 
                     if (o.Debug)
                     {
-                        pdp.CPU.Debug(true);
-
                         LoggingLevel.MinimumLevel = LogEventLevel.Debug;
                     }
 

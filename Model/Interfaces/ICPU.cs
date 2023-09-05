@@ -32,10 +32,6 @@ public interface ICPU
 
     void SetBreakpoint(Breakpoint breakpoint);
 
-    void SingleStep(bool state);
-
-    void Debug(bool state);
-
     int InstructionCounter { get; }
 
     void Attach(IRK8E peripheral);

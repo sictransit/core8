@@ -3,6 +3,7 @@ using Core8.Model;
 using Core8.Model.Instructions;
 using Core8.Model.Interfaces;
 using Serilog;
+using Serilog.Events;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -25,7 +26,6 @@ public class CPU : ICPU
     private const int MEMORY_MANAGEMENT_MASK = 0b_111_111_000_000;
     private const int INTERRUPT_MASK = 0b_000_111_111_000;
 
-    // TODO: Create class, include hit count. How to break on instruction and then continue e.g. 1000 more?
     private readonly List<Breakpoint> breakpoints = new();
 
     private readonly RK8EInstructions rk8eInstructions;
@@ -42,8 +42,6 @@ public class CPU : ICPU
     private readonly LinePrinterInstructions linePrinterInstructions;
     private readonly PrivilegedNoOperationInstruction privilegedNoOperationInstruction;
 
-    private bool debug;
-
     private int rk8eDeviceId = -1;
 
     private int rx8eDeviceId = -1;
@@ -55,8 +53,6 @@ public class CPU : ICPU
     private int linePrinterDeviceId = -1;
 
     private volatile bool running;
-
-    private bool singleStep;
 
     private (int address, int data) waitingLoopCap;
 
@@ -153,7 +149,7 @@ public class CPU : ICPU
     {
         running = true;
 
-        Log.Information($"CONT @ {Registry.PC} (dbg: {debug})");
+        Log.Information($"CONT @ {Registry.PC}");
 
         InstructionCounter = 0;
 
@@ -173,7 +169,7 @@ public class CPU : ICPU
 
                 Instruction = Fetch(Registry.PC.Content);
 
-                if (debug)
+                if (Log.IsEnabled(LogEventLevel.Debug))
                 {
                     Log.Debug($"{Registry.PC.IF}{Registry.PC.Address.ToOctalString()}  {Registry.AC.Link} {Registry.AC.Accumulator.ToOctalString()}  {Registry.MQ.Content.ToOctalString()}  {Instruction}");
                 }
@@ -182,17 +178,14 @@ public class CPU : ICPU
 
                 Instruction.Execute();
 
-                if (debug)
-                { 
-                    if (breakpoints.Exists(b => b.Check(this)) || singleStep)
+                if (breakpoints.Count>0 && breakpoints.Exists(b => b.Check(this)))
+                {
+                    if (Debugger.IsAttached)
                     {
-                        if (Debugger.IsAttached)
-                        {
-                            Debugger.Break();                            
-                        }
-
-                        break;
+                        Debugger.Break();                            
                     }
+
+                    break;
                 }
 
             }
@@ -213,21 +206,7 @@ public class CPU : ICPU
         }
     }
 
-    public void SetBreakpoint(Breakpoint breakpoint)
-    {
-        breakpoints.Add(breakpoint);
-
-        Debug(true);
-    }
-
-    public void Debug(bool state) => debug = state;
-
-    public void SingleStep(bool state)
-    {
-        singleStep = state;
-
-        Debug(state || breakpoints.Any());
-    }
+    public void SetBreakpoint(Breakpoint breakpoint) => breakpoints.Add(breakpoint);
 
     public IInstruction Fetch(int address)
     {

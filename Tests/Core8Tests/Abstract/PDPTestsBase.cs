@@ -27,7 +27,5 @@ public abstract class PDPTestsBase
             .CreateLogger();
 
         PDP = new PDP();
-
-        PDP.CPU.Debug(Debugger.IsAttached);
     }
 }
