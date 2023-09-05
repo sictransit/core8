@@ -186,7 +186,7 @@ public class CPU : ICPU
                 {
                     Log.Debug($"{debugIF}{debugPC.ToOctalString()}  {Registry.AC.Link} {Registry.AC.Accumulator.ToOctalString()}  {Registry.MQ.Content.ToOctalString()}  {Instruction}");
 
-                    if (breakpoints.Any(b => b(this)) || singleStep)
+                    if (breakpoints.Exists(b => b(this)) || singleStep)
                     {
                         if (Debugger.IsAttached)
                         {
