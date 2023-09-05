@@ -11,9 +11,11 @@ namespace Core8.Model
     {
         private readonly Func<ICPU, bool> predicate;
 
+        private int delayedInstructionCounter = int.MinValue;
+
         public Breakpoint(int octalAddress) : this(cpu => cpu.Registry.PC.Content == octalAddress.ToDecimal())
         {
-            MaxHits = int.MaxValue;
+            MaxHits = int.MaxValue;            
         }
 
         public Breakpoint(Func<ICPU, bool> predicate)
@@ -23,14 +25,32 @@ namespace Core8.Model
 
         public int MaxHits { get; set; }
 
+        public bool WasHit { get; set; }
+
+        public Breakpoint Parent { get; set; }
+
+        public int Delay { get; set; }
+
         public bool Check(ICPU cpu)
         {
-            if (predicate(cpu) && (MaxHits-- > 0))
+            var result = false;
+
+            if (Parent == null || Parent.WasHit)
             {
-                return true;
+                if (predicate(cpu) && --MaxHits >= 0)
+                {
+                    delayedInstructionCounter = cpu.InstructionCounter + Delay;
+                }
+            }
+            
+            if (delayedInstructionCounter == cpu.InstructionCounter)
+            {
+                result = true;
             }
 
-            return false;
+            WasHit |= result;
+
+            return result;
         }
     }
 }

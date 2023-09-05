@@ -65,13 +65,26 @@ public class CPUTests : PDPTestsBase
     public void TestBreakpointAtPC()
     {
         PDP.CPU.Memory.Clear();
-        PDP.CPU.SetBreakpoint(new Breakpoint(10)); // octal address
+        PDP.CPU.SetBreakpoint(new Breakpoint(10)); 
 
         PDP.Load8(0);
         PDP.Continue();
 
         Assert.AreEqual(8, PDP.CPU.Registry.PC.Address);
     }
+
+    [TestMethod]
+    public void TestBreakpointDelay()
+    {
+        PDP.CPU.Memory.Clear();
+        PDP.CPU.SetBreakpoint(new Breakpoint(10) { Delay = 8}); 
+
+        PDP.Load8(0);
+        PDP.Continue();
+
+        Assert.AreEqual(20.ToDecimal(), PDP.CPU.Registry.PC.Address);
+    }
+
 
     [TestMethod]
     public void TestBreakpointMaxHits()
