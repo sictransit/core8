@@ -81,20 +81,20 @@ public class CPUTests : PDPTestsBase
         var breaks = Enumerable.Range(1, 10).ToList();
         breaks.Add(7777.ToDecimal());
 
-        PDP.CPU.SetBreakpoint(new Breakpoint((cpu)=>cpu.Instruction.Data == 0) { MaxHits=10}); 
-        PDP.CPU.SetBreakpoint(new Breakpoint(7777)); 
+        PDP.CPU.SetBreakpoint(new Breakpoint((cpu) => cpu.Instruction.Data == 0) { MaxHits = 10 });
+        PDP.CPU.SetBreakpoint(new Breakpoint(7777));
 
         PDP.Load8(0);
 
         var hit = 0;
 
-        while (hit<breaks.Count)
+        while (hit < breaks.Count)
         {
             PDP.Continue();
 
-            Assert.AreEqual(breaks[hit], PDP.CPU.Registry.PC.Content); 
+            Assert.AreEqual(breaks[hit], PDP.CPU.Registry.PC.Content);
 
             hit++;
-        }                
+        }
     }
 }

@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Core8.Extensions;
+﻿using Core8.Extensions;
 using Core8.Model.Interfaces;
+using System;
 
 namespace Core8.Model
 {
@@ -13,7 +9,7 @@ namespace Core8.Model
     //chain
     public class Breakpoint
     {
-        private readonly Func<ICPU, bool> predicate;        
+        private readonly Func<ICPU, bool> predicate;
 
         public Breakpoint(int octalAddress) : this(cpu => cpu.Registry.PC.Content == octalAddress.ToDecimal())
         {
@@ -30,7 +26,7 @@ namespace Core8.Model
         public bool Check(ICPU cpu)
         {
             if (predicate(cpu) && (MaxHits-- > 0))
-            { 
+            {
                 return true;
             }
 

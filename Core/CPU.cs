@@ -7,7 +7,6 @@ using Serilog.Events;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
 using System.Threading;
 
 namespace Core8.Core;
@@ -140,7 +139,7 @@ public class CPU : ICPU
         Registry.AC.Clear();
         Interrupts.ClearUser();
         Interrupts.Disable();
-        RX8E?.Initialize();        
+        RX8E?.Initialize();
     }
 
     public void Halt() => running = false;
@@ -178,11 +177,11 @@ public class CPU : ICPU
 
                 Instruction.Execute();
 
-                if (breakpoints.Count>0 && breakpoints.Exists(b => b.Check(this)))
+                if (breakpoints.Count > 0 && breakpoints.Exists(b => b.Check(this)))
                 {
                     if (Debugger.IsAttached)
                     {
-                        Debugger.Break();                            
+                        Debugger.Break();
                     }
 
                     break;
