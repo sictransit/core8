@@ -26,7 +26,7 @@ public class CPU : ICPU
     private const int INTERRUPT_MASK = 0b_000_111_111_000;
 
     // TODO: Create class, include hit count. How to break on instruction and then continue e.g. 1000 more?
-    private readonly List<Func<ICPU, bool>> breakpoints = new();
+    private readonly List<Breakpoint> breakpoints = new();
 
     private readonly RK8EInstructions rk8eInstructions;
     private readonly RX8EInstructions rx8eInstructions;
@@ -151,9 +151,6 @@ public class CPU : ICPU
 
     public void Run()
     {
-        var debugPC = 0;
-        var debugIF = 0;
-
         running = true;
 
         Log.Information($"CONT @ {Registry.PC} (dbg: {debug})");
@@ -174,34 +171,30 @@ public class CPU : ICPU
 
                 Interrupts.Interrupt();
 
-                if (debug)
-                {
-                    debugPC = Registry.PC.Address;
-                    debugIF = Registry.PC.IF;
-                }
-
                 Instruction = Fetch(Registry.PC.Content);
 
                 if (debug)
                 {
-                    Log.Debug($"{debugIF}{debugPC.ToOctalString()}  {Registry.AC.Link} {Registry.AC.Accumulator.ToOctalString()}  {Registry.MQ.Content.ToOctalString()}  {Instruction}");
-
-                    if (breakpoints.Exists(b => b(this)) || singleStep)
-                    {
-                        if (Debugger.IsAttached)
-                        {
-                            Debugger.Break();
-                        }
-                        else
-                        {
-                            break;
-                        }
-                    }
+                    Log.Debug($"{Registry.PC.IF}{Registry.PC.Address.ToOctalString()}  {Registry.AC.Link} {Registry.AC.Accumulator.ToOctalString()}  {Registry.MQ.Content.ToOctalString()}  {Instruction}");
                 }
 
                 Registry.PC.Increment();
 
                 Instruction.Execute();
+
+                if (debug)
+                { 
+                    if (breakpoints.Exists(b => b.Check(this)) || singleStep)
+                    {
+                        if (Debugger.IsAttached)
+                        {
+                            Debugger.Break();                            
+                        }
+
+                        break;
+                    }
+                }
+
             }
         }
         catch (Exception ex)
@@ -220,7 +213,7 @@ public class CPU : ICPU
         }
     }
 
-    public void SetBreakpoint(Func<ICPU, bool> breakpoint)
+    public void SetBreakpoint(Breakpoint breakpoint)
     {
         breakpoints.Add(breakpoint);
 

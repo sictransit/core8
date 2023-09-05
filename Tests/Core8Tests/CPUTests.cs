@@ -1,6 +1,9 @@
+using Core8.Extensions;
+using Core8.Model;
 using Core8.Tests.Abstract;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Serilog;
+using System.Linq;
 
 namespace Core8.Tests;
 
@@ -59,13 +62,39 @@ public class CPUTests : PDPTestsBase
     }
 
     [TestMethod]
-    public void TestBreakpoint()
+    public void TestBreakpointAtPC()
     {
-        PDP.SetBreakpoint8(4);
+        PDP.CPU.Memory.Clear();
+        PDP.CPU.SetBreakpoint(new Breakpoint(10)); // octal address
 
         PDP.Load8(0);
         PDP.Continue();
 
-        Assert.AreEqual(4, PDP.CPU.Registry.PC.Address);
+        Assert.AreEqual(8, PDP.CPU.Registry.PC.Address);
+    }
+
+    [TestMethod]
+    public void TestBreakpointMaxHits()
+    {
+        PDP.CPU.Memory.Clear();
+
+        var breaks = Enumerable.Range(1, 10).ToList();
+        breaks.Add(7777.ToDecimal());
+
+        PDP.CPU.SetBreakpoint(new Breakpoint((cpu)=>cpu.Instruction.Data == 0) { MaxHits=10}); 
+        PDP.CPU.SetBreakpoint(new Breakpoint(7777)); 
+
+        PDP.Load8(0);
+
+        var hit = 0;
+
+        while (hit<breaks.Count)
+        {
+            PDP.Continue();
+
+            Assert.AreEqual(breaks[hit], PDP.CPU.Registry.PC.Content); 
+
+            hit++;
+        }                
     }
 }

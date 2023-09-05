@@ -30,7 +30,7 @@ public interface ICPU
 
     void Clear();
 
-    void SetBreakpoint(Func<ICPU, bool> breakpoint);
+    void SetBreakpoint(Breakpoint breakpoint);
 
     void SingleStep(bool state);
 

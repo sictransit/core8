@@ -321,11 +321,6 @@ public class PDP
         CPU.Registry.SR.Set(word);
     }
 
-    public void SetBreakpoint8(int address)
-    {
-        CPU.SetBreakpoint(cpu => cpu.Registry.PC.Address == address);
-    }
-
     public void Exam()
     {
         CPU.Registry.AC.SetAccumulator(CPU.Memory.Read(CPU.Registry.PC.Address));
