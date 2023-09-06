@@ -15,11 +15,18 @@ namespace Core8.Model
 
         public Breakpoint(int octalAddress) : this(cpu => cpu.Registry.PC.Content == octalAddress.ToDecimal())
         {
-            MaxHits = int.MaxValue;            
+                        
+        }
+
+        public Breakpoint() : this(_ => true)
+        {
+
         }
 
         public Breakpoint(Func<ICPU, bool> predicate)
         {
+            MaxHits = int.MaxValue;
+
             this.predicate = predicate;
         }
 
@@ -33,14 +40,16 @@ namespace Core8.Model
 
         public bool Check(ICPU cpu)
         {
+            if (Parent is { WasHit: false })
+            {
+                return false;
+            }
+
             var result = false;
 
-            if (Parent == null || Parent.WasHit)
+            if (predicate(cpu) && --MaxHits >= 0)
             {
-                if (predicate(cpu) && --MaxHits >= 0)
-                {
-                    delayedInstructionCounter = cpu.InstructionCounter + Delay;
-                }
+                delayedInstructionCounter = cpu.InstructionCounter + Delay;
             }
             
             if (delayedInstructionCounter == cpu.InstructionCounter)

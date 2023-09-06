@@ -150,8 +150,6 @@ public class CPU : ICPU
 
         Log.Information($"CONT @ {Registry.PC}");
 
-        InstructionCounter = 0;
-
         try
         {
             while (running)

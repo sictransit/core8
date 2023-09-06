@@ -74,10 +74,46 @@ public class CPUTests : PDPTestsBase
     }
 
     [TestMethod]
+    public void TestBreakpointSingleStep()
+    {
+        PDP.CPU.Memory.Clear();
+        PDP.CPU.SetBreakpoint(new Breakpoint());
+
+        PDP.Load8(0);
+
+        PDP.Continue();
+        Assert.AreEqual(1, PDP.CPU.Registry.PC.Address);
+
+        PDP.Continue();
+        Assert.AreEqual(2, PDP.CPU.Registry.PC.Address);
+    }
+
+    [TestMethod]
     public void TestBreakpointDelay()
     {
         PDP.CPU.Memory.Clear();
         PDP.CPU.SetBreakpoint(new Breakpoint(10) { Delay = 8}); 
+
+        PDP.Load8(0);
+        PDP.Continue();
+
+        Assert.AreEqual(20.ToDecimal(), PDP.CPU.Registry.PC.Address);
+    }
+
+    [TestMethod]
+    public void TestBreakpointChain()
+    {
+        PDP.CPU.Memory.Clear();
+
+        var parent = new Breakpoint(10) { Delay = 8 };
+        var child = new Breakpoint(cpu => cpu.Registry.AC.Accumulator == 0)
+        {
+            Parent = parent,
+            Delay = 8
+        };
+
+        PDP.CPU.SetBreakpoint(parent);
+        PDP.CPU.SetBreakpoint(child);
 
         PDP.Load8(0);
         PDP.Continue();
@@ -94,7 +130,7 @@ public class CPUTests : PDPTestsBase
         var breaks = Enumerable.Range(1, 10).ToList();
         breaks.Add(7777.ToDecimal());
 
-        PDP.CPU.SetBreakpoint(new Breakpoint((cpu) => cpu.Instruction.Data == 0) { MaxHits = 10 });
+        PDP.CPU.SetBreakpoint(new Breakpoint(cpu => cpu.Instruction.Data == 0) { MaxHits = 10 });
         PDP.CPU.SetBreakpoint(new Breakpoint(7777));
 
         PDP.Load8(0);
