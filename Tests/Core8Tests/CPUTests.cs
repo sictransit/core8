@@ -65,7 +65,7 @@ public class CPUTests : PDPTestsBase
     public void TestBreakpointAtPC()
     {
         PDP.CPU.Memory.Clear();
-        PDP.CPU.SetBreakpoint(new Breakpoint(10)); 
+        PDP.CPU.SetBreakpoint(new Breakpoint(10));
 
         PDP.Load8(0);
         PDP.Continue();
@@ -92,7 +92,7 @@ public class CPUTests : PDPTestsBase
     public void TestBreakpointDelay()
     {
         PDP.CPU.Memory.Clear();
-        PDP.CPU.SetBreakpoint(new Breakpoint(10) { Delay = 8}); 
+        PDP.CPU.SetBreakpoint(new Breakpoint(10) { Delay = 8 });
 
         PDP.Load8(0);
         PDP.Continue();

@@ -15,7 +15,7 @@ namespace Core8.Model
 
         public Breakpoint(int octalAddress) : this(cpu => cpu.Registry.PC.Content == octalAddress.ToDecimal())
         {
-                        
+
         }
 
         public Breakpoint() : this(_ => true)
@@ -51,7 +51,7 @@ namespace Core8.Model
             {
                 delayedInstructionCounter = cpu.InstructionCounter + Delay;
             }
-            
+
             if (delayedInstructionCounter == cpu.InstructionCounter)
             {
                 result = true;
