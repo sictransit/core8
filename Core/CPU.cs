@@ -53,8 +53,6 @@ public class CPU : ICPU
 
     private volatile bool running;
 
-    private (int address, int data) waitingLoopCap;
-
     public CPU()
     {
         group1Instructions = new Group1Instructions(this);
@@ -184,7 +182,6 @@ public class CPU : ICPU
 
                     break;
                 }
-
             }
         }
         catch (Exception ex)
@@ -225,18 +222,6 @@ public class CPU : ICPU
             IOT => privilegedNoOperationInstruction,
             _ => memoryReferenceInstructions.LoadAddress(address),
         }).LoadData(data);
-
-        if (address % 2 == 0) // To avoid looping over e.g. SDN/JMP as fast as the host CPU can manage.
-        {
-            if (waitingLoopCap == (address, data))
-            {
-                Thread.Sleep(0);
-            }
-            else
-            {
-                waitingLoopCap = (address, data);
-            }
-        }
 
         return instruction;
     }

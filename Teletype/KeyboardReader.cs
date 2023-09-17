@@ -6,6 +6,7 @@ using NetMQ.Sockets;
 using Serilog;
 using System;
 using System.Collections.Concurrent;
+using System.Threading;
 
 namespace Core8.Peripherals.Teletype;
 
@@ -18,6 +19,10 @@ public class KeyboardReader : IODevice, IKeyboardReader
 
     private int deviceControl;
 
+    private bool keyboardSpinCap = false;
+
+    private bool inputFlag = false;
+
     public KeyboardReader(string inputAddress, int deviceId = 03) : base(deviceId)
     {
         subscriberSocket = new SubscriberSocket();
@@ -25,20 +30,15 @@ public class KeyboardReader : IODevice, IKeyboardReader
         subscriberSocket.SubscribeToAnyTopic();
     }
 
-
     protected override bool InterruptEnable => (deviceControl & INTERRUPT_ENABLE) != 0;
 
     protected override int TickDelay => 100;
 
-
     public byte InputBuffer { get; private set; }
 
+    protected override bool RequestInterrupt => inputFlag;
 
-    public bool InputFlag { get; private set; }
-
-    protected override bool RequestInterrupt => InputFlag;
-
-    public void ClearInputFlag() => InputFlag = false;
+    public void ClearInputFlag() => inputFlag = false;
 
     public void SetDeviceControl(int data)
     {
@@ -92,12 +92,9 @@ public class KeyboardReader : IODevice, IKeyboardReader
         HandleInput();
     }
 
-    private void SetInputFlag() => InputFlag = true;
-
-
     private void HandleInput()
     {
-        if (InputFlag)
+        if (inputFlag)
         {
             return;
         }
@@ -118,7 +115,25 @@ public class KeyboardReader : IODevice, IKeyboardReader
 
             InputBuffer = b;
 
-            SetInputFlag();
+            inputFlag = true;
+
+            keyboardSpinCap = false;
         }
+        else
+        {
+            // We've exhausted the buffer, so make the next input flag check pause for a while.
+
+            keyboardSpinCap = true;
+        }        
+    }
+
+    public bool CheckInputFlag()
+    {
+        if (keyboardSpinCap)
+        {
+            Thread.Sleep(10);
+        }
+
+        return inputFlag;
     }
 }

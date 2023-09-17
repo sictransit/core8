@@ -8,7 +8,7 @@ public interface IKeyboardReader : IIODevice
 
     void Clear();
 
-    bool InputFlag { get; }
+    bool CheckInputFlag();
 
     void ClearInputFlag();
 
