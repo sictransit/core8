@@ -19,8 +19,6 @@ public class KeyboardReader : IODevice, IKeyboardReader
 
     private int deviceControl;
 
-    private bool keyboardSpinCap = false;
-
     private bool inputFlag = false;
 
     public KeyboardReader(string inputAddress, int deviceId = 03) : base(deviceId)
@@ -40,10 +38,7 @@ public class KeyboardReader : IODevice, IKeyboardReader
 
     public void ClearInputFlag() => inputFlag = false;
 
-    public void SetDeviceControl(int data)
-    {
-        deviceControl = data & INTERRUPT_ENABLE;
-    }
+    public void SetDeviceControl(int data) => deviceControl = data & INTERRUPT_ENABLE;
 
     public void Clear()
     {
@@ -54,10 +49,7 @@ public class KeyboardReader : IODevice, IKeyboardReader
         Ticks = 0;
     }
 
-    public void Type(byte c)
-    {
-        reader.Enqueue(c);
-    }
+    public void Type(byte c) => reader.Enqueue(c);
 
     public void Type(byte[] buffer)
     {
@@ -82,15 +74,9 @@ public class KeyboardReader : IODevice, IKeyboardReader
         }
     }
 
-    public void RemovePaperTape()
-    {
-        reader.Clear();
-    }
+    public void RemovePaperTape() => reader.Clear();
 
-    protected override void HandleTick()
-    {
-        HandleInput();
-    }
+    protected override void HandleTick() => HandleInput();
 
     private void HandleInput()
     {
@@ -116,24 +102,8 @@ public class KeyboardReader : IODevice, IKeyboardReader
             InputBuffer = b;
 
             inputFlag = true;
-
-            keyboardSpinCap = false;
         }
-        else
-        {
-            // We've exhausted the buffer, so make the next input flag check pause for a while.
-
-            keyboardSpinCap = true;
-        }        
     }
 
-    public bool CheckInputFlag()
-    {
-        if (keyboardSpinCap)
-        {
-            Thread.Sleep(10);
-        }
-
-        return inputFlag;
-    }
+    public bool CheckInputFlag() => inputFlag;
 }
