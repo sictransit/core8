@@ -53,6 +53,8 @@ public class CPU : ICPU
 
     private volatile bool running;
 
+    private int[] loopCap = new int[2];
+
     public CPU()
     {
         group1Instructions = new Group1Instructions(this);
@@ -223,6 +225,25 @@ public class CPU : ICPU
             _ => memoryReferenceInstructions.LoadAddress(address),
         }).LoadData(data);
 
+        // TODO: This is work in progress and can be improved, but at least it cuts down on crazy-tight loops
+        // while debugging. The idea is to check for repetitions. When we have fetched four instructions and
+        // they are pairwise the same, i.e. the XOR of them equal to zero over four instructions, we are likely
+        // in a loop waiting for I/O and can sleep for a while.
+        loopCap[InstructionCounter % 2] ^= address << 12 | data;
+
+        if (InstructionCounter % 4 == 0)
+        { 
+            if (loopCap[0] == 0 && loopCap[1]==0)
+            {
+                Thread.Sleep(0);
+            }
+            else
+            {
+                loopCap[0] = 0;
+                loopCap[1] = 0;
+            }
+        }
+        
         return instruction;
     }
 }
