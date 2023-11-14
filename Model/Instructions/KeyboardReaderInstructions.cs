@@ -76,7 +76,7 @@ public class KeyboardReaderInstructions : PrivilegedInstructionsBase
 
     private void KSF()
     {
-        if (Device.InputFlag)
+        if (Device.CheckInputFlag())
         {
             PC.Increment();
         }

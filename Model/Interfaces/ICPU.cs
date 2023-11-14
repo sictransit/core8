@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Core8.Model.Interfaces;
+﻿namespace Core8.Model.Interfaces;
 
 public interface ICPU
 {
@@ -30,11 +28,7 @@ public interface ICPU
 
     void Clear();
 
-    void SetBreakpoint(Func<ICPU, bool> breakpoint);
-
-    void SingleStep(bool state);
-
-    void Debug(bool state);
+    void SetBreakpoint(Breakpoint breakpoint);
 
     int InstructionCounter { get; }
 

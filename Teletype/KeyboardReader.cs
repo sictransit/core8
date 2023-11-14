@@ -6,6 +6,7 @@ using NetMQ.Sockets;
 using Serilog;
 using System;
 using System.Collections.Concurrent;
+using System.Threading;
 
 namespace Core8.Peripherals.Teletype;
 
@@ -18,6 +19,8 @@ public class KeyboardReader : IODevice, IKeyboardReader
 
     private int deviceControl;
 
+    private bool inputFlag = false;
+
     public KeyboardReader(string inputAddress, int deviceId = 03) : base(deviceId)
     {
         subscriberSocket = new SubscriberSocket();
@@ -25,25 +28,17 @@ public class KeyboardReader : IODevice, IKeyboardReader
         subscriberSocket.SubscribeToAnyTopic();
     }
 
-
     protected override bool InterruptEnable => (deviceControl & INTERRUPT_ENABLE) != 0;
 
     protected override int TickDelay => 100;
 
-
     public byte InputBuffer { get; private set; }
 
+    protected override bool RequestInterrupt => inputFlag;
 
-    public bool InputFlag { get; private set; }
+    public void ClearInputFlag() => inputFlag = false;
 
-    protected override bool RequestInterrupt => InputFlag;
-
-    public void ClearInputFlag() => InputFlag = false;
-
-    public void SetDeviceControl(int data)
-    {
-        deviceControl = data & INTERRUPT_ENABLE;
-    }
+    public void SetDeviceControl(int data) => deviceControl = data & INTERRUPT_ENABLE;
 
     public void Clear()
     {
@@ -54,10 +49,7 @@ public class KeyboardReader : IODevice, IKeyboardReader
         Ticks = 0;
     }
 
-    public void Type(byte c)
-    {
-        reader.Enqueue(c);
-    }
+    public void Type(byte c) => reader.Enqueue(c);
 
     public void Type(byte[] buffer)
     {
@@ -82,22 +74,13 @@ public class KeyboardReader : IODevice, IKeyboardReader
         }
     }
 
-    public void RemovePaperTape()
-    {
-        reader.Clear();
-    }
+    public void RemovePaperTape() => reader.Clear();
 
-    protected override void HandleTick()
-    {
-        HandleInput();
-    }
-
-    private void SetInputFlag() => InputFlag = true;
-
+    protected override void HandleTick() => HandleInput();
 
     private void HandleInput()
     {
-        if (InputFlag)
+        if (inputFlag)
         {
             return;
         }
@@ -118,7 +101,9 @@ public class KeyboardReader : IODevice, IKeyboardReader
 
             InputBuffer = b;
 
-            SetInputFlag();
+            inputFlag = true;
         }
     }
+
+    public bool CheckInputFlag() => inputFlag;
 }

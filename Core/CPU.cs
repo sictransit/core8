@@ -3,10 +3,10 @@ using Core8.Model;
 using Core8.Model.Instructions;
 using Core8.Model.Interfaces;
 using Serilog;
+using Serilog.Events;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
 using System.Threading;
 
 namespace Core8.Core;
@@ -25,8 +25,7 @@ public class CPU : ICPU
     private const int MEMORY_MANAGEMENT_MASK = 0b_111_111_000_000;
     private const int INTERRUPT_MASK = 0b_000_111_111_000;
 
-    // TODO: Create class, include hit count. How to break on instruction and then continue e.g. 1000 more?
-    private readonly List<Func<ICPU, bool>> breakpoints = new();
+    private readonly List<Breakpoint> breakpoints = new();
 
     private readonly RK8EInstructions rk8eInstructions;
     private readonly RX8EInstructions rx8eInstructions;
@@ -42,8 +41,6 @@ public class CPU : ICPU
     private readonly LinePrinterInstructions linePrinterInstructions;
     private readonly PrivilegedNoOperationInstruction privilegedNoOperationInstruction;
 
-    private bool debug;
-
     private int rk8eDeviceId = -1;
 
     private int rx8eDeviceId = -1;
@@ -56,9 +53,7 @@ public class CPU : ICPU
 
     private volatile bool running;
 
-    private bool singleStep;
-
-    private (int address, int data) waitingLoopCap;
+    private int[] loopCap = new int[2];
 
     public CPU()
     {
@@ -116,7 +111,7 @@ public class CPU : ICPU
     }
 
     public void Attach(ILinePrinter peripheral)
-    { 
+    {
         LinePrinter = peripheral;
 
         linePrinterDeviceId = peripheral.DeviceId;
@@ -140,6 +135,7 @@ public class CPU : ICPU
     {
         KeyboardReader.Clear();
         PrinterPunch.Clear();
+        LinePrinter.Clear();
         Registry.AC.Clear();
         Interrupts.ClearUser();
         Interrupts.Disable();
@@ -150,14 +146,9 @@ public class CPU : ICPU
 
     public void Run()
     {
-        var debugPC = 0;
-        var debugIF = 0;
-
         running = true;
 
-        Log.Information($"CONT @ {Registry.PC} (dbg: {debug})");
-
-        InstructionCounter = 0;
+        Log.Information($"CONT @ {Registry.PC}");
 
         try
         {
@@ -167,39 +158,32 @@ public class CPU : ICPU
 
                 KeyboardReader.Tick();
                 PrinterPunch.Tick();
+                LinePrinter.Tick();
                 RX8E?.Tick();
                 RK8E?.Tick();
 
                 Interrupts.Interrupt();
 
-                if (debug)
-                {
-                    debugPC = Registry.PC.Address;
-                    debugIF = Registry.PC.IF;
-                }
-
                 Instruction = Fetch(Registry.PC.Content);
 
-                if (debug)
+                if (Log.IsEnabled(LogEventLevel.Debug))
                 {
-                    Log.Debug($"{debugIF}{debugPC.ToOctalString()}  {Registry.AC.Link} {Registry.AC.Accumulator.ToOctalString()}  {Registry.MQ.Content.ToOctalString()}  {Instruction}");
-
-                    if (breakpoints.Any(b => b(this)) || singleStep)
-                    {
-                        if (Debugger.IsAttached)
-                        {
-                            Debugger.Break();
-                        }
-                        else
-                        {
-                            break;
-                        }
-                    }
+                    Log.Debug($"{Registry.PC.IF}{Registry.PC.Address.ToOctalString()}  {Registry.AC.Link} {Registry.AC.Accumulator.ToOctalString()}  {Registry.MQ.Content.ToOctalString()}  {Instruction}");
                 }
 
                 Registry.PC.Increment();
 
                 Instruction.Execute();
+
+                if (breakpoints.Count > 0 && breakpoints.Exists(b => b.Check(this)))
+                {
+                    if (Debugger.IsAttached)
+                    {
+                        Debugger.Break();
+                    }
+
+                    break;
+                }
             }
         }
         catch (Exception ex)
@@ -218,21 +202,7 @@ public class CPU : ICPU
         }
     }
 
-    public void SetBreakpoint(Func<ICPU, bool> breakpoint)
-    {
-        breakpoints.Add(breakpoint);
-
-        Debug(true);
-    }
-
-    public void Debug(bool state) => debug = state;
-
-    public void SingleStep(bool state)
-    {
-        singleStep = state;
-
-        Debug(state || breakpoints.Any());
-    }
+    public void SetBreakpoint(Breakpoint breakpoint) => breakpoints.Add(breakpoint);
 
     public IInstruction Fetch(int address)
     {
@@ -255,18 +225,25 @@ public class CPU : ICPU
             _ => memoryReferenceInstructions.LoadAddress(address),
         }).LoadData(data);
 
-        if (address % 2 == 0) // To avoid looping over e.g. SDN/JMP as fast as the host CPU can manage.
-        {
-            if (waitingLoopCap == (address, data))
+        // TODO: This is work in progress and can be improved, but at least it cuts down on crazy-tight loops
+        // while debugging. The idea is to check for repetitions. When we have fetched four instructions and
+        // they are pairwise the same, i.e. the XOR of them equal to zero over four instructions, we are likely
+        // in a loop waiting for I/O and can sleep for a while.
+        loopCap[InstructionCounter % 2] ^= address << 12 | data;
+
+        if (InstructionCounter % 4 == 0)
+        { 
+            if (loopCap[0] == 0 && loopCap[1]==0)
             {
                 Thread.Sleep(0);
             }
             else
             {
-                waitingLoopCap = (address, data);
+                loopCap[0] = 0;
+                loopCap[1] = 0;
             }
         }
-
+        
         return instruction;
     }
 }
