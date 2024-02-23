@@ -6,7 +6,6 @@ using NetMQ.Sockets;
 using Serilog;
 using System;
 using System.Collections.Concurrent;
-using System.Threading;
 
 namespace Core8.Peripherals.Teletype;
 

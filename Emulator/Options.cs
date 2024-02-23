@@ -31,6 +31,9 @@ public class Options
     [Option(Required = false, Default = false, HelpText = "boot OS/8")]
     public bool OS8 { get; set; }
 
+    [Option(Required = false, Default = false, HelpText = "boot Kermit utility disk")]
+    public bool Kermit { get; set; }
+
     [Option(Required = false, Default = false, HelpText = "run ADVENT")]
     public bool Advent { get; set; }
 
