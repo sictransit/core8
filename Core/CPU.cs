@@ -232,8 +232,8 @@ public class CPU : ICPU
         loopCap[InstructionCounter % 2] ^= address << 12 | data;
 
         if (InstructionCounter % 4 == 0)
-        { 
-            if (loopCap[0] == 0 && loopCap[1]==0)
+        {
+            if (loopCap[0] == 0 && loopCap[1] == 0)
             {
                 Thread.Sleep(0);
             }
@@ -243,7 +243,7 @@ public class CPU : ICPU
                 loopCap[1] = 0;
             }
         }
-        
+
         return instruction;
     }
 }
