@@ -89,6 +89,11 @@ public static class Program
                         Advent();
                     }
 
+                    if (o.Kermit)
+                    {
+                        Kermit();
+                    }
+
                     if (o.TTY)
                     {
                         Console.WriteLine(pdp.CPU.PrinterPunch.Printout);
@@ -122,6 +127,17 @@ public static class Program
         {
             Console.WriteLine($"{c}: {((int)c).ToOctalString()}");
         }
+    }
+
+    private static void Kermit()
+    {
+        pdp.CPU.Memory.Clear();
+        pdp.CPU.RK8E.Load(0, File.ReadAllBytes("disks/diag-games-kermit.rk05"));
+        pdp.ToggleRK8EBootstrap();
+        pdp.Load8(0023);
+
+        pdp.Continue(true);
+
     }
 
     private static void Advent()
