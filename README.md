@@ -22,33 +22,31 @@ There are extensive tests for the emulator as described in the MAINDEC section b
 
 ## Run
 
-Please note that the Emuluator is a console application. It can do many things, but it does not have a GUI. Options are described below. Most users will probably hook up Putty to the terminal server.
+Please note that the Emulator is a console application. It can do many things, but it does not have a GUI. Options are described below. Most users will probably hook up [Putty](https://www.putty.org/) to the terminal server.
 
-Why not play game of ADVENT?
+Why not play a game of ADVENT?
 
 ### Launch the Terminal Server
 	
 	PS c:\...\core8\TerminalServer\bin\Release\net8.0> .\TerminalServer.exe
 	[20:57:23 INF] Server starting ...
 
-Terminal server is now running and waiting for connections.
+The Terminal Server is now running and waiting for connections.
 
 ### Connect using Putty
 
 	PS c:\bin\putty)> .\putty.exe -telnet -raw localhost 23
 	WELCOME TO THE PDP-8 TERMINAL SERVER
 
-Terminal Server shows:
+The Terminal Server shows something similar to this:
 
 	[21:01:15 INF] Connected: 127.0.0.1:61365
 
 ### Launch the Emulator
 
-	PS c:\...\core8\Emulator\bin\Release\net8.0\> .Emulator.exe --advent
+	PS c:\...\core8\Emulator\bin\Release\net8.0\> .\Emulator.exe --advent
 
-The Emulator will boot OS/8 and start ADVENT:
-
-	WELCOME TO THE PDP-8 TERMINAL SERVER
+The Emulator will boot OS/8 and start ADVENT. You should see this is Putty:
 
 	.R FRTS
 	*ADVENT
@@ -58,6 +56,7 @@ The Emulator will boot OS/8 and start ADVENT:
 	>
 
 Type `Y` and hit `Enter` to get instructions. Have fun!
+
 # Test-driven development - MAINDEC
 
 The following MAINDEC diagnostics have been tested and run successfully. 
