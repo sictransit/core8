@@ -4,14 +4,11 @@ using System;
 
 namespace Core8.Model
 {
-    //disable once hit
-    //break now, or on x instructions
-    //chain
     public class Breakpoint
     {
         private readonly Func<ICPU, bool> predicate;
 
-        private int delayedInstructionCounter = int.MinValue;
+        private ulong delayedInstructionCounter;
 
         public Breakpoint(int octalAddress) : this(cpu => cpu.Registry.PC.Content == octalAddress.ToDecimal())
         {
@@ -36,7 +33,7 @@ namespace Core8.Model
 
         public Breakpoint Parent { get; set; }
 
-        public int Delay { get; set; }
+        public ulong Delay { get; set; }
 
         public bool Check(ICPU cpu)
         {

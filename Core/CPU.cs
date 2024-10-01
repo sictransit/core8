@@ -25,7 +25,7 @@ public class CPU : ICPU
     private const int MEMORY_MANAGEMENT_MASK = 0b_111_111_000_000;
     private const int INTERRUPT_MASK = 0b_000_111_111_000;
 
-    private readonly List<Breakpoint> breakpoints = new();
+    private readonly List<Breakpoint> breakpoints = [];
 
     private readonly RK8EInstructions rk8eInstructions;
     private readonly RX8EInstructions rx8eInstructions;
@@ -53,7 +53,7 @@ public class CPU : ICPU
 
     private volatile bool running;
 
-    private int[] loopCap = new int[2];
+    private readonly int[] loopCap = new int[2];
 
     public CPU()
     {
@@ -94,7 +94,7 @@ public class CPU : ICPU
 
     public IInstruction Instruction { get; private set; }
 
-    public int InstructionCounter { get; private set; }
+    public ulong InstructionCounter { get; private set; }
 
     public void Attach(IRK8E peripheral)
     {

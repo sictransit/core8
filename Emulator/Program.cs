@@ -152,12 +152,12 @@ public static class Program
 
         pdp.Continue(false);
 
-        List<(Func<IPrinterPunch, bool>, byte[])> steps = new()
-        {
+        List<(Func<IPrinterPunch, bool>, byte[])> steps =
+        [
             (tty=>tty.Printout.Contains('.'), Encoding.ASCII.GetBytes("R FRTS\r")),
             (tty=>tty.Printout.Contains('*'), Encoding.ASCII.GetBytes("ADVENT\r")),
-            (tty=>tty.Printout.Count(c=> c == '*') == 2, new byte[]{0x1b}),
-        };
+            (tty=>tty.Printout.Count(c=> c == '*') == 2, [0x1b]),
+        ];
 
         while (pdp.Running)
         {

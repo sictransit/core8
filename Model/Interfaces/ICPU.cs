@@ -30,7 +30,7 @@ public interface ICPU
 
     void SetBreakpoint(Breakpoint breakpoint);
 
-    int InstructionCounter { get; }
+    ulong InstructionCounter { get; }
 
     void Attach(IRK8E peripheral);
 
