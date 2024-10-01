@@ -2,10 +2,62 @@
 
 This is my first attempt to write an emulator. Ever! It is work-in-progress and might even be finished eventually.
 
-The emulator is stable enough to boot OS/8 and run [TINT8](https://github.com/PontusPih/TINT8), the PDP-8 version of a popular tile-matching puzzle video game. You can even play ADVENT (Colossal Cave) on it.
+The emulator is stable enough to boot OS/8 and run [TINT8](https://github.com/PontusPih/TINT8), the PDP-8 version of a popular tile-matching puzzle video game. You can even play [ADVENT (Colossal Cave)](https://en.wikipedia.org/wiki/Colossal_Cave_Adventure) on it.
 
 Have fun!
 
+## Build
+
+To build the Emulator: 
+
+	PS c:\...\core8> dotnet build --configuration Release
+
+This will build the Emulator in Release mode as well as the Terminal Server. Those are separate projects in the solution. The Terminal Server is a simple console application that listens on port 23 for incoming connections and should be started before the Emulator.
+
+## Test
+
+There are extensive tests for the emulator as described in the MAINDEC section below. To run them from the command line, use the following command:
+
+	PS c:\...\core8> dotnet test --configuration Release
+
+## Run
+
+Please note that the Emuluator is a console application. It can do many things, but it does not have a GUI. Options are described below. Most users will probably hook up Putty to the terminal server.
+
+Why not play game of ADVENT?
+
+### Launch the Terminal Server
+	
+	PS c:\...\core8\TerminalServer\bin\Release\net8.0> .\TerminalServer.exe
+	[20:57:23 INF] Server starting ...
+
+Terminal server is now running and waiting for connections.
+
+### Connect using Putty
+
+	PS c:\bin\putty)> .\putty.exe -telnet -raw localhost 23
+	WELCOME TO THE PDP-8 TERMINAL SERVER
+
+Terminal Server shows:
+
+	[21:01:15 INF] Connected: 127.0.0.1:61365
+
+### Launch the Emulator
+
+	PS c:\...\core8\Emulator\bin\Release\net8.0\> .Emulator.exe --advent
+
+The Emulator will boot OS/8 and start ADVENT:
+
+	WELCOME TO THE PDP-8 TERMINAL SERVER
+
+	.R FRTS
+	*ADVENT
+	*$
+	Welcome to Adventure!!  Would you like instructions?
+
+	>
+
+Type `Y` and hit `Enter` to get instructions. Have fun!
 # Test-driven development - MAINDEC
 
 The following MAINDEC diagnostics have been tested and run successfully. 
@@ -48,7 +100,9 @@ In fact that's how I implemented the emulator. Run the tests, fix the code, ... 
 	--dumpmemory         (Default: false) dump memory
 	
 	--os8                (Default: false) boot OS/8
-	
+
+	--kermit             (Default: false) boot Kermit utility disk
+
 	--advent             (Default: false) run ADVENT
 	
 	--debug              (Default: false) debug mode
